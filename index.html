@@ -44,7 +44,6 @@
         .hero { 
             text-align: center; 
             padding: 80px 20px; 
-            /* Se quiser embutir a imagem de fundo também, converta ela para base64 e substitua o link abaixo */
             background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1920&q=80'); 
             background-size: cover; 
             background-position: center; 
@@ -153,8 +152,8 @@
         /* Estilos da Galeria */
         .galeria-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
             margin-top: 20px;
         }
         .galeria-grid img {
@@ -165,10 +164,10 @@
             border: 2px solid #333;
             transition: transform 0.3s, border-color 0.3s;
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            background-color: #333; /* Cor de fundo para indicar onde a imagem vai aparecer */
+            background-color: #1e1e1e;
         }
         .galeria-grid img:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
             border-color: #d4af37;
             cursor: pointer;
         }
@@ -235,39 +234,15 @@
 
     <div id="galeria" class="section">
         <h2 class="section-title">Galeria</h2>
-        <p class="sobre-texto">Conheça nosso espaço e um pouco do nosso trabalho.</p>
+        <p class="sobre-texto">Conheça nosso estilo e ambiente.</p>
         <div class="galeria-grid">
-            
-            <!-- Imagem 1: Logo -->
-            <img src="COLE_O_CODIGO_BASE64_DA_LOGO_AQUI" alt="Logo Kiko Barbearia">
-            
-            <!-- Imagem 2: Espaço e Café -->
-            <img src="COLE_O_CODIGO_BASE64_DO_ESPACO_1_AQUI" alt="Interior e café">
-            
-            <!-- Imagem 3: Espelho -->
-            <img src="COLE_O_CODIGO_BASE64_DO_ESPACO_2_AQUI" alt="Estrutura e espelho">
-            
-            <!-- Imagem 4: Certificado -->
-            <img src="COLE_O_CODIGO_BASE64_DO_CERTIFICADO_AQUI" alt="Certificado Profissional">
-            
-            <!-- Imagem 5: Cliente 1 -->
-            <img src="COLE_O_CODIGO_BASE64_DO_CLIENTE_1_AQUI" alt="Atendimento Cliente">
-            
-            <!-- Imagem 6: Corte Adulto -->
-            <img src="COLE_O_CODIGO_BASE64_DO_CORTE_ADULTO_AQUI" alt="Trabalho de Corte">
-            
-            <!-- Imagem 7: Corte Infantil 1 -->
-            <img src="COLE_O_CODIGO_BASE64_DO_CORTE_INFANTIL_1_AQUI" alt="Corte Infantil 1">
-            
-            <!-- Imagem 8: Corte Infantil 2 -->
-            <img src="COLE_O_CODIGO_BASE64_DO_CORTE_INFANTIL_2_AQUI" alt="Corte Infantil 2">
-            
-            <!-- Imagem 9: Corte Infantil 3 -->
-            <img src="COLE_O_CODIGO_BASE64_DO_CORTE_INFANTIL_3_AQUI" alt="Corte Infantil 3">
-            
-            <!-- Imagem 10: Perfil -->
-            <img src="COLE_O_CODIGO_BASE64_DO_PERFIL_AQUI" alt="Profissional">
-
+            <!-- Imagens Ilustrativas Profissionais Direto da Nuvem -->
+            <img src="https://images.unsplash.com/photo-1521590832167-7bfcfaa6362f?auto=format&fit=crop&w=600&q=80" alt="Cadeira de Barbearia Clássica">
+            <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=600&q=80" alt="Corte de Cabelo com Máquina">
+            <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80" alt="Cuidado com a Barba e Toalha Quente">
+            <img src="https://images.unsplash.com/photo-1599305090598-fe179d501227?auto=format&fit=crop&w=600&q=80" alt="Ferramentas de Barbeiro">
+            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80" alt="Café na recepção">
+            <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=600&q=80" alt="Atendimento Profissional">
         </div>
     </div>
 
