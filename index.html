@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -32,7 +32,7 @@
         nav a { 
             color: #ffffff; 
             text-decoration: none; 
-            margin: 0 15px; 
+            margin: 0 10px; 
             font-weight: bold; 
             text-transform: uppercase;
             font-size: 0.9em;
@@ -60,6 +60,219 @@
         }
         .btn-whatsapp { 
             background-color: #25D366; 
+            color: white; 
+            padding: 15px 35px; 
+            text-decoration: none; 
+            font-size: 1.2em; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            transition: background-color 0.3s; 
+            display: inline-block;
+        }
+        .btn-whatsapp:hover { 
+            background-color: #128C7E; 
+        }
+        .section { 
+            padding: 60px 20px; 
+            max-width: 1100px; 
+            margin: auto; 
+            text-align: center; 
+        }
+        .section-title { 
+            color: #d4af37; 
+            font-size: 2.2em; 
+            margin-bottom: 40px; 
+            text-transform: uppercase; 
+        }
+        .sobre-texto {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #cccccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .services { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 25px; 
+        }
+        .service-card { 
+            background-color: #1e1e1e; 
+            padding: 30px 20px; 
+            border-radius: 8px; 
+            width: 250px; 
+            border: 1px solid #333;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+        }
+        .service-card h3 { 
+            color: #d4af37; 
+            margin-top: 0; 
+            font-size: 1.4em;
+        }
+        .service-card p {
+            color: #aaaaaa;
+            font-size: 1em;
+            flex-grow: 1;
+        }
+        .service-price {
+            font-size: 1.3em;
+            color: #ffffff;
+            font-weight: bold;
+            margin-top: 15px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .horarios-box {
+            background-color: #1e1e1e;
+            border: 1px solid #d4af37;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #ffffff;
+            font-size: 1.2em;
+            line-height: 2;
+            text-align: left;
+        }
+        .horarios-box span {
+            float: right;
+            color: #d4af37;
+            font-weight: bold;
+        }
+        
+        /* Estilos da Galeria */
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .galeria-grid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #333;
+            transition: transform 0.3s, border-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .galeria-grid img:hover {
+            transform: scale(1.05);
+            border-color: #d4af37;
+            cursor: pointer;
+        }
+
+        footer { 
+            background-color: #000000; 
+            text-align: center; 
+            padding: 25px; 
+            border-top: 1px solid #333; 
+            color: #777777;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Kiko Barbearia</h1>
+        <nav>
+            <a href="#sobre">Sobre</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#galeria">Galeria</a>
+            <a href="#horarios">Agenda</a>
+            <a href="#localizacao">Localização</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h2>O seu estilo em boas mãos</h2>
+        <p>Tradição, qualidade e o melhor atendimento.</p>
+        <a href="https://wa.me/5567999673200?text=Olá,%20gostaria%20de%20agendar%20um%20horário!" class="btn-whatsapp" target="_blank">Agendar no WhatsApp</a>
+    </div>
+
+    <div id="sobre" class="section">
+        <h2 class="section-title">Sobre Nós</h2>
+        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, nosso foco é oferecer uma experiência completa para o homem moderno, desde o corte clássico na tesoura até os estilos mais ousados e o cuidado impecável com a barba. Criamos um ambiente onde você pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para receber você.</p>
+    </div>
+
+    <div id="servicos" class="section">
+        <h2 class="section-title">Nossos Serviços</h2>
+        <div class="services">
+            <div class="service-card">
+                <h3>Corte</h3>
+                <p>Cortes modernos, clássicos e degradê com finalização impecável.</p>
+                <div class="service-price">R$ 50,00</div>
+            </div>
+            <div class="service-card">
+                <h3>Corte e Barba</h3>
+                <p>O pacote completo para dar aquele talento no visual com um alinhamento perfeito.</p>
+                <div class="service-price">R$ 100,00</div>
+            </div>
+            <div class="service-card">
+                <h3>Barboterapia</h3>
+                <p>Alinhamento de barba, toalha quente e hidratação profunda para sua pele.</p>
+                <div class="service-price">R$ 100,00</div>
+            </div>
+            <div class="service-card">
+                <h3>Progressiva Masculina</h3>
+                <p>Redução de volume e alinhamento dos fios para um cabelo liso e prático.</p>
+                <div class="service-price">R$ 100,00</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="galeria" class="section">
+        <h2 class="section-title">Galeria</h2>
+        <p class="sobre-texto">Conheça nosso espaço e um pouco do nosso trabalho.</p>
+        <div class="galeria-grid">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_42778.jpg" alt="Logo Kiko Barbearia">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_41957.jpg" alt="Interior e café">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_41955.jpg" alt="Estrutura e espelho">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_41960.jpg" alt="Certificado Profissional">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_41958.jpg" alt="Atendimento Cliente">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_42677.jpg" alt="Trabalho de Corte">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_42783.jpg" alt="Corte Infantil 1">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_42744.jpg" alt="Corte Infantil 2">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_42206.jpg" alt="Corte Infantil 3">
+            <img src="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_42276.jpg" alt="Profissional">
+        </div>
+    </div>
+
+    <div id="horarios" class="section">
+        <h2 class="section-title">Horário de Atendimento</h2>
+        <div class="horarios-box">
+            <div>Segunda a Sábado: <span>08:00 às 11:00 / 13:00 às 19:00</span></div>
+            <div>Domingo: <span>Fechado</span></div>
+        </div>
+        <p class="sobre-texto" style="margin-top: 25px;">Trabalhamos com horário agendado para o seu conforto e também por ordem de chegada.</p>
+    </div>
+
+    <div id="localizacao" class="section">
+        <h2 class="section-title">Localização</h2>
+        <p class="sobre-texto">Venha tomar um café com a gente e cuidar do visual.</p>
+        <p class="sobre-texto" style="margin-top: 15px; color: #ffffff; font-weight: bold; font-size: 1.2em;">
+            📍 Avenida Mato Grosso do Sul, 207 <br>
+            Coxim - MS
+        </p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Kiko Barbearia | Francisco Almeida de Oliveira Filho. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>
+         background-color: #25D366; 
             color: white; 
             padding: 15px 35px; 
             text-decoration: none; 
