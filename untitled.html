@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiko Barbearia</title>
+    <style>
+        /* Estilos do Site */
+        body { 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #121212; 
+            color: #ffffff; 
+        }
+        header { 
+            background-color: #000000; 
+            padding: 20px; 
+            text-align: center; 
+            border-bottom: 3px solid #d4af37; 
+        }
+        h1 { 
+            color: #d4af37; 
+            margin: 0; 
+            font-size: 2.8em; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+        }
+        nav { 
+            margin-top: 15px; 
+        }
+        nav a { 
+            color: #ffffff; 
+            text-decoration: none; 
+            margin: 0 15px; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        nav a:hover { 
+            color: #d4af37; 
+        }
+        .hero { 
+            text-align: center; 
+            padding: 80px 20px; 
+            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1920&q=80'); 
+            background-size: cover; 
+            background-position: center; 
+        }
+        .hero h2 { 
+            font-size: 3em; 
+            margin-bottom: 10px; 
+            color: #ffffff;
+        }
+        .hero p { 
+            font-size: 1.3em; 
+            margin-bottom: 40px; 
+            color: #cccccc;
+        }
+        .btn-whatsapp { 
+            background-color: #25D366; 
+            color: white; 
+            padding: 15px 35px; 
+            text-decoration: none; 
+            font-size: 1.2em; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            transition: background-color 0.3s; 
+        }
+        .btn-whatsapp:hover { 
+            background-color: #128C7E; 
+        }
+        .section { 
+            padding: 60px 20px; 
+            max-width: 1100px; 
+            margin: auto; 
+            text-align: center; 
+        }
+        .section-title { 
+            color: #d4af37; 
+            font-size: 2.2em; 
+            margin-bottom: 40px; 
+            text-transform: uppercase; 
+        }
+        .sobre-texto {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #cccccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .services { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 25px; 
+        }
+        .service-card { 
+            background-color: #1e1e1e; 
+            padding: 30px 20px; 
+            border-radius: 8px; 
+            width: 250px; 
+            border: 1px solid #333;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+        }
+        .service-card h3 { 
+            color: #d4af37; 
+            margin-top: 0; 
+            font-size: 1.4em;
+        }
+        .service-card p {
+            color: #aaaaaa;
+            font-size: 1em;
+        }
+        footer { 
+            background-color: #000000; 
+            text-align: center; 
+            padding: 25px; 
+            border-top: 1px solid #333; 
+            color: #777777;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Kiko Barbearia</h1>
+        <nav>
+            <a href="#sobre">Sobre a Barbearia</a>
+            <a href="#servicos">Nossos Serviços</a>
+            <a href="#localizacao">Localização</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h2>O seu estilo em boas mãos</h2>
+        <p>Tradição, qualidade e o melhor atendimento.</p>
+        <a href="https://wa.me/5567999673200?text=Olá,%20gostaria%20de%20agendar%20um%20horário!" class="btn-whatsapp" target="_blank">Agendar Horário</a>
+    </div>
+
+    <div id="sobre" class="section">
+        <h2 class="section-title">Sobre Nós</h2>
+        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, nosso foco é oferecer uma experiência completa para o homem moderno, desde o corte clássico na tesoura até os estilos mais ousados e o cuidado impecável com a barba. Mais do que cuidar do seu visual, criamos um ambiente onde você pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para receber você.</p>
+    </div>
+
+    <div id="servicos" class="section">
+        <h2 class="section-title">Nossos Serviços</h2>
+        <div class="services">
+            <div class="service-card">
+                <h3>Corte Moderno e Clássico</h3>
+                <p>Cortes na tesoura, degradê (fade) impecável e finalização com produtos de qualidade.</p>
+            </div>
+            <div class="service-card">
+                <h3>Barboterapia</h3>
+                <p>Alinhamento de barba perfeito, toalha quente e hidratação para sua pele.</p>
+            </div>
+            <div class="service-card">
+                <h3>Sobrancelha e Acabamento</h3>
+                <p>Atenção aos detalhes que fazem toda a diferença no visual.</p>
+            </div>
+            <div class="service-card">
+                <h3>Corte Infantil</h3>
+                <p>Paciência, cuidado e muito estilo também para os pequenos.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="localizacao" class="section">
+        <h2 class="section-title">Localização</h2>
+        <p class="sobre-texto">Venha tomar um café com a gente e cuidar do visual.</p>
+        <p class="sobre-texto" style="margin-top: 15px; color: #ffffff; font-weight: bold; font-size: 1.2em;">
+            📍 Avenida Mato Grosso do Sul, 207 <br>
+            Coxim - MS
+        </p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Kiko Barbearia | Francisco Almeida de Oliveira Filho. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>
