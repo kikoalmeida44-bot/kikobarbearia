@@ -58,6 +58,16 @@
             margin-bottom: 40px; 
             color: #cccccc;
         }
+        
+        /* Grupo de botões no topo */
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        /* Botão WhatsApp */
         .btn-whatsapp { 
             background-color: #25D366; 
             color: white; 
@@ -66,12 +76,31 @@
             font-size: 1.2em; 
             border-radius: 5px; 
             font-weight: bold; 
-            transition: background-color 0.3s; 
+            transition: transform 0.3s, background-color 0.3s; 
             display: inline-block;
         }
         .btn-whatsapp:hover { 
             background-color: #128C7E; 
+            transform: scale(1.05);
         }
+        
+        /* Botão Instagram */
+        .btn-instagram { 
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white; 
+            padding: 15px 35px; 
+            text-decoration: none; 
+            font-size: 1.2em; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            transition: transform 0.3s, opacity 0.3s; 
+            display: inline-block;
+        }
+        .btn-instagram:hover { 
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
         .section { 
             padding: 60px 20px; 
             max-width: 1100px; 
@@ -180,6 +209,13 @@
             color: #777777;
             font-size: 0.9em;
         }
+        footer a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -191,14 +227,18 @@
             <a href="#servicos">Serviços</a>
             <a href="#galeria">Galeria</a>
             <a href="#horarios">Agenda</a>
-            <a href="#localizacao">Localização</a>
+            <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
         </nav>
     </header>
 
     <div class="hero">
         <h2>O seu estilo em boas mãos</h2>
         <p>Tradição, qualidade e o melhor atendimento.</p>
-        <a href="https://wa.me/5567999673200?text=Olá,%20gostaria%20de%20agendar%20um%20horário!" class="btn-whatsapp" target="_blank">Agendar no WhatsApp</a>
+        
+        <div class="hero-buttons">
+            <a href="https://wa.me/5567999673200?text=Olá,%20gostaria%20de%20agendar%20um%20horário!" class="btn-whatsapp" target="_blank">Agendar no WhatsApp</a>
+            <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-instagram" target="_blank">Siga nosso Instagram</a>
+        </div>
     </div>
 
     <div id="sobre" class="section">
@@ -265,7 +305,8 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Kiko Barbearia | Francisco Almeida de Oliveira Filho. Todos os direitos reservados.</p>
+        <p>&copy; 2026 Kiko Barbearia | Francisco Almeida de Oliveira Filho.</p>
+        <p>Acompanhe nosso trabalho no <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a></p>
     </footer>
 
 </body>
