@@ -18,7 +18,7 @@
         .hero p { font-size: 1.3em; margin-bottom: 40px; color: #cccccc; }
         
         .hero-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-        .btn-whatsapp { background-color: #25D366; color: white; padding: 15px 35px; text-decoration: none; font-size: 1.2em; border-radius: 5px; font-weight: bold; transition: transform 0.3s; }
+        .btn-whatsapp { background-color: #25D366; color: white; padding: 15px 35px; text-decoration: none; font-size: 1.2em; border-radius: 5px; font-weight: bold; transition: transform 0.3s; cursor: pointer; border: none; }
         .btn-whatsapp:hover { background-color: #128C7E; transform: scale(1.05); }
         .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; padding: 15px 35px; text-decoration: none; font-size: 1.2em; border-radius: 5px; font-weight: bold; transition: transform 0.3s; }
         .btn-instagram:hover { opacity: 0.9; transform: scale(1.05); }
@@ -34,7 +34,14 @@
         .service-card p { color: #aaaaaa; font-size: 1em; flex-grow: 1; }
         .service-price { font-size: 1.3em; color: #ffffff; font-weight: bold; margin-top: 15px; background-color: #333; padding: 10px; border-radius: 5px; }
         
-        .horarios-box { background-color: #1e1e1e; border: 1px solid #d4af37; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; color: #ffffff; font-size: 1.2em; line-height: 2; text-align: left; }
+        /* Formulário de Agendamento */
+        .form-agendamento { background-color: #1e1e1e; padding: 40px; border-radius: 8px; border: 1px solid #d4af37; max-width: 600px; margin: 0 auto; text-align: left; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #d4af37; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #333; background-color: #2a2a2a; color: #ffffff; font-size: 1em; box-sizing: border-box; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; }
+        
+        .horarios-box { background-color: #1e1e1e; border: 1px solid #333; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; color: #ffffff; font-size: 1.2em; line-height: 2; text-align: left; }
         .horarios-box span { float: right; color: #d4af37; font-weight: bold; }
         
         footer { background-color: #000000; text-align: center; padding: 25px; border-top: 1px solid #333; color: #777777; font-size: 0.9em; }
@@ -46,10 +53,10 @@
     <header>
         <h1>Kiko Barbearia</h1>
         <nav>
-            <!-- Os links que conectam as páginas -->
-            <a href="index.html">Início</a>
+            <a href="#sobre">Sobre</a>
             <a href="#servicos">Serviços</a>
-            <a href="galeria.html">Nossa Galeria</a>
+            <a href="#agendamento">Agendar Horário</a>
+            <a href="galeria.html">Galeria</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
         </nav>
     </header>
@@ -58,14 +65,14 @@
         <h2>O seu estilo em boas mãos</h2>
         <p>Tradição, qualidade e o melhor atendimento.</p>
         <div class="hero-buttons">
-            <a href="https://wa.me/5567999673200?text=Olá,%20gostaria%20de%20agendar%20um%20horário!" class="btn-whatsapp" target="_blank">Agendar no WhatsApp</a>
+            <a href="#agendamento" class="btn-whatsapp">Agendar Horário</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-instagram" target="_blank">Siga nosso Instagram</a>
         </div>
     </div>
 
     <div id="sobre" class="section">
         <h2 class="section-title">Sobre Nós</h2>
-        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, nosso foco é oferecer uma experiência completa para o homem moderno, desde o corte clássico na tesoura até os estilos mais ousados e o cuidado impecável com a barba. Criamos um ambiente onde você pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para receber você.</p>
+        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, nosso foco é oferecer uma experiência completa para o homem moderno. Criamos um ambiente onde você pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para receber você.</p>
     </div>
 
     <div id="servicos" class="section">
@@ -94,8 +101,59 @@
         </div>
     </div>
 
+    <!-- NOVA SEÇÃO DE AGENDAMENTO -->
+    <div id="agendamento" class="section">
+        <h2 class="section-title">Agendar Horário</h2>
+        <p class="sobre-texto" style="margin-bottom: 30px;">Preencha os dados abaixo. Você será redirecionado para o nosso WhatsApp para confirmar o agendamento.</p>
+        
+        <div class="form-agendamento">
+            <form onsubmit="enviarAgendamento(event)">
+                <div class="form-group">
+                    <label for="nome">Seu Nome:</label>
+                    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="servico">Serviço Desejado:</label>
+                    <select id="servico" required>
+                        <option value="" disabled selected>Escolha um serviço...</option>
+                        <option value="Corte (R$ 50,00)">Corte (R$ 50,00)</option>
+                        <option value="Corte e Barba (R$ 100,00)">Corte e Barba (R$ 100,00)</option>
+                        <option value="Barboterapia (R$ 100,00)">Barboterapia (R$ 100,00)</option>
+                        <option value="Progressiva (R$ 100,00)">Progressiva Masculina (R$ 100,00)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="data">Data de Preferência:</label>
+                    <input type="date" id="data" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="hora">Horário de Preferência:</label>
+                    <select id="hora" required>
+                        <option value="" disabled selected>Escolha um horário...</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                        <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-whatsapp" style="width: 100%; margin-top: 10px;">Solicitar Agendamento</button>
+            </form>
+        </div>
+    </div>
+
     <div class="section">
-        <h2 class="section-title">Horário de Atendimento</h2>
+        <h2 class="section-title">Horário de Funcionamento</h2>
         <div class="horarios-box">
             <div>Segunda a Sábado: <span>08:00 às 11:00 / 13:00 às 19:00</span></div>
             <div>Domingo: <span>Fechado</span></div>
@@ -111,5 +169,35 @@
         <p>&copy; 2026 Kiko Barbearia | Francisco Almeida de Oliveira Filho.</p>
     </footer>
 
+    <!-- SCRIPT QUE FAZ O FORMULÁRIO FUNCIONAR -->
+    <script>
+        function enviarAgendamento(event) {
+            event.preventDefault(); // Impede o site de recarregar
+            
+            // Pega os dados que o cliente digitou
+            var nome = document.getElementById('nome').value;
+            var servico = document.getElementById('servico').value;
+            var data_americana = document.getElementById('data').value; // Vem como AAAA-MM-DD
+            var hora = document.getElementById('hora').value;
+            
+            // Transforma a data de AAAA-MM-DD para DD/MM/AAAA
+            var partes_data = data_americana.split('-');
+            var data_br = partes_data[2] + '/' + partes_data[1] + '/' + partes_data[0];
+
+            // Monta a mensagem final
+            var texto = "Olá, Kiko Barbearia! Gostaria de solicitar um agendamento.%0A%0A" + 
+                        "*Nome:* " + nome + "%0A" + 
+                        "*Serviço:* " + servico + "%0A" + 
+                        "*Data:* " + data_br + "%0A" + 
+                        "*Horário:* " + hora + "%0A%0A" + 
+                        "Esse horário está disponível?";
+
+            // Redireciona para o seu WhatsApp com a mensagem pronta
+            var numero = "5567999673200";
+            var link = "https://wa.me/" + numero + "?text=" + texto;
+            
+            window.open(link, '_blank');
+        }
+    </script>
 </body>
 </html>
