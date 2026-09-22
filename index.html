@@ -19,7 +19,8 @@
         
         .hero-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .btn-whatsapp { background-color: #25D366; color: white; padding: 15px 35px; text-decoration: none; font-size: 1.2em; border-radius: 5px; font-weight: bold; transition: transform 0.3s; cursor: pointer; border: none; }
-        .btn-whatsapp:hover { background-color: #128C7E; transform: scale(1.05); }
+        .btn-whatsapp:disabled { background-color: #555; cursor: not-allowed; }
+        .btn-whatsapp:hover:not(:disabled) { background-color: #128C7E; transform: scale(1.05); }
         .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; padding: 15px 35px; text-decoration: none; font-size: 1.2em; border-radius: 5px; font-weight: bold; transition: transform 0.3s; }
         .btn-instagram:hover { opacity: 0.9; transform: scale(1.05); }
 
@@ -66,17 +67,17 @@
         <p>Tradição, qualidade e o melhor atendimento.</p>
         <div class="hero-buttons">
             <a href="#agendamento" class="btn-whatsapp">Agendar Horário</a>
-            <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-instagram" target="_blank">Siga nosso Instagram</a>
+            <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-instagram" target="_blank">Siga o nosso Instagram</a>
         </div>
     </div>
 
     <div id="sobre" class="section">
         <h2 class="section-title">Sobre Nós</h2>
-        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, nosso foco é oferecer uma experiência completa para o homem moderno. Criamos um ambiente onde você pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para receber você.</p>
+        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, o nosso foco é oferecer uma experiência completa para o homem moderno. Criamos um ambiente onde pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para o receber.</p>
     </div>
 
     <div id="servicos" class="section">
-        <h2 class="section-title">Nossos Serviços</h2>
+        <h2 class="section-title">Os Nossos Serviços</h2>
         <div class="services">
             <div class="service-card">
                 <h3>Corte</h3>
@@ -90,22 +91,22 @@
             </div>
             <div class="service-card">
                 <h3>Cabelo e Barba</h3>
-                <p>O pacote completo para dar aquele talento no visual com um alinhamento perfeito.</p>
+                <p>O pacote completo para dar aquele talento no visual.</p>
                 <div class="service-price">R$ 100,00</div>
             </div>
             <div class="service-card">
                 <h3>Progressiva Masculina</h3>
-                <p>Redução de volume e alinhamento dos fios para um cabelo liso e prático.</p>
+                <p>Redução de volume e alinhamento dos fios.</p>
                 <div class="service-price">R$ 150,00</div>
             </div>
             <div class="service-card">
                 <h3>Pigmentação</h3>
-                <p>Realce dos traços, cobertura de falhas e mais volume para cabelo ou barba.</p>
+                <p>Realce dos traços e cobertura de falhas.</p>
                 <div class="service-price">R$ 100,00</div>
             </div>
             <div class="service-card">
                 <h3>Coloração</h3>
-                <p>Mudança de estilo ou cobertura de fios brancos com produtos de alta qualidade.</p>
+                <p>Mudança de estilo ou cobertura de fios brancos.</p>
                 <div class="service-price">R$ 100,00</div>
             </div>
             <div class="service-card">
@@ -116,56 +117,48 @@
         </div>
     </div>
 
-    <!-- NOVA SEÇÃO DE AGENDAMENTO -->
+    <!-- SEÇÃO DE AGENDAMENTO INTELIGENTE -->
     <div id="agendamento" class="section">
         <h2 class="section-title">Agendar Horário</h2>
-        <p class="sobre-texto" style="margin-bottom: 30px;">Preencha os dados abaixo. Você será redirecionado para o nosso WhatsApp para confirmar o agendamento.</p>
+        <p class="sobre-texto" style="margin-bottom: 30px;">Preencha os dados abaixo. O sistema verificará os horários disponíveis em tempo real.</p>
         
         <div class="form-agendamento">
-            <form onsubmit="enviarAgendamento(event)">
+            <form id="formAgendamento">
                 <div class="form-group">
-                    <label for="nome">Seu Nome:</label>
-                    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+                    <label for="nome">O seu Nome:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="servico">Serviço Desejado:</label>
-                    <select id="servico" required>
-                        <option value="" disabled selected>Escolha um serviço...</option>
-                        <option value="Corte (R$ 50,00)">Corte (R$ 50,00)</option>
-                        <option value="Barba (R$ 50,00)">Barba (R$ 50,00)</option>
-                        <option value="Cabelo e Barba (R$ 100,00)">Cabelo e Barba (R$ 100,00)</option>
-                        <option value="Progressiva Masculina (R$ 150,00)">Progressiva Masculina (R$ 150,00)</option>
-                        <option value="Pigmentação (R$ 100,00)">Pigmentação (R$ 100,00)</option>
-                        <option value="Coloração (R$ 100,00)">Coloração (R$ 100,00)</option>
-                        <option value="Sobrancelha (R$ 25,00)">Sobrancelha (R$ 25,00)</option>
+                    <select id="servico" name="servico" required onchange="atualizarValor()">
+                        <option value="" disabled selected data-valor="0">Escolha um serviço...</option>
+                        <option value="Corte" data-valor="50">Corte (R$ 50,00)</option>
+                        <option value="Barba" data-valor="50">Barba (R$ 50,00)</option>
+                        <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (R$ 100,00)</option>
+                        <option value="Progressiva Masculina" data-valor="150">Progressiva Masculina (R$ 150,00)</option>
+                        <option value="Pigmentação" data-valor="100">Pigmentação (R$ 100,00)</option>
+                        <option value="Coloração" data-valor="100">Coloração (R$ 100,00)</option>
+                        <option value="Sobrancelha" data-valor="25">Sobrancelha (R$ 25,00)</option>
                     </select>
+                    <!-- Campo oculto para enviar o valor em Reais ao financeiro -->
+                    <input type="hidden" id="valor" name="valor" value="0">
                 </div>
 
                 <div class="form-group">
                     <label for="data">Data de Preferência:</label>
-                    <input type="date" id="data" required>
+                    <input type="date" id="data" name="data" required onchange="verificarHorarios()">
                 </div>
 
                 <div class="form-group">
                     <label for="hora">Horário de Preferência:</label>
-                    <select id="hora" required>
-                        <option value="" disabled selected>Escolha um horário...</option>
-                        <option value="08:00">08:00</option>
-                        <option value="09:00">09:00</option>
-                        <option value="10:00">10:00</option>
-                        <option value="11:00">11:00</option>
-                        <option value="13:00">13:00</option>
-                        <option value="14:00">14:00</option>
-                        <option value="15:00">15:00</option>
-                        <option value="16:00">16:00</option>
-                        <option value="17:00">17:00</option>
-                        <option value="18:00">18:00</option>
-                        <option value="19:00">19:00</option>
+                    <select id="hora" name="hora" required disabled>
+                        <option value="" disabled selected>Escolha uma data primeiro...</option>
                     </select>
                 </div>
 
-                <button type="submit" class="btn-whatsapp" style="width: 100%; margin-top: 10px;">Solicitar Agendamento</button>
+                <button type="submit" id="btnSubmit" class="btn-whatsapp" style="width: 100%; margin-top: 10px;">Confirmar Agendamento</button>
+                <p id="mensagem-status" style="text-align: center; margin-top: 15px; color: #d4af37; font-weight: bold;"></p>
             </form>
         </div>
     </div>
@@ -187,35 +180,122 @@
         <p>&copy; 2026 Kiko Barbearia | Francisco Almeida de Oliveira Filho.</p>
     </footer>
 
-    <!-- SCRIPT QUE FAZ O FORMULÁRIO FUNCIONAR -->
+    <!-- SCRIPT DE CONEXÃO COM O GOOGLE PLANILHAS -->
     <script>
-        function enviarAgendamento(event) {
-            event.preventDefault(); // Impede o site de recarregar
-            
-            // Pega os dados que o cliente digitou
-            var nome = document.getElementById('nome').value;
-            var servico = document.getElementById('servico').value;
-            var data_americana = document.getElementById('data').value; // Vem como AAAA-MM-DD
-            var hora = document.getElementById('hora').value;
-            
-            // Transforma a data de AAAA-MM-DD para DD/MM/AAAA
-            var partes_data = data_americana.split('-');
-            var data_br = partes_data[2] + '/' + partes_data[1] + '/' + partes_data[0];
+        // A sua hiperligação do banco de dados (App Script)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
+        
+        const form = document.getElementById('formAgendamento');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const msgStatus = document.getElementById('mensagem-status');
+        const selectHora = document.getElementById('hora');
+        const inputData = document.getElementById('data');
+        let agendamentosDaNuvem = [];
 
-            // Monta a mensagem final
-            var texto = "Olá, Kiko Barbearia! Gostaria de solicitar um agendamento.%0A%0A" + 
-                        "*Nome:* " + nome + "%0A" + 
-                        "*Serviço:* " + servico + "%0A" + 
-                        "*Data:* " + data_br + "%0A" + 
-                        "*Horário:* " + hora + "%0A%0A" + 
-                        "Esse horário está disponível?";
-
-            // Redireciona para o seu WhatsApp com a mensagem pronta
-            var numero = "5567999673200";
-            var link = "https://wa.me/" + numero + "?text=" + texto;
-            
-            window.open(link, '_blank');
+        // Atualiza o valor invisível com base no serviço
+        function atualizarValor() {
+            const selectServico = document.getElementById('servico');
+            const valorOption = selectServico.options[selectServico.selectedIndex].getAttribute('data-valor');
+            document.getElementById('valor').value = valorOption;
         }
+
+        // Ao abrir o site, vai buscar à nuvem os horários já marcados
+        window.onload = function() {
+            msgStatus.innerText = "A sincronizar a agenda com o sistema...";
+            
+            // Impede escolher datas no passado
+            let hoje = new Date().toISOString().split('T')[0];
+            inputData.setAttribute('min', hoje);
+
+            fetch(scriptURL)
+                .then(response => response.json())
+                .then(data => {
+                    agendamentosDaNuvem = data;
+                    msgStatus.innerText = "";
+                })
+                .catch(error => {
+                    msgStatus.innerText = "Modo offline. Poderá agendar, mas aguarde confirmação.";
+                });
+        };
+
+        // Verifica os horários sempre que uma data é escolhida no ecrã
+        function verificarHorarios() {
+            const dataEscolhida = inputData.value;
+            if (!dataEscolhida) return;
+
+            selectHora.disabled = false;
+            selectHora.innerHTML = '<option value="" disabled selected>Escolha um horário...</option>';
+            
+            // Todos os horários de trabalho do Kiko
+            const todosHorarios = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+            
+            todosHorarios.forEach(hora => {
+                // Procura na nuvem se existe data e hora iguais
+                const ocupado = agendamentosDaNuvem.some(ag => {
+                    let agData = String(ag.data).split('T')[0];
+                    return agData === dataEscolhida && ag.hora === hora;
+                });
+                
+                const option = document.createElement('option');
+                option.value = hora;
+                
+                if (ocupado) {
+                    option.text = hora + " (Indisponível)";
+                    option.disabled = true;
+                    option.style.color = "red";
+                } else {
+                    option.text = hora;
+                }
+                selectHora.add(option);
+            });
+        }
+
+        // Envia os dados para a sua Folha de Cálculo ao clicar no botão
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "A guardar...";
+            msgStatus.innerText = "A registar o seu horário no sistema, aguarde...";
+            msgStatus.style.color = "#d4af37";
+
+            const formData = new FormData(form);
+
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                .then(() => {
+                    msgStatus.innerText = "Horário guardado com sucesso!";
+                    msgStatus.style.color = "#25D366";
+                    
+                    // Formata a data para a mensagem de WhatsApp
+                    var data_americana = document.getElementById('data').value;
+                    var partes_data = data_americana.split('-');
+                    var data_br = partes_data[2] + '/' + partes_data[1] + '/' + partes_data[0];
+                    var nome = document.getElementById('nome').value;
+                    var servico = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].text;
+                    var hora = document.getElementById('hora').value;
+
+                    // Mensagem para o seu WhatsApp
+                    var texto = "Olá, Kiko Barbearia! O meu agendamento foi registado no site.%0A%0A" + 
+                                "*Nome:* " + nome + "%0A" + 
+                                "*Serviço:* " + servico + "%0A" + 
+                                "*Data:* " + data_br + "%0A" + 
+                                "*Horário:* " + hora;
+
+                    form.reset();
+                    selectHora.disabled = true;
+                    
+                    // Vai para o WhatsApp ao fim de 1,5 segundos e atualiza o ecrã
+                    setTimeout(() => {
+                        window.open("https://wa.me/5567999673200?text=" + texto, '_blank');
+                        location.reload(); 
+                    }, 1500);
+                })
+                .catch(error => {
+                    msgStatus.innerText = "Erro ao enviar. Tente novamente.";
+                    msgStatus.style.color = "red";
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerText = "Confirmar Agendamento";
+                });
+        });
     </script>
 </body>
 </html>
