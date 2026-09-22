@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Barbeiro - Kiko Barbearia</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #0a0a0a; color: #ffffff; }
+        header { background-color: #111; padding: 20px; text-align: center; border-bottom: 3px solid #25D366; }
+        h1 { color: #25D366; margin: 0; font-size: 2.2em; text-transform: uppercase; letter-spacing: 1px; }
+        p.subtitle { color: #aaaaaa; margin-top: 5px; }
+        
+        .section { padding: 40px 20px; max-width: 600px; margin: auto; }
+        .form-agendamento { background-color: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #25D366; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #444; background-color: #2a2a2a; color: #ffffff; font-size: 1.1em; box-sizing: border-box; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #25D366; }
+        
+        .btn-salvar { background-color: #25D366; color: #000; padding: 15px; text-decoration: none; font-size: 1.2em; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; width: 100%; transition: 0.3s; }
+        .btn-salvar:disabled { background-color: #555; color: #aaa; cursor: not-allowed; }
+        .btn-salvar:hover:not(:disabled) { background-color: #128C7E; color: #fff; }
+        
+        #mensagem-status { text-align: center; margin-top: 20px; font-weight: bold; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Painel Interno</h1>
+        <p class="subtitle">Área restrita - Kiko Barbearia</p>
+    </header>
+
+    <div class="section">
+        <div class="form-agendamento">
+            <h2 style="text-align: center; margin-top: 0; color: #fff;">Bloquear Horário / Agendar Cliente</h2>
+            <form id="formPainel">
+                <div class="form-group">
+                    <label for="nome">Nome do Cliente (Lembrança):</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: João (Balcão) ou Marcos (Telefone)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="servico">Serviço Realizado:</label>
+                    <select id="servico" name="servico" required onchange="atualizarValor()">
+                        <option value="" disabled selected data-valor="0">Escolha o serviço...</option>
+                        <option value="Corte" data-valor="50">Corte (R$ 50,00)</option>
+                        <option value="Barba" data-valor="50">Barba (R$ 50,00)</option>
+                        <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (R$ 100,00)</option>
+                        <option value="Progressiva Masculina" data-valor="150">Progressiva Masculina (R$ 150,00)</option>
+                        <option value="Pigmentação" data-valor="100">Pigmentação (R$ 100,00)</option>
+                        <option value="Coloração" data-valor="100">Coloração (R$ 100,00)</option>
+                        <option value="Sobrancelha" data-valor="25">Sobrancelha (R$ 25,00)</option>
+                        <option value="Bloqueio de Agenda (Folga)" data-valor="0">Bloqueio de Agenda (Almoço/Folga)</option>
+                    </select>
+                    <input type="hidden" id="valor" name="valor" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="data">Data:</label>
+                    <input type="date" id="data" name="data" required onchange="verificarHorarios()">
+                </div>
+
+                <div class="form-group">
+                    <label for="hora">Horário:</label>
+                    <select id="hora" name="hora" required disabled>
+                        <option value="" disabled selected>Escolha uma data primeiro...</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="btn-salvar">Salvar e Bloquear no Site</button>
+                <p id="mensagem-status"></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // O mesmo link do seu banco de dados
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
+        
+        const form = document.getElementById('formPainel');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const msgStatus = document.getElementById('mensagem-status');
+        const selectHora = document.getElementById('hora');
+        const inputData = document.getElementById('data');
+        let agendamentosDaNuvem = [];
+
+        function atualizarValor() {
+            const selectServico = document.getElementById('servico');
+            const valorOption = selectServico.options[selectServico.selectedIndex].getAttribute('data-valor');
+            document.getElementById('valor').value = valorOption;
+        }
+
+        window.onload = function() {
+            msgStatus.innerText = "Carregando horários ocupados...";
+            msgStatus.style.color = "#aaaaaa";
+
+            fetch(scriptURL)
+                .then(response => response.json())
+                .then(data => {
+                    agendamentosDaNuvem = data;
+                    msgStatus.innerText = "Sistema pronto para uso.";
+                    msgStatus.style.color = "#25D366";
+                })
+                .catch(error => {
+                    msgStatus.innerText = "Erro ao conectar. Tente recarregar a página.";
+                    msgStatus.style.color = "red";
+                });
+        };
+
+        function verificarHorarios() {
+            const dataEscolhida = inputData.value;
+            if (!dataEscolhida) return;
+
+            selectHora.disabled = false;
+            selectHora.innerHTML = '<option value="" disabled selected>Escolha o horário para bloquear...</option>';
+            
+            const todosHorarios = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+            
+            todosHorarios.forEach(hora => {
+                const ocupado = agendamentosDaNuvem.some(ag => {
+                    let agData = String(ag.data).split('T')[0];
+                    return agData === dataEscolhida && ag.hora === hora;
+                });
+                
+                const option = document.createElement('option');
+                option.value = hora;
+                
+                if (ocupado) {
+                    option.text = hora + " (Já está ocupado)";
+                    option.disabled = true;
+                    option.style.color = "red";
+                } else {
+                    option.text = hora + " (Livre)";
+                }
+                selectHora.add(option);
+            });
+        }
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Salvando no sistema...";
+            msgStatus.innerText = "";
+
+            const formData = new FormData(form);
+
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                .then(() => {
+                    msgStatus.innerText = "Horário bloqueado com sucesso!";
+                    msgStatus.style.color = "#25D366";
+                    
+                    setTimeout(() => {
+                        form.reset();
+                        selectHora.disabled = true;
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerText = "Salvar e Bloquear no Site";
+                        msgStatus.innerText = "";
+                        // Recarrega os dados da nuvem para atualizar a lista
+                        window.onload(); 
+                    }, 2000);
+                })
+                .catch(error => {
+                    msgStatus.innerText = "Erro ao salvar. Verifique a internet.";
+                    msgStatus.style.color = "red";
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerText = "Salvar e Bloquear no Site";
+                });
+        });
+    </script>
+</body>
+</html>
