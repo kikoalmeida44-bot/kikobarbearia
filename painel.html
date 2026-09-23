@@ -105,23 +105,22 @@
         
         <form id="formAdmin">
             <div class="form-group">
-                <label for="nome">Nome do Cliente (ou Bloqueio):</label>
-                <input type="text" id="nome" name="nome" placeholder="Ex: João / ALMOÇO / FECHADO" required>
+                <label for="nome">Nome (ou Bloqueio):</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex: João Silva ou Fechado" required>
             </div>
             
             <div class="form-group">
-                <label for="servico">Serviço:</label>
+                <label for="servico">Serviço/Função:</label>
                 <select id="servico" name="servico" required onchange="atualizarValor()">
                     <option value="" disabled selected data-valor="0">Selecione...</option>
-                    <option value="Corte" data-valor="50">Corte (R$ 50,00)</option>
-                    <option value="Barba" data-valor="50">Barba (R$ 50,00)</option>
-                    <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (R$ 100,00)</option>
-                    <option value="Progressiva Masculina" data-valor="150">Progressiva Masculina (R$ 150,00)</option>
+                    <option value="Corte Premium" data-valor="50">Corte Premium (R$ 50,00)</option>
+                    <option value="Barboterapia" data-valor="50">Barboterapia (R$ 50,00)</option>
+                    <option value="O Pacote Completo" data-valor="100">O Pacote Completo (R$ 100,00)</option>
+                    <option value="Progressiva" data-valor="150">Progressiva (R$ 150,00)</option>
                     <option value="Pigmentação" data-valor="100">Pigmentação (R$ 100,00)</option>
                     <option value="Coloração" data-valor="100">Coloração (R$ 100,00)</option>
-                    <option value="Sobrancelha" data-valor="25">Sobrancelha (R$ 25,00)</option>
-                    <!-- Opção exclusiva do painel administrativo -->
-                    <option value="Bloqueio de Agenda" data-valor="0">Bloqueio de Horário (Interno)</option>
+                    <option value="Design de Sobrancelha" data-valor="25">Design de Sobrancelha (R$ 25,00)</option>
+                    <option value="Bloqueio de Agenda (Interno)" data-valor="0" style="color:#d4af37; font-weight:bold;">⚠️ Bloqueio de Horário</option>
                 </select>
                 <input type="hidden" id="valor" name="valor" value="0">
             </div>
@@ -138,14 +137,13 @@
                 </select>
             </div>
 
-            <button type="submit" id="btnSubmit" class="btn-admin">Gravar Horário</button>
+            <button type="submit" id="btnSubmit" class="btn-admin">Confirmar Bloqueio</button>
             <p id="mensagem-status"></p>
 
             <a href="index.html" class="btn-voltar">Voltar para o Site Principal</a>
         </form>
     </div>
 
-    <!-- SCRIPT DO BANCO DE DADOS (O MESMO DO SITE) -->
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
         
@@ -162,22 +160,21 @@
             document.getElementById('valor').value = valorOption;
         }
 
-        window.onload = function() {
-            msgStatus.innerText = "Carregando banco de dados...";
-            msgStatus.style.color = "#555";
-            
-            // Permite agendar no passado caso você queira registrar algo que já aconteceu
+        function carregarDados() {
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
                     agendamentosDaNuvem = data;
-                    msgStatus.innerText = "Sistema online e pronto.";
-                    setTimeout(() => msgStatus.innerText = "", 2000);
                 })
                 .catch(error => {
-                    msgStatus.innerText = "Atenção: Modo offline.";
-                    msgStatus.style.color = "red";
+                    console.error("Erro ao carregar dados", error);
                 });
+        }
+
+        window.onload = function() {
+            msgStatus.innerText = "Sincronizando com a nuvem...";
+            carregarDados();
+            setTimeout(() => msgStatus.innerText = "", 1500);
         };
 
         function verificarHorarios() {
@@ -191,15 +188,16 @@
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
-                    let agData = String(ag.data).split('T')[0];
-                    return agData === dataEscolhida && ag.hora === hora;
+                    // Trata a formatação da data do Google (remove horas e fuso horário)
+                    let agData = String(ag.data).substring(0, 10);
+                    return agData === dataEscolhida && String(ag.hora) === String(hora);
                 });
                 
                 const option = document.createElement('option');
                 option.value = hora;
                 
                 if (ocupado) {
-                    option.text = hora + " (Já ocupado)";
+                    option.text = hora + " (Já Bloqueado)";
                     option.disabled = true;
                     option.style.color = "#ff4444";
                 } else {
@@ -212,36 +210,34 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "Salvando...";
-            msgStatus.innerText = "Gravando horário na planilha...";
+            btnSubmit.innerText = "Enviando comando...";
+            msgStatus.innerText = "Registrando bloqueio no servidor...";
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
 
             fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
                 .then(() => {
-                    msgStatus.innerText = "✅ Horário salvo com sucesso!";
+                    msgStatus.innerText = "Bloqueio/Agendamento salvo com sucesso!";
                     msgStatus.style.color = "#25D366";
                     
                     form.reset();
                     selectHora.disabled = true;
                     
-                    // Diferente do site dos clientes, aqui ele não abre o WhatsApp.
-                    // Apenas atualiza a tela para você poder agendar o próximo!
+                    // Recarrega os dados imediatamente após salvar para o próximo agendamento
+                    carregarDados();
+
                     setTimeout(() => {
                         btnSubmit.disabled = false;
-                        btnSubmit.innerText = "Gravar Horário";
+                        btnSubmit.innerText = "Confirmar Bloqueio";
                         msgStatus.innerText = "";
-                        // Recarrega o banco de dados interno
-                        agendamentosDaNuvem = [];
-                        window.onload();
-                    }, 2000);
+                    }, 2500);
                 })
                 .catch(error => {
                     msgStatus.innerText = "Erro ao enviar. Tente novamente.";
                     msgStatus.style.color = "#ff4444";
                     btnSubmit.disabled = false;
-                    btnSubmit.innerText = "Gravar Horário";
+                    btnSubmit.innerText = "Confirmar Bloqueio";
                 });
         });
     </script>
