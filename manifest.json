@@ -1,0 +1,21 @@
+{
+  "name": "Kiko Barbearia",
+  "short_name": "Kiko App",
+  "description": "Agendamento online e serviços Kiko Barbearia",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#d4af37",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
