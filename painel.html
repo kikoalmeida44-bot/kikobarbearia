@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Interno - Kiko Barbearia</title>
+    <title>Painel Restrito - Kiko Barbearia</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -46,7 +46,7 @@
         }
         .form-group input, .form-group select { 
             width: 100%; 
-            padding: 12px; 
+            padding: 15px; 
             background-color: #111; 
             color: #ffffff; 
             border: 1px solid #333;
@@ -90,17 +90,35 @@
             font-weight: 600;
         }
         .btn-voltar:hover { color: #fff; border-color: #fff; }
-        #mensagem-status {
+        
+        /* Oculta as telas dinamicamente */
+        #tela-admin { display: none; }
+        
+        .erro-senha {
+            color: #ff4444;
             text-align: center;
             margin-top: 15px;
-            font-weight: 600;
-            font-size: 0.9em;
+            display: none;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="painel-container">
+    <!-- TELA 1: LOGIN -->
+    <div class="painel-container" id="tela-login">
+        <h2>Acesso Restrito</h2>
+        <div class="form-group">
+            <label for="senha">Senha de Administrador:</label>
+            <input type="password" id="senha" placeholder="Digite a sua senha">
+        </div>
+        <button onclick="verificarSenha()" class="btn-admin">Entrar no Sistema</button>
+        <p class="erro-senha" id="erro-senha">Senha incorreta. Tente novamente.</p>
+        <a href="index.html" class="btn-voltar">Voltar para o Site</a>
+    </div>
+
+    <!-- TELA 2: PAINEL DE CONTROLE (Oculto inicialmente) -->
+    <div class="painel-container" id="tela-admin">
         <h2>Controle de Agenda</h2>
         
         <form id="formAdmin">
@@ -138,13 +156,36 @@
             </div>
 
             <button type="submit" id="btnSubmit" class="btn-admin">Confirmar Bloqueio</button>
-            <p id="mensagem-status"></p>
+            <p id="mensagem-status" style="text-align: center; margin-top: 15px; font-weight: 600;"></p>
 
-            <a href="index.html" class="btn-voltar">Voltar para o Site Principal</a>
+            <button type="button" onclick="sair()" class="btn-voltar" style="color: #ff4444; border-color: #ff4444;">Sair / Bloquear Tela</button>
         </form>
     </div>
 
+    <!-- SCRIPTS -->
     <script>
+        // --- SISTEMA DE LOGIN ---
+        function verificarSenha() {
+            var senhaDigitada = document.getElementById('senha').value;
+            // AQUI FICA A SUA SENHA. Pode alterar o "Kiko2026" para o que desejar.
+            if(senhaDigitada === "Kiko2026") {
+                document.getElementById('tela-login').style.display = 'none';
+                document.getElementById('tela-admin').style.display = 'block';
+                // Quando o login dá certo, puxamos os dados da nuvem
+                carregarDados();
+            } else {
+                document.getElementById('erro-senha').style.display = 'block';
+            }
+        }
+
+        function sair() {
+            document.getElementById('senha').value = '';
+            document.getElementById('tela-admin').style.display = 'none';
+            document.getElementById('tela-login').style.display = 'block';
+            document.getElementById('erro-senha').style.display = 'none';
+        }
+
+        // --- SISTEMA DE BANCO DE DADOS (O MESMO QUE JÁ ESTÁ FUNCIONANDO) ---
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
         
         const form = document.getElementById('formAdmin');
@@ -161,21 +202,18 @@
         }
 
         function carregarDados() {
+            msgStatus.innerText = "Sincronizando com a nuvem...";
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
                     agendamentosDaNuvem = data;
+                    msgStatus.innerText = "";
                 })
                 .catch(error => {
                     console.error("Erro ao carregar dados", error);
+                    msgStatus.innerText = "Modo Offline.";
                 });
         }
-
-        window.onload = function() {
-            msgStatus.innerText = "Sincronizando com a nuvem...";
-            carregarDados();
-            setTimeout(() => msgStatus.innerText = "", 1500);
-        };
 
         function verificarHorarios() {
             const dataEscolhida = inputData.value;
@@ -188,22 +226,14 @@
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
-                    // CORREÇÃO DO FUSO HORÁRIO
-                    // Forçamos a conversão para string e pegamos apenas o formato limpo, ignorando letras T e Z
-                    let dataDoGoogle = String(ag.data).replace(/T.*/, ""); // Corta tudo que vem depois da letra T
-                    
-                    // Como o Google pode salvar "2026-09-23T03:00:00Z" e a pessoa escolheu dia 24,
-                    // vamos verificar se a string do banco contém a data exata que o usuário digitou.
-                    // Outro método seguro: verificar a data digitada dentro da string retornada
+                    let dataDoGoogle = String(ag.data).replace(/T.*/, "");
                     let dataBaseString = String(ag.data);
                     
                     let horasBatem = String(ag.hora).trim() === String(hora).trim();
                     let datasBatem = dataBaseString.includes(dataEscolhida) || dataDoGoogle === dataEscolhida;
 
-                    // Ajuste de fuso horário brasileiro (se o Google subtraiu 1 dia por causa de fuso)
                     if (!datasBatem && dataBaseString.includes("T")) {
                          let tempDate = new Date(ag.data);
-                         // Adiciona o fuso do Brasil (GMT-3) para normalizar
                          tempDate.setMinutes(tempDate.getMinutes() + tempDate.getTimezoneOffset());
                          let dataCorrigida = tempDate.toISOString().split('T')[0];
                          if (dataCorrigida === dataEscolhida) {
