@@ -188,16 +188,37 @@
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
-                    // Trata a formatação da data do Google (remove horas e fuso horário)
-                    let agData = String(ag.data).substring(0, 10);
-                    return agData === dataEscolhida && String(ag.hora) === String(hora);
+                    // CORREÇÃO DO FUSO HORÁRIO
+                    // Forçamos a conversão para string e pegamos apenas o formato limpo, ignorando letras T e Z
+                    let dataDoGoogle = String(ag.data).replace(/T.*/, ""); // Corta tudo que vem depois da letra T
+                    
+                    // Como o Google pode salvar "2026-09-23T03:00:00Z" e a pessoa escolheu dia 24,
+                    // vamos verificar se a string do banco contém a data exata que o usuário digitou.
+                    // Outro método seguro: verificar a data digitada dentro da string retornada
+                    let dataBaseString = String(ag.data);
+                    
+                    let horasBatem = String(ag.hora).trim() === String(hora).trim();
+                    let datasBatem = dataBaseString.includes(dataEscolhida) || dataDoGoogle === dataEscolhida;
+
+                    // Ajuste de fuso horário brasileiro (se o Google subtraiu 1 dia por causa de fuso)
+                    if (!datasBatem && dataBaseString.includes("T")) {
+                         let tempDate = new Date(ag.data);
+                         // Adiciona o fuso do Brasil (GMT-3) para normalizar
+                         tempDate.setMinutes(tempDate.getMinutes() + tempDate.getTimezoneOffset());
+                         let dataCorrigida = tempDate.toISOString().split('T')[0];
+                         if (dataCorrigida === dataEscolhida) {
+                             datasBatem = true;
+                         }
+                    }
+
+                    return datasBatem && horasBatem;
                 });
                 
                 const option = document.createElement('option');
                 option.value = hora;
                 
                 if (ocupado) {
-                    option.text = hora + " (Já Bloqueado)";
+                    option.text = hora + " (Bloqueado)";
                     option.disabled = true;
                     option.style.color = "#ff4444";
                 } else {
@@ -211,20 +232,19 @@
             e.preventDefault();
             btnSubmit.disabled = true;
             btnSubmit.innerText = "Enviando comando...";
-            msgStatus.innerText = "Registrando bloqueio no servidor...";
+            msgStatus.innerText = "Registrando bloqueio...";
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
 
             fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
                 .then(() => {
-                    msgStatus.innerText = "Bloqueio/Agendamento salvo com sucesso!";
+                    msgStatus.innerText = "Salvo com sucesso!";
                     msgStatus.style.color = "#25D366";
                     
                     form.reset();
                     selectHora.disabled = true;
                     
-                    // Recarrega os dados imediatamente após salvar para o próximo agendamento
                     carregarDados();
 
                     setTimeout(() => {
@@ -234,7 +254,7 @@
                     }, 2500);
                 })
                 .catch(error => {
-                    msgStatus.innerText = "Erro ao enviar. Tente novamente.";
+                    msgStatus.innerText = "Erro ao enviar.";
                     msgStatus.style.color = "#ff4444";
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = "Confirmar Bloqueio";
