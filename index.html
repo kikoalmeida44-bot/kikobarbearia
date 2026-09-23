@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiko Barbearia | Estilo e Tradição</title>
     <!-- Importando a fonte premium do Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* Estilos Premium */
+        /* Estilos Premium - Pegada Urbana/Cartel */
         body { 
             font-family: 'Montserrat', sans-serif; 
             margin: 0; 
@@ -16,14 +16,15 @@
             background-color: #050505; 
             color: #ffffff; 
             line-height: 1.6;
+            overflow-x: hidden; /* Impede barra de rolagem horizontal */
         }
 
-        /* Menu Flutuante e Elegante */
+        /* Menu Flutuante */
         header { 
             position: fixed;
             top: 0;
             width: 100%;
-            background-color: rgba(5, 5, 5, 0.9); 
+            background-color: rgba(5, 5, 5, 0.85); 
             backdrop-filter: blur(10px);
             padding: 15px 0; 
             text-align: center; 
@@ -37,13 +38,13 @@
             font-size: 2.2em; 
             text-transform: uppercase; 
             letter-spacing: 5px; 
-            font-weight: 300;
+            font-weight: 700;
         }
         nav a { 
             color: #cccccc; 
             text-decoration: none; 
             margin: 0 15px; 
-            font-weight: 400; 
+            font-weight: 600; 
             text-transform: uppercase; 
             font-size: 0.85em; 
             letter-spacing: 1px;
@@ -51,51 +52,95 @@
         }
         nav a:hover { color: #d4af37; }
 
-        /* Banner Principal (Hero) */
+        /* =========================================
+           EFEITO "KEN BURNS" - FOTO EM MOVIMENTO
+           ========================================= */
         .hero { 
+            position: relative;
             text-align: center; 
-            padding: 180px 20px 120px 20px; 
-            background-image: linear-gradient(rgba(5,5,5,0.7), rgba(5,5,5,0.95)), url('https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg'); 
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed;
+            padding: 220px 20px 150px 20px; 
+            overflow: hidden; 
+            border-bottom: 3px solid #d4af37;
         }
-        .hero h2 { 
-            font-size: 3.2em; 
+        
+        /* Imagem de Fundo Animada */
+        .hero-bg {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background-image: url('https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            /* A mágica do movimento acontece aqui */
+            animation: zoomEfeito 25s infinite alternate linear;
+        }
+
+        /* Criação da animação de Zoom Lento */
+        @keyframes zoomEfeito {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        /* Película escura por cima da imagem */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(5,5,5,0.6), rgba(5,5,5,0.9)); 
+            z-index: -1;
+        }
+
+        /* O texto que fica por cima de tudo */
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h2 { 
+            font-size: 4em; 
             margin-bottom: 15px; 
             color: #ffffff; 
-            font-weight: 300;
+            font-weight: 900;
             letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 10px #000;
         }
-        .hero p { 
-            font-size: 1.2em; 
+        .hero-content p { 
+            font-size: 1.3em; 
             margin-bottom: 50px; 
-            color: #aaaaaa; 
-            font-weight: 300;
-            max-width: 600px;
+            color: #dddddd; 
+            font-weight: 400;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
+            text-shadow: 1px 1px 5px #000;
         }
 
         /* Botões Estilo Ghost */
         .hero-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
         
         .btn-gold {
-            background-color: transparent;
-            color: #d4af37;
+            background-color: #d4af37; 
+            color: #050505;
             padding: 15px 40px;
             text-decoration: none;
-            font-size: 1em;
+            font-size: 1.1em;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border: 1px solid #d4af37;
-            border-radius: 0; 
+            border: 2px solid #d4af37;
+            border-radius: 3px; 
             transition: all 0.4s ease;
             cursor: pointer;
         }
         .btn-gold:hover {
-            background-color: #d4af37;
-            color: #050505;
+            background-color: transparent;
+            color: #d4af37;
         }
         
         .btn-white {
@@ -104,10 +149,11 @@
             padding: 15px 40px;
             text-decoration: none;
             font-size: 1em;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border: 1px solid #ffffff;
-            border-radius: 0;
+            border: 2px solid #ffffff;
+            border-radius: 3px;
             transition: all 0.4s ease;
         }
         .btn-white:hover {
@@ -119,21 +165,21 @@
         .section { padding: 90px 20px; max-width: 1200px; margin: auto; text-align: center; }
         .section-title { 
             color: #ffffff; 
-            font-size: 2em; 
+            font-size: 2.2em; 
             margin-bottom: 50px; 
             text-transform: uppercase; 
             letter-spacing: 4px; 
-            font-weight: 300;
+            font-weight: 700;
         }
         .section-title::after {
             content: '';
             display: block;
-            width: 50px;
-            height: 1px;
+            width: 60px;
+            height: 3px;
             background: #d4af37;
             margin: 20px auto 0 auto;
         }
-        .sobre-texto { font-size: 1.1em; color: #999999; max-width: 800px; margin: 0 auto; font-weight: 300; }
+        .sobre-texto { font-size: 1.1em; color: #aaaaaa; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
 
         /* Cards de Serviços Elegantes */
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
@@ -141,20 +187,20 @@
             background-color: transparent; 
             padding: 40px 20px; 
             width: 260px; 
-            border: 1px solid #222; 
+            border: 1px solid #333; 
             transition: all 0.4s ease; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between;
         }
-        .service-card:hover { border-color: #d4af37; transform: translateY(-10px); }
-        .service-card h3 { color: #ffffff; margin-top: 0; font-size: 1.3em; font-weight: 400; letter-spacing: 1px; }
-        .service-card p { color: #777777; font-size: 0.95em; flex-grow: 1; font-weight: 300; }
+        .service-card:hover { border-color: #d4af37; transform: translateY(-10px); background-color: #0a0a0a; }
+        .service-card h3 { color: #ffffff; margin-top: 0; font-size: 1.3em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .service-card p { color: #888888; font-size: 0.95em; flex-grow: 1; font-weight: 400; }
         .service-price { 
-            font-size: 1.2em; 
+            font-size: 1.3em; 
             color: #d4af37; 
             margin-top: 20px; 
-            font-weight: 400; 
+            font-weight: 700; 
         }
 
         /* Galeria Refinada */
@@ -164,43 +210,43 @@
             height: 350px; 
             object-fit: cover; 
             border-radius: 0; 
-            filter: grayscale(20%); 
+            filter: contrast(110%) saturate(120%); 
             transition: all 0.5s ease;
         }
         .galeria-grid img:hover { 
-            filter: grayscale(0%);
-            transform: scale(1.02); 
+            transform: scale(1.03); 
+            border: 2px solid #d4af37;
         }
 
         /* Formulário Premium */
         .form-agendamento { 
             background-color: #0a0a0a; 
             padding: 50px; 
-            border: 1px solid #222; 
+            border: 1px solid #333; 
             max-width: 600px; 
             margin: 0 auto; 
             text-align: left; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
         }
         .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; margin-bottom: 10px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+        .form-group label { display: block; margin-bottom: 10px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .form-group input, .form-group select { 
             width: 100%; 
             padding: 15px; 
-            background-color: transparent; 
+            background-color: #050505; 
             color: #ffffff; 
             font-size: 1em; 
-            border: none;
-            border-bottom: 1px solid #444; 
+            border: 1px solid #333;
             box-sizing: border-box; 
             font-family: 'Montserrat', sans-serif;
             transition: border-color 0.3s;
         }
-        .form-group input:focus, .form-group select:focus { outline: none; border-bottom: 1px solid #d4af37; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; background-color: #111; }
         
-        .horarios-box { text-align: center; color: #999999; font-size: 1.1em; line-height: 2; font-weight: 300; }
-        .horarios-box span { color: #d4af37; font-weight: 400; display: block; font-size: 1.2em; margin-top: 5px; }
+        .horarios-box { text-align: center; color: #999999; font-size: 1.1em; line-height: 2; font-weight: 400; }
+        .horarios-box span { color: #d4af37; font-weight: 700; display: block; font-size: 1.2em; margin-top: 5px; }
         
-        footer { background-color: #030303; text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #555555; font-size: 0.85em; font-weight: 300; letter-spacing: 1px; }
+        footer { background-color: #030303; text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #555555; font-size: 0.85em; font-weight: 400; letter-spacing: 1px; }
         footer a { color: #777777; text-decoration: none; transition: color 0.3s; }
         footer a:hover { color: #d4af37; }
     </style>
@@ -216,17 +262,24 @@
             <a href="#agendamento">Agendar</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
             <a href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
-            <a href="painel.html" style="color: #444; font-size: 0.7em; margin-left: 15px;">⚙️ Painel</a>
+            <a href="painel.html" style="color: #666; font-size: 0.7em; margin-left: 15px;">⚙️ Painel</a>
         </nav>
     </header>
 
     <div class="hero">
-        <h2>A Arte da Barbearia</h2>
-        <p>Tradição, qualidade e um ambiente pensado exclusivamente para o homem moderno.</p>
-        <div class="hero-buttons">
-            <a href="#agendamento" class="btn-gold">Agendar Horário</a>
-            <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-white" target="_blank">Instagram</a>
-            <a href="https://www.facebook.com/share/1JepNxcz5b/" class="btn-white" target="_blank">Facebook</a>
+        <!-- DIV RESPONSÁVEL PELA FOTO EM MOVIMENTO LENTO -->
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="hero-content">
+            <h2>Kiko Barbearia</h2>
+            <p>Tradição, atitude e um ambiente de alto padrão pensado exclusivamente para o homem moderno.</p>
+            <div class="hero-buttons">
+                <a href="#agendamento" class="btn-gold">Agendar Horário</a>
+                <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-white" target="_blank">Instagram</a>
+                <a href="https://www.facebook.com/share/1JepNxcz5b/" class="btn-white" target="_blank">Facebook</a>
+            </div>
         </div>
     </div>
 
@@ -346,7 +399,6 @@
     <footer>
         <p>&copy; 2026 Kiko Barbearia. Todos os direitos reservados.</p>
         
-        <!-- Contador de Visitas Dourado -->
         <div style="margin: 25px 0;">
             <p style="font-size: 0.9em; color: #777; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Visitas ao Site</p>
             <img src="https://api.visitorbadge.io/api/visitors?path=kikobarbearia-site&countColor=%23d4af37&style=flat-square" alt="Contador de Visitas">
