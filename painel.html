@@ -3,82 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Barbeiro - Kiko Barbearia</title>
+    <title>Painel Interno - Kiko Barbearia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #0a0a0a; color: #ffffff; }
-        header { background-color: #111; padding: 20px; text-align: center; border-bottom: 3px solid #25D366; }
-        h1 { color: #25D366; margin: 0; font-size: 2.2em; text-transform: uppercase; letter-spacing: 1px; }
-        p.subtitle { color: #aaaaaa; margin-top: 5px; }
-        
-        .section { padding: 40px 20px; max-width: 600px; margin: auto; }
-        .form-agendamento { background-color: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: #050505; 
+            color: #ffffff; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+        }
+        .painel-container {
+            background-color: #0a0a0a;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid #d4af37;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+        }
+        h2 {
+            color: #d4af37;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.5em;
+        }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #25D366; font-weight: bold; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #444; background-color: #2a2a2a; color: #ffffff; font-size: 1.1em; box-sizing: border-box; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: #25D366; }
-        
-        .btn-salvar { background-color: #25D366; color: #000; padding: 15px; text-decoration: none; font-size: 1.2em; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; width: 100%; transition: 0.3s; }
-        .btn-salvar:disabled { background-color: #555; color: #aaa; cursor: not-allowed; }
-        .btn-salvar:hover:not(:disabled) { background-color: #128C7E; color: #fff; }
-        
-        #mensagem-status { text-align: center; margin-top: 20px; font-weight: bold; font-size: 1.1em; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            color: #aaaaaa; 
+            font-size: 0.9em; 
+            text-transform: uppercase; 
+            font-weight: 600; 
+        }
+        .form-group input, .form-group select { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #111; 
+            color: #ffffff; 
+            border: 1px solid #333;
+            border-radius: 4px;
+            box-sizing: border-box; 
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1em;
+        }
+        .form-group input:focus, .form-group select:focus { 
+            outline: none; 
+            border-color: #d4af37; 
+        }
+        .btn-admin {
+            background-color: #d4af37;
+            color: #050505;
+            padding: 15px;
+            border: none;
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            margin-top: 10px;
+        }
+        .btn-admin:hover { opacity: 0.8; }
+        .btn-voltar {
+            background-color: transparent;
+            color: #777;
+            border: 1px solid #333;
+            padding: 10px;
+            width: 100%;
+            margin-top: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .btn-voltar:hover { color: #fff; border-color: #fff; }
+        #mensagem-status {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Painel Interno</h1>
-        <p class="subtitle">Área restrita - Kiko Barbearia</p>
-    </header>
+    <div class="painel-container">
+        <h2>Controle de Agenda</h2>
+        
+        <form id="formAdmin">
+            <div class="form-group">
+                <label for="nome">Nome do Cliente (ou Bloqueio):</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex: João / ALMOÇO / FECHADO" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="servico">Serviço:</label>
+                <select id="servico" name="servico" required onchange="atualizarValor()">
+                    <option value="" disabled selected data-valor="0">Selecione...</option>
+                    <option value="Corte" data-valor="50">Corte (R$ 50,00)</option>
+                    <option value="Barba" data-valor="50">Barba (R$ 50,00)</option>
+                    <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (R$ 100,00)</option>
+                    <option value="Progressiva Masculina" data-valor="150">Progressiva Masculina (R$ 150,00)</option>
+                    <option value="Pigmentação" data-valor="100">Pigmentação (R$ 100,00)</option>
+                    <option value="Coloração" data-valor="100">Coloração (R$ 100,00)</option>
+                    <option value="Sobrancelha" data-valor="25">Sobrancelha (R$ 25,00)</option>
+                    <!-- Opção exclusiva do painel administrativo -->
+                    <option value="Bloqueio de Agenda" data-valor="0">Bloqueio de Horário (Interno)</option>
+                </select>
+                <input type="hidden" id="valor" name="valor" value="0">
+            </div>
 
-    <div class="section">
-        <div class="form-agendamento">
-            <h2 style="text-align: center; margin-top: 0; color: #fff;">Bloquear Horário / Agendar Cliente</h2>
-            <form id="formPainel">
-                <div class="form-group">
-                    <label for="nome">Nome do Cliente (Lembrança):</label>
-                    <input type="text" id="nome" name="nome" placeholder="Ex: João (Balcão) ou Marcos (Telefone)" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="servico">Serviço Realizado:</label>
-                    <select id="servico" name="servico" required onchange="atualizarValor()">
-                        <option value="" disabled selected data-valor="0">Escolha o serviço...</option>
-                        <option value="Corte" data-valor="50">Corte (R$ 50,00)</option>
-                        <option value="Barba" data-valor="50">Barba (R$ 50,00)</option>
-                        <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (R$ 100,00)</option>
-                        <option value="Progressiva Masculina" data-valor="150">Progressiva Masculina (R$ 150,00)</option>
-                        <option value="Pigmentação" data-valor="100">Pigmentação (R$ 100,00)</option>
-                        <option value="Coloração" data-valor="100">Coloração (R$ 100,00)</option>
-                        <option value="Sobrancelha" data-valor="25">Sobrancelha (R$ 25,00)</option>
-                        <option value="Bloqueio de Agenda (Folga)" data-valor="0">Bloqueio de Agenda (Almoço/Folga)</option>
-                    </select>
-                    <input type="hidden" id="valor" name="valor" value="0">
-                </div>
+            <div class="form-group">
+                <label for="data">Data:</label>
+                <input type="date" id="data" name="data" required onchange="verificarHorarios()">
+            </div>
 
-                <div class="form-group">
-                    <label for="data">Data:</label>
-                    <input type="date" id="data" name="data" required onchange="verificarHorarios()">
-                </div>
+            <div class="form-group">
+                <label for="hora">Horário a Bloquear:</label>
+                <select id="hora" name="hora" required disabled>
+                    <option value="" disabled selected>Selecione a data primeiro...</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label for="hora">Horário:</label>
-                    <select id="hora" name="hora" required disabled>
-                        <option value="" disabled selected>Escolha uma data primeiro...</option>
-                    </select>
-                </div>
+            <button type="submit" id="btnSubmit" class="btn-admin">Gravar Horário</button>
+            <p id="mensagem-status"></p>
 
-                <button type="submit" id="btnSubmit" class="btn-salvar">Salvar e Bloquear no Site</button>
-                <p id="mensagem-status"></p>
-            </form>
-        </div>
+            <a href="index.html" class="btn-voltar">Voltar para o Site Principal</a>
+        </form>
     </div>
 
+    <!-- SCRIPT DO BANCO DE DADOS (O MESMO DO SITE) -->
     <script>
-        // O mesmo link do seu banco de dados
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
         
-        const form = document.getElementById('formPainel');
+        const form = document.getElementById('formAdmin');
         const btnSubmit = document.getElementById('btnSubmit');
         const msgStatus = document.getElementById('mensagem-status');
         const selectHora = document.getElementById('hora');
@@ -92,18 +163,19 @@
         }
 
         window.onload = function() {
-            msgStatus.innerText = "Carregando horários ocupados...";
-            msgStatus.style.color = "#aaaaaa";
-
+            msgStatus.innerText = "Carregando banco de dados...";
+            msgStatus.style.color = "#555";
+            
+            // Permite agendar no passado caso você queira registrar algo que já aconteceu
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
                     agendamentosDaNuvem = data;
-                    msgStatus.innerText = "Sistema pronto para uso.";
-                    msgStatus.style.color = "#25D366";
+                    msgStatus.innerText = "Sistema online e pronto.";
+                    setTimeout(() => msgStatus.innerText = "", 2000);
                 })
                 .catch(error => {
-                    msgStatus.innerText = "Erro ao conectar. Tente recarregar a página.";
+                    msgStatus.innerText = "Atenção: Modo offline.";
                     msgStatus.style.color = "red";
                 });
         };
@@ -113,7 +185,7 @@
             if (!dataEscolhida) return;
 
             selectHora.disabled = false;
-            selectHora.innerHTML = '<option value="" disabled selected>Escolha o horário para bloquear...</option>';
+            selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
             const todosHorarios = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
             
@@ -127,11 +199,11 @@
                 option.value = hora;
                 
                 if (ocupado) {
-                    option.text = hora + " (Já está ocupado)";
+                    option.text = hora + " (Já ocupado)";
                     option.disabled = true;
-                    option.style.color = "red";
+                    option.style.color = "#ff4444";
                 } else {
-                    option.text = hora + " (Livre)";
+                    option.text = hora;
                 }
                 selectHora.add(option);
             });
@@ -140,31 +212,36 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "Salvando no sistema...";
-            msgStatus.innerText = "";
+            btnSubmit.innerText = "Salvando...";
+            msgStatus.innerText = "Gravando horário na planilha...";
+            msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
 
             fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
                 .then(() => {
-                    msgStatus.innerText = "Horário bloqueado com sucesso!";
+                    msgStatus.innerText = "✅ Horário salvo com sucesso!";
                     msgStatus.style.color = "#25D366";
                     
+                    form.reset();
+                    selectHora.disabled = true;
+                    
+                    // Diferente do site dos clientes, aqui ele não abre o WhatsApp.
+                    // Apenas atualiza a tela para você poder agendar o próximo!
                     setTimeout(() => {
-                        form.reset();
-                        selectHora.disabled = true;
                         btnSubmit.disabled = false;
-                        btnSubmit.innerText = "Salvar e Bloquear no Site";
+                        btnSubmit.innerText = "Gravar Horário";
                         msgStatus.innerText = "";
-                        // Recarrega os dados da nuvem para atualizar a lista
-                        window.onload(); 
+                        // Recarrega o banco de dados interno
+                        agendamentosDaNuvem = [];
+                        window.onload();
                     }, 2000);
                 })
                 .catch(error => {
-                    msgStatus.innerText = "Erro ao salvar. Verifique a internet.";
-                    msgStatus.style.color = "red";
+                    msgStatus.innerText = "Erro ao enviar. Tente novamente.";
+                    msgStatus.style.color = "#ff4444";
                     btnSubmit.disabled = false;
-                    btnSubmit.innerText = "Salvar e Bloquear no Site";
+                    btnSubmit.innerText = "Gravar Horário";
                 });
         });
     </script>
