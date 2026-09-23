@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,8 @@
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg">
+    <!-- Aqui está puxando a sua logomarca localmente -->
+    <link rel="apple-touch-icon" href="f098a157-6036-4ce2-8f9c-dfc1c3d73548-1_all_42778_2.jpg">
 
     <!-- Importando a fonte premium do Google -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -291,7 +292,7 @@
 
     <div id="sobre" class="section">
         <h2 class="section-title">Sobre Nós</h2>
-        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, o nosso foco é oferecer uma experiência completa para o homem moderno. Criamos um ambiente onde pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para receber-vos.</p>
+        <p class="sobre-texto">Bem-vindo à Kiko Barbearia. Comandada por Francisco Almeida de Oliveira Filho, nosso foco é oferecer uma experiência completa para o homem moderno. Criamos um ambiente onde você pode relaxar e sair com a autoestima renovada. Atendendo com orgulho a nossa cidade de Coxim, estamos prontos para receber você.</p>
     </div>
 
     <div id="servicos" class="section">
@@ -355,8 +356,8 @@
         <div class="form-agendamento">
             <form id="formAgendamento">
                 <div class="form-group">
-                    <label for="nome">O Seu Nome:</label>
-                    <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
+                    <label for="nome">Seu Nome:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
                 </div>
                 
                 <div class="form-group">
@@ -413,7 +414,7 @@
         <p><a href="painel.html">Acesso Administrativo</a></p>
     </footer>
 
-    <!-- SCRIPT DE CONEXÃO COM A FOLHA DE CÁLCULO DO GOOGLE -->
+    <!-- SCRIPT DE CONEXÃO COM O GOOGLE PLANILHAS -->
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
         
@@ -431,7 +432,7 @@
         }
 
         window.onload = function() {
-            msgStatus.innerText = "A sincronizar a agenda com o sistema...";
+            msgStatus.innerText = "Sincronizando a agenda com o sistema...";
             msgStatus.style.color = "#555";
             
             let hoje = new Date().toISOString().split('T')[0];
@@ -444,7 +445,7 @@
                     msgStatus.innerText = "";
                 })
                 .catch(error => {
-                    msgStatus.innerText = "Modo offline ativo. Pode agendar normalmente.";
+                    msgStatus.innerText = "Modo offline ativo. Você pode agendar normalmente.";
                 });
         };
 
@@ -480,8 +481,8 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "A processar...";
-            msgStatus.innerText = "A registar o seu horário no sistema, aguarde...";
+            btnSubmit.innerText = "Processando...";
+            msgStatus.innerText = "Registrando seu horário no sistema, aguarde...";
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
@@ -498,7 +499,7 @@
                     var servico = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].text;
                     var hora = document.getElementById('hora').value;
 
-                    var texto = "Olá, Kiko Barbearia! O meu agendamento foi registado no site.%0A%0A" + 
+                    var texto = "Olá, Kiko Barbearia! Meu agendamento foi registrado no site.%0A%0A" + 
                                 "*Nome:* " + nome + "%0A" + 
                                 "*Serviço:* " + servico + "%0A" + 
                                 "*Data:* " + data_br + "%0A" + 
