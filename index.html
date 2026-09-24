@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiko Barbearia | Estilo e Tradição</title>
     
-    <!-- CÓDIGOS DO APLICATIVO (PWA) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.jpg">
 
-    <!-- Importando a fonte premium do Google -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -209,7 +207,7 @@
     </footer>
 
     <script>
-        // O NOVO LINK ESTÁ AQUI
+        // NOVO LINK CORRETO (/exec)
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
         const form = document.getElementById('formAgendamento');
@@ -245,8 +243,7 @@
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
-                    let dataDoGoogle = String(ag.data).replace(/T.*/, "");
-                    return dataDoGoogle === dataEscolhida && String(ag.hora).trim() === String(hora).trim();
+                    return String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === String(hora).trim();
                 });
                 const option = document.createElement('option');
                 option.value = hora;
@@ -263,15 +260,15 @@
             msgStatus.innerText = "Registrando seu horário na agenda, aguarde...";
             msgStatus.style.color = "#d4af37";
 
-            const urlEncoded = new URLSearchParams(new FormData(form)).toString();
+            const formData = new FormData(form);
 
+            // MODO NO-CORS RESTAURADO PARA GARANTIR O ENVIO
             fetch(scriptURL, { 
                 method: 'POST', 
-                body: urlEncoded, 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                body: formData, 
+                mode: 'no-cors' 
             })
-            .then(response => response.text())
-            .then(respostaServidor => {
+            .then(() => {
                 msgStatus.innerText = "Agendamento confirmado com sucesso!";
                 msgStatus.style.color = "#d4af37";
                 
