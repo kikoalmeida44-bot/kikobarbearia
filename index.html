@@ -10,7 +10,6 @@
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- Ícone da sua logomarca para a tela inicial -->
     <link rel="apple-touch-icon" href="logo.jpg">
 
     <!-- Importando a fonte premium do Google -->
@@ -72,7 +71,6 @@
             border-bottom: 3px solid #d4af37;
         }
         
-        /* Imagem de Fundo Animada */
         .hero-bg {
             position: absolute;
             top: -10%;
@@ -91,7 +89,6 @@
             100% { transform: scale(1.15); }
         }
 
-        /* Película escura por cima da imagem */
         .hero-overlay {
             position: absolute;
             top: 0;
@@ -102,7 +99,6 @@
             z-index: -1;
         }
 
-        /* O texto que fica por cima de tudo */
         .hero-content {
             position: relative;
             z-index: 1;
@@ -128,7 +124,6 @@
             text-shadow: 1px 1px 5px #000;
         }
 
-        /* Botões Estilo Ghost */
         .hero-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
         
         .btn-gold {
@@ -168,7 +163,6 @@
             color: #050505;
         }
 
-        /* Seções Gerais */
         .section { padding: 90px 20px; max-width: 1200px; margin: auto; text-align: center; }
         .section-title { 
             color: #ffffff; 
@@ -188,7 +182,6 @@
         }
         .sobre-texto { font-size: 1.1em; color: #aaaaaa; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
 
-        /* Cards de Serviços Elegantes */
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
         .service-card { 
             background-color: transparent; 
@@ -210,7 +203,6 @@
             font-weight: 700; 
         }
 
-        /* Galeria Refinada */
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
         .galeria-grid img { 
             width: 100%; 
@@ -225,7 +217,6 @@
             border: 2px solid #d4af37;
         }
 
-        /* Formulário Premium */
         .form-agendamento { 
             background-color: #0a0a0a; 
             padding: 50px; 
@@ -274,11 +265,9 @@
     </header>
 
     <div class="hero">
-        <!-- DIV RESPONSÁVEL PELA FOTO EM MOVIMENTO LENTO -->
         <div class="hero-bg"></div>
         <div class="hero-overlay"></div>
         
-        <!-- CONTEÚDO PRINCIPAL -->
         <div class="hero-content">
             <h2>Kiko Barbearia</h2>
             <p>Tradição, atitude e um ambiente de alto padrão pensado exclusivamente para o homem moderno.</p>
@@ -414,10 +403,9 @@
         <p><a href="painel.html">Acesso Administrativo</a></p>
     </footer>
 
-    <!-- SCRIPT DE CONEXÃO COM O GOOGLE AGENDA -->
     <script>
-        // NOVO LINK DO GOOGLE AGENDA
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxu1fr2whjdg5jMH9siAJTP8aIdSXgJYpTY7V6AoMnVIIcUumzh7UYrSt-VYWEGM7CC/exec';
+        // --- NOVO LINK DA GOOGLE AGENDA ATUALIZADO AQUI ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9OEtLlrm5tjTN8U-zbvQQHJj1rhchnLngtW-iR0Y36TGdiNRzcXLkwsKIhqQ-RRcZ1w/exec';
         
         const form = document.getElementById('formAgendamento');
         const btnSubmit = document.getElementById('btnSubmit');
@@ -461,7 +449,6 @@
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
-                    // Limpa qualquer vestígio de T ou Z na data retornada pela nuvem, garantindo a comparação correta
                     let dataDoGoogle = String(ag.data).replace(/T.*/, "");
                     let horasBatem = String(ag.hora).trim() === String(hora).trim();
                     let datasBatem = dataDoGoogle === dataEscolhida;
