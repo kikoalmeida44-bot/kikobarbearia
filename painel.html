@@ -6,100 +6,19 @@
     <title>Painel Restrito - Kiko Barbearia</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background-color: #050505; 
-            color: #ffffff; 
-            margin: 0; 
-            padding: 20px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
-        }
-        .painel-container {
-            background-color: #0a0a0a;
-            padding: 40px;
-            border-radius: 8px;
-            border: 1px solid #d4af37;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
-        }
-        h2 {
-            color: #d4af37;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 1.5em;
-        }
+        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #ffffff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .painel-container { background-color: #0a0a0a; padding: 40px; border-radius: 8px; border: 1px solid #d4af37; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); }
+        h2 { color: #d4af37; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 30px; font-size: 1.5em; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 8px; 
-            color: #aaaaaa; 
-            font-size: 0.9em; 
-            text-transform: uppercase; 
-            font-weight: 600; 
-        }
-        .form-group input, .form-group select { 
-            width: 100%; 
-            padding: 15px; 
-            background-color: #111; 
-            color: #ffffff; 
-            border: 1px solid #333;
-            border-radius: 4px;
-            box-sizing: border-box; 
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1em;
-        }
-        .form-group input:focus, .form-group select:focus { 
-            outline: none; 
-            border-color: #d4af37; 
-        }
-        .btn-admin {
-            background-color: #d4af37;
-            color: #050505;
-            padding: 15px;
-            border: none;
-            width: 100%;
-            font-size: 1.1em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-            margin-top: 10px;
-        }
+        .form-group label { display: block; margin-bottom: 8px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 15px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 1em; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; }
+        .btn-admin { background-color: #d4af37; color: #050505; padding: 15px; border: none; width: 100%; font-size: 1.1em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; transition: opacity 0.3s; margin-top: 10px; }
         .btn-admin:hover { opacity: 0.8; }
-        .btn-voltar {
-            background-color: transparent;
-            color: #777;
-            border: 1px solid #333;
-            padding: 10px;
-            width: 100%;
-            margin-top: 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-            display: block;
-            text-decoration: none;
-            font-weight: 600;
-        }
+        .btn-voltar { background-color: transparent; color: #777; border: 1px solid #333; padding: 10px; width: 100%; margin-top: 15px; border-radius: 4px; cursor: pointer; text-align: center; display: block; text-decoration: none; font-weight: 600; }
         .btn-voltar:hover { color: #fff; border-color: #fff; }
-        
         #tela-admin { display: none; }
-        
-        .erro-senha {
-            color: #ff4444;
-            text-align: center;
-            margin-top: 15px;
-            display: none;
-            font-weight: bold;
-        }
+        .erro-senha { color: #ff4444; text-align: center; margin-top: 15px; display: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -117,7 +36,6 @@
 
     <div class="painel-container" id="tela-admin">
         <h2>Controle de Agenda</h2>
-        
         <form id="formAdmin">
             <div class="form-group">
                 <label for="nome">Nome (ou Bloqueio):</label>
@@ -160,25 +78,14 @@
     </div>
 
     <script>
-        function verificarEnter(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                verificarSenha();
-            }
-        }
-
+        function verificarEnter(e) { if (e.key === 'Enter') { e.preventDefault(); verificarSenha(); } }
         function verificarSenha() {
-            var senhaDigitada = document.getElementById('senha').value;
-            // A senha continua sendo kiko2026
-            if(senhaDigitada.toLowerCase() === "kiko2026") {
+            if(document.getElementById('senha').value.toLowerCase() === "kiko2026") {
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('tela-admin').style.display = 'block';
                 carregarDados();
-            } else {
-                document.getElementById('erro-senha').style.display = 'block';
-            }
+            } else { document.getElementById('erro-senha').style.display = 'block'; }
         }
-
         function sair() {
             document.getElementById('senha').value = '';
             document.getElementById('tela-admin').style.display = 'none';
@@ -186,7 +93,8 @@
             document.getElementById('erro-senha').style.display = 'none';
         }
 
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9OEtLlrm5tjTN8U-zbvQQHJj1rhchnLngtW-iR0Y36TGdiNRzcXLkwsKIhqQ-RRcZ1w/exec';
+        // NOVO LINK CORRETO (/exec)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
         const form = document.getElementById('formAdmin');
         const btnSubmit = document.getElementById('btnSubmit');
@@ -195,30 +103,19 @@
         const inputData = document.getElementById('data');
         let agendamentosDaNuvem = [];
 
-        function atualizarValor() {
-            const selectServico = document.getElementById('servico');
-            const valorOption = selectServico.options[selectServico.selectedIndex].getAttribute('data-valor');
-            document.getElementById('valor').value = valorOption;
-        }
+        function atualizarValor() { document.getElementById('valor').value = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].getAttribute('data-valor'); }
 
         function carregarDados() {
             msgStatus.innerText = "Sincronizando com o Google Agenda...";
             fetch(scriptURL)
                 .then(response => response.json())
-                .then(data => {
-                    agendamentosDaNuvem = data;
-                    msgStatus.innerText = "";
-                })
-                .catch(error => {
-                    console.error("Erro ao carregar dados", error);
-                    msgStatus.innerText = "Modo Offline.";
-                });
+                .then(data => { agendamentosDaNuvem = data; msgStatus.innerText = ""; })
+                .catch(error => { msgStatus.innerText = "Modo Offline."; });
         }
 
         function verificarHorarios() {
             const dataEscolhida = inputData.value;
             if (!dataEscolhida) return;
-
             selectHora.disabled = false;
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
@@ -226,23 +123,12 @@
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
-                    let dataDoGoogle = String(ag.data).replace(/T.*/, "");
-                    let horasBatem = String(ag.hora).trim() === String(hora).trim();
-                    let datasBatem = dataDoGoogle === dataEscolhida;
-
-                    return datasBatem && horasBatem;
+                    return String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === String(hora).trim();
                 });
-                
                 const option = document.createElement('option');
                 option.value = hora;
-                
-                if (ocupado) {
-                    option.text = hora + " (Bloqueado)";
-                    option.disabled = true;
-                    option.style.color = "#ff4444";
-                } else {
-                    option.text = hora;
-                }
+                if (ocupado) { option.text = hora + " (Bloqueado)"; option.disabled = true; option.style.color = "#ff4444"; } 
+                else { option.text = hora; }
                 selectHora.add(option);
             });
         }
@@ -255,29 +141,19 @@
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
-            // CORREÇÃO AQUI
-            const dadosConvertidos = new URLSearchParams(formData).toString();
 
             fetch(scriptURL, { 
                 method: 'POST', 
-                body: dadosConvertidos, 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData, 
                 mode: 'no-cors' 
             })
             .then(() => {
                 msgStatus.innerText = "Salvo com sucesso na Google Agenda!";
                 msgStatus.style.color = "#25D366";
-                
                 form.reset();
                 selectHora.disabled = true;
-                
                 carregarDados();
-
-                setTimeout(() => {
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = "Confirmar Bloqueio";
-                    msgStatus.innerText = "";
-                }, 2500);
+                setTimeout(() => { btnSubmit.disabled = false; btnSubmit.innerText = "Confirmar Bloqueio"; msgStatus.innerText = ""; }, 2500);
             })
             .catch(error => {
                 msgStatus.innerText = "Erro ao enviar.";
