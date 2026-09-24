@@ -91,7 +91,6 @@
         }
         .btn-voltar:hover { color: #fff; border-color: #fff; }
         
-        /* Oculta as telas dinamicamente */
         #tela-admin { display: none; }
         
         .erro-senha {
@@ -105,19 +104,17 @@
 </head>
 <body>
 
-    <!-- TELA 1: LOGIN -->
     <div class="painel-container" id="tela-login">
         <h2>Acesso Restrito</h2>
         <div class="form-group">
             <label for="senha">Senha de Administrador:</label>
-            <input type="password" id="senha" placeholder="Digite a sua senha">
+            <input type="password" id="senha" placeholder="Digite a sua senha" onkeypress="verificarEnter(event)">
         </div>
         <button onclick="verificarSenha()" class="btn-admin">Entrar no Sistema</button>
         <p class="erro-senha" id="erro-senha">Senha incorreta. Tente novamente.</p>
         <a href="index.html" class="btn-voltar">Voltar para o Site</a>
     </div>
 
-    <!-- TELA 2: PAINEL DE CONTROLE (Oculto inicialmente) -->
     <div class="painel-container" id="tela-admin">
         <h2>Controle de Agenda</h2>
         
@@ -155,23 +152,27 @@
                 </select>
             </div>
 
-            <button type="submit" id="btnSubmit" class="btn-admin">Confirmar Bloqueio</button>
+            <button type="submit" id="btnSubmit" class="btn-admin">Confirmar Bloqueio na Agenda</button>
             <p id="mensagem-status" style="text-align: center; margin-top: 15px; font-weight: 600;"></p>
 
             <button type="button" onclick="sair()" class="btn-voltar" style="color: #ff4444; border-color: #ff4444;">Sair / Bloquear Tela</button>
         </form>
     </div>
 
-    <!-- SCRIPTS -->
     <script>
-        // --- SISTEMA DE LOGIN ---
+        function verificarEnter(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verificarSenha();
+            }
+        }
+
         function verificarSenha() {
             var senhaDigitada = document.getElementById('senha').value;
-            // AQUI FICA A SUA SENHA. Pode alterar o "Kiko2026" para o que desejar.
-            if(senhaDigitada === "Kiko2026") {
+            // A senha continua sendo kiko2026
+            if(senhaDigitada.toLowerCase() === "kiko2026") {
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('tela-admin').style.display = 'block';
-                // Quando o login dá certo, puxamos os dados da nuvem
                 carregarDados();
             } else {
                 document.getElementById('erro-senha').style.display = 'block';
@@ -185,8 +186,8 @@
             document.getElementById('erro-senha').style.display = 'none';
         }
 
-        // --- SISTEMA DE BANCO DE DADOS (O MESMO QUE JÁ ESTÁ FUNCIONANDO) ---
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
+        // --- NOVO LINK DA GOOGLE AGENDA ATUALIZADO AQUI ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9OEtLlrm5tjTN8U-zbvQQHJj1rhchnLngtW-iR0Y36TGdiNRzcXLkwsKIhqQ-RRcZ1w/exec';
         
         const form = document.getElementById('formAdmin');
         const btnSubmit = document.getElementById('btnSubmit');
@@ -202,7 +203,7 @@
         }
 
         function carregarDados() {
-            msgStatus.innerText = "Sincronizando com a nuvem...";
+            msgStatus.innerText = "Sincronizando com o Google Agenda...";
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
@@ -227,19 +228,8 @@
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
                     let dataDoGoogle = String(ag.data).replace(/T.*/, "");
-                    let dataBaseString = String(ag.data);
-                    
                     let horasBatem = String(ag.hora).trim() === String(hora).trim();
-                    let datasBatem = dataBaseString.includes(dataEscolhida) || dataDoGoogle === dataEscolhida;
-
-                    if (!datasBatem && dataBaseString.includes("T")) {
-                         let tempDate = new Date(ag.data);
-                         tempDate.setMinutes(tempDate.getMinutes() + tempDate.getTimezoneOffset());
-                         let dataCorrigida = tempDate.toISOString().split('T')[0];
-                         if (dataCorrigida === dataEscolhida) {
-                             datasBatem = true;
-                         }
-                    }
+                    let datasBatem = dataDoGoogle === dataEscolhida;
 
                     return datasBatem && horasBatem;
                 });
@@ -262,14 +252,14 @@
             e.preventDefault();
             btnSubmit.disabled = true;
             btnSubmit.innerText = "Enviando comando...";
-            msgStatus.innerText = "Registrando bloqueio...";
+            msgStatus.innerText = "Registrando evento na agenda...";
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
 
             fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
                 .then(() => {
-                    msgStatus.innerText = "Salvo com sucesso!";
+                    msgStatus.innerText = "Salvo com sucesso na Google Agenda!";
                     msgStatus.style.color = "#25D366";
                     
                     form.reset();
