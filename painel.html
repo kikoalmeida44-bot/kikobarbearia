@@ -186,7 +186,6 @@
             document.getElementById('erro-senha').style.display = 'none';
         }
 
-        // --- NOVO LINK DA GOOGLE AGENDA ATUALIZADO AQUI ---
         const scriptURL = 'https://script.google.com/macros/s/AKfycbz9OEtLlrm5tjTN8U-zbvQQHJj1rhchnLngtW-iR0Y36TGdiNRzcXLkwsKIhqQ-RRcZ1w/exec';
         
         const form = document.getElementById('formAdmin');
@@ -256,29 +255,36 @@
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
+            // CORREÇÃO AQUI
+            const dadosConvertidos = new URLSearchParams(formData).toString();
 
-            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
-                .then(() => {
-                    msgStatus.innerText = "Salvo com sucesso na Google Agenda!";
-                    msgStatus.style.color = "#25D366";
-                    
-                    form.reset();
-                    selectHora.disabled = true;
-                    
-                    carregarDados();
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: dadosConvertidos, 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                mode: 'no-cors' 
+            })
+            .then(() => {
+                msgStatus.innerText = "Salvo com sucesso na Google Agenda!";
+                msgStatus.style.color = "#25D366";
+                
+                form.reset();
+                selectHora.disabled = true;
+                
+                carregarDados();
 
-                    setTimeout(() => {
-                        btnSubmit.disabled = false;
-                        btnSubmit.innerText = "Confirmar Bloqueio";
-                        msgStatus.innerText = "";
-                    }, 2500);
-                })
-                .catch(error => {
-                    msgStatus.innerText = "Erro ao enviar.";
-                    msgStatus.style.color = "#ff4444";
+                setTimeout(() => {
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = "Confirmar Bloqueio";
-                });
+                    msgStatus.innerText = "";
+                }, 2500);
+            })
+            .catch(error => {
+                msgStatus.innerText = "Erro ao enviar.";
+                msgStatus.style.color = "#ff4444";
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Confirmar Bloqueio";
+            });
         });
     </script>
 </body>
