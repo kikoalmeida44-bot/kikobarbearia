@@ -16,145 +16,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background-color: #050505; 
-            color: #ffffff; 
-            line-height: 1.6;
-            overflow-x: hidden; 
-        }
-        header { 
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-color: rgba(5, 5, 5, 0.85); 
-            backdrop-filter: blur(10px);
-            padding: 15px 0; 
-            text-align: center; 
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2); 
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        h1 { 
-            color: #d4af37; 
-            margin: 0 0 10px 0; 
-            font-size: 2.2em; 
-            text-transform: uppercase; 
-            letter-spacing: 5px; 
-            font-weight: 700;
-        }
-        nav a { 
-            color: #cccccc; 
-            text-decoration: none; 
-            margin: 0 15px; 
-            font-weight: 600; 
-            text-transform: uppercase; 
-            font-size: 0.85em; 
-            letter-spacing: 1px;
-            transition: color 0.3s; 
-        }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; background-color: #050505; color: #ffffff; line-height: 1.6; overflow-x: hidden; }
+        header { position: fixed; top: 0; width: 100%; background-color: rgba(5, 5, 5, 0.85); backdrop-filter: blur(10px); padding: 15px 0; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); z-index: 1000; transition: all 0.3s ease; }
+        h1 { color: #d4af37; margin: 0 0 10px 0; font-size: 2.2em; text-transform: uppercase; letter-spacing: 5px; font-weight: 700; }
+        nav a { color: #cccccc; text-decoration: none; margin: 0 15px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; transition: color 0.3s; }
         nav a:hover { color: #d4af37; }
-        .hero { 
-            position: relative;
-            text-align: center; 
-            padding: 220px 20px 150px 20px; 
-            overflow: hidden; 
-            border-bottom: 3px solid #d4af37;
-        }
-        .hero-bg {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            background-image: url('https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg');
-            background-size: cover;
-            background-position: center;
-            z-index: -2;
-            animation: zoomEfeito 25s infinite alternate linear;
-        }
-        @keyframes zoomEfeito {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.15); }
-        }
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(5,5,5,0.6), rgba(5,5,5,0.9)); 
-            z-index: -1;
-        }
+        .hero { position: relative; text-align: center; padding: 220px 20px 150px 20px; overflow: hidden; border-bottom: 3px solid #d4af37; }
+        .hero-bg { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background-image: url('https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg'); background-size: cover; background-position: center; z-index: -2; animation: zoomEfeito 25s infinite alternate linear; }
+        @keyframes zoomEfeito { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(5,5,5,0.6), rgba(5,5,5,0.9)); z-index: -1; }
         .hero-content { position: relative; z-index: 1; }
-        .hero-content h2 { 
-            font-size: 4em; 
-            margin-bottom: 15px; 
-            color: #ffffff; 
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 10px #000;
-        }
-        .hero-content p { 
-            font-size: 1.3em; 
-            margin-bottom: 50px; 
-            color: #dddddd; 
-            font-weight: 400;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            text-shadow: 1px 1px 5px #000;
-        }
+        .hero-content h2 { font-size: 4em; margin-bottom: 15px; color: #ffffff; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; text-shadow: 2px 2px 10px #000; }
+        .hero-content p { font-size: 1.3em; margin-bottom: 50px; color: #dddddd; font-weight: 400; max-width: 700px; margin-left: auto; margin-right: auto; text-shadow: 1px 1px 5px #000; }
         .hero-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .btn-gold {
-            background-color: #d4af37; color: #050505; padding: 15px 40px; text-decoration: none;
-            font-size: 1.1em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
-            border: 2px solid #d4af37; border-radius: 3px; transition: all 0.4s ease; cursor: pointer;
-        }
+        .btn-gold { background-color: #d4af37; color: #050505; padding: 15px 40px; text-decoration: none; font-size: 1.1em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border: 2px solid #d4af37; border-radius: 3px; transition: all 0.4s ease; cursor: pointer; }
         .btn-gold:hover { background-color: transparent; color: #d4af37; }
-        .btn-white {
-            background-color: transparent; color: #ffffff; padding: 15px 40px; text-decoration: none;
-            font-size: 1em; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
-            border: 2px solid #ffffff; border-radius: 3px; transition: all 0.4s ease;
-        }
+        .btn-white { background-color: transparent; color: #ffffff; padding: 15px 40px; text-decoration: none; font-size: 1em; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; border: 2px solid #ffffff; border-radius: 3px; transition: all 0.4s ease; }
         .btn-white:hover { background-color: #ffffff; color: #050505; }
         .section { padding: 90px 20px; max-width: 1200px; margin: auto; text-align: center; }
-        .section-title { 
-            color: #ffffff; font-size: 2.2em; margin-bottom: 50px; text-transform: uppercase; 
-            letter-spacing: 4px; font-weight: 700;
-        }
-        .section-title::after {
-            content: ''; display: block; width: 60px; height: 3px; background: #d4af37; margin: 20px auto 0 auto;
-        }
+        .section-title { color: #ffffff; font-size: 2.2em; margin-bottom: 50px; text-transform: uppercase; letter-spacing: 4px; font-weight: 700; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: #d4af37; margin: 20px auto 0 auto; }
         .sobre-texto { font-size: 1.1em; color: #aaaaaa; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
-        .service-card { 
-            background-color: transparent; padding: 40px 20px; width: 260px; border: 1px solid #333; 
-            transition: all 0.4s ease; display: flex; flex-direction: column; justify-content: space-between;
-        }
+        .service-card { background-color: transparent; padding: 40px 20px; width: 260px; border: 1px solid #333; transition: all 0.4s ease; display: flex; flex-direction: column; justify-content: space-between; }
         .service-card:hover { border-color: #d4af37; transform: translateY(-10px); background-color: #0a0a0a; }
         .service-card h3 { color: #ffffff; margin-top: 0; font-size: 1.3em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
         .service-card p { color: #888888; font-size: 0.95em; flex-grow: 1; font-weight: 400; }
         .service-price { font-size: 1.3em; color: #d4af37; margin-top: 20px; font-weight: 700; }
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
-        .galeria-grid img { 
-            width: 100%; height: 350px; object-fit: cover; border-radius: 0; 
-            filter: contrast(110%) saturate(120%); transition: all 0.5s ease;
-        }
+        .galeria-grid img { width: 100%; height: 350px; object-fit: cover; border-radius: 0; filter: contrast(110%) saturate(120%); transition: all 0.5s ease; }
         .galeria-grid img:hover { transform: scale(1.03); border: 2px solid #d4af37; }
-        .form-agendamento { 
-            background-color: #0a0a0a; padding: 50px; border: 1px solid #333; max-width: 600px; 
-            margin: 0 auto; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-        }
+        .form-agendamento { background-color: #0a0a0a; padding: 50px; border: 1px solid #333; max-width: 600px; margin: 0 auto; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
         .form-group { margin-bottom: 25px; }
         .form-group label { display: block; margin-bottom: 10px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .form-group input, .form-group select { 
-            width: 100%; padding: 15px; background-color: #050505; color: #ffffff; font-size: 1em; 
-            border: 1px solid #333; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: border-color 0.3s;
-        }
+        .form-group input, .form-group select { width: 100%; padding: 15px; background-color: #050505; color: #ffffff; font-size: 1em; border: 1px solid #333; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: border-color 0.3s; }
         .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; background-color: #111; }
         .horarios-box { text-align: center; color: #999999; font-size: 1.1em; line-height: 2; font-weight: 400; }
         .horarios-box span { color: #d4af37; font-weight: 700; display: block; font-size: 1.2em; margin-top: 5px; }
@@ -164,7 +59,6 @@
     </style>
 </head>
 <body>
-
     <header>
         <h1>Kiko Barbearia</h1>
         <nav>
@@ -307,17 +201,16 @@
 
     <footer>
         <p>&copy; 2026 Kiko Barbearia. Todos os direitos reservados.</p>
-        
         <div style="margin: 25px 0;">
             <p style="font-size: 0.9em; color: #777; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Visitas ao Site</p>
             <img src="https://api.visitorbadge.io/api/visitors?path=kikobarbearia-site&countColor=%23d4af37&style=flat-square" alt="Contador de Visitas">
         </div>
-
         <p><a href="painel.html">Acesso Administrativo</a></p>
     </footer>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9OEtLlrm5tjTN8U-zbvQQHJj1rhchnLngtW-iR0Y36TGdiNRzcXLkwsKIhqQ-RRcZ1w/exec';
+        // O NOVO LINK ESTÁ AQUI
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
         const form = document.getElementById('formAgendamento');
         const btnSubmit = document.getElementById('btnSubmit');
@@ -327,33 +220,24 @@
         let agendamentosDaNuvem = [];
 
         function atualizarValor() {
-            const selectServico = document.getElementById('servico');
-            const valorOption = selectServico.options[selectServico.selectedIndex].getAttribute('data-valor');
-            document.getElementById('valor').value = valorOption;
+            document.getElementById('valor').value = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].getAttribute('data-valor');
         }
 
         window.onload = function() {
             msgStatus.innerText = "Sincronizando com a Google Agenda...";
             msgStatus.style.color = "#555";
-            
             let hoje = new Date().toISOString().split('T')[0];
             inputData.setAttribute('min', hoje);
 
             fetch(scriptURL)
                 .then(response => response.json())
-                .then(data => {
-                    agendamentosDaNuvem = data;
-                    msgStatus.innerText = "";
-                })
-                .catch(error => {
-                    msgStatus.innerText = "Modo offline ativo. Pode agendar normalmente.";
-                });
+                .then(data => { agendamentosDaNuvem = data; msgStatus.innerText = ""; })
+                .catch(error => { msgStatus.innerText = "Modo offline ativo. Pode agendar normalmente."; });
         };
 
         function verificarHorarios() {
             const dataEscolhida = inputData.value;
             if (!dataEscolhida) return;
-
             selectHora.disabled = false;
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
@@ -362,22 +246,12 @@
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
                     let dataDoGoogle = String(ag.data).replace(/T.*/, "");
-                    let horasBatem = String(ag.hora).trim() === String(hora).trim();
-                    let datasBatem = dataDoGoogle === dataEscolhida;
-
-                    return datasBatem && horasBatem;
+                    return dataDoGoogle === dataEscolhida && String(ag.hora).trim() === String(hora).trim();
                 });
-                
                 const option = document.createElement('option');
                 option.value = hora;
-                
-                if (ocupado) {
-                    option.text = hora + " (Indisponível)";
-                    option.disabled = true;
-                    option.style.color = "#ff4444";
-                } else {
-                    option.text = hora;
-                }
+                if (ocupado) { option.text = hora + " (Indisponível)"; option.disabled = true; option.style.color = "#ff4444"; } 
+                else { option.text = hora; }
                 selectHora.add(option);
             });
         }
@@ -389,17 +263,15 @@
             msgStatus.innerText = "Registrando seu horário na agenda, aguarde...";
             msgStatus.style.color = "#d4af37";
 
-            const formData = new FormData(form);
-            // CORREÇÃO AQUI: Força a conversão dos dados para o Google entender 100%
-            const dadosConvertidos = new URLSearchParams(formData).toString();
+            const urlEncoded = new URLSearchParams(new FormData(form)).toString();
 
             fetch(scriptURL, { 
                 method: 'POST', 
-                body: dadosConvertidos, 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                mode: 'no-cors' 
+                body: urlEncoded, 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             })
-            .then(() => {
+            .then(response => response.text())
+            .then(respostaServidor => {
                 msgStatus.innerText = "Agendamento confirmado com sucesso!";
                 msgStatus.style.color = "#d4af37";
                 
@@ -411,10 +283,7 @@
                 var hora = document.getElementById('hora').value;
 
                 var texto = "Olá, Kiko Barbearia! Meu agendamento foi registrado no aplicativo.%0A%0A" + 
-                            "*Nome:* " + nome + "%0A" + 
-                            "*Serviço:* " + servico + "%0A" + 
-                            "*Data:* " + data_br + "%0A" + 
-                            "*Horário:* " + hora;
+                            "*Nome:* " + nome + "%0A" + "*Serviço:* " + servico + "%0A" + "*Data:* " + data_br + "%0A" + "*Horário:* " + hora;
 
                 form.reset();
                 selectHora.disabled = true;
