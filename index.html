@@ -16,7 +16,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* Estilos Premium - Pegada Urbana/Cartel */
         body { 
             font-family: 'Montserrat', sans-serif; 
             margin: 0; 
@@ -26,8 +25,6 @@
             line-height: 1.6;
             overflow-x: hidden; 
         }
-
-        /* Menu Flutuante */
         header { 
             position: fixed;
             top: 0;
@@ -59,10 +56,6 @@
             transition: color 0.3s; 
         }
         nav a:hover { color: #d4af37; }
-
-        /* =========================================
-           EFEITO "KEN BURNS" - FOTO EM MOVIMENTO
-           ========================================= */
         .hero { 
             position: relative;
             text-align: center; 
@@ -70,7 +63,6 @@
             overflow: hidden; 
             border-bottom: 3px solid #d4af37;
         }
-        
         .hero-bg {
             position: absolute;
             top: -10%;
@@ -83,12 +75,10 @@
             z-index: -2;
             animation: zoomEfeito 25s infinite alternate linear;
         }
-
         @keyframes zoomEfeito {
             0% { transform: scale(1); }
             100% { transform: scale(1.15); }
         }
-
         .hero-overlay {
             position: absolute;
             top: 0;
@@ -98,12 +88,7 @@
             background: linear-gradient(rgba(5,5,5,0.6), rgba(5,5,5,0.9)); 
             z-index: -1;
         }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
+        .hero-content { position: relative; z-index: 1; }
         .hero-content h2 { 
             font-size: 4em; 
             margin-bottom: 15px; 
@@ -123,127 +108,56 @@
             margin-right: auto;
             text-shadow: 1px 1px 5px #000;
         }
-
         .hero-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        
         .btn-gold {
-            background-color: #d4af37; 
-            color: #050505;
-            padding: 15px 40px;
-            text-decoration: none;
-            font-size: 1.1em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border: 2px solid #d4af37;
-            border-radius: 3px; 
-            transition: all 0.4s ease;
-            cursor: pointer;
+            background-color: #d4af37; color: #050505; padding: 15px 40px; text-decoration: none;
+            font-size: 1.1em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+            border: 2px solid #d4af37; border-radius: 3px; transition: all 0.4s ease; cursor: pointer;
         }
-        .btn-gold:hover {
-            background-color: transparent;
-            color: #d4af37;
-        }
-        
+        .btn-gold:hover { background-color: transparent; color: #d4af37; }
         .btn-white {
-            background-color: transparent;
-            color: #ffffff;
-            padding: 15px 40px;
-            text-decoration: none;
-            font-size: 1em;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border: 2px solid #ffffff;
-            border-radius: 3px;
-            transition: all 0.4s ease;
+            background-color: transparent; color: #ffffff; padding: 15px 40px; text-decoration: none;
+            font-size: 1em; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+            border: 2px solid #ffffff; border-radius: 3px; transition: all 0.4s ease;
         }
-        .btn-white:hover {
-            background-color: #ffffff;
-            color: #050505;
-        }
-
+        .btn-white:hover { background-color: #ffffff; color: #050505; }
         .section { padding: 90px 20px; max-width: 1200px; margin: auto; text-align: center; }
         .section-title { 
-            color: #ffffff; 
-            font-size: 2.2em; 
-            margin-bottom: 50px; 
-            text-transform: uppercase; 
-            letter-spacing: 4px; 
-            font-weight: 700;
+            color: #ffffff; font-size: 2.2em; margin-bottom: 50px; text-transform: uppercase; 
+            letter-spacing: 4px; font-weight: 700;
         }
         .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: #d4af37;
-            margin: 20px auto 0 auto;
+            content: ''; display: block; width: 60px; height: 3px; background: #d4af37; margin: 20px auto 0 auto;
         }
         .sobre-texto { font-size: 1.1em; color: #aaaaaa; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
-
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
         .service-card { 
-            background-color: transparent; 
-            padding: 40px 20px; 
-            width: 260px; 
-            border: 1px solid #333; 
-            transition: all 0.4s ease; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
+            background-color: transparent; padding: 40px 20px; width: 260px; border: 1px solid #333; 
+            transition: all 0.4s ease; display: flex; flex-direction: column; justify-content: space-between;
         }
         .service-card:hover { border-color: #d4af37; transform: translateY(-10px); background-color: #0a0a0a; }
         .service-card h3 { color: #ffffff; margin-top: 0; font-size: 1.3em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
         .service-card p { color: #888888; font-size: 0.95em; flex-grow: 1; font-weight: 400; }
-        .service-price { 
-            font-size: 1.3em; 
-            color: #d4af37; 
-            margin-top: 20px; 
-            font-weight: 700; 
-        }
-
+        .service-price { font-size: 1.3em; color: #d4af37; margin-top: 20px; font-weight: 700; }
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
         .galeria-grid img { 
-            width: 100%; 
-            height: 350px; 
-            object-fit: cover; 
-            border-radius: 0; 
-            filter: contrast(110%) saturate(120%); 
-            transition: all 0.5s ease;
+            width: 100%; height: 350px; object-fit: cover; border-radius: 0; 
+            filter: contrast(110%) saturate(120%); transition: all 0.5s ease;
         }
-        .galeria-grid img:hover { 
-            transform: scale(1.03); 
-            border: 2px solid #d4af37;
-        }
-
+        .galeria-grid img:hover { transform: scale(1.03); border: 2px solid #d4af37; }
         .form-agendamento { 
-            background-color: #0a0a0a; 
-            padding: 50px; 
-            border: 1px solid #333; 
-            max-width: 600px; 
-            margin: 0 auto; 
-            text-align: left; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            background-color: #0a0a0a; padding: 50px; border: 1px solid #333; max-width: 600px; 
+            margin: 0 auto; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
         }
         .form-group { margin-bottom: 25px; }
         .form-group label { display: block; margin-bottom: 10px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .form-group input, .form-group select { 
-            width: 100%; 
-            padding: 15px; 
-            background-color: #050505; 
-            color: #ffffff; 
-            font-size: 1em; 
-            border: 1px solid #333;
-            box-sizing: border-box; 
-            font-family: 'Montserrat', sans-serif;
-            transition: border-color 0.3s;
+            width: 100%; padding: 15px; background-color: #050505; color: #ffffff; font-size: 1em; 
+            border: 1px solid #333; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: border-color 0.3s;
         }
         .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; background-color: #111; }
-        
         .horarios-box { text-align: center; color: #999999; font-size: 1.1em; line-height: 2; font-weight: 400; }
         .horarios-box span { color: #d4af37; font-weight: 700; display: block; font-size: 1.2em; margin-top: 5px; }
-        
         footer { background-color: #030303; text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #555555; font-size: 0.85em; font-weight: 400; letter-spacing: 1px; }
         footer a { color: #777777; text-decoration: none; transition: color 0.3s; }
         footer a:hover { color: #d4af37; }
@@ -267,7 +181,6 @@
     <div class="hero">
         <div class="hero-bg"></div>
         <div class="hero-overlay"></div>
-        
         <div class="hero-content">
             <h2>Kiko Barbearia</h2>
             <p>Tradição, atitude e um ambiente de alto padrão pensado exclusivamente para o homem moderno.</p>
@@ -404,7 +317,6 @@
     </footer>
 
     <script>
-        // --- NOVO LINK DA GOOGLE AGENDA ATUALIZADO AQUI ---
         const scriptURL = 'https://script.google.com/macros/s/AKfycbz9OEtLlrm5tjTN8U-zbvQQHJj1rhchnLngtW-iR0Y36TGdiNRzcXLkwsKIhqQ-RRcZ1w/exec';
         
         const form = document.getElementById('formAgendamento');
@@ -478,39 +390,46 @@
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
+            // CORREÇÃO AQUI: Força a conversão dos dados para o Google entender 100%
+            const dadosConvertidos = new URLSearchParams(formData).toString();
 
-            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
-                .then(() => {
-                    msgStatus.innerText = "Agendamento confirmado com sucesso!";
-                    msgStatus.style.color = "#d4af37";
-                    
-                    var data_americana = document.getElementById('data').value;
-                    var partes_data = data_americana.split('-');
-                    var data_br = partes_data[2] + '/' + partes_data[1] + '/' + partes_data[0];
-                    var nome = document.getElementById('nome').value;
-                    var servico = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].text;
-                    var hora = document.getElementById('hora').value;
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: dadosConvertidos, 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                mode: 'no-cors' 
+            })
+            .then(() => {
+                msgStatus.innerText = "Agendamento confirmado com sucesso!";
+                msgStatus.style.color = "#d4af37";
+                
+                var data_americana = document.getElementById('data').value;
+                var partes_data = data_americana.split('-');
+                var data_br = partes_data[2] + '/' + partes_data[1] + '/' + partes_data[0];
+                var nome = document.getElementById('nome').value;
+                var servico = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].text;
+                var hora = document.getElementById('hora').value;
 
-                    var texto = "Olá, Kiko Barbearia! Meu agendamento foi registrado no aplicativo.%0A%0A" + 
-                                "*Nome:* " + nome + "%0A" + 
-                                "*Serviço:* " + servico + "%0A" + 
-                                "*Data:* " + data_br + "%0A" + 
-                                "*Horário:* " + hora;
+                var texto = "Olá, Kiko Barbearia! Meu agendamento foi registrado no aplicativo.%0A%0A" + 
+                            "*Nome:* " + nome + "%0A" + 
+                            "*Serviço:* " + servico + "%0A" + 
+                            "*Data:* " + data_br + "%0A" + 
+                            "*Horário:* " + hora;
 
-                    form.reset();
-                    selectHora.disabled = true;
-                    
-                    setTimeout(() => {
-                        window.open("https://wa.me/5567999673200?text=" + texto, '_blank');
-                        location.reload(); 
-                    }, 1500);
-                })
-                .catch(error => {
-                    msgStatus.innerText = "Erro ao enviar. Tente novamente.";
-                    msgStatus.style.color = "#ff4444";
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = "Confirmar Agendamento";
-                });
+                form.reset();
+                selectHora.disabled = true;
+                
+                setTimeout(() => {
+                    window.open("https://wa.me/5567999673200?text=" + texto, '_blank');
+                    location.reload(); 
+                }, 1500);
+            })
+            .catch(error => {
+                msgStatus.innerText = "Erro ao enviar. Tente novamente.";
+                msgStatus.style.color = "#ff4444";
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Confirmar Agendamento";
+            });
         });
     </script>
 </body>
