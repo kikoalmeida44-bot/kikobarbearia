@@ -46,13 +46,15 @@
                 <label for="servico">Serviço/Função:</label>
                 <select id="servico" name="servico" required onchange="atualizarValor()">
                     <option value="" disabled selected data-valor="0">Selecione...</option>
-                    <option value="Corte Premium" data-valor="50">Corte Premium (R$ 50,00)</option>
-                    <option value="Barboterapia" data-valor="50">Barboterapia (R$ 50,00)</option>
-                    <option value="O Pacote Completo" data-valor="100">O Pacote Completo (R$ 100,00)</option>
-                    <option value="Progressiva" data-valor="150">Progressiva (R$ 150,00)</option>
-                    <option value="Pigmentação" data-valor="100">Pigmentação (R$ 100,00)</option>
-                    <option value="Coloração" data-valor="100">Coloração (R$ 100,00)</option>
-                    <option value="Design de Sobrancelha" data-valor="25">Design de Sobrancelha (R$ 25,00)</option>
+                    <option value="Corte Masculino" data-valor="50">Corte Masculino (20 min) - R$ 50,00</option>
+                    <option value="Barba" data-valor="50">Barba (15 min) - R$ 50,00</option>
+                    <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (45 min) - R$ 100,00</option>
+                    <option value="Progressiva" data-valor="150">Progressiva (30 min) - R$ 150,00</option>
+                    <option value="Corte Feminino" data-valor="60">Corte Feminino (30 min) - R$ 60,00</option>
+                    <option value="Coloração" data-valor="100">Coloração (1 hora) - R$ 100,00</option>
+                    <option value="Sobrancelha" data-valor="25">Sobrancelha (10 min) - R$ 25,00</option>
+                    <option value="Dois Cortes de Cabelo" data-valor="100">Dois Cortes de Cabelo (45 min) - R$ 100,00</option>
+                    <option value="Três Cortes de Cabelo" data-valor="150">Três Cortes de Cabelo (1 hora) - R$ 150,00</option>
                     <option value="Bloqueio de Agenda (Interno)" data-valor="0" style="color:#d4af37; font-weight:bold;">⚠️ Bloqueio de Horário</option>
                 </select>
                 <input type="hidden" id="valor" name="valor" value="0">
@@ -118,13 +120,11 @@
             selectHora.disabled = false;
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
-            // --- LISTA DE HORÁRIOS ATUALIZADA (20 EM 20 MINUTOS) ---
             const todosHorarios = [
                 "08:00", "08:20", "08:40",
                 "09:00", "09:20", "09:40",
                 "10:00", "10:20", "10:40",
                 "11:00", "11:20", "11:40",
-                "12:00", "12:20", "12:40",
                 "13:00", "13:20", "13:40",
                 "14:00", "14:20", "14:40",
                 "15:00", "15:20", "15:40",
