@@ -10,6 +10,7 @@
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Ícone da sua logomarca para a tela inicial -->
     <link rel="apple-touch-icon" href="logo.jpg">
 
     <!-- Importando a fonte premium do Google -->
@@ -413,9 +414,10 @@
         <p><a href="painel.html">Acesso Administrativo</a></p>
     </footer>
 
-    <!-- SCRIPT DE CONEXÃO COM O GOOGLE PLANILHAS -->
+    <!-- SCRIPT DE CONEXÃO COM O GOOGLE AGENDA -->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw8eC5tExG3qBqSk11BbeQg9dPHTNk8jfZ_KgtFfIpqBnTNbGSbW_E6EcIrrRZNnjI6/exec';
+        // NOVO LINK DO GOOGLE AGENDA
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxu1fr2whjdg5jMH9siAJTP8aIdSXgJYpTY7V6AoMnVIIcUumzh7UYrSt-VYWEGM7CC/exec';
         
         const form = document.getElementById('formAgendamento');
         const btnSubmit = document.getElementById('btnSubmit');
@@ -431,7 +433,7 @@
         }
 
         window.onload = function() {
-            msgStatus.innerText = "Sincronizando a agenda com o sistema...";
+            msgStatus.innerText = "Sincronizando com a Google Agenda...";
             msgStatus.style.color = "#555";
             
             let hoje = new Date().toISOString().split('T')[0];
@@ -444,7 +446,7 @@
                     msgStatus.innerText = "";
                 })
                 .catch(error => {
-                    msgStatus.innerText = "Modo offline ativo. Você pode agendar normalmente.";
+                    msgStatus.innerText = "Modo offline ativo. Pode agendar normalmente.";
                 });
         };
 
@@ -459,20 +461,10 @@
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
+                    // Limpa qualquer vestígio de T ou Z na data retornada pela nuvem, garantindo a comparação correta
                     let dataDoGoogle = String(ag.data).replace(/T.*/, "");
-                    let dataBaseString = String(ag.data);
-                    
                     let horasBatem = String(ag.hora).trim() === String(hora).trim();
-                    let datasBatem = dataBaseString.includes(dataEscolhida) || dataDoGoogle === dataEscolhida;
-
-                    if (!datasBatem && dataBaseString.includes("T")) {
-                         let tempDate = new Date(ag.data);
-                         tempDate.setMinutes(tempDate.getMinutes() + tempDate.getTimezoneOffset());
-                         let dataCorrigida = tempDate.toISOString().split('T')[0];
-                         if (dataCorrigida === dataEscolhida) {
-                             datasBatem = true;
-                         }
-                    }
+                    let datasBatem = dataDoGoogle === dataEscolhida;
 
                     return datasBatem && horasBatem;
                 });
@@ -495,7 +487,7 @@
             e.preventDefault();
             btnSubmit.disabled = true;
             btnSubmit.innerText = "Processando...";
-            msgStatus.innerText = "Registrando seu horário no sistema, aguarde...";
+            msgStatus.innerText = "Registrando seu horário na agenda, aguarde...";
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
@@ -512,7 +504,7 @@
                     var servico = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].text;
                     var hora = document.getElementById('hora').value;
 
-                    var texto = "Olá, Kiko Barbearia! Meu agendamento foi registrado no site.%0A%0A" + 
+                    var texto = "Olá, Kiko Barbearia! Meu agendamento foi registrado no aplicativo.%0A%0A" + 
                                 "*Nome:* " + nome + "%0A" + 
                                 "*Serviço:* " + servico + "%0A" + 
                                 "*Data:* " + data_br + "%0A" + 
