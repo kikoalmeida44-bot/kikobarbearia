@@ -93,39 +93,49 @@
         <h2 class="section-title">Nossos Serviços</h2>
         <div class="services">
             <div class="service-card">
-                <h3>Corte</h3>
-                <p>Cortes modernos, clássicos e degradê com finalização impecável.</p>
+                <h3>Corte Masculino</h3>
+                <p>Corte moderno com acabamento impecável.</p>
                 <div class="service-price">R$ 50,00</div>
             </div>
             <div class="service-card">
                 <h3>Barba</h3>
-                <p>Alinhamento de barba, toalha quente e hidratação profunda.</p>
+                <p>Alinhamento de barba, toalha quente e hidratação.</p>
                 <div class="service-price">R$ 50,00</div>
             </div>
             <div class="service-card">
                 <h3>Cabelo e Barba</h3>
-                <p>O pacote completo para dar aquele talento no visual com alinhamento perfeito.</p>
+                <p>O combo perfeito para renovar o visual.</p>
                 <div class="service-price">R$ 100,00</div>
             </div>
             <div class="service-card">
-                <h3>Progressiva Masculina</h3>
-                <p>Redução de volume e alinhamento dos fios para um cabelo prático e alinhado.</p>
+                <h3>Progressiva</h3>
+                <p>Redução de volume e alinhamento dos fios.</p>
                 <div class="service-price">R$ 150,00</div>
             </div>
             <div class="service-card">
-                <h3>Pigmentação</h3>
-                <p>Realce dos traços, cobertura de falhas e mais volume para o cabelo ou barba.</p>
-                <div class="service-price">R$ 100,00</div>
+                <h3>Corte Feminino</h3>
+                <p>Estilo e precisão para cortes femininos.</p>
+                <div class="service-price">R$ 60,00</div>
             </div>
             <div class="service-card">
                 <h3>Coloração</h3>
-                <p>Mudança de estilo ou cobertura de fios brancos mantendo a saúde do cabelo.</p>
+                <p>Cobertura de fios e mudança de visual.</p>
                 <div class="service-price">R$ 100,00</div>
             </div>
             <div class="service-card">
                 <h3>Sobrancelha</h3>
-                <p>Atenção aos detalhes e alinhamento na navalha.</p>
+                <p>Alinhamento e design na navalha.</p>
                 <div class="service-price">R$ 25,00</div>
+            </div>
+            <div class="service-card">
+                <h3>Dois Cortes de Cabelo</h3>
+                <p>Combo para dupla (amigos ou pai e filho).</p>
+                <div class="service-price">R$ 100,00</div>
+            </div>
+            <div class="service-card">
+                <h3>Três Cortes de Cabelo</h3>
+                <p>Pacote especial para trio.</p>
+                <div class="service-price">R$ 150,00</div>
             </div>
         </div>
     </div>
@@ -158,13 +168,15 @@
                     <label for="servico">Serviço Desejado:</label>
                     <select id="servico" name="servico" required onchange="atualizarValor()">
                         <option value="" disabled selected data-valor="0">Selecione o serviço...</option>
-                        <option value="Corte" data-valor="50">Corte (R$ 50,00)</option>
-                        <option value="Barba" data-valor="50">Barba (R$ 50,00)</option>
-                        <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (R$ 100,00)</option>
-                        <option value="Progressiva Masculina" data-valor="150">Progressiva Masculina (R$ 150,00)</option>
-                        <option value="Pigmentação" data-valor="100">Pigmentação (R$ 100,00)</option>
-                        <option value="Coloração" data-valor="100">Coloração (R$ 100,00)</option>
-                        <option value="Sobrancelha" data-valor="25">Sobrancelha (R$ 25,00)</option>
+                        <option value="Corte Masculino" data-valor="50">Corte Masculino (20 min) - R$ 50,00</option>
+                        <option value="Barba" data-valor="50">Barba (15 min) - R$ 50,00</option>
+                        <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (45 min) - R$ 100,00</option>
+                        <option value="Progressiva" data-valor="150">Progressiva (30 min) - R$ 150,00</option>
+                        <option value="Corte Feminino" data-valor="60">Corte Feminino (30 min) - R$ 60,00</option>
+                        <option value="Coloração" data-valor="100">Coloração (1 hora) - R$ 100,00</option>
+                        <option value="Sobrancelha" data-valor="25">Sobrancelha (10 min) - R$ 25,00</option>
+                        <option value="Dois Cortes de Cabelo" data-valor="100">Dois Cortes de Cabelo (45 min) - R$ 100,00</option>
+                        <option value="Três Cortes de Cabelo" data-valor="150">Três Cortes de Cabelo (1 hora) - R$ 150,00</option>
                     </select>
                     <input type="hidden" id="valor" name="valor" value="0">
                 </div>
@@ -191,7 +203,7 @@
         <h2 class="section-title">Atendimento</h2>
         <div class="horarios-box">
             Segunda a Sábado <br>
-            <span>08:00 — 11:00 | 13:00 — 19:00</span>
+            <span>08:00 — 11:40 | 13:00 — 19:40</span>
             <br><br>
             Avenida Mato Grosso do Sul, 207 <br> Coxim, MS
         </div>
@@ -207,7 +219,6 @@
     </footer>
 
     <script>
-        // NOVO LINK CORRETO (/exec)
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
         const form = document.getElementById('formAgendamento');
@@ -239,7 +250,20 @@
             selectHora.disabled = false;
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
-            const todosHorarios = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+            // Grade de horários de 20 em 20 minutos
+            const todosHorarios = [
+                "08:00", "08:20", "08:40",
+                "09:00", "09:20", "09:40",
+                "10:00", "10:20", "10:40",
+                "11:00", "11:20", "11:40",
+                "13:00", "13:20", "13:40",
+                "14:00", "14:20", "14:40",
+                "15:00", "15:20", "15:40",
+                "16:00", "16:20", "16:40",
+                "17:00", "17:20", "17:40",
+                "18:00", "18:20", "18:40",
+                "19:00", "19:20"
+            ];
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
@@ -262,7 +286,6 @@
 
             const formData = new FormData(form);
 
-            // MODO NO-CORS RESTAURADO PARA GARANTIR O ENVIO
             fetch(scriptURL, { 
                 method: 'POST', 
                 body: formData, 
