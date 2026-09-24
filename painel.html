@@ -93,7 +93,6 @@
             document.getElementById('erro-senha').style.display = 'none';
         }
 
-        // NOVO LINK CORRETO (/exec)
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
         const form = document.getElementById('formAdmin');
@@ -119,7 +118,21 @@
             selectHora.disabled = false;
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
-            const todosHorarios = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+            // --- LISTA DE HORÁRIOS ATUALIZADA (20 EM 20 MINUTOS) ---
+            const todosHorarios = [
+                "08:00", "08:20", "08:40",
+                "09:00", "09:20", "09:40",
+                "10:00", "10:20", "10:40",
+                "11:00", "11:20", "11:40",
+                "12:00", "12:20", "12:40",
+                "13:00", "13:20", "13:40",
+                "14:00", "14:20", "14:40",
+                "15:00", "15:20", "15:40",
+                "16:00", "16:20", "16:40",
+                "17:00", "17:20", "17:40",
+                "18:00", "18:20", "18:40",
+                "19:00", "19:20"
+            ];
             
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => {
