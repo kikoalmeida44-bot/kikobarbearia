@@ -142,7 +142,9 @@
 
     <div id="galeria" class="section">
         <h2 class="section-title">Nossa Galeria</h2>
-        <div class="galeria-grid">
+        <!-- A GALERIA AGORA CARREGA AS FOTOS AUTOMATICAMENTE DO PAINEL -->
+        <div class="galeria-grid" id="galeriaDinamica">
+            <!-- Fotos padrão iniciais -->
             <img src="https://i.postimg.cc/zfMqHQc6/20260524-220545-COLLAGE.jpg" alt="Trabalho Barbearia Kiko">
             <img src="https://i.postimg.cc/BvyJPzzW/20260524-220725-COLLAGE.jpg" alt="Trabalho Barbearia Kiko">
             <img src="https://i.postimg.cc/CKtwn2Qk/20260618-064651-COLLAGE.jpg" alt="Trabalho Barbearia Kiko">
@@ -238,10 +240,29 @@
             let hoje = new Date().toISOString().split('T')[0];
             inputData.setAttribute('min', hoje);
 
+            // Carrega os horários ocupados
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => { agendamentosDaNuvem = data; msgStatus.innerText = ""; })
                 .catch(error => { msgStatus.innerText = "Modo offline ativo. Pode agendar normalmente."; });
+
+            // Carrega dinamicamente as fotos da galeria salvas no painel
+            fetch(scriptURL + "?acao=obter_fotos")
+                .then(response => response.json())
+                .then(fotosNovas => {
+                    if (fotosNovas && fotosNovas.length > 0) {
+                        const gridGaleria = document.getElementById('galeriaDinamica');
+                        // Mantém as originais e adiciona as novas no topo
+                        let htmlFotos = "";
+                        fotosNovas.forEach(linkFoto => {
+                            htmlFotos += `<img src="${linkFoto}" alt="Trabalho Barbearia Kiko">`;
+                        });
+                        // Adiciona as fotos antigas logo abaixo
+                        htmlFotos += gridGaleria.innerHTML;
+                        gridGaleria.innerHTML = htmlFotos;
+                    }
+                })
+                .catch(err => console.log("Erro ao carregar galeria dinâmica"));
         };
 
         function verificarHorarios() {
@@ -250,18 +271,12 @@
             selectHora.disabled = false;
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
-            // Grade de horários de 20 em 20 minutos
             const todosHorarios = [
-                "08:00", "08:20", "08:40",
-                "09:00", "09:20", "09:40",
-                "10:00", "10:20", "10:40",
-                "11:00", "11:20", "11:40",
-                "13:00", "13:20", "13:40",
-                "14:00", "14:20", "14:40",
-                "15:00", "15:20", "15:40",
-                "16:00", "16:20", "16:40",
-                "17:00", "17:20", "17:40",
-                "18:00", "18:20", "18:40",
+                "08:00", "08:20", "08:40", "09:00", "09:20", "09:40",
+                "10:00", "10:20", "10:40", "11:00", "11:20", "11:40",
+                "13:00", "13:20", "13:40", "14:00", "14:20", "14:40",
+                "15:00", "15:20", "15:40", "16:00", "16:20", "16:40",
+                "17:00", "17:20", "17:40", "18:00", "18:20", "18:40",
                 "19:00", "19:20"
             ];
             
