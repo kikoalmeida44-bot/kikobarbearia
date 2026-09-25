@@ -142,9 +142,7 @@
 
     <div id="galeria" class="section">
         <h2 class="section-title">Nossa Galeria</h2>
-        <!-- A GALERIA AGORA CARREGA AS FOTOS AUTOMATICAMENTE DO PAINEL -->
         <div class="galeria-grid" id="galeriaDinamica">
-            <!-- Fotos padrão iniciais -->
             <img src="https://i.postimg.cc/zfMqHQc6/20260524-220545-COLLAGE.jpg" alt="Trabalho Barbearia Kiko">
             <img src="https://i.postimg.cc/BvyJPzzW/20260524-220725-COLLAGE.jpg" alt="Trabalho Barbearia Kiko">
             <img src="https://i.postimg.cc/CKtwn2Qk/20260618-064651-COLLAGE.jpg" alt="Trabalho Barbearia Kiko">
@@ -240,24 +238,21 @@
             let hoje = new Date().toISOString().split('T')[0];
             inputData.setAttribute('min', hoje);
 
-            // Carrega os horários ocupados
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => { agendamentosDaNuvem = data; msgStatus.innerText = ""; })
                 .catch(error => { msgStatus.innerText = "Modo offline ativo. Pode agendar normalmente."; });
 
-            // Carrega dinamicamente as fotos da galeria salvas no painel
             fetch(scriptURL + "?acao=obter_fotos")
                 .then(response => response.json())
                 .then(fotosNovas => {
                     if (fotosNovas && fotosNovas.length > 0) {
                         const gridGaleria = document.getElementById('galeriaDinamica');
-                        // Mantém as originais e adiciona as novas no topo
                         let htmlFotos = "";
                         fotosNovas.forEach(linkFoto => {
-                            htmlFotos += `<img src="${linkFoto}" alt="Trabalho Barbearia Kiko">`;
+                            // AQUI ESTÁ A MAGIA: onerror oculta a imagem se o link for inválido
+                            htmlFotos += `<img src="${linkFoto}" alt="Trabalho Barbearia Kiko" onerror="this.style.display='none'">`;
                         });
-                        // Adiciona as fotos antigas logo abaixo
                         htmlFotos += gridGaleria.innerHTML;
                         gridGaleria.innerHTML = htmlFotos;
                     }
