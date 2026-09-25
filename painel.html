@@ -6,20 +6,21 @@
     <title>Painel Restrito - Kiko Barbearia</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #ffffff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .painel-container { background-color: #0a0a0a; padding: 30px; border-radius: 8px; border: 1px solid #d4af37; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); margin: 10px; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #ffffff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        .painel-container { background-color: #0a0a0a; padding: 30px; border-radius: 8px; border: 1px solid #d4af37; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); margin: 10px auto; }
         h2 { color: #d4af37; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; font-size: 1.3em; }
+        h3 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #aaaaaa; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 0.95em; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; }
-        .btn-admin { background-color: #d4af37; color: #050505; padding: 12px; border: none; width: 100%; font-size: 1em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; transition: opacity 0.3s; margin-top: 5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 0.95em; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #d4af37; }
+        .btn-admin { background-color: #d4af37; color: #050505; padding: 12px; border: none; width: 100%; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: opacity 0.3s; margin-top: 5px; }
         .btn-admin:hover { opacity: 0.8; }
         .btn-voltar { background-color: transparent; color: #777; border: 1px solid #333; padding: 10px; width: 100%; margin-top: 10px; border-radius: 4px; cursor: pointer; text-align: center; display: block; text-decoration: none; font-weight: 600; }
         .btn-voltar:hover { color: #fff; border-color: #fff; }
         #tela-admin { display: none; }
         .erro-senha { color: #ff4444; text-align: center; margin-top: 10px; font-weight: bold; }
-        hr { border: 0; border-top: 1px solid #222; margin: 25px 0; }
+        hr { border: 0; border-top: 1px solid #222; margin: 30px 0; }
     </style>
 </head>
 <body>
@@ -28,11 +29,10 @@
         <h2>Acesso Restrito</h2>
         <div class="form-group">
             <label for="senha">Senha de Administrador:</label>
-            <input type="password" id="senha" placeholder="Digite a sua senha" onkeypress="verificarEnter(event)">
+            <input type="password" id="senha" placeholder="Digite a senha" onkeypress="verificarEnter(event)">
         </div>
-        <button onclick="verificarSenha()" class="btn-admin">Entrar no Sistema</button>
-        <p class="erro-senha" id="erro-senha" style="display:none;">Senha incorreta. Tente novamente.</p>
-        <a href="index.html" class="btn-voltar">Voltar para o Site</a>
+        <button onclick="verificarSenha()" class="btn-admin">Entrar</button>
+        <p class="erro-senha" id="erro-senha" style="display:none;">Senha incorreta.</p>
     </div>
 
     <div class="painel-container" id="tela-admin">
@@ -40,181 +40,155 @@
         
         <!-- SECÇÃO 1: BLOQUEIO / AGENDAMENTO -->
         <form id="formAdmin">
-            <h3>Controle de Horários</h3>
+            <h3>Agenda</h3>
             <div class="form-group">
-                <label for="nome">Nome (ou Bloqueio):</label>
-                <input type="text" id="nome" name="nome" placeholder="Ex: João Silva ou Fechado" required>
+                <input type="text" id="nome" name="nome" placeholder="Nome do Cliente ou Bloqueio" required>
             </div>
-            
             <div class="form-group">
-                <label for="servico">Serviço/Função:</label>
                 <select id="servico" name="servico" required onchange="atualizarValor()">
-                    <option value="" disabled selected data-valor="0">Selecione...</option>
-                    <option value="Corte Masculino" data-valor="50">Corte Masculino (20 min) - R$ 50,00</option>
-                    <option value="Barba" data-valor="50">Barba (15 min) - R$ 50,00</option>
-                    <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (45 min) - R$ 100,00</option>
-                    <option value="Progressiva" data-valor="150">Progressiva (30 min) - R$ 150,00</option>
-                    <option value="Corte Feminino" data-valor="60">Corte Feminino (30 min) - R$ 60,00</option>
-                    <option value="Coloração" data-valor="100">Coloração (1 hora) - R$ 100,00</option>
-                    <option value="Sobrancelha" data-valor="25">Sobrancelha (10 min) - R$ 25,00</option>
-                    <option value="Dois Cortes de Cabelo" data-valor="100">Dois Cortes de Cabelo (45 min) - R$ 100,00</option>
-                    <option value="Três Cortes de Cabelo" data-valor="150">Três Cortes de Cabelo (1 hora) - R$ 150,00</option>
-                    <option value="Bloqueio de Agenda (Interno)" data-valor="0" style="color:#d4af37; font-weight:bold;">⚠️ Bloqueio de Horário</option>
+                    <option value="" disabled selected>Selecione o serviço...</option>
+                    <option value="Corte Masculino" data-valor="50">Corte (20 min) - R$ 50</option>
+                    <option value="Barba" data-valor="50">Barba (15 min) - R$ 50</option>
+                    <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (45 min) - R$ 100</option>
+                    <option value="Progressiva" data-valor="150">Progressiva (30 min) - R$ 150</option>
+                    <option value="Corte Feminino" data-valor="60">Corte Feminino (30 min) - R$ 60</option>
+                    <option value="Coloração" data-valor="100">Coloração (1 hora) - R$ 100</option>
+                    <option value="Sobrancelha" data-valor="25">Sobrancelha (10 min) - R$ 25</option>
+                    <option value="Bloqueio de Agenda (Interno)" data-valor="0">⚠️ Bloqueio de Horário</option>
                 </select>
                 <input type="hidden" id="valor" name="valor" value="0">
             </div>
-
             <div class="form-group">
-                <label for="data">Data:</label>
                 <input type="date" id="data" name="data" required onchange="verificarHorarios()">
             </div>
-
             <div class="form-group">
-                <label for="hora">Horário a Bloquear:</label>
                 <select id="hora" name="hora" required disabled>
                     <option value="" disabled selected>Selecione a data primeiro...</option>
                 </select>
             </div>
-
-            <button type="submit" id="btnSubmit" class="btn-admin">Confirmar Bloqueio</button>
-            <p id="mensagem-status" style="text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9em;"></p>
+            <button type="submit" id="btnSubmit" class="btn-admin">Confirmar na Agenda</button>
+            <p id="mensagem-status" style="text-align: center; color:#25D366;"></p>
         </form>
 
         <hr>
 
-        <!-- SECÇÃO 2: ADICIONAR FOTO NA GALERIA -->
-        <form id="formFoto" onsubmit="adicionarFoto(event)">
-            <h3>Adicionar Foto na Galeria</h3>
+        <!-- SECÇÃO 2: EDITAR TEXTOS DO SITE -->
+        <form id="formTextos" onsubmit="salvarTextos(event)">
+            <h3>Editar Textos do Site</h3>
             <div class="form-group">
-                <label for="url_foto">Link Direto da Imagem:</label>
-                <input type="text" id="url_foto" placeholder="Cole o link da foto (ex: https://i.postimg.cc/...)" required>
+                <label>Título Principal:</label>
+                <input type="text" id="edit_titulo" required>
             </div>
-            <button type="submit" id="btnFoto" class="btn-admin" style="background-color: #25D366; color: #fff;">Enviar Foto para o Site</button>
-            <p id="status-foto" style="text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9em;"></p>
+            <div class="form-group">
+                <label>Mensagem/Subtítulo:</label>
+                <textarea id="edit_subtitulo" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Texto "Sobre Nós":</label>
+                <textarea id="edit_sobre" rows="5" required></textarea>
+            </div>
+            <button type="submit" id="btnTextos" class="btn-admin" style="background-color: #2596be;">Salvar Textos no Site</button>
+            <p id="status-textos" style="text-align: center; color:#25D366;"></p>
         </form>
 
-        <button type="button" onclick="sair()" class="btn-voltar" style="color: #ff4444; border-color: #ff4444; margin-top: 25px;">Sair / Bloquear Tela</button>
+        <hr>
+
+        <!-- SECÇÃO 3: ADICIONAR FOTO NA GALERIA -->
+        <form id="formFoto" onsubmit="adicionarFoto(event)">
+            <h3>Galeria de Fotos</h3>
+            <div class="form-group">
+                <input type="text" id="url_foto" placeholder="Link direto da imagem (.jpg/.png)" required>
+            </div>
+            <button type="submit" id="btnFoto" class="btn-admin" style="background-color: #25D366;">Adicionar Imagem</button>
+            <p id="status-foto" style="text-align: center; color:#25D366;"></p>
+        </form>
+
+        <button type="button" onclick="sair()" class="btn-voltar" style="color: #ff4444; border-color: #ff4444; margin-top: 30px;">Sair / Bloquear Tela</button>
     </div>
 
     <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
+        let agendamentosDaNuvem = [];
+
         function verificarEnter(e) { if (e.key === 'Enter') { e.preventDefault(); verificarSenha(); } }
         function verificarSenha() {
             if(document.getElementById('senha').value.toLowerCase() === "kiko2026") {
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('tela-admin').style.display = 'block';
                 carregarDados();
+                carregarTextos(); // Puxa os textos atuais para você poder editar
             } else { document.getElementById('erro-senha').style.display = 'block'; }
         }
-        function sair() {
-            document.getElementById('senha').value = '';
-            document.getElementById('tela-admin').style.display = 'none';
-            document.getElementById('tela-login').style.display = 'block';
-            document.getElementById('erro-senha').style.display = 'none';
-        }
-
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
-        
-        const form = document.getElementById('formAdmin');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const msgStatus = document.getElementById('mensagem-status');
-        const selectHora = document.getElementById('hora');
-        const inputData = document.getElementById('data');
-        let agendamentosDaNuvem = [];
-
+        function sair() { location.reload(); }
         function atualizarValor() { document.getElementById('valor').value = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].getAttribute('data-valor'); }
 
+        // Carrega Agenda
         function carregarDados() {
-            msgStatus.innerText = "Sincronizando com o Google Agenda...";
-            fetch(scriptURL)
-                .then(response => response.json())
-                .then(data => { agendamentosDaNuvem = data; msgStatus.innerText = ""; })
-                .catch(error => { msgStatus.innerText = "Modo Offline."; });
+            fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; });
         }
 
-        function verificarHorarios() {
-            const dataEscolhida = inputData.value;
-            if (!dataEscolhida) return;
-            selectHora.disabled = false;
-            selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
-            
-            const todosHorarios = [
-                "08:00", "08:20", "08:40", "09:00", "09:20", "09:40",
-                "10:00", "10:20", "10:40", "11:00", "11:20", "11:40",
-                "13:00", "13:20", "13:40", "14:00", "14:20", "14:40",
-                "15:00", "15:20", "15:40", "16:00", "16:20", "16:40",
-                "17:00", "17:20", "17:40", "18:00", "18:20", "18:40",
-                "19:00", "19:20"
-            ];
-            
-            todosHorarios.forEach(hora => {
-                const ocupado = agendamentosDaNuvem.some(ag => {
-                    return String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === String(hora).trim();
-                });
-                const option = document.createElement('option');
-                option.value = hora;
-                if (ocupado) { option.text = hora + " (Bloqueado)"; option.disabled = true; option.style.color = "#ff4444"; } 
-                else { option.text = hora; }
-                selectHora.add(option);
+        // Carrega Textos para os Inputs do Painel
+        function carregarTextos() {
+            fetch(scriptURL + "?acao=obter_textos").then(res => res.json()).then(textos => {
+                document.getElementById('edit_titulo').value = textos.titulo;
+                document.getElementById('edit_subtitulo').value = textos.subtitulo;
+                document.getElementById('edit_sobre').value = textos.sobre;
             });
         }
 
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-            btnSubmit.disabled = true;
-            btnSubmit.innerText = "Enviando...";
-            msgStatus.innerText = "Registrando bloqueio...";
-            msgStatus.style.color = "#d4af37";
+        // Bloquear Horários
+        function verificarHorarios() {
+            const data = document.getElementById('data').value;
+            if (!data) return;
+            const selectHora = document.getElementById('hora');
+            selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
+            const todos = ["08:00", "08:20", "08:40", "09:00", "09:20", "09:40", "10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "13:00", "13:20", "13:40", "14:00", "14:20", "14:40", "15:00", "15:20", "15:40", "16:00", "16:20", "16:40", "17:00", "17:20", "17:40", "18:00", "18:20", "18:40", "19:00", "19:20"];
+            todos.forEach(hora => {
+                const ocupado = agendamentosDaNuvem.some(ag => String(ag.data) === String(data) && String(ag.hora).trim() === hora);
+                const opt = document.createElement('option'); opt.value = hora;
+                if(ocupado) { opt.text = hora + " (Bloqueado)"; opt.disabled = true; opt.style.color = "#ff4444"; } else { opt.text = hora; }
+                selectHora.add(opt);
+            });
+        }
 
-            const formData = new FormData(form);
-            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+        document.getElementById('formAdmin').addEventListener('submit', e => {
+            e.preventDefault();
+            document.getElementById('btnSubmit').innerText = "Enviando...";
+            fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' })
             .then(() => {
-                msgStatus.innerText = "Bloqueio salvo com sucesso!";
-                msgStatus.style.color = "#25D366";
-                form.reset();
-                selectHora.disabled = true;
-                carregarDados();
-                setTimeout(() => { btnSubmit.disabled = false; btnSubmit.innerText = "Confirmar Bloqueio"; msgStatus.innerText = ""; }, 2500);
-            })
-            .catch(error => {
-                msgStatus.innerText = "Erro ao enviar.";
-                msgStatus.style.color = "#ff4444";
-                btnSubmit.disabled = false;
-                btnSubmit.innerText = "Confirmar Bloqueio";
+                document.getElementById('mensagem-status').innerText = "Bloqueio Salvo!";
+                e.target.reset(); document.getElementById('hora').disabled = true; carregarDados();
+                setTimeout(() => { document.getElementById('btnSubmit').innerText = "Confirmar na Agenda"; document.getElementById('mensagem-status').innerText = ""; }, 2500);
             });
         });
 
-        // FUNÇÃO CORRIGIDA PARA ADICIONAR FOTOS
+        // Enviar Textos Novos
+        function salvarTextos(e) {
+            e.preventDefault();
+            document.getElementById('btnTextos').innerText = "Salvando...";
+            const dados = new URLSearchParams({
+                acao: 'salvar_textos',
+                titulo: document.getElementById('edit_titulo').value,
+                subtitulo: document.getElementById('edit_subtitulo').value,
+                sobre: document.getElementById('edit_sobre').value
+            }).toString();
+            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' })
+            .then(() => {
+                document.getElementById('status-textos').innerText = "Textos atualizados no site!";
+                setTimeout(() => { document.getElementById('btnTextos').innerText = "Salvar Textos no Site"; document.getElementById('status-textos').innerText = ""; }, 3000);
+            });
+        }
+
+        // Adicionar Foto
         function adicionarFoto(e) {
             e.preventDefault();
-            const btnFoto = document.getElementById('btnFoto');
-            const statusFoto = document.getElementById('status-foto');
-            const urlFoto = document.getElementById('url_foto').value;
-
-            btnFoto.disabled = true;
-            statusFoto.innerText = "Enviando foto para o site...";
-            statusFoto.style.color = "#d4af37";
-
-            const dados = new URLSearchParams({
-                acao: 'salvar_foto',
-                url_foto: urlFoto
-            }).toString();
-
-            fetch(scriptURL, { 
-                method: 'POST', 
-                body: dados, 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                mode: 'no-cors'
-            })
+            document.getElementById('btnFoto').innerText = "Enviando...";
+            const dados = new URLSearchParams({ acao: 'salvar_foto', url_foto: document.getElementById('url_foto').value }).toString();
+            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' })
             .then(() => {
-                statusFoto.innerText = "Foto adicionada com sucesso na galeria!";
-                statusFoto.style.color = "#25D366";
+                document.getElementById('status-foto').innerText = "Foto adicionada!";
                 document.getElementById('url_foto').value = "";
-                setTimeout(() => { btnFoto.disabled = false; statusFoto.innerText = ""; }, 3000);
-            })
-            .catch(error => {
-                statusFoto.innerText = "Erro ao enviar foto.";
-                statusFoto.style.color = "#ff4444";
-                btnFoto.disabled = false;
+                setTimeout(() => { document.getElementById('btnFoto').innerText = "Adicionar Imagem"; document.getElementById('status-foto').innerText = ""; }, 3000);
             });
         }
     </script>
