@@ -58,17 +58,13 @@
         .horarios-box span { color: #d4af37; font-weight: 700; font-size: 1.2em; }
         footer { background-color: #030303; text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #555555; }
 
-        /* REGRAS DE RESPONSIVIDADE PARA O TELEMÓVEL (FIX) */
         @media (max-width: 768px) {
             h1 { font-size: 1.8em; }
             .hero { padding: 160px 20px 80px 20px; }
-            .hero-content h2 { font-size: 2.5em; word-break: break-word; } /* Evita que Kiko Barbearia quebre o layout */
+            .hero-content h2 { font-size: 2.5em; word-break: break-word; }
             .hero-content p { font-size: 1.1em; margin-bottom: 35px; }
-            
-            /* Empilha os botões perfeitamente */
             .hero-buttons { flex-direction: column; align-items: center; gap: 15px; }
             .hero-buttons a { width: 100%; max-width: 300px; box-sizing: border-box; }
-            
             .form-agendamento { padding: 30px 20px; }
         }
     </style>
@@ -83,7 +79,7 @@
             <a href="#agendamento">Agendar</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
             <a href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
-            <a href="painel.html" style="color: #666; font-size: 0.7em;">⚙️ Painel</a>
+            <!-- O botão do painel foi removido daqui para ficar 100% oculto -->
         </nav>
     </header>
 
@@ -163,8 +159,8 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Kiko Barbearia. Todos os direitos reservados.</p>
-        <p><a href="painel.html">Acesso Administrativo</a></p>
+        <!-- AQUI ESTÁ O ATALHO SECRETO! O link está disfarçado no nome da Barbearia -->
+        <p>&copy; 2026 <a href="painel.html" style="color: inherit; text-decoration: none; cursor: default;">Kiko Barbearia</a>. Todos os direitos reservados.</p>
     </footer>
 
     <script>
