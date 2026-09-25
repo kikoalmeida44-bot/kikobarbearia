@@ -7,18 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #ffffff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .painel-container { background-color: #0a0a0a; padding: 40px; border-radius: 8px; border: 1px solid #d4af37; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); }
-        h2 { color: #d4af37; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 30px; font-size: 1.5em; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 15px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 1em; }
+        .painel-container { background-color: #0a0a0a; padding: 30px; border-radius: 8px; border: 1px solid #d4af37; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); margin: 10px; }
+        h2 { color: #d4af37; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; font-size: 1.3em; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #aaaaaa; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 0.95em; }
         .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; }
-        .btn-admin { background-color: #d4af37; color: #050505; padding: 15px; border: none; width: 100%; font-size: 1.1em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; transition: opacity 0.3s; margin-top: 10px; }
+        .btn-admin { background-color: #d4af37; color: #050505; padding: 12px; border: none; width: 100%; font-size: 1em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; transition: opacity 0.3s; margin-top: 5px; }
         .btn-admin:hover { opacity: 0.8; }
-        .btn-voltar { background-color: transparent; color: #777; border: 1px solid #333; padding: 10px; width: 100%; margin-top: 15px; border-radius: 4px; cursor: pointer; text-align: center; display: block; text-decoration: none; font-weight: 600; }
+        .btn-voltar { background-color: transparent; color: #777; border: 1px solid #333; padding: 10px; width: 100%; margin-top: 10px; border-radius: 4px; cursor: pointer; text-align: center; display: block; text-decoration: none; font-weight: 600; }
         .btn-voltar:hover { color: #fff; border-color: #fff; }
         #tela-admin { display: none; }
-        .erro-senha { color: #ff4444; text-align: center; margin-top: 15px; display: none; font-weight: bold; }
+        .erro-senha { color: #ff4444; text-align: center; margin-top: 10px; font-weight: bold; }
+        hr { border: 0; border-top: 1px solid #222; margin: 25px 0; }
     </style>
 </head>
 <body>
@@ -30,13 +31,16 @@
             <input type="password" id="senha" placeholder="Digite a sua senha" onkeypress="verificarEnter(event)">
         </div>
         <button onclick="verificarSenha()" class="btn-admin">Entrar no Sistema</button>
-        <p class="erro-senha" id="erro-senha">Senha incorreta. Tente novamente.</p>
+        <p class="erro-senha" id="erro-senha" style="display:none;">Senha incorreta. Tente novamente.</p>
         <a href="index.html" class="btn-voltar">Voltar para o Site</a>
     </div>
 
     <div class="painel-container" id="tela-admin">
-        <h2>Controle de Agenda</h2>
+        <h2>Painel Kiko Barbearia</h2>
+        
+        <!-- SECÇÃO 1: BLOQUEIO / AGENDAMENTO -->
         <form id="formAdmin">
+            <h3>Controle de Horários</h3>
             <div class="form-group">
                 <label for="nome">Nome (ou Bloqueio):</label>
                 <input type="text" id="nome" name="nome" placeholder="Ex: João Silva ou Fechado" required>
@@ -72,11 +76,24 @@
                 </select>
             </div>
 
-            <button type="submit" id="btnSubmit" class="btn-admin">Confirmar Bloqueio na Agenda</button>
-            <p id="mensagem-status" style="text-align: center; margin-top: 15px; font-weight: 600;"></p>
-
-            <button type="button" onclick="sair()" class="btn-voltar" style="color: #ff4444; border-color: #ff4444;">Sair / Bloquear Tela</button>
+            <button type="submit" id="btnSubmit" class="btn-admin">Confirmar Bloqueio</button>
+            <p id="mensagem-status" style="text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9em;"></p>
         </form>
+
+        <hr>
+
+        <!-- SECÇÃO 2: ADICIONAR FOTO NA GALERIA -->
+        <form id="formFoto" onsubmit="adicionarFoto(event)">
+            <h3>Adicionar Foto na Galeria</h3>
+            <div class="form-group">
+                <label for="url_foto">Link Direto da Imagem:</label>
+                <input type="text" id="url_foto" placeholder="Cole o link da foto (ex: https://i.postimg.cc/...)" required>
+            </div>
+            <button type="submit" id="btnFoto" class="btn-admin" style="background-color: #25D366; color: #fff;">Enviar Foto para o Site</button>
+            <p id="status-foto" style="text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9em;"></p>
+        </form>
+
+        <button type="button" onclick="sair()" class="btn-voltar" style="color: #ff4444; border-color: #ff4444; margin-top: 25px;">Sair / Bloquear Tela</button>
     </div>
 
     <script>
@@ -121,16 +138,11 @@
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             
             const todosHorarios = [
-                "08:00", "08:20", "08:40",
-                "09:00", "09:20", "09:40",
-                "10:00", "10:20", "10:40",
-                "11:00", "11:20", "11:40",
-                "13:00", "13:20", "13:40",
-                "14:00", "14:20", "14:40",
-                "15:00", "15:20", "15:40",
-                "16:00", "16:20", "16:40",
-                "17:00", "17:20", "17:40",
-                "18:00", "18:20", "18:40",
+                "08:00", "08:20", "08:40", "09:00", "09:20", "09:40",
+                "10:00", "10:20", "10:40", "11:00", "11:20", "11:40",
+                "13:00", "13:20", "13:40", "14:00", "14:20", "14:40",
+                "15:00", "15:20", "15:40", "16:00", "16:20", "16:40",
+                "17:00", "17:20", "17:40", "18:00", "18:20", "18:40",
                 "19:00", "19:20"
             ];
             
@@ -149,19 +161,14 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "Enviando comando...";
-            msgStatus.innerText = "Registrando evento na agenda...";
+            btnSubmit.innerText = "Enviando...";
+            msgStatus.innerText = "Registrando bloqueio...";
             msgStatus.style.color = "#d4af37";
 
             const formData = new FormData(form);
-
-            fetch(scriptURL, { 
-                method: 'POST', 
-                body: formData, 
-                mode: 'no-cors' 
-            })
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
             .then(() => {
-                msgStatus.innerText = "Salvo com sucesso na Google Agenda!";
+                msgStatus.innerText = "Bloqueio salvo com sucesso!";
                 msgStatus.style.color = "#25D366";
                 form.reset();
                 selectHora.disabled = true;
@@ -175,6 +182,34 @@
                 btnSubmit.innerText = "Confirmar Bloqueio";
             });
         });
+
+        function adicionarFoto(e) {
+            e.preventDefault();
+            const btnFoto = document.getElementById('btnFoto');
+            const statusFoto = document.getElementById('status-foto');
+            const urlFoto = document.getElementById('url_foto').value;
+
+            btnFoto.disabled = true;
+            statusFoto.innerText = "Enviando foto para o site...";
+            statusFoto.style.color = "#d4af37";
+
+            const formData = new FormData();
+            formData.append('acao', 'salvar_foto');
+            formData.append('url_foto', urlFoto);
+
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+            .then(() => {
+                statusFoto.innerText = "Foto adicionada com sucesso na galeria!";
+                statusFoto.style.color = "#25D366";
+                document.getElementById('url_foto').value = "";
+                setTimeout(() => { btnFoto.disabled = false; statusFoto.innerText = ""; }, 3000);
+            })
+            .catch(error => {
+                statusFoto.innerText = "Erro ao enviar foto.";
+                statusFoto.style.color = "#ff4444";
+                btnFoto.disabled = false;
+            });
+        }
     </script>
 </body>
 </html>
