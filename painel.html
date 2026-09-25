@@ -12,12 +12,16 @@
         h3 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #aaaaaa; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 0.95em; }
+        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="date"], .form-group select, .form-group textarea { width: 100%; padding: 12px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 0.95em; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #d4af37; }
-        .btn-admin { background-color: #d4af37; color: #050505; padding: 12px; border: none; width: 100%; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: opacity 0.3s; margin-top: 5px; }
-        .btn-admin:hover { opacity: 0.8; }
+        
+        .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
+        .checkbox-item { display: flex; align-items: center; background: #111; padding: 12px; border: 1px solid #222; border-radius: 4px; cursor: pointer; }
+        .checkbox-item input { margin-right: 15px; transform: scale(1.3); accent-color: #d4af37; }
+        .checkbox-title { font-weight: 600; color: #fff; font-size: 0.9em; }
+
+        .btn-admin { background-color: #d4af37; color: #050505; padding: 12px; border: none; width: 100%; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; margin-top: 5px; }
         .btn-voltar { background-color: transparent; color: #777; border: 1px solid #333; padding: 10px; width: 100%; margin-top: 10px; border-radius: 4px; cursor: pointer; text-align: center; display: block; text-decoration: none; font-weight: 600; }
-        .btn-voltar:hover { color: #fff; border-color: #fff; }
         #tela-admin { display: none; }
         .erro-senha { color: #ff4444; text-align: center; margin-top: 10px; font-weight: bold; }
         hr { border: 0; border-top: 1px solid #222; margin: 30px 0; }
@@ -27,10 +31,7 @@
 
     <div class="painel-container" id="tela-login">
         <h2>Acesso Restrito</h2>
-        <div class="form-group">
-            <label for="senha">Senha de Administrador:</label>
-            <input type="password" id="senha" placeholder="Digite a senha" onkeypress="verificarEnter(event)">
-        </div>
+        <div class="form-group"><input type="password" id="senha" placeholder="Digite a senha" onkeypress="verificarEnter(event)"></div>
         <button onclick="verificarSenha()" class="btn-admin">Entrar</button>
         <p class="erro-senha" id="erro-senha" style="display:none;">Senha incorreta.</p>
     </div>
@@ -40,32 +41,22 @@
         
         <!-- SECÇÃO 1: BLOQUEIO / AGENDAMENTO -->
         <form id="formAdmin">
-            <h3>Agenda</h3>
+            <h3>Agenda e Bloqueios</h3>
             <div class="form-group">
-                <input type="text" id="nome" name="nome" placeholder="Nome do Cliente ou Bloqueio" required>
+                <input type="text" id="nome" name="nome" placeholder="Nome do Cliente ou Motivo do Bloqueio" required>
             </div>
             <div class="form-group">
-                <select id="servico" name="servico" required onchange="atualizarValor()">
-                    <option value="" disabled selected>Selecione o serviço...</option>
-                    <option value="Corte Masculino" data-valor="50">Corte (20 min) - R$ 50</option>
-                    <option value="Barba" data-valor="50">Barba (15 min) - R$ 50</option>
-                    <option value="Cabelo e Barba" data-valor="100">Cabelo e Barba (45 min) - R$ 100</option>
-                    <option value="Progressiva" data-valor="150">Progressiva (30 min) - R$ 150</option>
-                    <option value="Corte Feminino" data-valor="60">Corte Feminino (30 min) - R$ 60</option>
-                    <option value="Coloração" data-valor="100">Coloração (1 hora) - R$ 100</option>
-                    <option value="Sobrancelha" data-valor="25">Sobrancelha (10 min) - R$ 25</option>
-                    <option value="Bloqueio de Agenda (Interno)" data-valor="0">⚠️ Bloqueio de Horário</option>
-                </select>
-                <input type="hidden" id="valor" name="valor" value="0">
+                <label>Serviço ou Bloqueio:</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item"><input type="checkbox" name="servico" value="Corte Masculino" data-tempo="20" onchange="atualizarResumo()"><span class="checkbox-title">Corte Masculino (20m)</span></label>
+                    <label class="checkbox-item"><input type="checkbox" name="servico" value="Barba" data-tempo="15" onchange="atualizarResumo()"><span class="checkbox-title">Barba (15m)</span></label>
+                    <label class="checkbox-item"><input type="checkbox" name="servico" value="Cabelo e Barba" data-tempo="45" onchange="atualizarResumo()"><span class="checkbox-title">Cabelo e Barba (45m)</span></label>
+                    <label class="checkbox-item"><input type="checkbox" name="servico" value="Bloqueio de Agenda 1 HORA" data-tempo="60" onchange="atualizarResumo()"><span class="checkbox-title" style="color:#d4af37;">⚠️ Bloqueio (1 Hora)</span></label>
+                </div>
+                <input type="hidden" id="duracao_total" name="duracao_total" value="0">
             </div>
-            <div class="form-group">
-                <input type="date" id="data" name="data" required onchange="verificarHorarios()">
-            </div>
-            <div class="form-group">
-                <select id="hora" name="hora" required disabled>
-                    <option value="" disabled selected>Selecione a data primeiro...</option>
-                </select>
-            </div>
+            <div class="form-group"><input type="date" id="data" name="data" required onchange="verificarHorarios()"></div>
+            <div class="form-group"><select id="hora" name="hora" required disabled><option value="" disabled selected>Selecione a data primeiro...</option></select></div>
             <button type="submit" id="btnSubmit" class="btn-admin">Confirmar na Agenda</button>
             <p id="mensagem-status" style="text-align: center; color:#25D366;"></p>
         </form>
@@ -75,18 +66,9 @@
         <!-- SECÇÃO 2: EDITAR TEXTOS DO SITE -->
         <form id="formTextos" onsubmit="salvarTextos(event)">
             <h3>Editar Textos do Site</h3>
-            <div class="form-group">
-                <label>Título Principal:</label>
-                <input type="text" id="edit_titulo" required>
-            </div>
-            <div class="form-group">
-                <label>Mensagem/Subtítulo:</label>
-                <textarea id="edit_subtitulo" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-                <label>Texto "Sobre Nós":</label>
-                <textarea id="edit_sobre" rows="5" required></textarea>
-            </div>
+            <div class="form-group"><label>Título Principal:</label><input type="text" id="edit_titulo" required></div>
+            <div class="form-group"><label>Mensagem/Subtítulo:</label><textarea id="edit_subtitulo" rows="3" required></textarea></div>
+            <div class="form-group"><label>Texto "Sobre Nós":</label><textarea id="edit_sobre" rows="5" required></textarea></div>
             <button type="submit" id="btnTextos" class="btn-admin" style="background-color: #2596be;">Salvar Textos no Site</button>
             <p id="status-textos" style="text-align: center; color:#25D366;"></p>
         </form>
@@ -96,9 +78,7 @@
         <!-- SECÇÃO 3: ADICIONAR FOTO NA GALERIA -->
         <form id="formFoto" onsubmit="adicionarFoto(event)">
             <h3>Galeria de Fotos</h3>
-            <div class="form-group">
-                <input type="text" id="url_foto" placeholder="Link direto da imagem (.jpg/.png)" required>
-            </div>
+            <div class="form-group"><input type="text" id="url_foto" placeholder="Link direto da imagem (.jpg/.png)" required></div>
             <button type="submit" id="btnFoto" class="btn-admin" style="background-color: #25D366;">Adicionar Imagem</button>
             <p id="status-foto" style="text-align: center; color:#25D366;"></p>
         </form>
@@ -115,28 +95,22 @@
             if(document.getElementById('senha').value.toLowerCase() === "kiko2026") {
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('tela-admin').style.display = 'block';
-                carregarDados();
-                carregarTextos(); // Puxa os textos atuais para você poder editar
+                fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; });
+                fetch(scriptURL + "?acao=obter_textos").then(res => res.json()).then(textos => {
+                    document.getElementById('edit_titulo').value = textos.titulo;
+                    document.getElementById('edit_subtitulo').value = textos.subtitulo;
+                    document.getElementById('edit_sobre').value = textos.sobre;
+                });
             } else { document.getElementById('erro-senha').style.display = 'block'; }
         }
         function sair() { location.reload(); }
-        function atualizarValor() { document.getElementById('valor').value = document.getElementById('servico').options[document.getElementById('servico').selectedIndex].getAttribute('data-valor'); }
 
-        // Carrega Agenda
-        function carregarDados() {
-            fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; });
+        function atualizarResumo() {
+            let totalT = 0;
+            document.querySelectorAll('input[name="servico"]:checked').forEach(cb => { totalT += parseInt(cb.getAttribute('data-tempo')); });
+            document.getElementById('duracao_total').value = totalT;
         }
 
-        // Carrega Textos para os Inputs do Painel
-        function carregarTextos() {
-            fetch(scriptURL + "?acao=obter_textos").then(res => res.json()).then(textos => {
-                document.getElementById('edit_titulo').value = textos.titulo;
-                document.getElementById('edit_subtitulo').value = textos.subtitulo;
-                document.getElementById('edit_sobre').value = textos.sobre;
-            });
-        }
-
-        // Bloquear Horários
         function verificarHorarios() {
             const data = document.getElementById('data').value;
             if (!data) return;
@@ -153,41 +127,31 @@
 
         document.getElementById('formAdmin').addEventListener('submit', e => {
             e.preventDefault();
+            if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço ou bloqueio!"); return; }
             document.getElementById('btnSubmit').innerText = "Enviando...";
-            fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' })
-            .then(() => {
-                document.getElementById('mensagem-status').innerText = "Bloqueio Salvo!";
-                e.target.reset(); document.getElementById('hora').disabled = true; carregarDados();
+            fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' }).then(() => {
+                document.getElementById('mensagem-status').innerText = "Registado!";
+                e.target.reset(); document.getElementById('hora').disabled = true;
                 setTimeout(() => { document.getElementById('btnSubmit').innerText = "Confirmar na Agenda"; document.getElementById('mensagem-status').innerText = ""; }, 2500);
             });
         });
 
-        // Enviar Textos Novos
         function salvarTextos(e) {
             e.preventDefault();
             document.getElementById('btnTextos').innerText = "Salvando...";
-            const dados = new URLSearchParams({
-                acao: 'salvar_textos',
-                titulo: document.getElementById('edit_titulo').value,
-                subtitulo: document.getElementById('edit_subtitulo').value,
-                sobre: document.getElementById('edit_sobre').value
-            }).toString();
-            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' })
-            .then(() => {
-                document.getElementById('status-textos').innerText = "Textos atualizados no site!";
+            const dados = new URLSearchParams({ acao: 'salvar_textos', titulo: document.getElementById('edit_titulo').value, subtitulo: document.getElementById('edit_subtitulo').value, sobre: document.getElementById('edit_sobre').value }).toString();
+            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' }).then(() => {
+                document.getElementById('status-textos').innerText = "Textos atualizados!";
                 setTimeout(() => { document.getElementById('btnTextos').innerText = "Salvar Textos no Site"; document.getElementById('status-textos').innerText = ""; }, 3000);
             });
         }
 
-        // Adicionar Foto
         function adicionarFoto(e) {
             e.preventDefault();
             document.getElementById('btnFoto').innerText = "Enviando...";
             const dados = new URLSearchParams({ acao: 'salvar_foto', url_foto: document.getElementById('url_foto').value }).toString();
-            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' })
-            .then(() => {
-                document.getElementById('status-foto').innerText = "Foto adicionada!";
-                document.getElementById('url_foto').value = "";
+            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' }).then(() => {
+                document.getElementById('status-foto').innerText = "Foto adicionada!"; document.getElementById('url_foto').value = "";
                 setTimeout(() => { document.getElementById('btnFoto').innerText = "Adicionar Imagem"; document.getElementById('status-foto').innerText = ""; }, 3000);
             });
         }
