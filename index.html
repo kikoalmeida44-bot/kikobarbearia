@@ -6,10 +6,6 @@
     <title>Kiko Barbearia | Estilo e Tradição</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo.jpg">
-
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; background-color: #050505; color: #ffffff; line-height: 1.6; overflow-x: hidden; }
@@ -19,9 +15,7 @@
         nav a { color: #cccccc; text-decoration: none; margin: 5px 12px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; letter-spacing: 1px; }
         nav a:hover { color: #d4af37; }
         .hero { position: relative; text-align: center; padding: 220px 20px 150px 20px; overflow: hidden; border-bottom: 3px solid #d4af37; }
-        
         .hero-bg { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background-size: cover; background-position: center; z-index: -2; animation: zoomEfeito 25s infinite alternate linear; background-color: #111; }
-        
         @keyframes zoomEfeito { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
         .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(5,5,5,0.6), rgba(5,5,5,0.9)); z-index: -1; }
         .hero-content { position: relative; z-index: 1; }
@@ -35,7 +29,6 @@
         .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: #d4af37; margin: 20px auto 0 auto; }
         .sobre-texto { font-size: 1.1em; color: #aaaaaa; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
         
-        /* Layout dos Serviços Dinâmicos */
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
         .service-card { padding: 40px 20px; width: 260px; border: 1px solid #333; display: flex; flex-direction: column; justify-content: space-between; }
         .service-card h3 { color: #ffffff; font-size: 1.3em; text-transform: uppercase; margin-top: 0; }
@@ -119,11 +112,7 @@
 
     <div id="galeria" class="section">
         <h2 class="section-title">Nossa Galeria</h2>
-        <div class="galeria-grid" id="galeriaDinamica">
-            <img src="https://i.postimg.cc/zfMqHQc6/20260524-220545-COLLAGE.jpg" alt="Trabalho">
-            <img src="https://i.postimg.cc/CKtwn2Qk/20260618-064651-COLLAGE.jpg" alt="Trabalho">
-            <img src="https://i.postimg.cc/0yVkPjdy/20260626-191922-COLLAGE.jpg" alt="Trabalho">
-        </div>
+        <div class="galeria-grid" id="galeriaDinamica"></div>
     </div>
 
     <div id="agendamento" class="section">
@@ -134,26 +123,22 @@
                     <label for="nome">O Seu Nome:</label>
                     <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="email">O Seu E-mail (Para receber na sua agenda):</label>
                     <input type="email" id="email" name="email" placeholder="exemplo@gmail.com" required>
                 </div>
-                
                 <div class="form-group">
-                    <label>Quais serviços deseja hoje? (Pode marcar vários):</label>
+                    <label>Quais serviços deseja hoje?</label>
                     <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
                          <p style="color:#777;">A carregar...</p>
                     </div>
-                    
                     <div id="resumo-pedido" class="resumo-box">
                         <p>Total Estimado: <strong id="total-valor">R$ 0</strong></p>
                         <p>Tempo Necessário: <strong id="total-tempo">0 min</strong></p>
                     </div>
                     <input type="hidden" id="duracao_total" name="duracao_total" value="0">
-                    <input type="hidden" id="valor_total_enviar" value="0">
+                    <input type="hidden" id="valor_total_enviar" name="valor_total" value="0">
                 </div>
-
                 <div class="form-group">
                     <label for="data">Data de Preferência:</label>
                     <input type="date" id="data" name="data" required onchange="verificarHorarios()">
@@ -171,8 +156,7 @@
     <div class="section">
         <h2 class="section-title">Atendimento</h2>
         <div class="horarios-box">
-            Segunda a Sábado <br>
-            <span>08:00 — 11:40 | 13:00 — 19:40</span><br><br>
+            <p id="txt-horarios-info" style="color:#fff;">A carregar horários...</p>
             <a href="https://www.google.com/maps/search/?api=1&query=Avenida+Mato+Grosso+do+Sul,+207,+Coxim,+MS" target="_blank" class="mapa-link">📍 Avenida Mato Grosso do Sul, 207 <br> Coxim, MS</a>
         </div>
     </div>
@@ -184,6 +168,7 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         let agendamentosDaNuvem = [];
+        let configHorarios = null;
 
         window.onload = function() {
             let hoje = new Date().toISOString().split('T')[0];
@@ -195,7 +180,7 @@
                 if (fotos.length > 0) {
                     let htmlFotos = "";
                     fotos.forEach(link => { htmlFotos += `<img src="${link}" onerror="this.style.display='none'">`; });
-                    document.getElementById('galeriaDinamica').innerHTML = htmlFotos + document.getElementById('galeriaDinamica').innerHTML;
+                    document.getElementById('galeriaDinamica').innerHTML = htmlFotos;
                 }
             });
 
@@ -211,30 +196,18 @@
                 
                 if (textos.servicos) {
                     let listaServicos = JSON.parse(textos.servicos);
-                    let htmlCards = "";
-                    let htmlCaixas = "";
-                    
+                    let htmlCards = ""; let htmlCaixas = "";
                     listaServicos.forEach(servico => {
-                        htmlCards += `
-                            <div class="service-card">
-                                <h3>${servico.nome}</h3>
-                                <p>Cuidado profissional de alta qualidade na Kiko Barbearia.</p>
-                                <div class="service-price">R$ ${servico.preco}</div>
-                            </div>
-                        `;
-                        htmlCaixas += `
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="servico" value="${servico.nome}" data-valor="${servico.preco}" data-tempo="${servico.tempo}" onchange="atualizarResumo()">
-                                <div class="checkbox-details">
-                                    <span class="checkbox-title">${servico.nome} (${servico.tempo}m)</span>
-                                    <span class="checkbox-price">R$ ${servico.preco}</span>
-                                </div>
-                            </label>
-                        `;
+                        htmlCards += `<div class="service-card"><h3>${servico.nome}</h3><p>Cuidado profissional na Kiko Barbearia.</p><div class="service-price">R$ ${servico.preco}</div></div>`;
+                        htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${servico.preco}" data-tempo="${servico.tempo}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${servico.tempo}m)</span><span class="checkbox-price">R$ ${servico.preco}</span></div></label>`;
                     });
-                    
                     document.getElementById('quadro_servicos_dinamicos').innerHTML = htmlCards;
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
+                }
+
+                if(textos.horarios) {
+                    configHorarios = JSON.parse(textos.horarios);
+                    document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às ${configHorarios.fecha}</span><br>Pausa: ${configHorarios.almoco_inicio} às ${configHorarios.almoco_fim}`;
                 }
             });
         };
@@ -247,20 +220,45 @@
             document.getElementById('valor_total_enviar').value = totalV;
             const resumoBox = document.getElementById('resumo-pedido');
             if (totalT > 0) {
-                resumoBox.style.display = 'block';
-                document.getElementById('total-valor').innerText = "R$ " + totalV;
-                document.getElementById('total-tempo').innerText = totalT + " min";
+                resumoBox.style.display = 'block'; document.getElementById('total-valor').innerText = "R$ " + totalV; document.getElementById('total-tempo').innerText = totalT + " min";
             } else { resumoBox.style.display = 'none'; }
         }
 
+        // NOVO: GERADOR DE HORÁRIOS INTELIGENTE
+        function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
+        
         function verificarHorarios() {
-            const data = document.getElementById('data').value;
-            if (!data) return;
+            const dataEscolhida = document.getElementById('data').value;
+            if (!dataEscolhida || !configHorarios) return;
             const selectHora = document.getElementById('hora');
+            
+            // Verifica o dia da semana
+            const d = new Date(dataEscolhida + "T12:00:00");
+            const diaSemana = d.getDay(); // 0=Domingo
+            if (!configHorarios.dias_abertos.includes(diaSemana)) {
+                selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>';
+                selectHora.disabled = true;
+                return;
+            }
+
             selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
-            const todos = ["08:00", "08:20", "08:40", "09:00", "09:20", "09:40", "10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "13:00", "13:20", "13:40", "14:00", "14:20", "14:40", "15:00", "15:20", "15:40", "16:00", "16:20", "16:40", "17:00", "17:20", "17:40", "18:00", "18:20", "18:40", "19:00", "19:20"];
-            todos.forEach(hora => {
-                const ocupado = agendamentosDaNuvem.some(ag => String(ag.data) === String(data) && String(ag.hora).trim() === hora);
+            
+            let cur = parseTempo(configHorarios.abre);
+            let end = parseTempo(configHorarios.fecha);
+            let bStart = parseTempo(configHorarios.almoco_inicio);
+            let bEnd = parseTempo(configHorarios.almoco_fim);
+
+            let todosHorarios = [];
+            while(cur <= end) {
+                if (cur >= bStart && cur < bEnd) { cur += 20; continue; } // Pula a hora de almoço!
+                let hr = Math.floor(cur/60).toString().padStart(2,'0');
+                let mn = (cur%60).toString().padStart(2,'0');
+                todosHorarios.push(hr + ":" + mn);
+                cur += 20;
+            }
+
+            todosHorarios.forEach(hora => {
+                const ocupado = agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hora);
                 const opt = document.createElement('option'); opt.value = hora;
                 if(ocupado) { opt.text = hora + " (Ocupado)"; opt.disabled = true; opt.style.color = "#ff4444"; } else { opt.text = hora; }
                 selectHora.add(opt);
@@ -269,17 +267,13 @@
 
         document.getElementById('formAgendamento').addEventListener('submit', e => {
             e.preventDefault();
-            let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
-            if(checkboxes.length === 0) { alert("Por favor, selecione pelo menos um serviço!"); return; }
-
+            if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
             document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde...";
             fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' }).then(() => {
                 var d = document.getElementById('data').value.split('-');
-                let nomesServicos = []; checkboxes.forEach(cb => nomesServicos.push(cb.value));
-                let listaFormatada = nomesServicos.join(" + ");
+                let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
                 let valorFinal = document.getElementById('valor_total_enviar').value;
-
-                var texto = `Olá, Kiko Barbearia! Meu agendamento foi registrado.\n\n*Nome:* ${document.getElementById('nome').value}\n*E-mail:* ${document.getElementById('email').value}\n*Serviço(s):* ${listaFormatada}\n*Total Estimado:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]}\n*Horário:* ${document.getElementById('hora').value}`;
+                var texto = `Olá, Kiko Barbearia!\n\n*Nome:* ${document.getElementById('nome').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
                 
                 e.target.reset(); document.getElementById('hora').disabled = true; document.getElementById('resumo-pedido').style.display = 'none';
                 setTimeout(() => { window.open("https://wa.me/5567999673200?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1500);
