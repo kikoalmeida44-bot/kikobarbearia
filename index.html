@@ -15,7 +15,7 @@
         nav a { color: #cccccc; text-decoration: none; margin: 5px 12px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; letter-spacing: 1px; }
         nav a:hover { color: #d4af37; }
         .hero { position: relative; text-align: center; padding: 220px 20px 150px 20px; overflow: hidden; border-bottom: 3px solid #d4af37; }
-        .hero-bg { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background-image: url('https://i.postimg.cc/YSjp97bx/20260601-192627-IMG-STYLE.jpg'); background-size: cover; background-position: center; z-index: -2; animation: zoomEfeito 25s infinite alternate linear; }
+        .hero-bg { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background-size: cover; background-position: center; z-index: -2; animation: zoomEfeito 25s infinite alternate linear; background-color: #111; }
         @keyframes zoomEfeito { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
         .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(5,5,5,0.6), rgba(5,5,5,0.9)); z-index: -1; }
         .hero-content { position: relative; z-index: 1; }
@@ -29,6 +29,7 @@
         .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: #d4af37; margin: 20px auto 0 auto; }
         .sobre-texto { font-size: 1.1em; color: #aaaaaa; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
         
+        /* Layout dos Serviços Dinâmicos */
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
         .service-card { padding: 40px 20px; width: 260px; border: 1px solid #333; display: flex; flex-direction: column; justify-content: space-between; }
         .service-card h3 { color: #ffffff; font-size: 1.3em; text-transform: uppercase; margin-top: 0; }
@@ -43,7 +44,6 @@
         .form-group label { display: block; margin-bottom: 10px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; font-weight: 600; }
         .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 15px; background-color: #050505; color: #ffffff; border: 1px solid #333; box-sizing: border-box; }
         
-        /* NOVO VISUAL PARA AS CAIXAS DE SELEÇÃO MÚLTIPLA */
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
         .checkbox-item { display: flex; align-items: center; background: #111; padding: 15px; border: 1px solid #222; border-radius: 4px; cursor: pointer; transition: 0.3s; }
         .checkbox-item:hover { border-color: #d4af37; }
@@ -55,11 +55,11 @@
         .resumo-box { margin-top: 15px; padding: 20px; background: #151515; border-left: 4px solid #d4af37; display: none; }
         .resumo-box p { margin: 5px 0; font-size: 1.1em; color: #ccc; }
         .resumo-box strong { color: #d4af37; font-size: 1.2em; }
-
         .horarios-box { text-align: center; color: #999999; font-size: 1.1em; line-height: 2; }
         .horarios-box span { color: #d4af37; font-weight: 700; font-size: 1.2em; }
+        .mapa-link { color: #d4af37; text-decoration: none; font-weight: 700; font-size: 1.1em; border-bottom: 1px dashed #d4af37; transition: 0.3s; padding-bottom: 2px; }
+        .mapa-link:hover { color: #fff; border-color: #fff; }
         footer { background-color: #030303; text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #555555; }
-
         @media (max-width: 768px) {
             h1 { font-size: 1.8em; }
             .hero { padding: 160px 20px 80px 20px; }
@@ -85,7 +85,7 @@
     </header>
 
     <div class="hero">
-        <div class="hero-bg"></div>
+        <div class="hero-bg" id="imagemFundo"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h2 id="txt_titulo">Kiko Barbearia</h2>
@@ -105,13 +105,9 @@
 
     <div id="servicos" class="section">
         <h2 class="section-title">Nossos Serviços</h2>
-        <div class="services">
-            <div class="service-card"><h3>Corte Masculino</h3><p>Corte moderno com acabamento impecável.</p><div class="service-price">R$ 50</div></div>
-            <div class="service-card"><h3>Barba</h3><p>Alinhamento, toalha quente e hidratação.</p><div class="service-price">R$ 50</div></div>
-            <div class="service-card"><h3>Cabelo e Barba</h3><p>O combo perfeito para renovar o visual.</p><div class="service-price">R$ 100</div></div>
-            <div class="service-card"><h3>Progressiva</h3><p>Redução de volume e alinhamento.</p><div class="service-price">R$ 150</div></div>
-            <div class="service-card"><h3>Coloração</h3><p>Cobertura de fios e mudança de visual.</p><div class="service-price">R$ 100</div></div>
-            <div class="service-card"><h3>Sobrancelha</h3><p>Alinhamento e design na navalha.</p><div class="service-price">R$ 25</div></div>
+        <!-- O quadro de serviços agora será montado sozinho pelo Javascript! -->
+        <div class="services" id="quadro_servicos_dinamicos">
+            <p style="color:#777;">A carregar serviços da Kiko Barbearia...</p>
         </div>
     </div>
 
@@ -133,18 +129,13 @@
                     <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
                 </div>
                 
-                <!-- NOVA LISTA DE SELEÇÃO MÚLTIPLA -->
                 <div class="form-group">
                     <label>Quais serviços deseja hoje? (Pode marcar vários):</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-item"><input type="checkbox" name="servico" value="Corte Masculino" data-valor="50" data-tempo="20" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">Corte Masculino (20m)</span><span class="checkbox-price">R$ 50</span></div></label>
-                        <label class="checkbox-item"><input type="checkbox" name="servico" value="Barba" data-valor="50" data-tempo="15" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">Barba (15m)</span><span class="checkbox-price">R$ 50</span></div></label>
-                        <label class="checkbox-item"><input type="checkbox" name="servico" value="Progressiva" data-valor="150" data-tempo="30" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">Progressiva (30m)</span><span class="checkbox-price">R$ 150</span></div></label>
-                        <label class="checkbox-item"><input type="checkbox" name="servico" value="Coloração" data-valor="100" data-tempo="60" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">Coloração (1h)</span><span class="checkbox-price">R$ 100</span></div></label>
-                        <label class="checkbox-item"><input type="checkbox" name="servico" value="Sobrancelha" data-valor="25" data-tempo="10" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">Sobrancelha (10m)</span><span class="checkbox-price">R$ 25</span></div></label>
+                    <!-- As caixinhas também serão criadas sozinhas! -->
+                    <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
+                         <p style="color:#777;">A carregar...</p>
                     </div>
                     
-                    <!-- Resumo Dinâmico visível ao clicar -->
                     <div id="resumo-pedido" class="resumo-box">
                         <p>Total Estimado: <strong id="total-valor">R$ 0</strong></p>
                         <p>Tempo Necessário: <strong id="total-tempo">0 min</strong></p>
@@ -164,6 +155,15 @@
                 <button type="submit" id="btnSubmit" class="btn-gold" style="width:100%; margin-top:10px;">Confirmar Agendamento</button>
                 <p id="mensagem-status" style="text-align: center; color: #d4af37; margin-top: 15px;"></p>
             </form>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Atendimento</h2>
+        <div class="horarios-box">
+            Segunda a Sábado <br>
+            <span>08:00 — 11:40 | 13:00 — 19:40</span><br><br>
+            <a href="https://www.google.com/maps/search/?api=1&query=Avenida+Mato+Grosso+do+Sul,+207,+Coxim,+MS" target="_blank" class="mapa-link">📍 Avenida Mato Grosso do Sul, 207 <br> Coxim, MS</a>
         </div>
     </div>
 
@@ -189,6 +189,7 @@
                 }
             });
 
+            // CARREGA TUDO: TEXTOS, FUNDO E AGORA OS SERVIÇOS!
             fetch(scriptURL + "?acao=obter_textos").then(res => res.json()).then(textos => {
                 if (textos.titulo) {
                     document.getElementById('txt_titulo').innerText = textos.titulo;
@@ -197,29 +198,53 @@
                 }
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
+                if (textos.fundo) document.getElementById('imagemFundo').style.backgroundImage = "url('" + textos.fundo + "')";
+                
+                // MÁGICA DOS SERVIÇOS:
+                if (textos.servicos) {
+                    let listaServicos = JSON.parse(textos.servicos);
+                    let htmlCards = "";
+                    let htmlCaixas = "";
+                    
+                    listaServicos.forEach(servico => {
+                        // Constrói os quadrados de exibição
+                        htmlCards += `
+                            <div class="service-card">
+                                <h3>${servico.nome}</h3>
+                                <p>Cuidado profissional de alta qualidade na Kiko Barbearia.</p>
+                                <div class="service-price">R$ ${servico.preco}</div>
+                            </div>
+                        `;
+                        // Constrói as caixinhas de agendamento
+                        htmlCaixas += `
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="servico" value="${servico.nome}" data-valor="${servico.preco}" data-tempo="${servico.tempo}" onchange="atualizarResumo()">
+                                <div class="checkbox-details">
+                                    <span class="checkbox-title">${servico.nome} (${servico.tempo}m)</span>
+                                    <span class="checkbox-price">R$ ${servico.preco}</span>
+                                </div>
+                            </label>
+                        `;
+                    });
+                    
+                    document.getElementById('quadro_servicos_dinamicos').innerHTML = htmlCards;
+                    document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
+                }
             });
         };
 
-        // Calcula valores quando cliente clica nas caixinhas
         function atualizarResumo() {
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
-            checkboxes.forEach(cb => {
-                totalV += parseInt(cb.getAttribute('data-valor'));
-                totalT += parseInt(cb.getAttribute('data-tempo'));
-            });
-
+            checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
             document.getElementById('duracao_total').value = totalT;
             document.getElementById('valor_total_enviar').value = totalV;
-
             const resumoBox = document.getElementById('resumo-pedido');
             if (totalT > 0) {
                 resumoBox.style.display = 'block';
                 document.getElementById('total-valor').innerText = "R$ " + totalV;
                 document.getElementById('total-tempo').innerText = totalT + " min";
-            } else {
-                resumoBox.style.display = 'none';
-            }
+            } else { resumoBox.style.display = 'none'; }
         }
 
         function verificarHorarios() {
@@ -238,28 +263,19 @@
 
         document.getElementById('formAgendamento').addEventListener('submit', e => {
             e.preventDefault();
-            
-            // Validação: Tem de marcar pelo menos um serviço!
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
-            if(checkboxes.length === 0) {
-                alert("Por favor, selecione pelo menos um serviço!");
-                return;
-            }
+            if(checkboxes.length === 0) { alert("Por favor, selecione pelo menos um serviço!"); return; }
 
             document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde...";
             fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' }).then(() => {
                 var d = document.getElementById('data').value.split('-');
-                
-                // Formatar lista de serviços para o WhatsApp
-                let nomesServicos = [];
-                checkboxes.forEach(cb => nomesServicos.push(cb.value));
+                let nomesServicos = []; checkboxes.forEach(cb => nomesServicos.push(cb.value));
                 let listaFormatada = nomesServicos.join(" + ");
                 let valorFinal = document.getElementById('valor_total_enviar').value;
 
                 var texto = `Olá, Kiko Barbearia! Meu agendamento foi registrado.\n\n*Nome:* ${document.getElementById('nome').value}\n*Serviço(s):* ${listaFormatada}\n*Total Estimado:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]}\n*Horário:* ${document.getElementById('hora').value}`;
                 
-                e.target.reset(); document.getElementById('hora').disabled = true;
-                document.getElementById('resumo-pedido').style.display = 'none';
+                e.target.reset(); document.getElementById('hora').disabled = true; document.getElementById('resumo-pedido').style.display = 'none';
                 setTimeout(() => { window.open("https://wa.me/5567999673200?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1500);
             });
         });
