@@ -28,21 +28,17 @@
         .section-title { color: #ffffff; font-size: 2.2em; margin-bottom: 50px; text-transform: uppercase; font-weight: 700; }
         .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: #d4af37; margin: 20px auto 0 auto; }
         .sobre-texto { font-size: 1.1em; color: #aaaaaa; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
-        
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
         .service-card { padding: 40px 20px; width: 260px; border: 1px solid #333; display: flex; flex-direction: column; justify-content: space-between; }
         .service-card h3 { color: #ffffff; font-size: 1.3em; text-transform: uppercase; margin-top: 0; }
         .service-card p { color: #888888; font-size: 0.95em; }
         .service-price { font-size: 1.3em; color: #d4af37; margin-top: 20px; font-weight: 700; }
-        
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
         .galeria-grid img { width: 100%; height: 350px; object-fit: cover; border-radius: 4px; }
-        
         .form-agendamento { background-color: #0a0a0a; padding: 40px; border: 1px solid #333; max-width: 600px; margin: 0 auto; text-align: left; }
         .form-group { margin-bottom: 25px; }
         .form-group label { display: block; margin-bottom: 10px; color: #aaaaaa; font-size: 0.9em; text-transform: uppercase; font-weight: 600; }
-        .form-group input[type="text"], .form-group input[type="email"], .form-group input[type="date"], .form-group select { width: 100%; padding: 15px; background-color: #050505; color: #ffffff; border: 1px solid #333; box-sizing: border-box; }
-        
+        .form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"], .form-group input[type="date"], .form-group select { width: 100%; padding: 15px; background-color: #050505; color: #ffffff; border: 1px solid #333; box-sizing: border-box; }
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
         .checkbox-item { display: flex; align-items: center; background: #111; padding: 15px; border: 1px solid #222; border-radius: 4px; cursor: pointer; transition: 0.3s; }
         .checkbox-item:hover { border-color: #d4af37; }
@@ -50,7 +46,6 @@
         .checkbox-details { display: flex; justify-content: space-between; flex-grow: 1; align-items: center; }
         .checkbox-title { font-weight: 600; color: #fff; font-size: 0.95em; }
         .checkbox-price { color: #d4af37; font-weight: 700; font-size: 1em; }
-
         .resumo-box { margin-top: 15px; padding: 20px; background: #151515; border-left: 4px solid #d4af37; display: none; }
         .resumo-box p { margin: 5px 0; font-size: 1.1em; color: #ccc; }
         .resumo-box strong { color: #d4af37; font-size: 1.2em; }
@@ -123,10 +118,18 @@
                     <label for="nome">O Seu Nome:</label>
                     <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
                 </div>
+                
+                <!-- CAMPOS DE E-MAIL E WHATSAPP AGORA VISÍVEIS -->
                 <div class="form-group">
-                    <label for="email">O Seu E-mail (Para receber na sua agenda):</label>
+                    <label for="email">O Seu E-mail (Para receber o convite):</label>
                     <input type="email" id="email" name="email" placeholder="exemplo@gmail.com" required>
                 </div>
+                
+                <div class="form-group">
+                    <label for="telefone">O Seu WhatsApp (Com DDD):</label>
+                    <input type="tel" id="telefone" name="telefone" placeholder="Ex: 67999999999" required>
+                </div>
+
                 <div class="form-group">
                     <label>Quais serviços deseja hoje?</label>
                     <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
@@ -139,6 +142,7 @@
                     <input type="hidden" id="duracao_total" name="duracao_total" value="0">
                     <input type="hidden" id="valor_total_enviar" name="valor_total" value="0">
                 </div>
+                
                 <div class="form-group">
                     <label for="data">Data de Preferência:</label>
                     <input type="date" id="data" name="data" required onchange="verificarHorarios()">
@@ -224,7 +228,6 @@
             } else { resumoBox.style.display = 'none'; }
         }
 
-        // NOVO: GERADOR DE HORÁRIOS INTELIGENTE
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
         
         function verificarHorarios() {
@@ -232,28 +235,21 @@
             if (!dataEscolhida || !configHorarios) return;
             const selectHora = document.getElementById('hora');
             
-            // Verifica o dia da semana
             const d = new Date(dataEscolhida + "T12:00:00");
-            const diaSemana = d.getDay(); // 0=Domingo
+            const diaSemana = d.getDay(); 
             if (!configHorarios.dias_abertos.includes(diaSemana)) {
                 selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>';
-                selectHora.disabled = true;
-                return;
+                selectHora.disabled = true; return;
             }
 
             selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
-            
-            let cur = parseTempo(configHorarios.abre);
-            let end = parseTempo(configHorarios.fecha);
-            let bStart = parseTempo(configHorarios.almoco_inicio);
-            let bEnd = parseTempo(configHorarios.almoco_fim);
+            let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
+            let bStart = parseTempo(configHorarios.almoco_inicio); let bEnd = parseTempo(configHorarios.almoco_fim);
 
             let todosHorarios = [];
             while(cur <= end) {
-                if (cur >= bStart && cur < bEnd) { cur += 20; continue; } // Pula a hora de almoço!
-                let hr = Math.floor(cur/60).toString().padStart(2,'0');
-                let mn = (cur%60).toString().padStart(2,'0');
-                todosHorarios.push(hr + ":" + mn);
+                if (cur >= bStart && cur < bEnd) { cur += 20; continue; }
+                todosHorarios.push(Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0'));
                 cur += 20;
             }
 
@@ -273,7 +269,7 @@
                 var d = document.getElementById('data').value.split('-');
                 let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
                 let valorFinal = document.getElementById('valor_total_enviar').value;
-                var texto = `Olá, Kiko Barbearia!\n\n*Nome:* ${document.getElementById('nome').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
+                var texto = `Olá, Kiko Barbearia!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
                 
                 e.target.reset(); document.getElementById('hora').disabled = true; document.getElementById('resumo-pedido').style.display = 'none';
                 setTimeout(() => { window.open("https://wa.me/5567999673200?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1500);
