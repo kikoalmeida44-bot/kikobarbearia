@@ -54,7 +54,7 @@
         .mapa-link { color: #d4af37; text-decoration: none; font-weight: 700; font-size: 1.1em; border-bottom: 1px dashed #d4af37; transition: 0.3s; padding-bottom: 2px; }
         .mapa-link:hover { color: #fff; border-color: #fff; }
         
-        /* ESTILO DO CHATBOT INTERATIVO MENOR */
+        /* ESTILO DO CHATBOT INTERATIVO */
         .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Montserrat', sans-serif; }
         .chat-btn-toggle { background-color: #d4af37; color: #050505; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9em; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
         .chat-janela { display: none; position: absolute; bottom: 65px; right: 0; width: 320px; background: #0a0a0a; border: 1px solid #d4af37; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
@@ -94,7 +94,6 @@
         </nav>
     </header>
 
-    <!-- CHATBOT INTERATIVO MENOR (WIDGET FLUTUANTE) -->
     <div class="chat-widget">
         <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Kiko</button>
         <div class="chat-janela" id="chatJanela">
@@ -244,12 +243,11 @@
 
                 if(textos.horarios) {
                     configHorarios = JSON.parse(textos.horarios);
-                    document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às ${configHorarios.fecha}</span><br>Pausa: ${configHorarios.almoco_inicio} às ${configHorarios.almoco_fim}`;
+                    document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:00 e das 13:00 às ${configHorarios.fecha}</span>`;
                 }
             });
         };
 
-        // LÓGICA DO CHATBOT INTERATIVO
         function alternarChat() {
             const janela = document.getElementById('chatJanela');
             janela.style.display = (janela.style.display === 'block') ? 'none' : 'block';
@@ -257,12 +255,10 @@
 
         function responderBot(opcao) {
             const mensagensDiv = document.getElementById('chatMensagens');
-            const opcoesDiv = document.getElementById('chatOpcoes');
-
             if (opcao === 'agendar') {
                 mensagensDiv.innerHTML += `<div class="msg msg-user">Quero agendar um horário</div>`;
                 setTimeout(() => {
-                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Perfeito! Deslize a página um pouco para baixo, selecione os seus serviços, preencha seus dados e escolha o horário no formulário abaixo! 👇</div>`;
+                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Perfeito! Deslize a página para baixo, selecione o seu serviço e escolha o horário no formulário! 👇</div>`;
                     mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
                     alternarChat();
                     window.location.hash = '#agendamento';
@@ -270,13 +266,13 @@
             } else if (opcao === 'horarios') {
                 mensagensDiv.innerHTML += `<div class="msg msg-user">Quais são os horários?</div>`;
                 setTimeout(() => {
-                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Atendemos de Segunda a Sábado, das 08:00 às 11:40 e das 13:00 às 19:40. Garanta o seu encaixe!</div>`;
+                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Atendemos de Segunda a Sábado, das 08:00 às 11:00 e das 13:00 às 19:40. Garanta o seu encaixe!</div>`;
                     mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
                 }, 500);
             } else if (opcao === 'local') {
                 mensagensDiv.innerHTML += `<div class="msg msg-user">Onde fica a barbearia?</div>`;
                 setTimeout(() => {
-                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Estamos localizados na Avenida Mato Grosso do Sul, 207 - Coxim, MS. Esperamos por si! 📍</div>`;
+                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Estamos na Avenida Mato Grosso do Sul, 207 - Coxim, MS. 📍</div>`;
                     mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
                 }, 500);
             }
