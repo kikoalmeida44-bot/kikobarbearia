@@ -7,29 +7,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #ffffff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-        .painel-container { background-color: #0a0a0a; padding: 30px; border-radius: 8px; border: 1px solid #d4af37; width: 100%; max-width: 600px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); margin: 10px auto; }
+        .painel-container { background-color: #0a0a0a; padding: 20px; border-radius: 8px; border: 1px solid #d4af37; width: 100%; max-width: 600px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); margin: 0 auto; }
         h2 { color: #d4af37; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; font-size: 1.3em; }
-        h3 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; font-size: 1.1em;}
+        
+        /* Botões de abrir/fechar secções (Acordeão) */
+        .accordion { background-color: #111; color: #d4af37; cursor: pointer; padding: 15px; width: 100%; text-align: left; border: 1px solid #333; outline: none; transition: 0.4s; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1em; border-radius: 4px; margin-bottom: 5px; text-transform: uppercase; }
+        .accordion:hover, .active { background-color: #1a1a1a; border-color: #d4af37; }
+        .panel { padding: 15px 10px; background-color: #0a0a0a; display: none; overflow: hidden; border: 1px solid #222; border-top: none; margin-bottom: 15px; border-radius: 0 0 4px 4px; }
+        
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #aaaaaa; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background-color: #111; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 0.95em; }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #d4af37; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background-color: #151515; color: #ffffff; border: 1px solid #333; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 0.95em; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #d4af37; }
+        
         .btn-admin { background-color: #d4af37; color: #050505; padding: 12px; border: none; width: 100%; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; margin-top: 5px; transition: 0.3s;}
         .btn-admin:hover { opacity: 0.8; }
-        .btn-voltar { background-color: transparent; color: #777; border: 1px solid #333; padding: 10px; width: 100%; margin-top: 10px; border-radius: 4px; cursor: pointer; text-align: center; display: block; text-decoration: none; font-weight: 600; }
+        .btn-voltar { background-color: transparent; color: #777; border: 1px solid #333; padding: 10px; width: 100%; margin-top: 20px; border-radius: 4px; cursor: pointer; text-align: center; display: block; text-decoration: none; font-weight: 600; }
         #tela-admin { display: none; }
-        hr { border: 0; border-top: 1px solid #222; margin: 30px 0; }
         
-        /* Estilos do Dashboard Financeiro */
+        /* Dashboard */
         .dash-card { background: #151515; border-left: 4px solid #25D366; padding: 15px; margin-bottom: 15px; border-radius: 4px; }
         .dash-card h4 { margin: 0 0 5px 0; color: #aaa; font-size: 0.9em; text-transform: uppercase;}
         .dash-card p { margin: 0; font-size: 1.8em; font-weight: bold; color: #fff; }
         .lista-fidelidade { background: #111; border: 1px solid #222; border-radius: 4px; padding: 10px; max-height: 200px; overflow-y: auto;}
         .fidelidade-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #333; padding: 8px 0; font-size: 0.9em; }
         
+        /* Gestão de Serviços */
+        .item-servico { display: flex; justify-content: space-between; align-items: center; background: #151515; padding: 12px; margin-bottom: 8px; border: 1px solid #333; border-radius: 4px; }
+        .btn-remover { background: #ff4444; color: #fff; border: none; padding: 5px 10px; border-radius: 3px; font-weight: bold; cursor: pointer; }
+        
+        /* Agendamento Manual */
+        .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
+        .checkbox-item { display: flex; align-items: center; background: #151515; padding: 12px; border: 1px solid #222; border-radius: 4px; cursor: pointer; }
+        .checkbox-item input { margin-right: 15px; transform: scale(1.3); accent-color: #d4af37; }
+        .checkbox-title { font-weight: 600; color: #fff; font-size: 0.9em; }
+        
+        /* Horários */
         .grid-horarios { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .checkbox-dias { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
-        .checkbox-dias label { background: #111; padding: 8px; border: 1px solid #333; border-radius: 4px; font-size: 0.8em; cursor: pointer; color: #fff;}
+        .checkbox-dias label { background: #151515; padding: 8px; border: 1px solid #333; border-radius: 4px; font-size: 0.8em; cursor: pointer; color: #fff;}
     </style>
 </head>
 <body>
@@ -44,9 +60,9 @@
     <div class="painel-container" id="tela-admin">
         <h2>Kiko Barbearia Pro</h2>
 
-        <!-- SECÇÃO 1: DASHBOARD FINANCEIRO E FIDELIDADE -->
-        <div id="sec-dashboard">
-            <h3>📊 Resumo do Mês (Faturamento & Fidelidade)</h3>
+        <!-- SECÇÃO 1: DASHBOARD -->
+        <button class="accordion">📊 Resumo do Mês</button>
+        <div class="panel">
             <div style="display: flex; gap: 10px;">
                 <div class="dash-card" style="flex: 1; border-color: #d4af37;">
                     <h4>Ganhos Estimados</h4>
@@ -57,69 +73,131 @@
                     <p id="dash-cortes">0</p>
                 </div>
             </div>
-            
-            <h4 style="color:#aaa; font-size:0.9em; text-transform:uppercase;">🏆 Top Clientes (Fidelidade)</h4>
+            <h4 style="color:#aaa; font-size:0.9em; text-transform:uppercase; margin-top:10px;">🏆 Top Clientes (Fidelidade)</h4>
             <div class="lista-fidelidade" id="lista-fidelidade">
                 <p style="color:#777; font-size:0.9em; text-align:center;">Carregando banco de dados...</p>
             </div>
         </div>
-        <hr>
 
-        <!-- SECÇÃO 2: HORÁRIOS DE FUNCIONAMENTO -->
-        <form id="formHorarios" onsubmit="salvarHorarios(event)">
-            <h3>🕒 Configurar Horários</h3>
-            <div class="grid-horarios">
-                <div class="form-group"><label>Abre às:</label><input type="time" id="cfg_abre" required></div>
-                <div class="form-group"><label>Fecha às:</label><input type="time" id="cfg_fecha" required></div>
-                <div class="form-group"><label>Início do Almoço:</label><input type="time" id="cfg_almoco_inicio" required></div>
-                <div class="form-group"><label>Fim do Almoço:</label><input type="time" id="cfg_almoco_fim" required></div>
+        <!-- SECÇÃO 2: AGENDAMENTO MANUAL COMPLETO -->
+        <button class="accordion">📅 Agendar / Bloquear</button>
+        <div class="panel">
+            <form id="formAgendamentoAdmin" onsubmit="enviarAgendamentoAdmin(event)">
+                <div class="form-group">
+                    <label>Nome do Cliente ou Motivo do Bloqueio:</label>
+                    <input type="text" id="admin_nome" placeholder="Ex: João (WhatsApp) ou Almoço Extra" required>
+                </div>
+                <div class="form-group">
+                    <label>E-mail do Cliente (Opcional):</label>
+                    <input type="email" id="admin_email" placeholder="Para enviar convite p/ agenda dele">
+                </div>
+                <div class="form-group">
+                    <label>Serviços ou Bloqueios:</label>
+                    <div class="checkbox-group" id="admin_servicos_dinamicos">
+                        <p style="color:#777; font-size:0.9em;">Carregando serviços...</p>
+                    </div>
+                    <p style="font-size:0.9em; color:#d4af37; margin-top:10px;">Duração Total: <strong id="admin_tempo_total">0</strong> min</p>
+                    <input type="hidden" id="admin_duracao" value="0">
+                    <input type="hidden" id="admin_valor_total" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Data:</label>
+                    <input type="date" id="admin_data" required onchange="verificarHorariosAdmin()">
+                </div>
+                <div class="form-group">
+                    <label>Horário:</label>
+                    <select id="admin_hora" required disabled><option value="" disabled selected>Selecione a data primeiro...</option></select>
+                </div>
+                <button type="submit" id="btnAdminAgendar" class="btn-admin">Adicionar à Agenda Oficial</button>
+                <p id="status-agendamento-admin" style="text-align: center; color:#25D366;"></p>
+            </form>
+        </div>
+
+        <!-- SECÇÃO 3: GESTÃO DE SERVIÇOS -->
+        <button class="accordion">✂️ Gerenciar Serviços e Preços</button>
+        <div class="panel">
+            <div id="lista-servicos-admin">
+                <p style="color:#777; font-size:0.9em;">Carregando...</p>
             </div>
-            <label style="color: #aaaaaa; font-size: 0.85em; font-weight: 600;">Dias Abertos (Marque para abrir):</label>
-            <div class="checkbox-dias" id="cfg_dias">
-                <label><input type="checkbox" value="1"> Seg</label>
-                <label><input type="checkbox" value="2"> Ter</label>
-                <label><input type="checkbox" value="3"> Qua</label>
-                <label><input type="checkbox" value="4"> Qui</label>
-                <label><input type="checkbox" value="5"> Sex</label>
-                <label><input type="checkbox" value="6"> Sáb</label>
-                <label><input type="checkbox" value="0"> Dom</label>
-            </div>
-            <button type="submit" id="btnHorarios" class="btn-admin" style="background-color: #2596be; margin-top: 15px;">Atualizar Horários do Site</button>
-            <p id="status-horarios" style="text-align: center; color:#25D366;"></p>
-        </form>
-        <hr>
+            <form onsubmit="adicionarNovoServico(event)" style="margin-top: 15px; background: #151515; padding: 15px; border: 1px dashed #333; border-radius: 4px;">
+                <p style="margin-top:0; color:#d4af37; font-size:0.9em; font-weight:bold;">+ Criar Novo Serviço</p>
+                <div class="form-group"><input type="text" id="novo_nome" placeholder="Nome (Ex: Luzes)" required></div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1"><input type="number" id="novo_preco" placeholder="Preço (R$)" required></div>
+                    <div class="form-group" style="flex:1"><input type="number" id="novo_tempo" placeholder="Tempo (Min)" required></div>
+                </div>
+                <button type="submit" class="btn-admin" style="background-color: #2596be; padding:10px;">Guardar Serviço</button>
+            </form>
+            <p id="status-servicos" style="text-align: center; color:#25D366; font-size: 0.9em;"></p>
+        </div>
 
-        <!-- SECÇÃO 3: BLOQUEIOS DE AGENDA -->
-        <form id="formAdmin">
-            <h3>🔒 Bloqueio Manual na Agenda</h3>
-            <div class="form-group"><input type="text" id="nome" name="nome" placeholder="Motivo (Ex: Reunião)" required></div>
-            <div class="form-group">
-                <input type="hidden" name="servico" value="Bloqueio de Painel">
-                <input type="hidden" name="duracao_total" value="60"> <!-- Bloqueia 1 hora direto -->
-            </div>
-            <div class="form-group"><input type="date" id="data" name="data" required></div>
-            <div class="form-group"><input type="time" id="hora" name="hora" required></div>
-            <button type="submit" id="btnSubmit" class="btn-admin">Adicionar Bloqueio de 1 Hora</button>
-            <p id="mensagem-status" style="text-align: center; color:#25D366;"></p>
-        </form>
-        <hr>
+        <!-- SECÇÃO 4: HORÁRIOS -->
+        <button class="accordion">🕒 Horário de Funcionamento</button>
+        <div class="panel">
+            <form onsubmit="salvarHorarios(event)">
+                <div class="grid-horarios">
+                    <div class="form-group"><label>Abre às:</label><input type="time" id="cfg_abre" required></div>
+                    <div class="form-group"><label>Fecha às:</label><input type="time" id="cfg_fecha" required></div>
+                    <div class="form-group"><label>Início Almoço:</label><input type="time" id="cfg_almoco_inicio" required></div>
+                    <div class="form-group"><label>Fim Almoço:</label><input type="time" id="cfg_almoco_fim" required></div>
+                </div>
+                <label style="color: #aaaaaa; font-size: 0.85em; font-weight: 600;">Dias Abertos (Marque para abrir):</label>
+                <div class="checkbox-dias" id="cfg_dias">
+                    <label><input type="checkbox" value="1"> Seg</label>
+                    <label><input type="checkbox" value="2"> Ter</label>
+                    <label><input type="checkbox" value="3"> Qua</label>
+                    <label><input type="checkbox" value="4"> Qui</label>
+                    <label><input type="checkbox" value="5"> Sex</label>
+                    <label><input type="checkbox" value="6"> Sáb</label>
+                    <label><input type="checkbox" value="0"> Dom</label>
+                </div>
+                <button type="submit" id="btnHorarios" class="btn-admin" style="background-color: #2596be;">Atualizar Horários do Site</button>
+                <p id="status-horarios" style="text-align: center; color:#25D366;"></p>
+            </form>
+        </div>
 
-        <!-- SECÇÃO 4: TEXTOS E FUNDO -->
-        <form id="formTextos" onsubmit="salvarTextos(event)">
-            <h3>🎨 Visual e Textos</h3>
-            <div class="form-group"><label>Título:</label><input type="text" id="edit_titulo" required></div>
-            <div class="form-group"><label>Foto Fundo:</label><input type="text" id="edit_fundo"></div>
-            <div class="form-group"><label>Subtítulo:</label><textarea id="edit_subtitulo" rows="2" required></textarea></div>
-            <div class="form-group"><label>Sobre Nós:</label><textarea id="edit_sobre" rows="3" required></textarea></div>
-            <button type="submit" id="btnTextos" class="btn-admin" style="background-color: #2596be;">Salvar Visual</button>
-            <p id="status-textos" style="text-align: center; color:#25D366;"></p>
-        </form>
+        <!-- SECÇÃO 5: VISUAL (TEXTOS, FUNDO, GALERIA) -->
+        <button class="accordion">🎨 Visual, Textos e Fotos</button>
+        <div class="panel">
+            <form onsubmit="salvarTextos(event)">
+                <h4 style="color:#d4af37; margin-top:0;">Página Inicial</h4>
+                <div class="form-group"><label>Título Principal:</label><input type="text" id="edit_titulo" required></div>
+                <div class="form-group"><label>Foto Fundo (Link Direto .jpg):</label><input type="text" id="edit_fundo"></div>
+                <div class="form-group"><label>Mensagem/Subtítulo:</label><textarea id="edit_subtitulo" rows="2" required></textarea></div>
+                <div class="form-group"><label>Texto "Sobre Nós":</label><textarea id="edit_sobre" rows="3" required></textarea></div>
+                <button type="submit" id="btnTextos" class="btn-admin" style="background-color: #2596be;">Salvar Textos</button>
+                <p id="status-textos" style="text-align: center; color:#25D366; margin-bottom: 20px;"></p>
+            </form>
+            
+            <hr style="border-color: #333;">
+            
+            <form onsubmit="adicionarFoto(event)">
+                <h4 style="color:#d4af37; margin-top:0;">Adicionar à Galeria</h4>
+                <div class="form-group"><input type="text" id="url_foto" placeholder="Link direto da imagem (.jpg/.png)" required></div>
+                <button type="submit" id="btnFoto" class="btn-admin" style="background-color: #25D366;">Adicionar Imagem</button>
+                <p id="status-foto" style="text-align: center; color:#25D366;"></p>
+            </form>
+        </div>
 
-        <button type="button" onclick="sair()" class="btn-voltar" style="color: #ff4444; border-color: #ff4444; margin-top: 30px;">Sair do Painel</button>
+        <button type="button" onclick="sair()" class="btn-voltar">Sair do Painel / Bloquear Tela</button>
     </div>
 
     <script>
+        // Funcionalidade do Acordeão (Sanfona)
+        var acc = document.getElementsByClassName("accordion");
+        for (let i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") { panel.style.display = "none"; } 
+                else { panel.style.display = "block"; }
+            });
+        }
+
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
+        let agendamentosDaNuvem = [];
+        let servicosGlobais = [];
+        let configHorarios = null;
 
         function verificarEnter(e) { if (e.key === 'Enter') { e.preventDefault(); verificarSenha(); } }
         
@@ -128,80 +206,184 @@
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('tela-admin').style.display = 'block';
                 
-                // Puxa Dados do Dashboard (Excel)
+                // Abre o primeiro separador (Dashboard) automaticamente
+                acc[0].classList.add("active");
+                acc[0].nextElementSibling.style.display = "block";
+                
+                let hoje = new Date().toISOString().split('T')[0];
+                document.getElementById('admin_data').setAttribute('min', hoje);
+
+                // Carrega Agendamentos
+                fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; });
+                
+                // Carrega Dashboard
                 fetch(scriptURL + "?acao=dashboard").then(res => res.json()).then(dash => {
                     document.getElementById('dash-dinheiro').innerText = "R$ " + dash.faturamento.toFixed(2).replace('.', ',');
                     document.getElementById('dash-cortes').innerText = dash.agendamentosMes;
                     
                     let htmlFidelidade = "";
                     if(dash.fidelidade.length === 0) htmlFidelidade = "<p style='color:#777;text-align:center;'>Nenhum cliente registado este mês.</p>";
-                    dash.fidelidade.forEach(cli => {
-                        htmlFidelidade += `<div class="fidelidade-item"><span>${cli.nome || cli.email}</span><strong style="color:#d4af37;">${cli.visitas} visitas</strong></div>`;
-                    });
+                    dash.fidelidade.forEach(cli => { htmlFidelidade += `<div class="fidelidade-item"><span>${cli.nome || cli.email}</span><strong style="color:#d4af37;">${cli.visitas} visitas</strong></div>`; });
                     document.getElementById('lista-fidelidade').innerHTML = htmlFidelidade;
                 });
                 
-                // Puxa Textos e Horários
+                // Carrega Textos, Serviços e Horários
                 fetch(scriptURL + "?acao=obter_textos").then(res => res.json()).then(textos => {
                     document.getElementById('edit_titulo').value = textos.titulo;
                     document.getElementById('edit_subtitulo').value = textos.subtitulo;
                     document.getElementById('edit_sobre').value = textos.sobre;
                     document.getElementById('edit_fundo').value = textos.fundo;
                     
+                    if(textos.servicos) {
+                        servicosGlobais = JSON.parse(textos.servicos);
+                        renderizarListaServicos();
+                    }
                     if(textos.horarios) {
-                        let h = JSON.parse(textos.horarios);
-                        document.getElementById('cfg_abre').value = h.abre;
-                        document.getElementById('cfg_fecha').value = h.fecha;
-                        document.getElementById('cfg_almoco_inicio').value = h.almoco_inicio;
-                        document.getElementById('cfg_almoco_fim').value = h.almoco_fim;
-                        
-                        let checkboxesDias = document.querySelectorAll('#cfg_dias input');
-                        checkboxesDias.forEach(cb => { cb.checked = h.dias_abertos.includes(parseInt(cb.value)); });
+                        configHorarios = JSON.parse(textos.horarios);
+                        document.getElementById('cfg_abre').value = configHorarios.abre;
+                        document.getElementById('cfg_fecha').value = configHorarios.fecha;
+                        document.getElementById('cfg_almoco_inicio').value = configHorarios.almoco_inicio;
+                        document.getElementById('cfg_almoco_fim').value = configHorarios.almoco_fim;
+                        document.querySelectorAll('#cfg_dias input').forEach(cb => { cb.checked = configHorarios.dias_abertos.includes(parseInt(cb.value)); });
                     }
                 });
             } else { document.getElementById('erro-senha').style.display = 'block'; }
         }
         function sair() { location.reload(); }
 
-        // SALVAR CONFIGURAÇÃO DE HORÁRIOS
+        // ================= GESTÃO DE SERVIÇOS E AGENDAMENTO =================
+        function renderizarListaServicos() {
+            const divLista = document.getElementById('lista-servicos-admin');
+            const divCaixas = document.getElementById('admin_servicos_dinamicos');
+            
+            divLista.innerHTML = "";
+            let htmlCaixas = "";
+            
+            servicosGlobais.forEach((s, index) => {
+                divLista.innerHTML += `<div class="item-servico"><span style="font-size: 0.9em;"><strong>${s.nome}</strong> <br> R$ ${s.preco} - ${s.tempo} min</span><button type="button" class="btn-remover" onclick="removerServico(${index})">X</button></div>`;
+                htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="admin_chk_servico" value="${s.nome}" data-tempo="${s.tempo}" data-valor="${s.preco}" onchange="atualizarResumoAdmin()"><span class="checkbox-title">${s.nome} (${s.tempo}m)</span></label>`;
+            });
+            // Adiciona o bloqueio para uso do admin
+            htmlCaixas += `<label class="checkbox-item" style="border-color:#d4af37;"><input type="checkbox" name="admin_chk_servico" value="BLOQUEIO DE AGENDA (1 Hora)" data-tempo="60" data-valor="0" onchange="atualizarResumoAdmin()"><span class="checkbox-title" style="color:#d4af37;">⚠️ Bloquear Agenda (60m)</span></label>`;
+            divCaixas.innerHTML = htmlCaixas;
+        }
+
+        function adicionarNovoServico(e) {
+            e.preventDefault();
+            servicosGlobais.push({ nome: document.getElementById('novo_nome').value, preco: document.getElementById('novo_preco').value, tempo: document.getElementById('novo_tempo').value });
+            renderizarListaServicos(); enviarServicosParaNuvem();
+            e.target.reset();
+        }
+
+        function removerServico(index) {
+            if(confirm("Tem certeza que quer apagar este serviço?")) { servicosGlobais.splice(index, 1); renderizarListaServicos(); enviarServicosParaNuvem(); }
+        }
+
+        function enviarServicosParaNuvem() {
+            document.getElementById('status-servicos').innerText = "Guardando...";
+            const dados = new URLSearchParams({ acao: 'salvar_servicos', servicos_json: JSON.stringify(servicosGlobais) }).toString();
+            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' }).then(() => {
+                document.getElementById('status-servicos').innerText = "Lista de serviços atualizada!";
+                setTimeout(() => { document.getElementById('status-servicos').innerText = ""; }, 3000);
+            });
+        }
+
+        function atualizarResumoAdmin() {
+            let totalT = 0, totalV = 0;
+            document.querySelectorAll('input[name="admin_chk_servico"]:checked').forEach(cb => { 
+                totalT += parseInt(cb.getAttribute('data-tempo')); 
+                totalV += parseFloat(cb.getAttribute('data-valor'));
+            });
+            document.getElementById('admin_duracao').value = totalT;
+            document.getElementById('admin_valor_total').value = totalV;
+            document.getElementById('admin_tempo_total').innerText = totalT;
+        }
+
+        function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
+        
+        function verificarHorariosAdmin() {
+            const dataEscolhida = document.getElementById('admin_data').value;
+            if (!dataEscolhida || !configHorarios) return;
+            const selectHora = document.getElementById('admin_hora');
+            
+            const d = new Date(dataEscolhida + "T12:00:00");
+            const diaSemana = d.getDay();
+            if (!configHorarios.dias_abertos.includes(diaSemana)) {
+                selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
+            }
+
+            selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
+            let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
+            let bStart = parseTempo(configHorarios.almoco_inicio); let bEnd = parseTempo(configHorarios.almoco_fim);
+
+            let todosHorarios = [];
+            while(cur <= end) {
+                if (cur >= bStart && cur < bEnd) { cur += 20; continue; }
+                todosHorarios.push(Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0'));
+                cur += 20;
+            }
+
+            todosHorarios.forEach(hora => {
+                const ocupado = agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hora);
+                const opt = document.createElement('option'); opt.value = hora;
+                if(ocupado) { opt.text = hora + " (Ocupado)"; opt.disabled = true; opt.style.color = "#ff4444"; } else { opt.text = hora; }
+                selectHora.add(opt);
+            });
+        }
+
+        function enviarAgendamentoAdmin(e) {
+            e.preventDefault();
+            let cbs = document.querySelectorAll('input[name="admin_chk_servico"]:checked');
+            if(cbs.length === 0) { alert("Selecione um serviço ou bloqueio!"); return; }
+
+            document.getElementById('btnAdminAgendar').disabled = true; document.getElementById('btnAdminAgendar').innerText = "Agendando...";
+            
+            let nomes = []; cbs.forEach(cb => nomes.push(cb.value));
+            const dadosPost = new URLSearchParams();
+            dadosPost.append('nome', document.getElementById('admin_nome').value);
+            dadosPost.append('email', document.getElementById('admin_email').value);
+            dadosPost.append('servico', nomes.join(" + "));
+            dadosPost.append('data', document.getElementById('admin_data').value);
+            dadosPost.append('hora', document.getElementById('admin_hora').value);
+            dadosPost.append('duracao_total', document.getElementById('admin_duracao').value);
+            dadosPost.append('valor_total', document.getElementById('admin_valor_total').value);
+
+            fetch(scriptURL, { method: 'POST', body: dadosPost, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' }).then(() => {
+                document.getElementById('status-agendamento-admin').innerText = "Adicionado à Google Agenda e ao Painel Financeiro!";
+                e.target.reset(); document.getElementById('admin_hora').disabled = true; document.getElementById('admin_tempo_total').innerText = "0";
+                fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; }); // Atualiza a agenda local
+                setTimeout(() => { document.getElementById('btnAdminAgendar').disabled = false; document.getElementById('btnAdminAgendar').innerText = "Adicionar à Agenda Oficial"; document.getElementById('status-agendamento-admin').innerText = ""; }, 3000);
+            });
+        }
+
+        // ================= CONFIGURAÇÕES RESTANTES =================
         function salvarHorarios(e) {
             e.preventDefault();
             document.getElementById('btnHorarios').innerText = "Atualizando...";
-            
-            let diasMarcados = [];
-            document.querySelectorAll('#cfg_dias input:checked').forEach(cb => diasMarcados.push(parseInt(cb.value)));
-
-            let config = {
-                abre: document.getElementById('cfg_abre').value,
-                fecha: document.getElementById('cfg_fecha').value,
-                almoco_inicio: document.getElementById('cfg_almoco_inicio').value,
-                almoco_fim: document.getElementById('cfg_almoco_fim').value,
-                dias_abertos: diasMarcados
-            };
-
+            let diasMarcados = []; document.querySelectorAll('#cfg_dias input:checked').forEach(cb => diasMarcados.push(parseInt(cb.value)));
+            let config = { abre: document.getElementById('cfg_abre').value, fecha: document.getElementById('cfg_fecha').value, almoco_inicio: document.getElementById('cfg_almoco_inicio').value, almoco_fim: document.getElementById('cfg_almoco_fim').value, dias_abertos: diasMarcados };
             const dados = new URLSearchParams({ acao: 'salvar_horarios', horarios_json: JSON.stringify(config) }).toString();
             fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' }).then(() => {
-                document.getElementById('status-horarios').innerText = "Horários do site atualizados com sucesso!";
+                document.getElementById('status-horarios').innerText = "Horários do site atualizados!"; configHorarios = config;
                 setTimeout(() => { document.getElementById('btnHorarios').innerText = "Atualizar Horários do Site"; document.getElementById('status-horarios').innerText = ""; }, 3000);
             });
         }
 
-        document.getElementById('formAdmin').addEventListener('submit', e => {
-            e.preventDefault();
-            document.getElementById('btnSubmit').innerText = "Bloqueando...";
-            fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' }).then(() => {
-                document.getElementById('mensagem-status').innerText = "Bloqueio Inserido!"; e.target.reset();
-                setTimeout(() => { document.getElementById('btnSubmit').innerText = "Adicionar Bloqueio de 1 Hora"; document.getElementById('mensagem-status').innerText = ""; }, 2500);
-            });
-        });
-
         function salvarTextos(e) {
-            e.preventDefault();
-            document.getElementById('btnTextos').innerText = "Salvando...";
+            e.preventDefault(); document.getElementById('btnTextos').innerText = "Salvando...";
             const dados = new URLSearchParams({ acao: 'salvar_textos', titulo: document.getElementById('edit_titulo').value, subtitulo: document.getElementById('edit_subtitulo').value, sobre: document.getElementById('edit_sobre').value, fundo: document.getElementById('edit_fundo').value }).toString();
             fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' }).then(() => {
                 document.getElementById('status-textos').innerText = "Visual atualizado!";
-                setTimeout(() => { document.getElementById('btnTextos').innerText = "Salvar Visual"; document.getElementById('status-textos').innerText = ""; }, 3000);
+                setTimeout(() => { document.getElementById('btnTextos').innerText = "Salvar Textos"; document.getElementById('status-textos').innerText = ""; }, 3000);
+            });
+        }
+
+        function adicionarFoto(e) {
+            e.preventDefault(); document.getElementById('btnFoto').innerText = "Enviando...";
+            const dados = new URLSearchParams({ acao: 'salvar_foto', url_foto: document.getElementById('url_foto').value }).toString();
+            fetch(scriptURL, { method: 'POST', body: dados, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, mode: 'no-cors' }).then(() => {
+                document.getElementById('status-foto').innerText = "Foto adicionada!"; document.getElementById('url_foto').value = "";
+                setTimeout(() => { document.getElementById('btnFoto').innerText = "Adicionar Imagem"; document.getElementById('status-foto').innerText = ""; }, 3000);
             });
         }
     </script>
