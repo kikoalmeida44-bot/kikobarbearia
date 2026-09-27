@@ -41,16 +41,19 @@
         .modal-title { color: #c8a355; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
-        .input-group input, .input-group textarea { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; }
         .action-btn { background-color: #c8a355; color: black; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
         .close-btn { background-color: #333; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
         
-        .servico-item { background: #222; padding: 10px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;}
+        /* Lista de Serviços Dinâmica */
+        .servico-row { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px;}
+        .servico-row input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
+        .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;}
     </style>
 </head>
 <body>
 
-    <!-- 1. TELA DE LOGIN -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen">
         <div class="login-box">
             <h1 class="logo">KIKO BARBEARIA PRO</h1>
@@ -61,12 +64,12 @@
         </div>
     </div>
 
-    <!-- 2. DASHBOARD PRINCIPAL -->
+    <!-- DASHBOARD PRINCIPAL -->
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo">Kiko Barbearia Pro</h1>
 
         <div class="section-card">
-            <div class="section-title">📊 RESUMO DO MÊS (Setembro)</div>
+            <div class="section-title">📊 RESUMO DO MÊS</div>
             <div class="dashboard-grid">
                 <div class="dash-box ganhos-box">
                     <div class="box-label">GANHOS ESTIMADOS</div>
@@ -84,54 +87,71 @@
             <div class="fidelidade-container" id="lista-fidelidade">A carregar dados...</div>
         </div>
 
-        <!-- Botões Funcionais que abrem janelas -->
+        <!-- AS 4 FUNCIONALIDADES -->
+        <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR</button>
+        <button class="menu-btn" onclick="abrirModalServicos()">✂️ GERENCIAR SERVIÇOS E PREÇOS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModal('modal-textos')">🎨 VISUAL, TEXTOS E FOTOS</button>
 
         <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
 
-    <!-- JANELA: TEXTOS E VISUAL -->
-    <div id="modal-textos" class="modal">
+    <!-- 1. MODAL: AGENDAR / BLOQUEAR -->
+    <div id="modal-agendar" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">🎨 Visual e Textos do Site</h2>
-            <div class="input-group">
-                <label>Título Principal do Site</label>
-                <input type="text" id="edit-titulo" placeholder="Ex: Kiko Barbearia">
+            <h2 class="modal-title">📅 Agendar ou Bloquear Horário</h2>
+            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Use para marcar clientes manuais ou bloquear a sua agenda.</p>
+            <div class="input-group"><label>Nome / Motivo</label><input type="text" id="agend-nome" placeholder="Ex: Cliente João ou Almoço"></div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;"><label>Data</label><input type="date" id="agend-data"></div>
+                <div class="input-group" style="flex: 1;"><label>Hora</label><input type="time" id="agend-hora"></div>
             </div>
-            <div class="input-group">
-                <label>Slogan / Subtítulo</label>
-                <input type="text" id="edit-subtitulo" placeholder="Ex: Tradição e atitude">
-            </div>
-            <div class="input-group">
-                <label>Link da Imagem de Fundo (URL)</label>
-                <input type="text" id="edit-fundo" placeholder="https://...">
-            </div>
-            <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
-            <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
+            <div class="input-group"><label>Duração (minutos)</label><input type="number" id="agend-duracao" value="30"></div>
+            <div class="input-group"><label>Valor (R$ - Deixe 0 se for bloqueio)</label><input type="number" id="agend-valor" value="0"></div>
+            <button class="action-btn" onclick="salvarAgendamento()">Confirmar Registo</button>
+            <button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button>
         </div>
     </div>
 
-    <!-- JANELA: HORÁRIOS -->
+    <!-- 2. MODAL: GERENCIAR SERVIÇOS -->
+    <div id="modal-servicos" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">✂️ Gerenciar Serviços e Preços</h2>
+            <div id="lista-servicos-container"></div>
+            <button class="action-btn" style="background-color: #444; color: white;" onclick="adicionarLinhaServico('', '', '')">+ Adicionar Novo Serviço</button>
+            <br><br>
+            <button class="action-btn" onclick="salvarServicos()">Guardar Todos os Serviços</button>
+            <button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- 3. MODAL: HORÁRIOS -->
     <div id="modal-horarios" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">🕒 Horário de Funcionamento</h2>
             <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>Abre às:</label>
-                    <input type="time" id="edit-abre" value="08:00">
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Fecha às:</label>
-                    <input type="time" id="edit-fecha" value="19:40">
-                </div>
+                <div class="input-group" style="flex: 1;"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div>
+                <div class="input-group" style="flex: 1;"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div>
             </div>
             <button class="action-btn" onclick="salvarHorarios()">Guardar Horários</button>
             <button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button>
         </div>
     </div>
 
+    <!-- 4. MODAL: VISUAL E TEXTOS -->
+    <div id="modal-textos" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎨 Visual e Textos do Site</h2>
+            <div class="input-group"><label>Título Principal do Site</label><input type="text" id="edit-titulo" placeholder="Ex: Kiko Barbearia"></div>
+            <div class="input-group"><label>Slogan / Subtítulo</label><input type="text" id="edit-subtitulo" placeholder="Ex: Tradição e atitude"></div>
+            <div class="input-group"><label>Link da Imagem de Fundo (URL)</label><input type="text" id="edit-fundo" placeholder="https://..."></div>
+            <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
+            <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
+        </div>
+    </div>
+
     <script>
+        // Substitua pelo URL do seu script caso tenha mudado
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
         // --- SISTEMA DE LOGIN ---
@@ -140,17 +160,16 @@
             if (senha === "kiko2026") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-dashboard').style.display = 'block';
-                atualizarPainelAdmin(); // Só carrega os dados depois de logar
+                atualizarPainelAdmin();
             } else {
                 document.getElementById('erro-senha').style.display = 'block';
             }
         }
 
-        // --- SISTEMA DE JANELAS (MODAIS) ---
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
         function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- PUXAR DADOS DA PLANILHA ---
+        // --- DASHBOARD (Puxar Valores Reais) ---
         async function atualizarPainelAdmin() {
             try {
                 const response = await fetch(SCRIPT_URL + '?acao=dashboard');
@@ -161,7 +180,7 @@
                 
                 const elFid = document.getElementById('lista-fidelidade');
                 if (data.fidelidade && data.fidelidade.length > 0) {
-                    elFid.innerHTML = data.fidelidade.map(c => `<div class="cliente-item"><strong>🏆 ${c.nome}</strong> - ${c.visitas} agendamento(s)</div>`).join('');
+                    elFid.innerHTML = data.fidelidade.map(c => `<div class="cliente-item"><strong>🏆 ${c.nome}</strong> - ${c.visitas} visita(s)</div>`).join('');
                 } else {
                     elFid.innerHTML = `Nenhum cliente registado este mês.`;
                 }
@@ -170,21 +189,91 @@
             }
         }
 
-        // --- FUNÇÕES DE SALVAR DADOS NO GOOGLE SCRIPT ---
+        // --- 1. AGENDAR MANUALMENTE / BLOQUEAR ---
+        async function salvarAgendamento() {
+            const nome = document.getElementById('agend-nome').value || "Bloqueio";
+            const data = document.getElementById('agend-data').value;
+            const hora = document.getElementById('agend-hora').value;
+            const duracao = document.getElementById('agend-duracao').value;
+            const valor = document.getElementById('agend-valor').value;
+
+            if(!data || !hora) return alert("Preencha a data e a hora!");
+
+            const formData = new URLSearchParams();
+            formData.append('nome', nome);
+            formData.append('servico', 'Registo Manual/Bloqueio');
+            formData.append('data', data);
+            formData.append('hora', hora);
+            formData.append('duracao_total', duracao);
+            formData.append('valor_total', valor);
+
+            alert('A processar agendamento...');
+            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Horário guardado com sucesso na Agenda e Planilha!');
+            fecharModal('modal-agendar');
+            atualizarPainelAdmin();
+        }
+
+        // --- 2. GERENCIAR SERVIÇOS ---
+        async function abrirModalServicos() {
+            abrirModal('modal-servicos');
+            document.getElementById('lista-servicos-container').innerHTML = '<p style="color: #aaa;">A carregar serviços atuais...</p>';
+            try {
+                const response = await fetch(SCRIPT_URL + '?acao=obter_textos');
+                const data = await response.json();
+                let servicos = JSON.parse(data.servicos || "[]");
+                document.getElementById('lista-servicos-container').innerHTML = '';
+                servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo));
+            } catch(e) {
+                document.getElementById('lista-servicos-container').innerHTML = '<p>Erro ao carregar.</p>';
+            }
+        }
+
+        function adicionarLinhaServico(nome, preco, tempo) {
+            const div = document.createElement('div');
+            div.className = 'servico-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Nome" value="${nome}" class="s-nome" style="flex: 2;">
+                <input type="number" placeholder="R$" value="${preco}" class="s-preco" style="flex: 1;">
+                <input type="number" placeholder="Min" value="${tempo}" class="s-tempo" style="flex: 1;">
+                <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
+            `;
+            document.getElementById('lista-servicos-container').appendChild(div);
+        }
+
+        async function salvarServicos() {
+            const linhas = document.querySelectorAll('.servico-row');
+            let novosServicos = [];
+            linhas.forEach(linha => {
+                const n = linha.querySelector('.s-nome').value;
+                const p = parseFloat(linha.querySelector('.s-preco').value || 0);
+                const t = parseInt(linha.querySelector('.s-tempo').value || 0);
+                if(n) novosServicos.push({ nome: n, preco: p, tempo: t });
+            });
+
+            const formData = new URLSearchParams();
+            formData.append('acao', 'salvar_servicos');
+            formData.append('servicos_json', JSON.stringify(novosServicos));
+
+            alert('A guardar nova tabela de serviços...');
+            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Serviços atualizados! O site público e o bot já têm os novos preços.');
+            fecharModal('modal-servicos');
+        }
+
+        // --- 3 E 4. HORÁRIOS E TEXTOS ---
         async function salvarTextos() {
             const titulo = document.getElementById('edit-titulo').value;
             const sub = document.getElementById('edit-subtitulo').value;
             const fundo = document.getElementById('edit-fundo').value;
-            
             const formData = new URLSearchParams();
             formData.append('acao', 'salvar_textos');
             if(titulo) formData.append('titulo', titulo);
             if(sub) formData.append('subtitulo', sub);
             if(fundo) formData.append('fundo', fundo);
-
-            alert('A guardar alterações no servidor... Aguarde um momento.');
+            alert('A guardar alterações visuais...');
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Alterações visuais guardadas com sucesso! Atualize o site público para ver.');
+            alert('Visual atualizado com sucesso!');
             fecharModal('modal-textos');
         }
 
@@ -192,11 +281,9 @@
             const abre = document.getElementById('edit-abre').value;
             const fecha = document.getElementById('edit-fecha').value;
             const jsonHorarios = JSON.stringify({ abre: abre, fecha: fecha, almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] });
-            
             const formData = new URLSearchParams();
             formData.append('acao', 'salvar_horarios');
             formData.append('horarios_json', jsonHorarios);
-
             alert('A guardar horários...');
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
             alert('Horários atualizados com sucesso!');
