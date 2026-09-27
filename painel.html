@@ -162,12 +162,12 @@
     <div id="modal-galeria" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">📸 Adicionar Foto à Galeria</h2>
-            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px;">Cole o link da sua foto (do Postimages.org) para aparecer na galeria do site público.</p>
+            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px;">Cole o link da sua foto (do Postimages.org) para guardar na sua base de dados.</p>
             <div class="input-group">
                 <label>Link Direto da Imagem (.jpg, .png)</label>
                 <input type="text" id="nova-foto-url" placeholder="Ex: https://i.postimg.cc/sua-foto.jpg">
             </div>
-            <button class="action-btn" onclick="salvarFotoGaleria()">Adicionar à Galeria</button>
+            <button class="action-btn" onclick="salvarFotoGaleria()">Adicionar à Base de Dados</button>
             <button class="close-btn" onclick="fecharModal('modal-galeria')">Cancelar</button>
         </div>
     </div>
@@ -287,7 +287,7 @@
 
             alert('A guardar nova tabela de serviços...');
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Serviços atualizados no site e no robô!');
+            alert('Serviços guardados na base de dados!');
             fecharModal('modal-servicos');
         }
 
@@ -315,9 +315,9 @@
             if(titulo) formData.append('titulo', titulo);
             if(sub) formData.append('subtitulo', sub);
             if(fundo) formData.append('fundo', fundo);
-            alert('A guardar visual...');
+            alert('A guardar textos...');
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Visual atualizado!');
+            alert('Textos guardados!');
             fecharModal('modal-textos');
         }
 
@@ -328,9 +328,9 @@
             const formData = new URLSearchParams();
             formData.append('acao', 'salvar_foto');
             formData.append('url_foto', urlFoto);
-            alert('A adicionar foto à galeria...');
+            alert('A adicionar foto à base de dados...');
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Foto adicionada com sucesso!');
+            alert('Foto guardada com sucesso!');
             document.getElementById('nova-foto-url').value = '';
             fecharModal('modal-galeria');
         }
