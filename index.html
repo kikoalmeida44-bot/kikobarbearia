@@ -57,12 +57,14 @@
         /* ESTILO DO CHATBOT INTERATIVO */
         .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Montserrat', sans-serif; }
         .chat-btn-toggle { background-color: #d4af37; color: #050505; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9em; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
-        .chat-janela { display: none; position: absolute; bottom: 65px; right: 0; width: 320px; background: #0a0a0a; border: 1px solid #d4af37; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .chat-janela { display: none; position: absolute; bottom: 65px; right: 0; width: 340px; background: #0a0a0a; border: 1px solid #d4af37; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .chat-header { background: #111; padding: 12px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; color: #d4af37; font-weight: bold; font-size: 0.9em; text-transform: uppercase; }
-        .chat-mensagens { height: 260px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; font-size: 0.85em; }
-        .msg { padding: 10px 12px; border-radius: 6px; max-width: 85%; line-height: 1.4; }
+        .chat-mensagens { height: 300px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; font-size: 0.85em; }
+        .msg { padding: 10px 12px; border-radius: 6px; max-width: 85%; line-height: 1.4; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .msg-bot { background: #1a1a1a; color: #fff; align-self: flex-start; border-left: 3px solid #d4af37; }
         .msg-user { background: #d4af37; color: #050505; align-self: flex-end; font-weight: 600; }
+        .msg-digitando { color: #888; font-style: italic; background: transparent; border: none; padding: 5px; }
         .chat-opcoes { padding: 10px; background: #111; border-top: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
         .chat-opcao-btn { background: #1a1a1a; color: #d4af37; border: 1px solid #d4af37; padding: 8px; text-align: left; border-radius: 4px; cursor: pointer; font-size: 0.8em; font-weight: 600; transition: 0.2s; }
         .chat-opcao-btn:hover { background: #d4af37; color: #050505; }
@@ -94,18 +96,21 @@
         </nav>
     </header>
 
+    <!-- CHATBOT INTELIGENTE E EXPANDIDO -->
     <div class="chat-widget">
         <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Kiko</button>
         <div class="chat-janela" id="chatJanela">
             <div class="chat-header">
-                <span>⚡ Kiko Bot</span>
+                <span>⚡ Kiko Bot Inteligente</span>
                 <span style="cursor:pointer; color:#aaa; font-size: 1.1em;" onclick="alternarChat()">✕</span>
             </div>
             <div class="chat-mensagens" id="chatMensagens">
-                <div class="msg msg-bot">Olá! Seja bem-vindo à Kiko Barbearia em Coxim. Como posso ajudar com o seu visual hoje?</div>
+                <div class="msg msg-bot">Olá, chefe! 💈 Sou o assistente virtual da Kiko Barbearia em Coxim. Como posso dar um talento no seu visual hoje?</div>
             </div>
             <div class="chat-opcoes" id="chatOpcoes">
                 <button class="chat-opcao-btn" onclick="responderBot('agendar')">📅 Quero agendar um horário</button>
+                <button class="chat-opcao-btn" onclick="responderBot('precos')">✂️ Quais são os preços?</button>
+                <button class="chat-opcao-btn" onclick="responderBot('pagamento')">💳 Aceitam cartão ou Pix?</button>
                 <button class="chat-opcao-btn" onclick="responderBot('horarios')">🕒 Quais são os horários?</button>
                 <button class="chat-opcao-btn" onclick="responderBot('local')">📍 Onde fica a barbearia?</button>
             </div>
@@ -166,7 +171,7 @@
                     </div>
                     <div id="resumo-pedido" class="resumo-box">
                         <p>Total Estimado: <strong id="total-valor">R$ 0</strong></p>
-                        <p>Tempo Necessário: <strong id="total-tempo">0 min</strong></p>
+                        <p>Tempo Estimado: <strong id="total-tempo">0 min</strong></p>
                     </div>
                     <input type="hidden" id="duracao_total" name="duracao_total" value="0">
                     <input type="hidden" id="valor_total_enviar" name="valor_total" value="0">
@@ -212,10 +217,14 @@
 
             fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; }).catch(e => console.log("Erro offline"));
 
-            fetch(scriptURL + "?acao=obter_fotos").then(res => res.json()).then(fotos => {
-                if (fotos.length > 0) {
+            // GALERIA INTELIGENTE: Puxa as fotos e remove qualquer link repetido
+            fetch(scriptURL + "?acao=obter_fotos").then(res => res.json()).then(fotosBrutas => {
+                // Filtro matemático que elimina duplicados automaticamente
+                let fotosSemRepetir = [...new Set(fotosBrutas)];
+                
+                if (fotosSemRepetir.length > 0) {
                     let htmlFotos = "";
-                    fotos.forEach(link => { htmlFotos += `<img src="${link}" onerror="this.style.display='none'">`; });
+                    fotosSemRepetir.forEach(link => { htmlFotos += `<img src="${link}" onerror="this.style.display='none'">`; });
                     document.getElementById('galeriaDinamica').innerHTML = htmlFotos;
                 }
             });
@@ -248,36 +257,70 @@
             });
         };
 
+        // FUNÇÕES DO BOT INTELIGENTE
         function alternarChat() {
             const janela = document.getElementById('chatJanela');
             janela.style.display = (janela.style.display === 'block') ? 'none' : 'block';
         }
 
-        function responderBot(opcao) {
+        // Função que simula o robô "a pensar/digitar" antes de responder
+        function enviarMensagemBot(texto, delay = 1000) {
             const mensagensDiv = document.getElementById('chatMensagens');
-            if (opcao === 'agendar') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Quero agendar um horário</div>`;
-                setTimeout(() => {
-                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Perfeito! Deslize a página para baixo, selecione o seu serviço e escolha o horário no formulário! 👇</div>`;
-                    mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-                    alternarChat();
-                    window.location.hash = '#agendamento';
-                }, 500);
-            } else if (opcao === 'horarios') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Quais são os horários?</div>`;
-                setTimeout(() => {
-                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Atendemos de Segunda a Sábado, das 08:00 às 11:00 e das 13:00 às 19:40. Garanta o seu encaixe!</div>`;
-                    mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-                }, 500);
-            } else if (opcao === 'local') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Onde fica a barbearia?</div>`;
-                setTimeout(() => {
-                    mensagensDiv.innerHTML += `<div class="msg msg-bot">Estamos na Avenida Mato Grosso do Sul, 207 - Coxim, MS. 📍</div>`;
-                    mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-                }, 500);
-            }
+            
+            // Adiciona a bolha "A digitar..."
+            const digitandoDiv = document.createElement('div');
+            digitandoDiv.className = 'msg msg-digitando';
+            digitandoDiv.innerText = 'O Kiko Bot está a digitar...';
+            mensagensDiv.appendChild(digitandoDiv);
+            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+
+            // Remove o "digitando" e mostra a resposta real após o delay
+            setTimeout(() => {
+                mensagensDiv.removeChild(digitandoDiv);
+                mensagensDiv.innerHTML += `<div class="msg msg-bot">${texto}</div>`;
+                mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+            }, delay);
         }
 
+        function responderBot(opcao) {
+            const mensagensDiv = document.getElementById('chatMensagens');
+            const menuOpcoes = document.getElementById('chatOpcoes');
+            
+            // Oculta o menu durante a resposta
+            menuOpcoes.style.opacity = '0.5';
+            menuOpcoes.style.pointerEvents = 'none';
+
+            if (opcao === 'agendar') {
+                mensagensDiv.innerHTML += `<div class="msg msg-user">Quero agendar um horário</div>`;
+                enviarMensagemBot("Excelente escolha! Deslize um pouco a página para baixo, marque a caixinha do serviço que deseja e escolha o melhor horário no nosso formulário de agendamento! 👇", 1200);
+                setTimeout(() => { window.location.hash = '#agendamento'; }, 2000);
+
+            } else if (opcao === 'precos') {
+                mensagensDiv.innerHTML += `<div class="msg msg-user">Quais são os preços?</div>`;
+                enviarMensagemBot("Temos várias opções para si! Pode conferir a nossa tabela completa de preços deslizando um pouco para cima, na secção 'Nossos Serviços'. ✂️", 1000);
+                setTimeout(() => { window.location.hash = '#servicos'; }, 2000);
+
+            } else if (opcao === 'pagamento') {
+                mensagensDiv.innerHTML += `<div class="msg msg-user">Aceitam cartão ou Pix?</div>`;
+                enviarMensagemBot("Com certeza! Aceitamos Pix, Cartão de Crédito, Débito e Dinheiro. O pagamento é feito apenas no final do corte, na barbearia. 💳", 1500);
+
+            } else if (opcao === 'horarios') {
+                mensagensDiv.innerHTML += `<div class="msg msg-user">Quais são os horários?</div>`;
+                enviarMensagemBot("Atendemos de Segunda a Sábado. De manhã das 08:00 às 11:00, e de tarde das 13:00 às 19:40. Garanta já o seu encaixe!", 1200);
+
+            } else if (opcao === 'local') {
+                mensagensDiv.innerHTML += `<div class="msg msg-user">Onde fica a barbearia?</div>`;
+                enviarMensagemBot("A nossa barbearia fica localizada na Avenida Mato Grosso do Sul, número 207, bem no coração de Coxim - MS. Estamos à sua espera! 📍", 1500);
+            }
+
+            // Volta a ativar o menu após o bot responder
+            setTimeout(() => {
+                menuOpcoes.style.opacity = '1';
+                menuOpcoes.style.pointerEvents = 'auto';
+            }, 2000);
+        }
+
+        // FUNÇÕES DO FORMULÁRIO DE AGENDAMENTO
         function atualizarResumo() {
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
@@ -326,7 +369,7 @@
         document.getElementById('formAgendamento').addEventListener('submit', e => {
             e.preventDefault();
             if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
-            document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde...";
+            document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde, a agendar na nuvem...";
             fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' }).then(() => {
                 var d = document.getElementById('data').value.split('-');
                 let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
