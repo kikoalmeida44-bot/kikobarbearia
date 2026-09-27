@@ -1,39 +1,249 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Kiko Barbearia Pro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-async function atualizarPainelAdmin() {
-    try {
-        const response = await fetch(SCRIPT_URL + '?acao=dashboard');
-        const data = await response.json();
-
-        // 1. Atualiza os Ganhos Estimados
-        const elGanhos = document.getElementById('ganhos-estimados') || document.querySelector('.ganhos-valor');
-        if (elGanhos) {
-            elGanhos.innerText = data.faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
         }
 
-        // 2. Atualiza a Quantidade de Agendamentos
-        const elAgendamentos = document.getElementById('total-agendamentos') || document.querySelector('.agendamentos-qtd');
-        if (elAgendamentos) {
-            elAgendamentos.innerText = data.agendamentosMes;
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px 10px;
         }
 
-        // 3. Atualiza a Lista de Clientes no Top Fidelidade
-        const elFidelidade = document.getElementById('lista-fidelidade') || document.querySelector('.fidelidade-container');
-        if (elFidelidade) {
-            if (data.fidelidade && data.fidelidade.length > 0) {
-                elFidelidade.innerHTML = data.fidelidade.map(c => 
-                    `<div class="cliente-item">
-                        <strong>🏆 ${c.nome}</strong> - ${c.visitas} agendamento(s)
-                     </div>`
-                ).join('');
-            } else {
-                elFidelidade.innerHTML = `<p>Nenhum cliente registado este mês.</p>`;
+        .admin-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #0d0d0d;
+            border: 1px solid #c8a355;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        h1.logo {
+            text-align: center;
+            color: #c8a355;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        /* Cartões de Secção */
+        .section-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: #c8a355;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grid do Resumo (Ganhos e Agendamentos) */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .dash-box {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .ganhos-box {
+            border-left: 3px solid #ffd700;
+        }
+
+        .agend-box {
+            border-left: 3px solid #00bfff;
+        }
+
+        .box-label {
+            font-size: 0.7rem;
+            color: #aaaaaa;
+            font-weight: 600;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .box-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Top Clientes */
+        .fidelidade-container {
+            background-color: #111;
+            padding: 15px;
+            border-radius: 6px;
+            min-height: 60px;
+        }
+
+        .fidelidade-container p {
+            font-size: 0.8rem;
+            color: #777;
+            text-align: center;
+            margin: 0;
+        }
+
+        .cliente-item {
+            font-size: 0.85rem;
+            color: #ddd;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        .cliente-item:last-child {
+            border-bottom: none;
+        }
+        .cliente-item strong {
+            color: #c8a355;
+        }
+
+        /* Botões do Menu */
+        .menu-btn {
+            width: 100%;
+            background-color: transparent;
+            color: #c8a355;
+            border: 1px solid #333;
+            padding: 15px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .menu-btn:hover {
+            background-color: #1a1a1a;
+            border-color: #c8a355;
+        }
+
+        /* Botão de Sair */
+        .logout-btn {
+            width: 100%;
+            background-color: transparent;
+            color: #777;
+            border: 1px solid #333;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: #ff4c4c;
+            border-color: #ff4c4c;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <h1 class="logo">Kiko Barbearia Pro</h1>
+
+        <!-- Resumo do Mês -->
+        <div class="section-card">
+            <div class="section-title">📊 RESUMO DO MÊS</div>
+            <div class="dashboard-grid">
+                <div class="dash-box ganhos-box">
+                    <div class="box-label">GANHOS ESTIMADOS</div>
+                    <div class="box-value" id="ganhos-estimados">R$ 0,00</div>
+                </div>
+                <div class="dash-box agend-box">
+                    <div class="box-label">AGENDAMENTOS</div>
+                    <div class="box-value" id="total-agendamentos">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Clientes -->
+        <div class="section-card">
+            <div class="section-title">🏆 TOP CLIENTES (FIDELIDADE)</div>
+            <div class="fidelidade-container" id="lista-fidelidade">
+                <p>A carregar dados...</p>
+            </div>
+        </div>
+
+        <!-- Botões de Gestão -->
+        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">📅 AGENDAR / BLOQUEAR</button>
+        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">✂️ GERENCIAR SERVIÇOS E PREÇOS</button>
+        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
+        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">🎨 VISUAL, TEXTOS E FOTOS</button>
+
+        <button class="logout-btn" onclick="window.location.reload()">Sair do Painel / Bloquear Tela</button>
+    </div>
+
+    <!-- Script de Integração com o Google -->
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
+
+        async function atualizarPainelAdmin() {
+            try {
+                const response = await fetch(SCRIPT_URL + '?acao=dashboard');
+                const data = await response.json();
+
+                // 1. Atualiza Ganhos
+                const elGanhos = document.getElementById('ganhos-estimados');
+                elGanhos.innerText = data.faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                // 2. Atualiza Agendamentos
+                const elAgendamentos = document.getElementById('total-agendamentos');
+                elAgendamentos.innerText = data.agendamentosMes;
+
+                // 3. Atualiza Top Clientes
+                const elFidelidade = document.getElementById('lista-fidelidade');
+                if (data.fidelidade && data.fidelidade.length > 0) {
+                    elFidelidade.innerHTML = data.fidelidade.map(c => 
+                        `<div class="cliente-item">
+                            <strong>🏆 ${c.nome}</strong> - ${c.visitas} agendamento(s)
+                         </div>`
+                    ).join('');
+                } else {
+                    elFidelidade.innerHTML = `<p>Nenhum cliente registado este mês.</p>`;
+                }
+            } catch (err) {
+                console.error('Erro ao carregar dados do painel:', err);
+                document.getElementById('lista-fidelidade').innerHTML = `<p>Erro ao ligar ao servidor.</p>`;
             }
         }
-    } catch (err) {
-        console.error('Erro ao carregar dados do painel:', err);
-    }
-}
 
-// Executa a atualização do painel assim que a página é aberta
-document.addEventListener('DOMContentLoaded', atualizarPainelAdmin);
+        // Executa quando a página abre
+        document.addEventListener('DOMContentLoaded', atualizarPainelAdmin);
+    </script>
+</body>
+</html>
