@@ -3,142 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiko Barbearia</title>
+    <title>Kiko Barbearia Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background-color: #0d0d0d; color: #ffffff; line-height: 1.6; padding-bottom: 80px; }
+        body { background-color: #0d0d0d; color: #ffffff; line-height: 1.6; }
         
-        /* CABEÇALHO / HERO */
+        /* CABEÇALHO */
         .hero { position: relative; width: 100%; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; background-size: cover; background-position: center; border-bottom: 2px solid #c8a355; }
         .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1; }
         .hero-content { position: relative; z-index: 2; max-width: 800px; }
         h1 { color: #c8a355; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        .subtitle { font-size: 1.1rem; color: #ddd; }
+        .subtitle { font-size: 1.1rem; color: #ddd; margin-bottom: 20px; }
+        .btn-acao { display: inline-block; background-color: #c8a355; color: #000; padding: 12px 25px; font-weight: bold; text-decoration: none; border-radius: 4px; text-transform: uppercase; margin-top: 10px; }
 
         /* SECÇÕES GERAIS */
         .section { padding: 50px 20px; max-width: 1000px; margin: 0 auto; text-align: center; }
-        .section h2 { color: #c8a355; font-size: 1.8rem; margin-bottom: 30px; text-transform: uppercase; }
+        .section h2 { color: #c8a355; font-size: 1.8rem; margin-bottom: 30px; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block; }
 
         /* SERVIÇOS */
-        .servicos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; text-align: left; }
-        .servico-card { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #c8a355; display: flex; justify-content: space-between; align-items: center; }
-        .servico-info h3 { font-size: 1.1rem; margin-bottom: 5px; color: #fff; }
-        .servico-info p { color: #888; font-size: 0.85rem; }
-        .servico-preco { font-size: 1.2rem; font-weight: 700; color: #c8a355; }
+        .servicos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; text-align: left; }
+        .servico-card { background-color: #1a1a1a; padding: 15px; border-radius: 6px; border-left: 3px solid #c8a355; display: flex; justify-content: space-between; align-items: center; }
+        .servico-info h3 { font-size: 1.1rem; color: #fff; margin-bottom: 5px; }
+        .servico-preco { font-size: 1.2rem; font-weight: bold; color: #c8a355; }
 
         /* GALERIA DE FOTOS */
-        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .galeria-grid img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid #333; }
-        .mensagem-vazia { color: #777; font-style: italic; grid-column: 1 / -1; }
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .galeria-grid img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; border: 1px solid #333; }
+        
+        /* FORMULÁRIO DE AGENDAMENTO NO SITE */
+        .form-container { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #333; text-align: left; max-width: 600px; margin: 0 auto; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 0.9rem; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; font-size: 1rem; }
+        .btn-submit { width: 100%; background-color: #c8a355; color: black; padding: 15px; border: none; border-radius: 4px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; }
 
-        footer { text-align: center; padding: 20px; background-color: #000; color: #555; font-size: 0.8rem; border-top: 1px solid #222; }
+        footer { text-align: center; padding: 20px; background-color: #000; color: #555; font-size: 0.8rem; margin-bottom: 50px;} /* Margem para não tapar o botão do bot */
     </style>
 </head>
 <body>
 
-    <!-- CABEÇALHO (Puxa os textos e fundo do painel) -->
+    <!-- CABEÇALHO -->
     <header class="hero" id="hero-section">
         <div class="hero-content">
             <h1 id="site-titulo">Kiko Barbearia</h1>
-            <p class="subtitle" id="site-subtitulo">Tradição, atitude e um ambiente de alto padrão.</p>
+            <p class="subtitle" id="site-subtitulo">O ambiente ideal para o homem moderno.</p>
+            <a href="#agendar" class="btn-acao">📅 Agendar Agora</a>
         </div>
     </header>
 
-    <!-- SECÇÃO DE SERVIÇOS (Puxa os preços do painel) -->
+    <!-- SERVIÇOS -->
     <section class="section" id="servicos">
-        <h2>Tabela de Preços</h2>
+        <h2>Nossos Serviços</h2>
         <div class="servicos-grid" id="lista-servicos">
-            <p class="mensagem-vazia">A carregar serviços...</p>
+            <p style="color:#777;">A carregar tabela de preços...</p>
         </div>
     </section>
 
-    <!-- SECÇÃO DA GALERIA (Puxa as fotos do painel) -->
+    <!-- GALERIA DE FOTOS -->
     <section class="section" id="galeria">
-        <h2>Nossos Trabalhos</h2>
+        <h2>Galeria de Cortes</h2>
         <div class="galeria-grid" id="galeria-fotos">
-            <p class="mensagem-vazia" id="msg-galeria">A carregar fotos da barbearia...</p>
+            <p style="color:#777;" id="msg-galeria">A carregar os nossos trabalhos...</p>
+        </div>
+    </section>
+
+    <!-- FORMULÁRIO DE AGENDAMENTO -->
+    <section class="section" id="agendar">
+        <h2>Agende o seu Horário</h2>
+        <div class="form-container">
+            <form id="form-agendamento">
+                <div class="input-group">
+                    <label>Seu Nome *</label>
+                    <input type="text" id="cli-nome" required placeholder="Ex: João Silva">
+                </div>
+                <div class="input-group">
+                    <label>WhatsApp / Telefone *</label>
+                    <input type="tel" id="cli-whatsapp" required placeholder="(67) 99999-9999">
+                </div>
+                <div class="input-group">
+                    <label>E-mail (Para receber o convite no telemóvel)</label>
+                    <input type="email" id="cli-email" placeholder="seuemail@gmail.com">
+                </div>
+                <div class="input-group">
+                    <label>O que vamos fazer hoje? *</label>
+                    <select id="cli-servico" required>
+                        <option value="">A carregar serviços...</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>Data *</label>
+                        <input type="date" id="cli-data" required>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Hora *</label>
+                        <input type="time" id="cli-hora" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-confirmar">Confirmar Agendamento</button>
+            </form>
         </div>
     </section>
 
     <footer>
-        &copy; 2026 Kiko Barbearia Pro. Agendamentos via Assistente Virtual.
+        &copy; 2026 Kiko Barbearia. Todos os direitos reservados.
     </footer>
 
-    <!-- SCRIPT QUE LIGA O SITE AO SEU PAINEL GOOGLE -->
+    <!-- SCRIPT DE LIGAÇÃO AO SEU PAINEL (GOOGLE SCRIPT) -->
     <script>
+        // LIGAÇÃO AO SEU BANCO DE DADOS
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
-        async function carregarDadosDoPainel() {
+        async function carregarSite() {
             try {
-                // 1. Carregar Textos e Fundo
+                // 1. Textos e Fundo
                 const resTextos = await fetch(SCRIPT_URL + '?acao=obter_textos');
                 const dados = await resTextos.json();
                 
                 document.getElementById('site-titulo').innerText = dados.titulo || "Kiko Barbearia";
                 document.getElementById('site-subtitulo').innerText = dados.subtitulo || "";
-                if(dados.fundo) {
-                    document.getElementById('hero-section').style.backgroundImage = `url('${dados.fundo}')`;
-                }
+                if(dados.fundo) document.getElementById('hero-section').style.backgroundImage = `url('${dados.fundo}')`;
 
-                // 2. Carregar Serviços
+                // 2. Serviços e Preços
                 const servicos = JSON.parse(dados.servicos || "[]");
                 const divServicos = document.getElementById('lista-servicos');
+                const selectServico = document.getElementById('cli-servico');
+                
                 if (servicos.length > 0) {
                     divServicos.innerHTML = '';
+                    selectServico.innerHTML = '<option value="">Escolha um serviço...</option>';
                     servicos.forEach(s => {
                         divServicos.innerHTML += `
                             <div class="servico-card">
                                 <div class="servico-info">
                                     <h3>${s.nome}</h3>
-                                    <p>⏱️ ${s.tempo} min</p>
+                                    <p style="font-size: 0.8rem; color:#888;">⏱️ ${s.tempo} min</p>
                                 </div>
                                 <div class="servico-preco">R$ ${s.preco}</div>
                             </div>
                         `;
+                        selectServico.innerHTML += `<option value="${s.nome}" data-preco="${s.preco}" data-tempo="${s.tempo}">${s.nome} - R$ ${s.preco}</option>`;
                     });
-                } else {
-                    divServicos.innerHTML = '<p class="mensagem-vazia">Nenhum serviço disponível no momento.</p>';
                 }
 
-                // 3. Carregar Galeria de Fotos
+                // 3. Galeria de Fotos
                 const resFotos = await fetch(SCRIPT_URL + '?acao=obter_fotos');
                 const fotos = await resFotos.json();
                 const divGaleria = document.getElementById('galeria-fotos');
                 
                 if (fotos && fotos.length > 0) {
                     divGaleria.innerHTML = ''; 
-                    fotos.forEach(link => {
-                        divGaleria.innerHTML += `<img src="${link}" alt="Corte Kiko Barbearia" loading="lazy">`;
-                    });
+                    fotos.forEach(link => { divGaleria.innerHTML += `<img src="${link}" alt="Kiko Barbearia">`; });
                 } else {
-                    document.getElementById('msg-galeria').innerText = 'A galeria ainda não tem fotos.';
+                    document.getElementById('msg-galeria').innerText = 'A galeria está vazia.';
                 }
-            } catch (erro) {
-                console.error("Erro ao comunicar com o servidor:", erro);
-            }
+            } catch (erro) { console.error("Erro de ligação:", erro); }
         }
 
-        // Executa assim que a página abre
-        document.addEventListener('DOMContentLoaded', carregarDadosDoPainel);
+        // Executa ao abrir
+        document.addEventListener('DOMContentLoaded', carregarSite);
+
+        // 4. Envio do Agendamento
+        document.getElementById('form-agendamento').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-confirmar');
+            const servicoSelect = document.getElementById('cli-servico');
+            const opcao = servicoSelect.options[servicoSelect.selectedIndex];
+            
+            if(!opcao.value) return alert('Selecione um serviço.');
+
+            btn.innerText = "A Processar..."; btn.disabled = true;
+
+            const formData = new URLSearchParams();
+            formData.append('nome', document.getElementById('cli-nome').value);
+            formData.append('telefone', document.getElementById('cli-whatsapp').value);
+            formData.append('email', document.getElementById('cli-email').value);
+            formData.append('data', document.getElementById('cli-data').value);
+            formData.append('hora', document.getElementById('cli-hora').value);
+            formData.append('servico', opcao.value);
+            formData.append('valor_total', opcao.getAttribute('data-preco'));
+            formData.append('duracao_total', opcao.getAttribute('data-tempo'));
+
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+                alert('Sucesso! Horário agendado e salvo na agenda.');
+                document.getElementById('form-agendamento').reset();
+            } catch (erro) {
+                alert('Erro ao agendar. Tente novamente.');
+            } finally {
+                btn.innerText = "Confirmar Agendamento"; btn.disabled = false;
+            }
+        });
     </script>
 
-    <!-- O SEU ASSISTENTE VIRTUAL TYPEBOT (Bolha Flutuante) -->
+    <!-- O SEU TYPEBOT (BOLHA NO CANTO) -->
     <script type="module">
       import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@3/dist/web.js'
       
       Typebot.initBubble({
         typebot: "my-typebot-geftcg9",
         theme: {
-          button: {
-            backgroundColor: "#c8a355",
-            customIconSrc: "https://cdn-icons-png.flaticon.com/512/3058/3058866.png", /* Ícone de tesoura/barbearia */
-            size: "large"
-          },
-          chatWindow: {
-            backgroundColor: "#0d0d0d"
-          }
+          button: { backgroundColor: "#c8a355" },
+          chatWindow: { backgroundColor: "#0d0d0d" }
         }
       });
     </script>
