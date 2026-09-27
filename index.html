@@ -3,30 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atendimento - Kiko Barbearia</title>
+    <title>Kiko Barbearia</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0d0d0d;
-            overflow: hidden; /* Mantém o robô fixo na tela sem rolar */
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: #0d0d0d; color: #ffffff; line-height: 1.6; padding-bottom: 80px; }
+        
+        /* CABEÇALHO / HERO */
+        .hero { position: relative; width: 100%; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; background-size: cover; background-position: center; border-bottom: 2px solid #c8a355; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        h1 { color: #c8a355; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        .subtitle { font-size: 1.1rem; color: #ddd; }
+
+        /* SECÇÕES GERAIS */
+        .section { padding: 50px 20px; max-width: 1000px; margin: 0 auto; text-align: center; }
+        .section h2 { color: #c8a355; font-size: 1.8rem; margin-bottom: 30px; text-transform: uppercase; }
+
+        /* SERVIÇOS */
+        .servicos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; text-align: left; }
+        .servico-card { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #c8a355; display: flex; justify-content: space-between; align-items: center; }
+        .servico-info h3 { font-size: 1.1rem; margin-bottom: 5px; color: #fff; }
+        .servico-info p { color: #888; font-size: 0.85rem; }
+        .servico-preco { font-size: 1.2rem; font-weight: 700; color: #c8a355; }
+
+        /* GALERIA DE FOTOS */
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .galeria-grid img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid #333; }
+        .mensagem-vazia { color: #777; font-style: italic; grid-column: 1 / -1; }
+
+        footer { text-align: center; padding: 20px; background-color: #000; color: #555; font-size: 0.8rem; border-top: 1px solid #222; }
     </style>
 </head>
 <body>
 
-    <!-- SCRIPT DO TYPEBOT EM TELA CHEIA -->
+    <!-- CABEÇALHO (Puxa os textos e fundo do painel) -->
+    <header class="hero" id="hero-section">
+        <div class="hero-content">
+            <h1 id="site-titulo">Kiko Barbearia</h1>
+            <p class="subtitle" id="site-subtitulo">Tradição, atitude e um ambiente de alto padrão.</p>
+        </div>
+    </header>
+
+    <!-- SECÇÃO DE SERVIÇOS (Puxa os preços do painel) -->
+    <section class="section" id="servicos">
+        <h2>Tabela de Preços</h2>
+        <div class="servicos-grid" id="lista-servicos">
+            <p class="mensagem-vazia">A carregar serviços...</p>
+        </div>
+    </section>
+
+    <!-- SECÇÃO DA GALERIA (Puxa as fotos do painel) -->
+    <section class="section" id="galeria">
+        <h2>Nossos Trabalhos</h2>
+        <div class="galeria-grid" id="galeria-fotos">
+            <p class="mensagem-vazia" id="msg-galeria">A carregar fotos da barbearia...</p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 Kiko Barbearia Pro. Agendamentos via Assistente Virtual.
+    </footer>
+
+    <!-- SCRIPT QUE LIGA O SITE AO SEU PAINEL GOOGLE -->
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
+        
+        async function carregarDadosDoPainel() {
+            try {
+                // 1. Carregar Textos e Fundo
+                const resTextos = await fetch(SCRIPT_URL + '?acao=obter_textos');
+                const dados = await resTextos.json();
+                
+                document.getElementById('site-titulo').innerText = dados.titulo || "Kiko Barbearia";
+                document.getElementById('site-subtitulo').innerText = dados.subtitulo || "";
+                if(dados.fundo) {
+                    document.getElementById('hero-section').style.backgroundImage = `url('${dados.fundo}')`;
+                }
+
+                // 2. Carregar Serviços
+                const servicos = JSON.parse(dados.servicos || "[]");
+                const divServicos = document.getElementById('lista-servicos');
+                if (servicos.length > 0) {
+                    divServicos.innerHTML = '';
+                    servicos.forEach(s => {
+                        divServicos.innerHTML += `
+                            <div class="servico-card">
+                                <div class="servico-info">
+                                    <h3>${s.nome}</h3>
+                                    <p>⏱️ ${s.tempo} min</p>
+                                </div>
+                                <div class="servico-preco">R$ ${s.preco}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    divServicos.innerHTML = '<p class="mensagem-vazia">Nenhum serviço disponível no momento.</p>';
+                }
+
+                // 3. Carregar Galeria de Fotos
+                const resFotos = await fetch(SCRIPT_URL + '?acao=obter_fotos');
+                const fotos = await resFotos.json();
+                const divGaleria = document.getElementById('galeria-fotos');
+                
+                if (fotos && fotos.length > 0) {
+                    divGaleria.innerHTML = ''; 
+                    fotos.forEach(link => {
+                        divGaleria.innerHTML += `<img src="${link}" alt="Corte Kiko Barbearia" loading="lazy">`;
+                    });
+                } else {
+                    document.getElementById('msg-galeria').innerText = 'A galeria ainda não tem fotos.';
+                }
+            } catch (erro) {
+                console.error("Erro ao comunicar com o servidor:", erro);
+            }
+        }
+
+        // Executa assim que a página abre
+        document.addEventListener('DOMContentLoaded', carregarDadosDoPainel);
+    </script>
+
+    <!-- O SEU ASSISTENTE VIRTUAL TYPEBOT (Bolha Flutuante) -->
     <script type="module">
-      import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@3.1/dist/web.js'
+      import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@3/dist/web.js'
       
-      Typebot.initStandard({
+      Typebot.initBubble({
         typebot: "my-typebot-geftcg9",
+        theme: {
+          button: {
+            backgroundColor: "#c8a355",
+            customIconSrc: "https://cdn-icons-png.flaticon.com/512/3058/3058866.png", /* Ícone de tesoura/barbearia */
+            size: "large"
+          },
+          chatWindow: {
+            backgroundColor: "#0d0d0d"
+          }
+        }
       });
     </script>
-    
-    <typebot-standard style="width: 100%; height: 100%;"></typebot-standard>
 
 </body>
 </html>
