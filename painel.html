@@ -7,243 +7,201 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; min-height: 100vh; padding: 20px 10px; position: relative; }
+        
+        .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid #c8a355; border-radius: 8px; padding: 20px; display: none; }
+        h1.logo { text-align: center; color: #c8a355; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
 
-        body {
-            background-color: #0d0d0d;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px 10px;
-        }
+        /* --- TELA DE LOGIN --- */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0d0d0d; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .login-box { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #c8a355; text-align: center; width: 90%; max-width: 350px; }
+        .login-box input { width: 100%; padding: 12px; margin: 15px 0; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; text-align: center; font-size: 1rem; }
+        .login-box button { width: 100%; padding: 12px; background-color: #c8a355; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
-        .admin-container {
-            width: 100%;
-            max-width: 500px;
-            background-color: #0d0d0d;
-            border: 1px solid #c8a355;
-            border-radius: 8px;
-            padding: 20px;
-        }
+        /* --- DASHBOARD --- */
+        .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
+        .section-title { color: #c8a355; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .dash-box { background-color: #222; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; }
+        .ganhos-box { border-left: 3px solid #ffd700; } .agend-box { border-left: 3px solid #00bfff; }
+        .box-label { font-size: 0.7rem; color: #aaaaaa; font-weight: 600; margin-bottom: 5px; }
+        .box-value { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
+        .fidelidade-container { background-color: #111; padding: 15px; border-radius: 6px; min-height: 60px; font-size: 0.85rem; color: #777; text-align: center;}
+        .cliente-item { color: #ddd; padding: 8px 0; border-bottom: 1px solid #333; text-align: left;} .cliente-item strong { color: #c8a355; }
 
-        h1.logo {
-            text-align: center;
-            color: #c8a355;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-        }
+        /* --- BOTÕES DO MENU --- */
+        .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .menu-btn:hover { background-color: #1a1a1a; border-color: #c8a355; }
+        .logout-btn { width: 100%; background-color: transparent; color: #ff4c4c; border: 1px solid #333; padding: 12px; font-size: 0.75rem; border-radius: 6px; margin-top: 20px; cursor: pointer; }
 
-        /* Cartões de Secção */
-        .section-card {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            color: #c8a355;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Grid do Resumo (Ganhos e Agendamentos) */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .dash-box {
-            background-color: #222;
-            padding: 15px;
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .ganhos-box {
-            border-left: 3px solid #ffd700;
-        }
-
-        .agend-box {
-            border-left: 3px solid #00bfff;
-        }
-
-        .box-label {
-            font-size: 0.7rem;
-            color: #aaaaaa;
-            font-weight: 600;
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-        }
-
-        .box-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        /* Top Clientes */
-        .fidelidade-container {
-            background-color: #111;
-            padding: 15px;
-            border-radius: 6px;
-            min-height: 60px;
-        }
-
-        .fidelidade-container p {
-            font-size: 0.8rem;
-            color: #777;
-            text-align: center;
-            margin: 0;
-        }
-
-        .cliente-item {
-            font-size: 0.85rem;
-            color: #ddd;
-            padding: 8px 0;
-            border-bottom: 1px solid #333;
-        }
-        .cliente-item:last-child {
-            border-bottom: none;
-        }
-        .cliente-item strong {
-            color: #c8a355;
-        }
-
-        /* Botões do Menu */
-        .menu-btn {
-            width: 100%;
-            background-color: transparent;
-            color: #c8a355;
-            border: 1px solid #333;
-            padding: 15px;
-            text-align: left;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.2s;
-        }
-
-        .menu-btn:hover {
-            background-color: #1a1a1a;
-            border-color: #c8a355;
-        }
-
-        /* Botão de Sair */
-        .logout-btn {
-            width: 100%;
-            background-color: transparent;
-            color: #777;
-            border: 1px solid #333;
-            padding: 12px;
-            text-align: center;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .logout-btn:hover {
-            color: #ff4c4c;
-            border-color: #ff4c4c;
-        }
+        /* --- JANELAS MODAIS (Telas que abrem por cima) --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
+        .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #c8a355; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+        .modal-title { color: #c8a355; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+        .input-group input, .input-group textarea { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; }
+        .action-btn { background-color: #c8a355; color: black; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
+        .close-btn { background-color: #333; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
+        
+        .servico-item { background: #222; padding: 10px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;}
     </style>
 </head>
 <body>
 
-    <div class="admin-container">
+    <!-- 1. TELA DE LOGIN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h1 class="logo">KIKO BARBEARIA PRO</h1>
+            <p style="font-size: 0.8rem; color: #777;">Acesso Restrito ao Administrador</p>
+            <input type="password" id="senha-admin" placeholder="Digite a palavra-passe">
+            <button onclick="verificarSenha()">Entrar no Painel</button>
+            <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
+        </div>
+    </div>
+
+    <!-- 2. DASHBOARD PRINCIPAL -->
+    <div class="admin-container" id="main-dashboard">
         <h1 class="logo">Kiko Barbearia Pro</h1>
 
-        <!-- Resumo do Mês -->
         <div class="section-card">
-            <div class="section-title">📊 RESUMO DO MÊS</div>
+            <div class="section-title">📊 RESUMO DO MÊS (Setembro)</div>
             <div class="dashboard-grid">
                 <div class="dash-box ganhos-box">
                     <div class="box-label">GANHOS ESTIMADOS</div>
-                    <div class="box-value" id="ganhos-estimados">R$ 0,00</div>
+                    <div class="box-value" id="ganhos-estimados">A carregar...</div>
                 </div>
                 <div class="dash-box agend-box">
                     <div class="box-label">AGENDAMENTOS</div>
-                    <div class="box-value" id="total-agendamentos">0</div>
+                    <div class="box-value" id="total-agendamentos">...</div>
                 </div>
             </div>
         </div>
 
-        <!-- Top Clientes -->
         <div class="section-card">
             <div class="section-title">🏆 TOP CLIENTES (FIDELIDADE)</div>
-            <div class="fidelidade-container" id="lista-fidelidade">
-                <p>A carregar dados...</p>
-            </div>
+            <div class="fidelidade-container" id="lista-fidelidade">A carregar dados...</div>
         </div>
 
-        <!-- Botões de Gestão -->
-        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">📅 AGENDAR / BLOQUEAR</button>
-        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">✂️ GERENCIAR SERVIÇOS E PREÇOS</button>
-        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
-        <button class="menu-btn" onclick="alert('Funcionalidade em desenvolvimento')">🎨 VISUAL, TEXTOS E FOTOS</button>
+        <!-- Botões Funcionais que abrem janelas -->
+        <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
+        <button class="menu-btn" onclick="abrirModal('modal-textos')">🎨 VISUAL, TEXTOS E FOTOS</button>
 
-        <button class="logout-btn" onclick="window.location.reload()">Sair do Painel / Bloquear Tela</button>
+        <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
 
-    <!-- Script de Integração com o Google -->
+    <!-- JANELA: TEXTOS E VISUAL -->
+    <div id="modal-textos" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎨 Visual e Textos do Site</h2>
+            <div class="input-group">
+                <label>Título Principal do Site</label>
+                <input type="text" id="edit-titulo" placeholder="Ex: Kiko Barbearia">
+            </div>
+            <div class="input-group">
+                <label>Slogan / Subtítulo</label>
+                <input type="text" id="edit-subtitulo" placeholder="Ex: Tradição e atitude">
+            </div>
+            <div class="input-group">
+                <label>Link da Imagem de Fundo (URL)</label>
+                <input type="text" id="edit-fundo" placeholder="https://...">
+            </div>
+            <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
+            <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- JANELA: HORÁRIOS -->
+    <div id="modal-horarios" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🕒 Horário de Funcionamento</h2>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>Abre às:</label>
+                    <input type="time" id="edit-abre" value="08:00">
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>Fecha às:</label>
+                    <input type="time" id="edit-fecha" value="19:40">
+                </div>
+            </div>
+            <button class="action-btn" onclick="salvarHorarios()">Guardar Horários</button>
+            <button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button>
+        </div>
+    </div>
+
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
+        
+        // --- SISTEMA DE LOGIN ---
+        function verificarSenha() {
+            const senha = document.getElementById('senha-admin').value;
+            if (senha === "kiko2026") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-dashboard').style.display = 'block';
+                atualizarPainelAdmin(); // Só carrega os dados depois de logar
+            } else {
+                document.getElementById('erro-senha').style.display = 'block';
+            }
+        }
 
+        // --- SISTEMA DE JANELAS (MODAIS) ---
+        function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- PUXAR DADOS DA PLANILHA ---
         async function atualizarPainelAdmin() {
             try {
                 const response = await fetch(SCRIPT_URL + '?acao=dashboard');
                 const data = await response.json();
-
-                // 1. Atualiza Ganhos
-                const elGanhos = document.getElementById('ganhos-estimados');
-                elGanhos.innerText = data.faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-                // 2. Atualiza Agendamentos
-                const elAgendamentos = document.getElementById('total-agendamentos');
-                elAgendamentos.innerText = data.agendamentosMes;
-
-                // 3. Atualiza Top Clientes
-                const elFidelidade = document.getElementById('lista-fidelidade');
+                
+                document.getElementById('ganhos-estimados').innerText = data.faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('total-agendamentos').innerText = data.agendamentosMes;
+                
+                const elFid = document.getElementById('lista-fidelidade');
                 if (data.fidelidade && data.fidelidade.length > 0) {
-                    elFidelidade.innerHTML = data.fidelidade.map(c => 
-                        `<div class="cliente-item">
-                            <strong>🏆 ${c.nome}</strong> - ${c.visitas} agendamento(s)
-                         </div>`
-                    ).join('');
+                    elFid.innerHTML = data.fidelidade.map(c => `<div class="cliente-item"><strong>🏆 ${c.nome}</strong> - ${c.visitas} agendamento(s)</div>`).join('');
                 } else {
-                    elFidelidade.innerHTML = `<p>Nenhum cliente registado este mês.</p>`;
+                    elFid.innerHTML = `Nenhum cliente registado este mês.`;
                 }
             } catch (err) {
-                console.error('Erro ao carregar dados do painel:', err);
-                document.getElementById('lista-fidelidade').innerHTML = `<p>Erro ao ligar ao servidor.</p>`;
+                document.getElementById('lista-fidelidade').innerHTML = `Erro ao ligar ao servidor.`;
             }
         }
 
-        // Executa quando a página abre
-        document.addEventListener('DOMContentLoaded', atualizarPainelAdmin);
+        // --- FUNÇÕES DE SALVAR DADOS NO GOOGLE SCRIPT ---
+        async function salvarTextos() {
+            const titulo = document.getElementById('edit-titulo').value;
+            const sub = document.getElementById('edit-subtitulo').value;
+            const fundo = document.getElementById('edit-fundo').value;
+            
+            const formData = new URLSearchParams();
+            formData.append('acao', 'salvar_textos');
+            if(titulo) formData.append('titulo', titulo);
+            if(sub) formData.append('subtitulo', sub);
+            if(fundo) formData.append('fundo', fundo);
+
+            alert('A guardar alterações no servidor... Aguarde um momento.');
+            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Alterações visuais guardadas com sucesso! Atualize o site público para ver.');
+            fecharModal('modal-textos');
+        }
+
+        async function salvarHorarios() {
+            const abre = document.getElementById('edit-abre').value;
+            const fecha = document.getElementById('edit-fecha').value;
+            const jsonHorarios = JSON.stringify({ abre: abre, fecha: fecha, almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] });
+            
+            const formData = new URLSearchParams();
+            formData.append('acao', 'salvar_horarios');
+            formData.append('horarios_json', jsonHorarios);
+
+            alert('A guardar horários...');
+            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Horários atualizados com sucesso!');
+            fecharModal('modal-horarios');
+        }
     </script>
 </body>
 </html>
