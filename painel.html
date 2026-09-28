@@ -13,13 +13,13 @@
         .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid #c8a355; border-radius: 8px; padding: 20px; display: none; }
         h1.logo { text-align: center; color: #c8a355; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
 
-        /* --- TELA DE LOGIN --- */
+        /* TELA DE LOGIN */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0d0d0d; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .login-box { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #c8a355; text-align: center; width: 90%; max-width: 350px; }
         .login-box input { width: 100%; padding: 12px; margin: 15px 0; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; text-align: center; font-size: 1rem; }
         .login-box button { width: 100%; padding: 12px; background-color: #c8a355; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
-        /* --- DASHBOARD --- */
+        /* DASHBOARD */
         .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .section-title { color: #c8a355; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -30,13 +30,13 @@
         .fidelidade-container { background-color: #111; padding: 15px; border-radius: 6px; min-height: 60px; font-size: 0.85rem; color: #777; text-align: center;}
         .cliente-item { color: #ddd; padding: 8px 0; border-bottom: 1px solid #333; text-align: left;} .cliente-item strong { color: #c8a355; }
 
-        /* --- BOTÕES DO MENU --- */
+        /* BOTÕES DO MENU */
         .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: flex-start; gap: 10px;}
         .menu-btn:hover { background-color: #1a1a1a; border-color: #c8a355; }
         .logout-btn { width: 100%; background-color: transparent; color: #ff4c4c; border: 1px solid #333; padding: 12px; font-size: 0.75rem; border-radius: 6px; margin-top: 20px; cursor: pointer; }
 
-        /* --- JANELAS MODAIS --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
+        /* JANELAS MODAIS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
         .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #c8a355; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
         .modal-title { color: #c8a355; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
         .input-group { margin-bottom: 15px; }
@@ -45,25 +45,26 @@
         .action-btn { background-color: #c8a355; color: black; border: none; padding: 12px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
         .close-btn { background-color: #333; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
         
-        .servico-row { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px;}
-        .servico-row input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
-        .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;}
+        /* LINHAS DE SERVIÇOS E GALERIA */
+        .linha-item { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px;}
+        .linha-item input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
+        .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;}
+        .midia-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; background: #000; }
+        .midia-link { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.75rem; color: #aaa; margin-left: 10px;}
     </style>
 </head>
 <body>
 
-    <!-- TELA DE LOGIN -->
     <div id="login-screen">
         <div class="login-box">
             <h1 class="logo">KIKO BARBEARIA PRO</h1>
-            <p style="font-size: 0.8rem; color: #777;">Acesso Restrito ao Administrador</p>
+            <p style="font-size: 0.8rem; color: #777;">Acesso Restrito</p>
             <input type="password" id="senha-admin" placeholder="Digite a palavra-passe">
             <button onclick="verificarSenha()">Entrar no Painel</button>
             <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
         </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL -->
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo">Kiko Barbearia Pro</h1>
 
@@ -72,7 +73,7 @@
             <div class="dashboard-grid">
                 <div class="dash-box ganhos-box">
                     <div class="box-label">GANHOS ESTIMADOS</div>
-                    <div class="box-value" id="ganhos-estimados">A carregar...</div>
+                    <div class="box-value" id="ganhos-estimados">...</div>
                 </div>
                 <div class="dash-box agend-box">
                     <div class="box-label">AGENDAMENTOS</div>
@@ -81,59 +82,44 @@
             </div>
         </div>
 
-        <div class="section-card">
-            <div class="section-title">🏆 TOP CLIENTES (FIDELIDADE)</div>
-            <div class="fidelidade-container" id="lista-fidelidade">A carregar dados...</div>
-        </div>
-
-        <!-- MENU DE FUNCIONALIDADES -->
         <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂️ GERENCIAR SERVIÇOS E PREÇOS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModal('modal-textos')">🎨 TEXTOS E FUNDO DO SITE</button>
-        <button class="menu-btn" onclick="abrirModal('modal-galeria')" style="border-color: #ffd700;">📸 ADICIONAR FOTO À GALERIA</button>
+        <button class="menu-btn" onclick="abrirModalGaleria()" style="border-color: #ffd700;">📸 GERENCIAR GALERIA / VÍDEOS</button>
 
         <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
 
-    <!-- 1. MODAL: AGENDAR / BLOQUEAR -->
+    <!-- MODAL AGENDAR -->
     <div id="modal-agendar" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">📅 Agendar ou Bloquear Horário</h2>
-            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Preencha o e-mail para o cliente receber o convite na Agenda Google dele.</p>
-            
-            <div class="input-group"><label>Nome do Cliente / Motivo</label><input type="text" id="agend-nome" placeholder="Ex: João Silva ou Almoço"></div>
-            <div class="input-group"><label>E-mail do Cliente (Opcional)</label><input type="email" id="agend-email" placeholder="cliente@gmail.com"></div>
-            <div class="input-group"><label>WhatsApp (Opcional)</label><input type="text" id="agend-telefone" placeholder="67 99999-9999"></div>
-            
+            <h2 class="modal-title">📅 Agendar Manualmente</h2>
+            <div class="input-group"><input type="text" id="agend-nome" placeholder="Nome do Cliente"></div>
+            <div class="input-group"><input type="email" id="agend-email" placeholder="E-mail (Opcional)"></div>
+            <div class="input-group"><input type="tel" id="agend-telefone" placeholder="WhatsApp (Opcional)"></div>
             <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;"><label>Data</label><input type="date" id="agend-data"></div>
-                <div class="input-group" style="flex: 1;"><label>Hora</label><input type="time" id="agend-hora"></div>
+                <div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div>
+                <div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div>
             </div>
-            
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;"><label>Duração (minutos)</label><input type="number" id="agend-duracao" value="30"></div>
-                <div class="input-group" style="flex: 1;"><label>Valor (R$)</label><input type="number" id="agend-valor" value="0"></div>
-            </div>
-            
             <button class="action-btn" onclick="salvarAgendamento()">Confirmar Registo</button>
             <button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button>
         </div>
     </div>
 
-    <!-- 2. MODAL: GERENCIAR SERVIÇOS -->
+    <!-- MODAL SERVIÇOS -->
     <div id="modal-servicos" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">✂️ Gerenciar Serviços e Preços</h2>
+            <h2 class="modal-title">✂️ Serviços e Preços</h2>
             <div id="lista-servicos-container"></div>
-            <button class="action-btn" style="background-color: #444; color: white;" onclick="adicionarLinhaServico('', '', '')">+ Adicionar Novo Serviço</button>
+            <button class="action-btn" style="background-color: #444; color: white;" onclick="adicionarLinhaServico('', '', '')">+ Novo Serviço</button>
             <br><br>
-            <button class="action-btn" onclick="salvarServicos()">Guardar Todos os Serviços</button>
+            <button class="action-btn" onclick="salvarServicos()">Guardar Todos</button>
             <button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button>
         </div>
     </div>
 
-    <!-- 3. MODAL: HORÁRIOS -->
+    <!-- MODAL HORÁRIOS -->
     <div id="modal-horarios" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">🕒 Horário de Funcionamento</h2>
@@ -146,39 +132,44 @@
         </div>
     </div>
 
-    <!-- 4. MODAL: TEXTOS -->
+    <!-- MODAL TEXTOS -->
     <div id="modal-textos" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">🎨 Visual e Textos do Site</h2>
-            <div class="input-group"><label>Título Principal do Site</label><input type="text" id="edit-titulo" placeholder="Ex: Kiko Barbearia"></div>
-            <div class="input-group"><label>Slogan / Subtítulo</label><input type="text" id="edit-subtitulo" placeholder="Ex: Tradição e atitude"></div>
-            <div class="input-group"><label>Link da Imagem de Fundo (URL)</label><input type="text" id="edit-fundo" placeholder="https://..."></div>
+            <h2 class="modal-title">🎨 Visual do Site</h2>
+            <div class="input-group"><label>Título</label><input type="text" id="edit-titulo"></div>
+            <div class="input-group"><label>Fundo (Link da Foto ou Vídeo .mp4)</label><input type="text" id="edit-fundo"></div>
             <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
         </div>
     </div>
 
-    <!-- 5. MODAL: GALERIA DE FOTOS -->
+    <!-- MODAL GALERIA ATUALIZADO COM EXCLUSÃO -->
     <div id="modal-galeria" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">📸 Adicionar Foto à Galeria</h2>
-            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px;">Cole o link da sua foto (do Postimages.org) para guardar na sua base de dados.</p>
-            <div class="input-group">
-                <label>Link Direto da Imagem (.jpg, .png)</label>
-                <input type="text" id="nova-foto-url" placeholder="Ex: https://i.postimg.cc/sua-foto.jpg">
+            <h2 class="modal-title">📸 Gerenciar Galeria</h2>
+            
+            <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px dashed #d4af37;">
+                <label style="font-size: 0.8rem; color:#aaa;">Adicionar Nova Mídia (.jpg, .png, .mp4)</label>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <input type="text" id="nova-foto-url" placeholder="Cole o link aqui" style="flex:1; padding: 10px; background:#222; border:1px solid #444; color:white; border-radius:4px;">
+                    <button class="action-btn" style="width: auto; margin:0;" onclick="salvarFotoGaleria()">Adicionar</button>
+                </div>
             </div>
-            <button class="action-btn" onclick="salvarFotoGaleria()">Adicionar à Base de Dados</button>
-            <button class="close-btn" onclick="fecharModal('modal-galeria')">Cancelar</button>
+
+            <h3 style="font-size: 0.9rem; color: #fff; margin-bottom: 10px;">Mídias Atuais no Site:</h3>
+            <div id="lista-galeria-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                <!-- Lista de fotos e vídeos para excluir vai aparecer aqui -->
+            </div>
+
+            <button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar Gerenciador</button>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
         
-        // --- LOGIN ---
         function verificarSenha() {
-            const senha = document.getElementById('senha-admin').value;
-            if (senha === "kiko2026") {
+            if (document.getElementById('senha-admin').value === "kiko2026") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-dashboard').style.display = 'block';
                 atualizarPainelAdmin();
@@ -187,152 +178,134 @@
             }
         }
 
-        // --- GESTÃO DE MODAIS ---
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
         function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- DASHBOARD ---
         async function atualizarPainelAdmin() {
             try {
                 const response = await fetch(SCRIPT_URL + '?acao=dashboard');
                 const data = await response.json();
-                
                 document.getElementById('ganhos-estimados').innerText = data.faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 document.getElementById('total-agendamentos').innerText = data.agendamentosMes;
-                
-                const elFid = document.getElementById('lista-fidelidade');
-                if (data.fidelidade && data.fidelidade.length > 0) {
-                    elFid.innerHTML = data.fidelidade.map(c => `<div class="cliente-item"><strong>🏆 ${c.nome}</strong> - ${c.visitas} visita(s)</div>`).join('');
-                } else {
-                    elFid.innerHTML = `Nenhum cliente registado este mês.`;
+            } catch (err) { console.error(err); }
+        }
+
+        // --- SISTEMA DE GALERIA AVANÇADO (Lê e Apaga) ---
+        async function abrirModalGaleria() {
+            abrirModal('modal-galeria');
+            const container = document.getElementById('lista-galeria-container');
+            container.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">A carregar ficheiros...</p>';
+            
+            try {
+                const resposta = await fetch(SCRIPT_URL + '?acao=obter_fotos');
+                const fotos = await resposta.json();
+                container.innerHTML = '';
+
+                if(fotos.length === 0) {
+                    container.innerHTML = '<p style="color:#777; font-size:0.8rem;">A galeria está vazia.</p>';
+                    return;
                 }
-            } catch (err) {
-                document.getElementById('lista-fidelidade').innerHTML = `Erro ao ligar ao servidor.`;
+
+                // Cria a lista com a miniatura e o botão de apagar
+                fotos.forEach(link => {
+                    let isVideo = link.toLowerCase().includes('.mp4');
+                    let thumb = isVideo ? `<video src="${link}" class="midia-thumb" muted></video>` : `<img src="${link}" class="midia-thumb">`;
+                    
+                    container.innerHTML += `
+                        <div class="linha-item">
+                            ${thumb}
+                            <span class="midia-link">${link}</span>
+                            <button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                container.innerHTML = '<p style="color:#ff4444;">Erro ao carregar dados.</p>';
             }
         }
 
-        // --- 1. AGENDAR ---
-        async function salvarAgendamento() {
-            const nome = document.getElementById('agend-nome').value || "Bloqueio";
-            const email = document.getElementById('agend-email').value;
-            const telefone = document.getElementById('agend-telefone').value;
-            const data = document.getElementById('agend-data').value;
-            const hora = document.getElementById('agend-hora').value;
-            const duracao = document.getElementById('agend-duracao').value;
-            const valor = document.getElementById('agend-valor').value;
+        async function salvarFotoGaleria() {
+            const urlFoto = document.getElementById('nova-foto-url').value;
+            if (!urlFoto || !urlFoto.includes('http')) return alert("Link inválido.");
+            
+            const btn = event.target; btn.innerText = "...";
+            const formData = new URLSearchParams();
+            formData.append('acao', 'salvar_foto');
+            formData.append('url_foto', urlFoto);
+            
+            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            document.getElementById('nova-foto-url').value = '';
+            abrirModalGaleria(); // Recarrega a lista para mostrar a nova mídia
+        }
 
-            if(!data || !hora) return alert("Preencha a data e a hora!");
+        async function apagarFotoGaleria(linkParaApagar) {
+            const confirmar = confirm("Tem a certeza que deseja excluir esta mídia do site?");
+            if(!confirmar) return;
 
             const formData = new URLSearchParams();
-            formData.append('nome', nome);
-            if(email) formData.append('email', email);
-            if(telefone) formData.append('telefone', telefone);
-            formData.append('servico', 'Registo Manual');
-            formData.append('data', data);
-            formData.append('hora', hora);
-            formData.append('duracao_total', duracao);
-            formData.append('valor_total', valor);
-
-            alert('A processar agendamento...');
-            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Horário guardado com sucesso! O convite foi enviado para a agenda do cliente.');
+            formData.append('acao', 'remover_foto');
+            formData.append('url_foto', linkParaApagar);
             
-            document.getElementById('agend-nome').value = '';
-            document.getElementById('agend-email').value = '';
-            document.getElementById('agend-telefone').value = '';
-            fecharModal('modal-agendar');
-            atualizarPainelAdmin();
+            alert('A excluir do servidor...');
+            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            
+            alert('Excluído com sucesso!');
+            abrirModalGaleria(); // Recarrega a lista
         }
 
-        // --- 2. SERVIÇOS ---
+        // --- RESTANTES FUNÇÕES (Serviços, Textos, Agendar) ---
+        async function salvarAgendamento() {
+            const nome = document.getElementById('agend-nome').value || "Bloqueio";
+            const data = document.getElementById('agend-data').value;
+            const hora = document.getElementById('agend-hora').value;
+            if(!data || !hora) return alert("Preencha a data e a hora!");
+            const formData = new URLSearchParams();
+            formData.append('nome', nome); formData.append('servico', 'Manual');
+            formData.append('data', data); formData.append('hora', hora);
+            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Agendado com sucesso!'); fecharModal('modal-agendar'); atualizarPainelAdmin();
+        }
+
         async function abrirModalServicos() {
             abrirModal('modal-servicos');
-            document.getElementById('lista-servicos-container').innerHTML = '<p style="color: #aaa;">A carregar serviços atuais...</p>';
-            try {
-                const response = await fetch(SCRIPT_URL + '?acao=obter_textos');
-                const data = await response.json();
-                let servicos = JSON.parse(data.servicos || "[]");
-                document.getElementById('lista-servicos-container').innerHTML = '';
-                servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo));
-            } catch(e) {
-                document.getElementById('lista-servicos-container').innerHTML = '<p>Erro ao carregar.</p>';
-            }
+            document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>';
+            const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json();
+            const servicos = JSON.parse(data.servicos || "[]");
+            document.getElementById('lista-servicos-container').innerHTML = '';
+            servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo));
         }
 
-        function adicionarLinhaServico(nome, preco, tempo) {
-            const div = document.createElement('div');
-            div.className = 'servico-row';
-            div.innerHTML = `
-                <input type="text" placeholder="Nome" value="${nome}" class="s-nome" style="flex: 2;">
-                <input type="number" placeholder="R$" value="${preco}" class="s-preco" style="flex: 1;">
-                <input type="number" placeholder="Min" value="${tempo}" class="s-tempo" style="flex: 1;">
-                <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
-            `;
+        function adicionarLinhaServico(n, p, t) {
+            const div = document.createElement('div'); div.className = 'linha-item';
+            div.innerHTML = `<input type="text" value="${n}" class="s-nome"><input type="number" value="${p}" class="s-preco" style="width:60px;"><input type="number" value="${t}" class="s-tempo" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`;
             document.getElementById('lista-servicos-container').appendChild(div);
         }
 
         async function salvarServicos() {
-            const linhas = document.querySelectorAll('.servico-row');
-            let novosServicos = [];
-            linhas.forEach(linha => {
-                const n = linha.querySelector('.s-nome').value;
-                const p = parseFloat(linha.querySelector('.s-preco').value || 0);
-                const t = parseInt(linha.querySelector('.s-tempo').value || 0);
-                if(n) novosServicos.push({ nome: n, preco: p, tempo: t });
+            const linhas = document.querySelectorAll('.linha-item:not(.is-galeria)');
+            let novos = [];
+            document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => {
+                const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0);
+                if(n) novos.push({nome: n, preco: p, tempo: t});
             });
-
-            const formData = new URLSearchParams();
-            formData.append('acao', 'salvar_servicos');
-            formData.append('servicos_json', JSON.stringify(novosServicos));
-
-            alert('A guardar nova tabela de serviços...');
-            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Serviços guardados na base de dados!');
-            fecharModal('modal-servicos');
+            const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos));
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Serviços guardados!'); fecharModal('modal-servicos');
         }
 
-        // --- 3. HORÁRIOS ---
-        async function salvarHorarios() {
-            const abre = document.getElementById('edit-abre').value;
-            const fecha = document.getElementById('edit-fecha').value;
-            const jsonHorarios = JSON.stringify({ abre: abre, fecha: fecha, almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] });
-            const formData = new URLSearchParams();
-            formData.append('acao', 'salvar_horarios');
-            formData.append('horarios_json', jsonHorarios);
-            alert('A guardar horários...');
-            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Horários atualizados!');
-            fecharModal('modal-horarios');
-        }
-
-        // --- 4. TEXTOS ---
         async function salvarTextos() {
-            const titulo = document.getElementById('edit-titulo').value;
-            const sub = document.getElementById('edit-subtitulo').value;
-            const fundo = document.getElementById('edit-fundo').value;
-            const formData = new URLSearchParams();
-            formData.append('acao', 'salvar_textos');
-            if(titulo) formData.append('titulo', titulo);
-            if(sub) formData.append('subtitulo', sub);
-            if(fundo) formData.append('fundo', fundo);
-            alert('A guardar textos...');
-            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Textos guardados!');
-            fecharModal('modal-textos');
+            const titulo = document.getElementById('edit-titulo').value; const fundo = document.getElementById('edit-fundo').value;
+            const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos');
+            if(titulo) fd.append('titulo', titulo); if(fundo) fd.append('fundo', fundo);
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Guardado!'); fecharModal('modal-textos');
         }
 
-        // --- 5. GALERIA ---
-        async function salvarFotoGaleria() {
-            const urlFoto = document.getElementById('nova-foto-url').value;
-            if (!urlFoto || !urlFoto.includes('http')) return alert("Cole um link válido da imagem (http...).");
-            const formData = new URLSearchParams();
-            formData.append('acao', 'salvar_foto');
-            formData.append('url_foto', urlFoto);
-            alert('A adicionar foto à base de dados...');
-            await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            alert('Foto guardada com sucesso!');
-            document.getElementById('nova-foto-url').value = '';
-            fecharModal('modal-galeria');
+        async function salvarHorarios() {
+            const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios');
+            fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]}));
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+            alert('Guardado!'); fecharModal('modal-horarios');
         }
     </script>
 </body>
