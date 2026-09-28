@@ -10,12 +10,11 @@
     <style>
         body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; color: #ffffff; line-height: 1.6; overflow-x: hidden; background-color: #050505; }
         
-        /* --- NOVO: FUNDO ANIMADO EM TODO O SITE --- */
+        /* FUNDO ANIMADO */
         #slideshow-fundo { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; background-color: #050505; }
         .slide-imagem { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out; }
-        .slide-ativo { opacity: 0.4; } /* O valor 0.4 deixa a foto meio escura para os textos brancos se lerem bem */
+        .slide-ativo { opacity: 0.4; } 
         
-        /* Camada escura por cima de tudo para dar um ar premium */
         .overlay-global { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom, rgba(5,5,5,0.7) 0%, rgba(5,5,5,0.95) 100%); z-index: -2; pointer-events: none;}
 
         header { position: fixed; top: 0; width: 100%; background-color: rgba(5, 5, 5, 0.6); backdrop-filter: blur(10px); padding: 15px 0; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); z-index: 1000; }
@@ -24,7 +23,6 @@
         nav a { color: #cccccc; text-decoration: none; margin: 5px 12px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; letter-spacing: 1px; }
         nav a:hover { color: #d4af37; }
         
-        /* Secção do Topo (Hero) já não precisa de fundo fixo, o fundo global faz o trabalho */
         .hero { position: relative; text-align: center; padding: 220px 20px 150px 20px; overflow: hidden; border-bottom: 2px solid rgba(212, 175, 55, 0.3); }
         .hero-content { position: relative; z-index: 1; }
         .hero-content h2 { font-size: 4em; margin-bottom: 15px; color: #ffffff; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
@@ -38,7 +36,6 @@
         .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: #d4af37; margin: 20px auto 0 auto; }
         .sobre-texto { font-size: 1.1em; color: #dddddd; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
         
-        /* Caixas semi-transparentes para deixar o fundo aparecer */
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
         .service-card { padding: 40px 20px; width: 260px; border: 1px solid rgba(212, 175, 55, 0.3); background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(5px); display: flex; flex-direction: column; justify-content: space-between; border-radius: 8px;}
         .service-card h3 { color: #ffffff; font-size: 1.3em; text-transform: uppercase; margin-top: 0; }
@@ -69,19 +66,25 @@
         .mapa-link { color: #d4af37; text-decoration: none; font-weight: 700; font-size: 1.1em; border-bottom: 1px dashed #d4af37; transition: 0.3s; padding-bottom: 2px; }
         .mapa-link:hover { color: #fff; border-color: #fff; }
         
-        /* ESTILO DO CHATBOT INTERATIVO */
+        /* CHATBOT INTELIGENTE */
         .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Montserrat', sans-serif; }
         .chat-btn-toggle { background-color: #d4af37; color: #050505; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9em; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
         .chat-janela { display: none; position: absolute; bottom: 65px; right: 0; width: 340px; background: #0a0a0a; border: 1px solid #d4af37; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .chat-header { background: #111; padding: 12px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; color: #d4af37; font-weight: bold; font-size: 0.9em; text-transform: uppercase; }
-        .chat-mensagens { height: 300px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; font-size: 0.85em; }
-        .msg { padding: 10px 12px; border-radius: 6px; max-width: 85%; line-height: 1.4; animation: fadeIn 0.3s ease-in-out; }
+        .chat-mensagens { height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; font-size: 0.85em; }
+        .msg { padding: 10px 12px; border-radius: 6px; max-width: 85%; line-height: 1.4; animation: fadeIn 0.3s ease-in-out; word-wrap: break-word;}
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .msg-bot { background: #1a1a1a; color: #fff; align-self: flex-start; border-left: 3px solid #d4af37; }
         .msg-user { background: #d4af37; color: #050505; align-self: flex-end; font-weight: 600; }
         .msg-digitando { color: #888; font-style: italic; background: transparent; border: none; padding: 5px; }
-        .chat-opcoes { padding: 10px; background: #111; border-top: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
-        .chat-opcao-btn { background: #1a1a1a; color: #d4af37; border: 1px solid #d4af37; padding: 8px; text-align: left; border-radius: 4px; cursor: pointer; font-size: 0.8em; font-weight: 600; transition: 0.2s; }
+        
+        /* Nova Área de Escrita no Robô */
+        .chat-input-area { display: flex; border-top: 1px solid #333; background: #111; padding: 10px; }
+        .chat-input { flex: 1; background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 20px; outline: none; font-size: 0.85rem;}
+        .chat-send-btn { background: transparent; border: none; color: #d4af37; font-size: 1.2rem; cursor: pointer; padding: 0 10px; font-weight: bold;}
+        
+        .chat-opcoes { padding: 10px; background: #111; display: flex; flex-direction: column; gap: 6px; }
+        .chat-opcao-btn { background: #1a1a1a; color: #d4af37; border: 1px solid #d4af37; padding: 8px; text-align: left; border-radius: 4px; cursor: pointer; font-size: 0.75em; font-weight: 600; transition: 0.2s; }
         .chat-opcao-btn:hover { background: #d4af37; color: #050505; }
 
         footer { background-color: rgba(3, 3, 3, 0.9); text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #777; position: relative; z-index: 1;}
@@ -100,10 +103,7 @@
 </head>
 <body>
 
-    <!-- A MAGIA DO FUNDO ANIMADO GLOBAL -->
-    <div id="slideshow-fundo">
-        <!-- As imagens vão ser geradas aqui pelo Javascript -->
-    </div>
+    <div id="slideshow-fundo"></div>
     <div class="overlay-global"></div>
 
     <header>
@@ -113,11 +113,13 @@
             <a href="#servicos">Serviços</a>
             <a href="#galeria">Galeria</a>
             <a href="#agendamento">Agendar</a>
+            <!-- FACEBOOK VOLTOU AQUI! -->
+            <a href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
         </nav>
     </header>
 
-    <!-- CHATBOT INTELIGENTE E EXPANDIDO -->
+    <!-- O NOVO KIKO BOT INTELIGENTE COM CAIXA DE TEXTO -->
     <div class="chat-widget">
         <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Kiko</button>
         <div class="chat-janela" id="chatJanela">
@@ -129,11 +131,12 @@
                 <div class="msg msg-bot">Olá, chefe! 💈 Como posso dar um talento no seu visual hoje?</div>
             </div>
             <div class="chat-opcoes" id="chatOpcoes">
-                <button class="chat-opcao-btn" onclick="responderBot('agendar')">📅 Quero agendar um horário</button>
-                <button class="chat-opcao-btn" onclick="responderBot('precos')">✂️ Quais são os preços?</button>
-                <button class="chat-opcao-btn" onclick="responderBot('pagamento')">💳 Aceitam cartão ou Pix?</button>
-                <button class="chat-opcao-btn" onclick="responderBot('horarios')">🕒 Quais são os horários?</button>
-                <button class="chat-opcao-btn" onclick="responderBot('local')">📍 Onde fica a barbearia?</button>
+                <button class="chat-opcao-btn" onclick="enviarOpcao('📅 Quero agendar um horário')">📅 Quero agendar um horário</button>
+                <button class="chat-opcao-btn" onclick="enviarOpcao('✂️ Quais são os preços?')">✂️ Quais são os preços?</button>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Escreva a sua dúvida..." onkeypress="verificarEnter(event)">
+                <button class="chat-send-btn" onclick="processarMensagemUsuario()">➤</button>
             </div>
         </div>
     </div>
@@ -144,6 +147,8 @@
             <p id="txt_subtitulo">A carregar...</p>
             <div class="hero-buttons">
                 <a href="#agendamento" class="btn-gold">Agendar Horário</a>
+                <!-- FACEBOOK VOLTOU AQUI TAMBÉM! -->
+                <a href="https://www.facebook.com/share/1JepNxcz5b/" class="btn-white" target="_blank">Facebook</a>
                 <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-white" target="_blank">Instagram</a>
             </div>
         </div>
@@ -225,29 +230,16 @@
         let agendamentosDaNuvem = [];
         let configHorarios = null;
 
-        // SISTEMA DE TROCA DE FUNDO
         function iniciarSlideshow(fotos) {
             const container = document.getElementById('slideshow-fundo');
             if(fotos.length === 0) return;
-            
-            // Cria as tags de imagem
             fotos.forEach((fotoUrl, index) => {
-                const img = document.createElement('img');
-                img.src = fotoUrl;
-                img.className = 'slide-imagem';
-                if(index === 0) img.classList.add('slide-ativo');
-                container.appendChild(img);
+                const img = document.createElement('img'); img.src = fotoUrl; img.className = 'slide-imagem';
+                if(index === 0) img.classList.add('slide-ativo'); container.appendChild(img);
             });
-
-            // Se tiver mais de uma, começa a trocar a cada 5 segundos
             if(fotos.length > 1) {
-                let indiceAtual = 0;
-                const imagens = document.querySelectorAll('.slide-imagem');
-                setInterval(() => {
-                    imagens[indiceAtual].classList.remove('slide-ativo');
-                    indiceAtual = (indiceAtual + 1) % imagens.length;
-                    imagens[indiceAtual].classList.add('slide-ativo');
-                }, 5000); // 5000 milissegundos = 5 segundos por foto
+                let i = 0; const imgs = document.querySelectorAll('.slide-imagem');
+                setInterval(() => { imgs[i].classList.remove('slide-ativo'); i = (i + 1) % imgs.length; imgs[i].classList.add('slide-ativo'); }, 5000); 
             }
         }
 
@@ -255,24 +247,17 @@
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('data').setAttribute('min', hoje);
 
-            let visitasBase = 120 + (new Date().getHours() * 7);
-            document.getElementById('contadorVisitas').innerText = visitasBase;
+            let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
             fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; }).catch(e => console.log("Erro offline"));
 
-            // PUXAR FOTOS (PARA A GALERIA E PARA O FUNDO)
             fetch(scriptURL + "?acao=obter_fotos").then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
-                
-                // 1. Constrói a Galeria Normal
                 if (midiasSemRepetir.length > 0) {
-                    let htmlMidia = "";
-                    let fotosParaFundo = []; // Guarda só as fotos para o fundo (ignora vídeos)
-                    
+                    let htmlMidia = ""; let fotosParaFundo = [];
                     midiasSemRepetir.forEach(link => { 
                         let lkLower = link.toLowerCase();
-                        if(lkLower.includes('<blockquote') || link.includes(' ')) return; // Proteção
-
+                        if(lkLower.includes('<blockquote') || link.includes(' ')) return;
                         if(lkLower.includes('.mp4') || lkLower.includes('.webm')) {
                             htmlMidia += `<video src="${link}" autoplay loop muted playsinline></video>`;
                         } else {
@@ -281,13 +266,10 @@
                         }
                     });
                     document.getElementById('galeriaDinamica').innerHTML = htmlMidia;
-
-                    // 2. Inicia o Fundo Animado com as fotos da barbearia
                     iniciarSlideshow(fotosParaFundo);
                 }
             });
 
-            // TEXTOS E PREÇOS
             fetch(scriptURL + "?acao=obter_textos").then(res => res.json()).then(textos => {
                 if (textos.titulo) {
                     document.getElementById('txt_titulo').innerText = textos.titulo;
@@ -296,7 +278,6 @@
                 }
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
-                
                 if (textos.servicos) {
                     let listaServicos = JSON.parse(textos.servicos);
                     let htmlCards = ""; let htmlCaixas = "";
@@ -307,7 +288,6 @@
                     document.getElementById('quadro_servicos_dinamicos').innerHTML = htmlCards;
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
                 }
-
                 if(textos.horarios) {
                     configHorarios = JSON.parse(textos.horarios);
                     document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:00 e das 13:00 às ${configHorarios.fecha}</span>`;
@@ -315,17 +295,28 @@
             });
         };
 
-        // FUNÇÕES DO BOT INTELIGENTE
+        // --- LÓGICA DO ROBÔ INTELIGENTE (CAIXA DE TEXTO) ---
         function alternarChat() {
             const janela = document.getElementById('chatJanela');
             janela.style.display = (janela.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function verificarEnter(event) {
+            if (event.key === "Enter") {
+                processarMensagemUsuario();
+            }
+        }
+
+        function enviarOpcao(texto) {
+            document.getElementById('chatInput').value = texto;
+            processarMensagemUsuario();
         }
 
         function enviarMensagemBot(texto, delay = 1000) {
             const mensagensDiv = document.getElementById('chatMensagens');
             const digitandoDiv = document.createElement('div');
             digitandoDiv.className = 'msg msg-digitando';
-            digitandoDiv.innerText = 'A digitar...';
+            digitandoDiv.innerText = 'Kiko Bot a digitar...';
             mensagensDiv.appendChild(digitandoDiv);
             mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
 
@@ -336,32 +327,43 @@
             }, delay);
         }
 
-        function responderBot(opcao) {
+        function processarMensagemUsuario() {
+            const input = document.getElementById('chatInput');
+            const textoStr = input.value.trim();
+            if(textoStr === "") return;
+
             const mensagensDiv = document.getElementById('chatMensagens');
-            const menuOpcoes = document.getElementById('chatOpcoes');
-            menuOpcoes.style.opacity = '0.5';
-            menuOpcoes.style.pointerEvents = 'none';
+            mensagensDiv.innerHTML += `<div class="msg msg-user">${textoStr}</div>`;
+            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+            input.value = ""; // Limpa a caixa
 
-            if (opcao === 'agendar') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Quero agendar um horário</div>`;
-                enviarMensagemBot("Deslize a página, escolha o serviço e a melhor hora no formulário! 👇", 1000);
-                setTimeout(() => { window.location.hash = '#agendamento'; }, 1500);
-            } else if (opcao === 'precos') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Quais são os preços?</div>`;
-                enviarMensagemBot("Veja a nossa tabela completa um pouco mais acima na secção 'Serviços'. ✂️", 1000);
-                setTimeout(() => { window.location.hash = '#servicos'; }, 1500);
-            } else if (opcao === 'pagamento') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Aceitam cartão ou Pix?</div>`;
-                enviarMensagemBot("Com certeza! Aceitamos Pix, Cartão e Dinheiro no final do atendimento. 💳", 1200);
-            } else if (opcao === 'horarios') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Quais são os horários?</div>`;
-                enviarMensagemBot("Segunda a Sábado: 08h-11h e 13h-19:40h. Aguardamos por si!", 1200);
-            } else if (opcao === 'local') {
-                mensagensDiv.innerHTML += `<div class="msg msg-user">Onde fica a barbearia?</div>`;
-                enviarMensagemBot("Avenida Mato Grosso do Sul, 207 - Coxim, MS. 📍", 1000);
+            const texto = textoStr.toLowerCase();
+
+            // Cérebro de Palavras-Chave
+            if (texto.includes('agendar') || texto.includes('marcar') || texto.includes('cortar') || texto.includes('cabelo') || texto.includes('barba')) {
+                enviarMensagemBot("Pode deixar, chefe! Deslize a página para o final e escolha o horário no nosso formulário de agendamento! ✂️", 1200);
+                setTimeout(() => { window.location.hash = '#agendamento'; }, 2000);
+            } 
+            else if (texto.includes('preço') || texto.includes('valor') || texto.includes('custa')) {
+                enviarMensagemBot("Temos várias opções. A tabela completa de preços está aqui na secção 'Nossos Serviços'. Dê uma vista de olhos! 💸", 1000);
+                setTimeout(() => { window.location.hash = '#servicos'; }, 2000);
+            } 
+            else if (texto.includes('cartão') || texto.includes('pix') || texto.includes('dinheiro') || texto.includes('pagamento') || texto.includes('pagar')) {
+                enviarMensagemBot("Aceitamos Pix, Cartão de Crédito/Débito e Dinheiro. O pagamento é feito presencialmente no final do corte. 💳", 1300);
+            } 
+            else if (texto.includes('hora') || texto.includes('abre') || texto.includes('fecha') || texto.includes('funcionamento')) {
+                enviarMensagemBot("Estamos abertos de Segunda a Sábado: Das 08h às 11h, e de tarde das 13h às 19:40h. ⏰", 1200);
+            } 
+            else if (texto.includes('onde') || texto.includes('rua') || texto.includes('local') || texto.includes('fica') || texto.includes('endereço')) {
+                enviarMensagemBot("A Kiko Barbearia fica na Avenida Mato Grosso do Sul, nº 207, em Coxim - MS. Estamos à sua espera! 📍", 1200);
+            } 
+            else if (texto.includes('obrigado') || texto.includes('valeu') || texto.includes('top') || texto.includes('boa')) {
+                enviarMensagemBot("De nada, chefe! A Kiko Barbearia está sempre à disposição. Tamo junto! 👊", 800);
+            } 
+            else {
+                // Caso não reconheça a palavra
+                enviarMensagemBot("Sou um robô ainda a aprender! 🤖 Mas se quiser cortar o cabelo, basta descer a página e preencher o nosso formulário de agendamento rápido.", 1500);
             }
-
-            setTimeout(() => { menuOpcoes.style.opacity = '1'; menuOpcoes.style.pointerEvents = 'auto'; }, 1500);
         }
 
         // FORMULÁRIO DE AGENDAMENTO
@@ -369,8 +371,7 @@
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
             checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
-            document.getElementById('duracao_total').value = totalT;
-            document.getElementById('valor_total_enviar').value = totalV;
+            document.getElementById('duracao_total').value = totalT; document.getElementById('valor_total_enviar').value = totalV;
             const resumoBox = document.getElementById('resumo-pedido');
             if (totalT > 0) {
                 resumoBox.style.display = 'block'; document.getElementById('total-valor').innerText = "R$ " + totalV; document.getElementById('total-tempo').innerText = totalT + " min";
@@ -384,24 +385,19 @@
             if (!dataEscolhida || !configHorarios) return;
             const selectHora = document.getElementById('hora');
             
-            const d = new Date(dataEscolhida + "T12:00:00");
-            const diaSemana = d.getDay(); 
+            const d = new Date(dataEscolhida + "T12:00:00"); const diaSemana = d.getDay(); 
             if (!configHorarios.dias_abertos.includes(diaSemana)) {
-                selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>';
-                selectHora.disabled = true; return;
+                selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
             }
 
             selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
             let bStart = parseTempo(configHorarios.almoco_inicio); let bEnd = parseTempo(configHorarios.almoco_fim);
-
             let todosHorarios = [];
             while(cur <= end) {
                 if (cur >= bStart && cur < bEnd) { cur += 20; continue; }
-                todosHorarios.push(Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0'));
-                cur += 20;
+                todosHorarios.push(Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0')); cur += 20;
             }
-
             todosHorarios.forEach(hora => {
                 const ocupado = agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hora);
                 const opt = document.createElement('option'); opt.value = hora;
