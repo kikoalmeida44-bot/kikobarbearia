@@ -143,7 +143,7 @@
         </div>
     </div>
 
-    <!-- MODAL GALERIA ATUALIZADO COM EXCLUSÃO -->
+    <!-- MODAL GALERIA -->
     <div id="modal-galeria" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">📸 Gerenciar Galeria</h2>
@@ -158,7 +158,7 @@
 
             <h3 style="font-size: 0.9rem; color: #fff; margin-bottom: 10px;">Mídias Atuais no Site:</h3>
             <div id="lista-galeria-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
-                <!-- Lista de fotos e vídeos para excluir vai aparecer aqui -->
+                <!-- Lista será gerada aqui -->
             </div>
 
             <button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar Gerenciador</button>
@@ -190,7 +190,7 @@
             } catch (err) { console.error(err); }
         }
 
-        // --- SISTEMA DE GALERIA AVANÇADO (Lê e Apaga) ---
+        // --- SISTEMA DE GALERIA AVANÇADO (Protegido contra links partidos) ---
         async function abrirModalGaleria() {
             abrirModal('modal-galeria');
             const container = document.getElementById('lista-galeria-container');
@@ -206,18 +206,32 @@
                     return;
                 }
 
-                // Cria a lista com a miniatura e o botão de apagar
+                // Cria a lista bloco a bloco para evitar que aspas de links estragados quebrem o botão
                 fotos.forEach(link => {
-                    let isVideo = link.toLowerCase().includes('.mp4');
-                    let thumb = isVideo ? `<video src="${link}" class="midia-thumb" muted></video>` : `<img src="${link}" class="midia-thumb">`;
+                    const div = document.createElement('div');
+                    div.className = 'linha-item';
                     
-                    container.innerHTML += `
-                        <div class="linha-item">
-                            ${thumb}
-                            <span class="midia-link">${link}</span>
-                            <button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>
-                        </div>
+                    const isVideo = link.toLowerCase().includes('.mp4');
+                    let thumbHtml = isVideo ? `<video src="${link}" class="midia-thumb" muted></video>` : `<img src="${link}" class="midia-thumb" onerror="this.style.display='none'">`;
+                    
+                    // Se o link for um texto gigante do Imgur ou tiver tags HTML, mostramos um aviso visual
+                    if(link.includes('<blockquote') || link.length > 200) {
+                        thumbHtml = `<div class="midia-thumb" style="display:flex; align-items:center; justify-content:center; color:red; font-size:0.6rem; border: 1px solid red;">ERRO</div>`;
+                    }
+
+                    div.innerHTML = `
+                        ${thumbHtml}
+                        <span class="midia-link" style="font-size: 0.65rem;">${link.substring(0, 50)}...</span>
                     `;
+                    
+                    const btn = document.createElement('button');
+                    btn.className = 'remove-btn';
+                    btn.innerText = 'X';
+                    // Como a função é atribuída diretamente pelo JS, aspas no link não vão partir o HTML
+                    btn.onclick = function() { apagarFotoGaleria(link); };
+                    
+                    div.appendChild(btn);
+                    container.appendChild(div);
                 });
             } catch (e) {
                 container.innerHTML = '<p style="color:#ff4444;">Erro ao carregar dados.</p>';
@@ -235,7 +249,8 @@
             
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
             document.getElementById('nova-foto-url').value = '';
-            abrirModalGaleria(); // Recarrega a lista para mostrar a nova mídia
+            btn.innerText = "Adicionar";
+            abrirModalGaleria(); 
         }
 
         async function apagarFotoGaleria(linkParaApagar) {
