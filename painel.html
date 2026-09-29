@@ -71,11 +71,11 @@
             <div class="dashboard-grid">
                 <div class="dash-box ganhos-box">
                     <div class="box-label">GANHOS ESTIMADOS</div>
-                    <div class="box-value" id="ganhos-estimados">...</div>
+                    <div class="box-value" id="ganhos-estimados">R$ 0,00</div>
                 </div>
                 <div class="dash-box agend-box">
                     <div class="box-label">AGENDAMENTOS</div>
-                    <div class="box-value" id="total-agendamentos">...</div>
+                    <div class="box-value" id="total-agendamentos">0</div>
                 </div>
             </div>
         </div>
@@ -181,9 +181,18 @@
             try {
                 const response = await fetch(SCRIPT_URL + '?acao=dashboard');
                 const data = await response.json();
-                document.getElementById('ganhos-estimados').innerText = data.faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('total-agendamentos').innerText = data.agendamentosMes;
-            } catch (err) { console.error(err); }
+                
+                // Atualiza os valores com segurança contra nulos
+                const faturamento = data.faturamento || 0;
+                const totalAgendamentos = data.agendamentosMes || 0;
+
+                document.getElementById('ganhos-estimados').innerText = faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('total-agendamentos').innerText = totalAgendamentos;
+            } catch (err) { 
+                console.error("Erro ao carregar dashboard:", err);
+                document.getElementById('ganhos-estimados').innerText = "R$ 0,00";
+                document.getElementById('total-agendamentos').innerText = "0";
+            }
         }
 
         async function abrirModalGaleria() {
@@ -196,7 +205,7 @@
                 const fotos = await resposta.json();
                 container.innerHTML = '';
 
-                if(fotos.length === 0) {
+                if(!fotos || fotos.length === 0) {
                     container.innerHTML = '<p style="color:#777; font-size:0.8rem;">A galeria está vazia.</p>'; return;
                 }
 
