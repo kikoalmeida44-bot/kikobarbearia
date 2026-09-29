@@ -66,7 +66,7 @@
         .mapa-link { color: #d4af37; text-decoration: none; font-weight: 700; font-size: 1.1em; border-bottom: 1px dashed #d4af37; transition: 0.3s; padding-bottom: 2px; }
         .mapa-link:hover { color: #fff; border-color: #fff; }
         
-        /* CHATBOT IA */
+        /* CHATBOT INTELIGENTE LOCAL */
         .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Montserrat', sans-serif; }
         .chat-btn-toggle { background-color: #d4af37; color: #050505; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9em; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
         .chat-janela { display: none; position: absolute; bottom: 65px; right: 0; width: 340px; background: #0a0a0a; border: 1px solid #d4af37; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
@@ -121,18 +121,18 @@
         <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Kiko</button>
         <div class="chat-janela" id="chatJanela">
             <div class="chat-header">
-                <span>⚡ Kiko Bot IA</span>
+                <span>⚡ Kiko Bot Inteligente</span>
                 <span style="cursor:pointer; color:#aaa; font-size: 1.1em;" onclick="alternarChat()">✕</span>
             </div>
             <div class="chat-mensagens" id="chatMensagens">
-                <div class="msg msg-bot">Olá, chefe! 💈 Sou a Inteligência Artificial da Kiko Barbearia. O que posso fazer por si?</div>
+                <div class="msg msg-bot">Olá, chefe! 💈 Como posso dar um talento no seu visual hoje?</div>
             </div>
             <div class="chat-opcoes" id="chatOpcoes">
                 <button class="chat-opcao-btn" onclick="enviarOpcao('📅 Quero agendar um horário')">📅 Quero agendar um horário</button>
                 <button class="chat-opcao-btn" onclick="enviarOpcao('✂️ Quais são os preços?')">✂️ Quais são os preços?</button>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Pergunte o que quiser..." onkeypress="verificarEnter(event)">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Escreva a sua dúvida..." onkeypress="verificarEnter(event)">
                 <button class="chat-send-btn" onclick="processarMensagemUsuario()">➤</button>
             </div>
         </div>
@@ -290,7 +290,7 @@
             });
         };
 
-        // --- SISTEMA DE INTELIGÊNCIA ARTIFICIAL (CÉREBRO NO FRONTEND) ---
+        // --- CHATBOT INTELIGENTE LOCAL (SUPER RÁPIDO E EFICIENTE) ---
         function alternarChat() {
             const janela = document.getElementById('chatJanela');
             janela.style.display = (janela.style.display === 'block') ? 'none' : 'block';
@@ -322,34 +322,46 @@
 
             const digitandoDiv = document.createElement('div');
             digitandoDiv.className = 'msg msg-digitando';
-            digitandoDiv.innerText = 'Kiko Bot IA a pensar... 🧠';
+            digitandoDiv.innerText = 'Kiko Bot a pensar... 🧠';
             mensagensDiv.appendChild(digitandoDiv);
             mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
 
-            try {
-                const formData = new URLSearchParams();
-                formData.append('acao', 'chat_ai');
-                formData.append('mensagem', textoStr);
-                
-                const resposta = await fetch(scriptURL, { 
-                    method: 'POST', 
-                    body: formData.toString(), 
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' } 
-                });
-                
-                const dados = await resposta.json();
-                
+            setTimeout(() => {
                 mensagensDiv.removeChild(digitandoDiv);
-                mensagensDiv.innerHTML += `<div class="msg msg-bot">${dados.resposta}</div>`;
-                mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
                 
-            } catch (erro) {
-                mensagensDiv.removeChild(digitandoDiv);
-                mensagensDiv.innerHTML += `<div class="msg msg-bot">Desculpe chefe, estou sem rede no momento. Tente de novo! 😅</div>`;
-            }
+                const t = textoStr.toLowerCase();
+                let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
 
-            menuOpcoes.style.opacity = '1';
-            menuOpcoes.style.pointerEvents = 'auto';
+                if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) {
+                    respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅";
+                    setTimeout(() => { window.location.hash = '#agendamento'; }, 1200);
+                } 
+                else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) {
+                    respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸";
+                    setTimeout(() => { window.location.hash = '#servicos'; }, 1200);
+                } 
+                else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) {
+                    respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳";
+                } 
+                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) {
+                    respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11h, e à tarde das 13h às 19:40h. ⏰";
+                } 
+                else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) {
+                    respostaBot = "A Kiko Barbearia fica na Avenida Mato Grosso do Sul, nº 207, em Coxim - MS. Passa por cá! 📍";
+                } 
+                else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) {
+                    respostaBot = "Fala chefe! Tudo ótimo por aqui na Kiko Barbearia. Como posso ajudar o seu visual hoje? 👊";
+                }
+                else if (t.includes('obrigado') || t.includes('valeu') || t.includes('tmj')) {
+                    respostaBot = "Tamo junto, meu caro! A Kiko Barbearia está sempre à disposição. ✂️💈";
+                }
+
+                mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`;
+                mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+                menuOpcoes.style.opacity = '1';
+                menuOpcoes.style.pointerEvents = 'auto';
+
+            }, 600);
         }
 
         // FORMULÁRIO DE AGENDAMENTO
