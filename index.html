@@ -66,7 +66,7 @@
         .mapa-link { color: #d4af37; text-decoration: none; font-weight: 700; font-size: 1.1em; border-bottom: 1px dashed #d4af37; transition: 0.3s; padding-bottom: 2px; }
         .mapa-link:hover { color: #fff; border-color: #fff; }
         
-        /* CHATBOT INTELIGENTE */
+        /* CHATBOT IA */
         .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Montserrat', sans-serif; }
         .chat-btn-toggle { background-color: #d4af37; color: #050505; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9em; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
         .chat-janela { display: none; position: absolute; bottom: 65px; right: 0; width: 340px; background: #0a0a0a; border: 1px solid #d4af37; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
@@ -78,7 +78,6 @@
         .msg-user { background: #d4af37; color: #050505; align-self: flex-end; font-weight: 600; }
         .msg-digitando { color: #888; font-style: italic; background: transparent; border: none; padding: 5px; }
         
-        /* Nova Área de Escrita no Robô */
         .chat-input-area { display: flex; border-top: 1px solid #333; background: #111; padding: 10px; }
         .chat-input { flex: 1; background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 20px; outline: none; font-size: 0.85rem;}
         .chat-send-btn { background: transparent; border: none; color: #d4af37; font-size: 1.2rem; cursor: pointer; padding: 0 10px; font-weight: bold;}
@@ -113,29 +112,27 @@
             <a href="#servicos">Serviços</a>
             <a href="#galeria">Galeria</a>
             <a href="#agendamento">Agendar</a>
-            <!-- FACEBOOK VOLTOU AQUI! -->
             <a href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
         </nav>
     </header>
 
-    <!-- O NOVO KIKO BOT INTELIGENTE COM CAIXA DE TEXTO -->
     <div class="chat-widget">
         <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Kiko</button>
         <div class="chat-janela" id="chatJanela">
             <div class="chat-header">
-                <span>⚡ Kiko Bot Inteligente</span>
+                <span>⚡ Kiko Bot IA</span>
                 <span style="cursor:pointer; color:#aaa; font-size: 1.1em;" onclick="alternarChat()">✕</span>
             </div>
             <div class="chat-mensagens" id="chatMensagens">
-                <div class="msg msg-bot">Olá, chefe! 💈 Como posso dar um talento no seu visual hoje?</div>
+                <div class="msg msg-bot">Olá, chefe! 💈 Sou a Inteligência Artificial da Kiko Barbearia. O que posso fazer por si?</div>
             </div>
             <div class="chat-opcoes" id="chatOpcoes">
                 <button class="chat-opcao-btn" onclick="enviarOpcao('📅 Quero agendar um horário')">📅 Quero agendar um horário</button>
                 <button class="chat-opcao-btn" onclick="enviarOpcao('✂️ Quais são os preços?')">✂️ Quais são os preços?</button>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Escreva a sua dúvida..." onkeypress="verificarEnter(event)">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Pergunte o que quiser..." onkeypress="verificarEnter(event)">
                 <button class="chat-send-btn" onclick="processarMensagemUsuario()">➤</button>
             </div>
         </div>
@@ -147,7 +144,6 @@
             <p id="txt_subtitulo">A carregar...</p>
             <div class="hero-buttons">
                 <a href="#agendamento" class="btn-gold">Agendar Horário</a>
-                <!-- FACEBOOK VOLTOU AQUI TAMBÉM! -->
                 <a href="https://www.facebook.com/share/1JepNxcz5b/" class="btn-white" target="_blank">Facebook</a>
                 <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" class="btn-white" target="_blank">Instagram</a>
             </div>
@@ -246,7 +242,6 @@
         window.onload = function() {
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('data').setAttribute('min', hoje);
-
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
             fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; }).catch(e => console.log("Erro offline"));
@@ -295,16 +290,14 @@
             });
         };
 
-        // --- LÓGICA DO ROBÔ INTELIGENTE (CAIXA DE TEXTO) ---
+        // --- SISTEMA DE INTELIGÊNCIA ARTIFICIAL (CÉREBRO NO FRONTEND) ---
         function alternarChat() {
             const janela = document.getElementById('chatJanela');
             janela.style.display = (janela.style.display === 'block') ? 'none' : 'block';
         }
 
         function verificarEnter(event) {
-            if (event.key === "Enter") {
-                processarMensagemUsuario();
-            }
+            if (event.key === "Enter") processarMensagemUsuario();
         }
 
         function enviarOpcao(texto) {
@@ -312,58 +305,51 @@
             processarMensagemUsuario();
         }
 
-        function enviarMensagemBot(texto, delay = 1000) {
-            const mensagensDiv = document.getElementById('chatMensagens');
-            const digitandoDiv = document.createElement('div');
-            digitandoDiv.className = 'msg msg-digitando';
-            digitandoDiv.innerText = 'Kiko Bot a digitar...';
-            mensagensDiv.appendChild(digitandoDiv);
-            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-
-            setTimeout(() => {
-                mensagensDiv.removeChild(digitandoDiv);
-                mensagensDiv.innerHTML += `<div class="msg msg-bot">${texto}</div>`;
-                mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-            }, delay);
-        }
-
-        function processarMensagemUsuario() {
+        async function processarMensagemUsuario() {
             const input = document.getElementById('chatInput');
             const textoStr = input.value.trim();
             if(textoStr === "") return;
 
             const mensagensDiv = document.getElementById('chatMensagens');
+            const menuOpcoes = document.getElementById('chatOpcoes');
+            
             mensagensDiv.innerHTML += `<div class="msg msg-user">${textoStr}</div>`;
             mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-            input.value = ""; // Limpa a caixa
+            input.value = ""; 
+            
+            menuOpcoes.style.opacity = '0.5';
+            menuOpcoes.style.pointerEvents = 'none';
 
-            const texto = textoStr.toLowerCase();
+            const digitandoDiv = document.createElement('div');
+            digitandoDiv.className = 'msg msg-digitando';
+            digitandoDiv.innerText = 'Kiko Bot IA a pensar... 🧠';
+            mensagensDiv.appendChild(digitandoDiv);
+            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
 
-            // Cérebro de Palavras-Chave
-            if (texto.includes('agendar') || texto.includes('marcar') || texto.includes('cortar') || texto.includes('cabelo') || texto.includes('barba')) {
-                enviarMensagemBot("Pode deixar, chefe! Deslize a página para o final e escolha o horário no nosso formulário de agendamento! ✂️", 1200);
-                setTimeout(() => { window.location.hash = '#agendamento'; }, 2000);
-            } 
-            else if (texto.includes('preço') || texto.includes('valor') || texto.includes('custa')) {
-                enviarMensagemBot("Temos várias opções. A tabela completa de preços está aqui na secção 'Nossos Serviços'. Dê uma vista de olhos! 💸", 1000);
-                setTimeout(() => { window.location.hash = '#servicos'; }, 2000);
-            } 
-            else if (texto.includes('cartão') || texto.includes('pix') || texto.includes('dinheiro') || texto.includes('pagamento') || texto.includes('pagar')) {
-                enviarMensagemBot("Aceitamos Pix, Cartão de Crédito/Débito e Dinheiro. O pagamento é feito presencialmente no final do corte. 💳", 1300);
-            } 
-            else if (texto.includes('hora') || texto.includes('abre') || texto.includes('fecha') || texto.includes('funcionamento')) {
-                enviarMensagemBot("Estamos abertos de Segunda a Sábado: Das 08h às 11h, e de tarde das 13h às 19:40h. ⏰", 1200);
-            } 
-            else if (texto.includes('onde') || texto.includes('rua') || texto.includes('local') || texto.includes('fica') || texto.includes('endereço')) {
-                enviarMensagemBot("A Kiko Barbearia fica na Avenida Mato Grosso do Sul, nº 207, em Coxim - MS. Estamos à sua espera! 📍", 1200);
-            } 
-            else if (texto.includes('obrigado') || texto.includes('valeu') || texto.includes('top') || texto.includes('boa')) {
-                enviarMensagemBot("De nada, chefe! A Kiko Barbearia está sempre à disposição. Tamo junto! 👊", 800);
-            } 
-            else {
-                // Caso não reconheça a palavra
-                enviarMensagemBot("Sou um robô ainda a aprender! 🤖 Mas se quiser cortar o cabelo, basta descer a página e preencher o nosso formulário de agendamento rápido.", 1500);
+            try {
+                const formData = new URLSearchParams();
+                formData.append('acao', 'chat_ai');
+                formData.append('mensagem', textoStr);
+                
+                const resposta = await fetch(scriptURL, { 
+                    method: 'POST', 
+                    body: formData.toString(), 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' } 
+                });
+                
+                const dados = await resposta.json();
+                
+                mensagensDiv.removeChild(digitandoDiv);
+                mensagensDiv.innerHTML += `<div class="msg msg-bot">${dados.resposta}</div>`;
+                mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+                
+            } catch (erro) {
+                mensagensDiv.removeChild(digitandoDiv);
+                mensagensDiv.innerHTML += `<div class="msg msg-bot">Desculpe chefe, estou sem rede no momento. Tente de novo! 😅</div>`;
             }
+
+            menuOpcoes.style.opacity = '1';
+            menuOpcoes.style.pointerEvents = 'auto';
         }
 
         // FORMULÁRIO DE AGENDAMENTO
