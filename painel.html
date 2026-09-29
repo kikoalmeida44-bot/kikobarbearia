@@ -27,9 +27,7 @@
         .ganhos-box { border-left: 3px solid #ffd700; } .agend-box { border-left: 3px solid #00bfff; }
         .box-label { font-size: 0.7rem; color: #aaaaaa; font-weight: 600; margin-bottom: 5px; }
         .box-value { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
-        .fidelidade-container { background-color: #111; padding: 15px; border-radius: 6px; min-height: 60px; font-size: 0.85rem; color: #777; text-align: center;}
-        .cliente-item { color: #ddd; padding: 8px 0; border-bottom: 1px solid #333; text-align: left;} .cliente-item strong { color: #c8a355; }
-
+        
         /* BOTÕES DO MENU */
         .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: flex-start; gap: 10px;}
         .menu-btn:hover { background-color: #1a1a1a; border-color: #c8a355; }
@@ -41,7 +39,7 @@
         .modal-title { color: #c8a355; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
-        .input-group input, .input-group textarea { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; }
+        .input-group input { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; }
         .action-btn { background-color: #c8a355; color: black; border: none; padding: 12px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
         .close-btn { background-color: #333; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
         
@@ -82,10 +80,10 @@
             </div>
         </div>
 
-        <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR</button>
+        <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR MANUAMENTE</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂️ GERENCIAR SERVIÇOS E PREÇOS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
-        <button class="menu-btn" onclick="abrirModal('modal-textos')">🎨 TEXTOS E FUNDO DO SITE</button>
+        <button class="menu-btn" onclick="abrirModal('modal-textos')">🎨 TEXTOS DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()" style="border-color: #ffd700;">📸 GERENCIAR GALERIA / VÍDEOS</button>
 
         <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
@@ -96,8 +94,6 @@
         <div class="modal-content">
             <h2 class="modal-title">📅 Agendar Manualmente</h2>
             <div class="input-group"><input type="text" id="agend-nome" placeholder="Nome do Cliente"></div>
-            <div class="input-group"><input type="email" id="agend-email" placeholder="E-mail (Opcional)"></div>
-            <div class="input-group"><input type="tel" id="agend-telefone" placeholder="WhatsApp (Opcional)"></div>
             <div style="display: flex; gap: 10px;">
                 <div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div>
                 <div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div>
@@ -135,9 +131,9 @@
     <!-- MODAL TEXTOS -->
     <div id="modal-textos" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">🎨 Visual do Site</h2>
-            <div class="input-group"><label>Título</label><input type="text" id="edit-titulo"></div>
-            <div class="input-group"><label>Fundo (Link da Foto ou Vídeo .mp4)</label><input type="text" id="edit-fundo"></div>
+            <h2 class="modal-title">🎨 Textos do Site</h2>
+            <div class="input-group"><label>Título Principal</label><input type="text" id="edit-titulo"></div>
+            <div class="input-group"><label>Subtítulo</label><input type="text" id="edit-subtitulo"></div>
             <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
         </div>
@@ -190,7 +186,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // --- SISTEMA DE GALERIA AVANÇADO (Protegido contra links partidos) ---
         async function abrirModalGaleria() {
             abrirModal('modal-galeria');
             const container = document.getElementById('lista-galeria-container');
@@ -202,11 +197,9 @@
                 container.innerHTML = '';
 
                 if(fotos.length === 0) {
-                    container.innerHTML = '<p style="color:#777; font-size:0.8rem;">A galeria está vazia.</p>';
-                    return;
+                    container.innerHTML = '<p style="color:#777; font-size:0.8rem;">A galeria está vazia.</p>'; return;
                 }
 
-                // Cria a lista bloco a bloco para evitar que aspas de links estragados quebrem o botão
                 fotos.forEach(link => {
                     const div = document.createElement('div');
                     div.className = 'linha-item';
@@ -214,24 +207,17 @@
                     const isVideo = link.toLowerCase().includes('.mp4');
                     let thumbHtml = isVideo ? `<video src="${link}" class="midia-thumb" muted></video>` : `<img src="${link}" class="midia-thumb" onerror="this.style.display='none'">`;
                     
-                    // Se o link for um texto gigante do Imgur ou tiver tags HTML, mostramos um aviso visual
                     if(link.includes('<blockquote') || link.length > 200) {
                         thumbHtml = `<div class="midia-thumb" style="display:flex; align-items:center; justify-content:center; color:red; font-size:0.6rem; border: 1px solid red;">ERRO</div>`;
                     }
 
-                    div.innerHTML = `
-                        ${thumbHtml}
-                        <span class="midia-link" style="font-size: 0.65rem;">${link.substring(0, 50)}...</span>
-                    `;
+                    div.innerHTML = `${thumbHtml}<span class="midia-link" style="font-size: 0.65rem;">${link.substring(0, 50)}...</span>`;
                     
                     const btn = document.createElement('button');
-                    btn.className = 'remove-btn';
-                    btn.innerText = 'X';
-                    // Como a função é atribuída diretamente pelo JS, aspas no link não vão partir o HTML
+                    btn.className = 'remove-btn'; btn.innerText = 'X';
                     btn.onclick = function() { apagarFotoGaleria(link); };
                     
-                    div.appendChild(btn);
-                    container.appendChild(div);
+                    div.appendChild(btn); container.appendChild(div);
                 });
             } catch (e) {
                 container.innerHTML = '<p style="color:#ff4444;">Erro ao carregar dados.</p>';
@@ -244,13 +230,11 @@
             
             const btn = event.target; btn.innerText = "...";
             const formData = new URLSearchParams();
-            formData.append('acao', 'salvar_foto');
-            formData.append('url_foto', urlFoto);
+            formData.append('acao', 'salvar_foto'); formData.append('url_foto', urlFoto);
             
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
             document.getElementById('nova-foto-url').value = '';
-            btn.innerText = "Adicionar";
-            abrirModalGaleria(); 
+            btn.innerText = "Adicionar"; abrirModalGaleria(); 
         }
 
         async function apagarFotoGaleria(linkParaApagar) {
@@ -258,17 +242,13 @@
             if(!confirmar) return;
 
             const formData = new URLSearchParams();
-            formData.append('acao', 'remover_foto');
-            formData.append('url_foto', linkParaApagar);
+            formData.append('acao', 'remover_foto'); formData.append('url_foto', linkParaApagar);
             
             alert('A excluir do servidor...');
             await fetch(SCRIPT_URL, { method: 'POST', body: formData.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-            
-            alert('Excluído com sucesso!');
-            abrirModalGaleria(); // Recarrega a lista
+            alert('Excluído com sucesso!'); abrirModalGaleria(); 
         }
 
-        // --- RESTANTES FUNÇÕES (Serviços, Textos, Agendar) ---
         async function salvarAgendamento() {
             const nome = document.getElementById('agend-nome').value || "Bloqueio";
             const data = document.getElementById('agend-data').value;
@@ -297,7 +277,6 @@
         }
 
         async function salvarServicos() {
-            const linhas = document.querySelectorAll('.linha-item:not(.is-galeria)');
             let novos = [];
             document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => {
                 const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0);
@@ -309,9 +288,9 @@
         }
 
         async function salvarTextos() {
-            const titulo = document.getElementById('edit-titulo').value; const fundo = document.getElementById('edit-fundo').value;
+            const titulo = document.getElementById('edit-titulo').value; const subtitulo = document.getElementById('edit-subtitulo').value;
             const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos');
-            if(titulo) fd.append('titulo', titulo); if(fundo) fd.append('fundo', fundo);
+            if(titulo) fd.append('titulo', titulo); if(subtitulo) fd.append('subtitulo', subtitulo);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
             alert('Guardado!'); fecharModal('modal-textos');
         }
