@@ -29,7 +29,7 @@
         .modal-title { color: #c8a355; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
-        .input-group input { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; font-family: inherit; }
         .action-btn { background-color: #c8a355; color: black; border: none; padding: 12px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
         .close-btn { background-color: #333; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
         .linha-item { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px;}
@@ -49,6 +49,7 @@
             <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
         </div>
     </div>
+    
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo">Kiko Barbearia Pro</h1>
         <div class="section-card">
@@ -58,28 +59,116 @@
                 <div class="dash-box agend-box"><div class="box-label">AGENDAMENTOS</div><div class="box-value" id="total-agendamentos">0</div></div>
             </div>
         </div>
-        <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR MANUAMENTE</button>
+        <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂️ GERENCIAR SERVIÇOS E PREÇOS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
-        <button class="menu-btn" onclick="abrirModal('modal-textos')">🎨 TEXTOS DO SITE</button>
+        <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()" style="border-color: #ffd700;">📸 GERENCIAR GALERIA / VÍDEOS</button>
         <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
-    <div id="modal-agendar" class="modal"><div class="modal-content"><h2 class="modal-title">📅 Agendar Manualmente</h2><div class="input-group"><input type="text" id="agend-nome" placeholder="Nome do Cliente"></div><div style="display: flex; gap: 10px;"><div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div><div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div></div><button class="action-btn" onclick="salvarAgendamento()">Confirmar Registo</button><button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button></div></div>
-    <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂️ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white;" onclick="adicionarLinhaServico('', '', '')">+ Novo Serviço</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar Todos</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
-    <div id="modal-horarios" class="modal"><div class="modal-content"><h2 class="modal-title">🕒 Horário de Funcionamento</h2><div style="display: flex; gap: 10px;"><div class="input-group" style="flex: 1;"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div><div class="input-group" style="flex: 1;"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div></div><button class="action-btn" onclick="salvarHorarios()">Guardar Horários</button><button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button></div></div>
-    <div id="modal-textos" class="modal"><div class="modal-content"><h2 class="modal-title">🎨 Textos do Site</h2><div class="input-group"><label>Título Principal</label><input type="text" id="edit-titulo"></div><div class="input-group"><label>Subtítulo</label><input type="text" id="edit-subtitulo"></div><button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button><button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button></div></div>
-    <div id="modal-galeria" class="modal"><div class="modal-content"><h2 class="modal-title">📸 Gerenciar Galeria</h2><div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px dashed #d4af37;"><label style="font-size: 0.8rem; color:#aaa;">Adicionar Nova Mídia</label><div style="display: flex; gap: 10px; margin-top: 5px;"><input type="text" id="nova-foto-url" placeholder="Cole o link aqui" style="flex:1; padding: 10px; background:#222; border:1px solid #444; color:white; border-radius:4px;"><button class="action-btn" style="width: auto; margin:0;" onclick="salvarFotoGaleria()">Adicionar</button></div></div><h3 style="font-size: 0.9rem; color: #fff; margin-bottom: 10px;">Mídias Atuais:</h3><div id="lista-galeria-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div><button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar</button></div></div>
+
+    <!-- MODAL AGENDAR / BLOQUEAR COM DURAÇÃO -->
+    <div id="modal-agendar" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">📅 Agendar ou Bloquear Horário</h2>
+            <div class="input-group"><label>Nome do Cliente / Motivo do Bloqueio</label><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João Silva"></div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;"><label>Data</label><input type="date" id="agend-data"></div>
+                <div class="input-group" style="flex: 1;"><label>Hora Inicial</label><input type="time" id="agend-hora"></div>
+            </div>
+            <div class="input-group">
+                <label>Duração do Bloqueio / Atendimento:</label>
+                <select id="agend-duracao">
+                    <option value="20">20 minutos (1 horário)</option>
+                    <option value="40">40 minutos (2 horários)</option>
+                    <option value="60">1 hora (60 min)</option>
+                    <option value="120">2 horas</option>
+                    <option value="240">4 horas (Meio período)</option>
+                    <option value="480">Dia todo (8 horas)</option>
+                </select>
+            </div>
+            <button class="action-btn" onclick="salvarAgendamento()">Confirmar Registo</button>
+            <button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL SERVIÇOS -->
+    <div id="modal-servicos" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">✂️ Serviços e Preços</h2>
+            <div id="lista-servicos-container"></div>
+            <button class="action-btn" style="background-color: #444; color: white;" onclick="adicionarLinhaServico('', '', '')">+ Novo Serviço</button><br><br>
+            <button class="action-btn" onclick="salvarServicos()">Guardar Todos</button>
+            <button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL HORÁRIOS -->
+    <div id="modal-horarios" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🕒 Horário de Funcionamento</h2>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div>
+                <div class="input-group" style="flex: 1;"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div>
+            </div>
+            <button class="action-btn" onclick="salvarHorarios()">Guardar Horários</button>
+            <button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL TEXTOS -->
+    <div id="modal-textos" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎨 Textos do Site</h2>
+            <div class="input-group"><label>Título Principal</label><input type="text" id="edit-titulo"></div>
+            <div class="input-group"><label>Subtítulo</label><input type="text" id="edit-subtitulo"></div>
+            <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
+            <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL GALERIA -->
+    <div id="modal-galeria" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">📸 Gerenciar Galeria</h2>
+            <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px dashed #d4af37;">
+                <label style="font-size: 0.8rem; color:#aaa;">Adicionar Nova Mídia</label>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <input type="text" id="nova-foto-url" placeholder="Cole o link aqui" style="flex:1; padding: 10px; background:#222; border:1px solid #444; color:white; border-radius:4px;">
+                    <button class="action-btn" style="width: auto; margin:0;" onclick="salvarFotoGaleria()">Adicionar</button>
+                </div>
+            </div>
+            <h3 style="font-size: 0.9rem; color: #fff; margin-bottom: 10px;">Mídias Atuais:</h3>
+            <div id="lista-galeria-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar</button>
+        </div>
+    </div>
+
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
-        function verificarSenha() { if (document.getElementById('senha-admin').value === "kiko2026") { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-dashboard').style.display = 'block'; atualizarPainelAdmin(); } else { document.getElementById('erro-senha').style.display = 'block'; } }
+        
+        function verificarSenha() { 
+            if (document.getElementById('senha-admin').value === "kiko2026") { 
+                document.getElementById('login-screen').style.display = 'none'; 
+                document.getElementById('main-dashboard').style.display = 'block'; 
+                atualizarPainelAdmin(); 
+            } else { 
+                document.getElementById('erro-senha').style.display = 'block'; 
+            } 
+        }
+
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
         function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+
         async function atualizarPainelAdmin() {
-            try { const res = await fetch(SCRIPT_URL + '?acao=dashboard'); const data = await res.json();
-            document.getElementById('ganhos-estimados').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('total-agendamentos').innerText = data.agendamentosMes || 0; } catch (e) {}
+            try { 
+                const res = await fetch(SCRIPT_URL + '?acao=dashboard'); 
+                const data = await res.json();
+                document.getElementById('ganhos-estimados').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('total-agendamentos').innerText = data.agendamentosMes || 0; 
+            } catch (e) {}
         }
+
         async function abrirModalServicos() {
             abrirModal('modal-servicos');
             document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>';
@@ -88,11 +177,13 @@
             document.getElementById('lista-servicos-container').innerHTML = '';
             servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo));
         }
+
         function adicionarLinhaServico(n, p, t) {
             const div = document.createElement('div'); div.className = 'linha-item';
             div.innerHTML = `<input type="text" value="${n}" class="s-nome"><input type="number" value="${p}" class="s-preco" style="width:60px;"><input type="number" value="${t}" class="s-tempo" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`;
             document.getElementById('lista-servicos-container').appendChild(div);
         }
+
         async function salvarServicos() {
             let novos = [];
             document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => {
@@ -103,47 +194,83 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
             alert('Serviços guardados com sucesso!'); fecharModal('modal-servicos');
         }
-        async function salvarTextos() {
-            const titulo = document.getElementById('edit-titulo').value; const subtitulo = document.getElementById('edit-subtitulo').value;
-            const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos');
-            if(titulo) fd.append('titulo', titulo); if(subtitulo) fd.append('subtitulo', subtitulo);
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Guardado!'); fecharModal('modal-textos');
+
+        async function abrirModalTextos() {
+            abrirModal('modal-textos');
+            try {
+                const res = await fetch(SCRIPT_URL + '?acao=obter_textos');
+                const data = await res.json();
+                if(data.titulo) document.getElementById('edit-titulo').value = data.titulo;
+                if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo;
+            } catch(e) {}
         }
+
+        async function salvarTextos() {
+            const titulo = document.getElementById('edit-titulo').value; 
+            const subtitulo = document.getElementById('edit-subtitulo').value;
+            const fd = new URLSearchParams(); 
+            fd.append('acao', 'salvar_textos');
+            if(titulo) fd.append('titulo', titulo); 
+            if(subtitulo) fd.append('subtitulo', subtitulo);
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+            alert('Textos guardados com sucesso!'); fecharModal('modal-textos');
+        }
+
         async function salvarHorarios() {
             const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios');
             fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]}));
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Guardado!'); fecharModal('modal-horarios');
+            alert('Horários guardados com sucesso!'); fecharModal('modal-horarios');
         }
+
         async function salvarFotoGaleria() {
             const urlFoto = document.getElementById('nova-foto-url').value;
-            if (!urlFoto) return;
+            if (!urlFoto) return alert("Insira o link da mídia!");
             const fd = new URLSearchParams(); fd.append('acao', 'salvar_foto'); fd.append('url_foto', urlFoto);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            document.getElementById('nova-foto-url').value = ''; alert('Adicionado!'); abrirModalGaleria();
+            document.getElementById('nova-foto-url').value = ''; alert('Mídia adicionada!'); abrirModalGaleria();
         }
+
         async function abrirModalGaleria() {
             abrirModal('modal-galeria'); const container = document.getElementById('lista-galeria-container'); container.innerHTML = '<p>A carregar...</p>';
-            try { const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); const fotos = await res.json(); container.innerHTML = '';
-            fotos.forEach(link => {
-                const div = document.createElement('div'); div.className = 'linha-item';
-                div.innerHTML = `<span class="midia-link">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`;
-                container.appendChild(div);
-            }); } catch(e) {}
+            try { 
+                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); 
+                const fotos = await res.json(); 
+                container.innerHTML = '';
+                if(!fotos || fotos.length === 0) {
+                    container.innerHTML = '<p style="color:#777; font-size:0.8rem;">Galeria vazia.</p>';
+                    return;
+                }
+                fotos.forEach(link => {
+                    const div = document.createElement('div'); div.className = 'linha-item';
+                    div.innerHTML = `<span class="midia-link">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`;
+                    container.appendChild(div);
+                }); 
+            } catch(e) { container.innerHTML = '<p style="color:red;">Erro ao carregar</p>'; }
         }
+
         async function apagarFotoGaleria(link) {
             const fd = new URLSearchParams(); fd.append('acao', 'remover_foto'); fd.append('url_foto', link);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
             alert('Removido!'); abrirModalGaleria();
         }
+
         async function salvarAgendamento() {
             const nome = document.getElementById('agend-nome').value || "Bloqueio";
-            const data = document.getElementById('agend-data').value; const hora = document.getElementById('agend-hora').value;
+            const data = document.getElementById('agend-data').value; 
+            const hora = document.getElementById('agend-hora').value;
+            const duracao = document.getElementById('agend-duracao').value || 20;
+            
             if(!data || !hora) return alert("Preencha data e hora!");
-            const fd = new URLSearchParams(); fd.append('nome', nome); fd.append('servico', 'Manual'); fd.append('data', data); fd.append('hora', hora);
+            const fd = new URLSearchParams(); 
+            fd.append('nome', nome); 
+            fd.append('servico', 'Manual/Bloqueio'); 
+            fd.append('data', data); 
+            fd.append('hora', hora);
+            fd.append('duracao_total', duracao);
+            
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Agendado!'); fecharModal('modal-agendar'); atualizarPainelAdmin();
+            alert('Horário bloqueado/agendado com sucesso!'); fecharModal('modal-agendar'); atualizarPainelAdmin();
         }
     </script>
 </body>
