@@ -162,7 +162,7 @@
     </div>
 
     <script>
-        // LIGAÇÃO DIRETA AO NOVO SERVIDOR (COM O SEU LINK)
+        // LIGAÇÃO DIRETA AO NOVO SERVIDOR
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
         function verificarSenha() {
@@ -183,7 +183,6 @@
                 const response = await fetch(SCRIPT_URL + '?acao=dashboard');
                 const data = await response.json();
                 
-                // Atualiza os valores com segurança contra nulos
                 const faturamento = data.faturamento || 0;
                 const totalAgendamentos = data.agendamentosMes || 0;
 
@@ -274,8 +273,28 @@
         async function abrirModalServicos() {
             abrirModal('modal-servicos');
             document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>';
-            const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json();
-            const servicos = JSON.parse(data.servicos || "[]");
+            const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); 
+            const data = await res.json();
+            
+            let servicos = [];
+            try {
+                servicos = JSON.parse(data.servicos || "[]");
+            } catch(e) { servicos = []; }
+
+            // Se estiver vazio no servidor, carrega a lista padrão predefinida pelo Kiko
+            if(servicos.length === 0) {
+                servicos = [
+                    {nome: "Corte Masculino", preco: 50, tempo: 20},
+                    {nome: "Barba", preco: 50, tempo: 15},
+                    {nome: "Cabelo e Barba", preco: 100, tempo: 45},
+                    {nome: "Progressiva", preco: 150, tempo: 30},
+                    {nome: "Coloração", preco: 100, tempo: 60},
+                    {nome: "Sobrancelha", preco: 25, tempo: 10},
+                    {nome: "Plano Cabelo e Barba", preco: 38, tempo: 30},
+                    {nome: "Plano Corte", preco: 25, tempo: 15}
+                ];
+            }
+
             document.getElementById('lista-servicos-container').innerHTML = '';
             servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo));
         }
@@ -289,7 +308,9 @@
         async function salvarServicos() {
             let novos = [];
             document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => {
-                const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0);
+                const n = l.querySelector('.s-nome').value; 
+                const p = parseFloat(l.querySelector('.s-preco').value||0); 
+                const t = parseInt(l.querySelector('.s-tempo').value||0);
                 if(n) novos.push({nome: n, preco: p, tempo: t});
             });
             const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos));
