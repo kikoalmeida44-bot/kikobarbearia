@@ -129,7 +129,7 @@
             </div>
             <div class="chat-opcoes" id="chatOpcoes">
                 <button class="chat-opcao-btn" onclick="enviarOpcao('📅 Quero agendar um horário')">📅 Quero agendar um horário</button>
-                <button class="chat-opcao-btn" onclick="enviarOpcao('✂️ Quais são os preços?')">✂️ Quais são os preços?</button>
+                <button class="chat-opcao-btn" onclick="enviarOpcao('✂️️ Quais são os preços?')">✂️ Quais são os preços?</button>
             </div>
             <div class="chat-input-area">
                 <input type="text" id="chatInput" class="chat-input" placeholder="Escreva a sua dúvida..." onkeypress="verificarEnter(event)">
@@ -222,7 +222,9 @@
     </footer>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwoFpOt-eXHQ-9utcqPp3R3i6eow2PYxvsSZKuJKiYEziND_xU6vz3kgA2q5zY4MePc/exec';
+        // LIGAÇÃO DIRETA AO NOVO SERVIDOR (COM O SEU LINK)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        
         let agendamentosDaNuvem = [];
         let configHorarios = null;
 
