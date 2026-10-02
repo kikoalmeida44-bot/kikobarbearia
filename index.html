@@ -282,11 +282,19 @@
                     document.getElementById('quadro_servicos_dinamicos').innerHTML = htmlCards;
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
                 }
-                if(textos.horarios) {
-                    configHorarios = JSON.parse(textos.horarios);
-                    document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às ${configHorarios.almoco_inicio} e das ${configHorarios.almoco_fim} às ${configHorarios.fecha}</span>`;
-                }
-            }).catch(e => {});
+                
+                // FORÇA O ALMOÇO EXATO DAS 11:00 ATÉ ÀS 13:00 DE FORMA FIXA E SEGURA
+                configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
+                configHorarios.almoco_inicio = "11:00";
+                configHorarios.almoco_fim = "13:00";
+                if(!configHorarios.abre) configHorarios.abre = "08:00";
+                if(!configHorarios.fecha) configHorarios.fecha = "19:40";
+                if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
+
+                document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:00 e das 13:00 às ${configHorarios.fecha}</span>`;
+            }).catch(e => {
+                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+            });
         };
 
         // --- CHATBOT INTELIGENTE LOCAL ---
@@ -326,12 +334,16 @@
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
         
-        // BLOQUEIO RIGOROSO DE HORÁRIOS E INTERVALO DE ALMOÇO
+        // BLOQUEIO RIGOROSO DAS 11:00 ÀS 13:00
         function verificarHorarios() {
             const dataEscolhida = document.getElementById('data').value;
-            if (!dataEscolhida || !configHorarios) return;
+            if (!dataEscolhida) return;
             const selectHora = document.getElementById('hora');
             
+            if(!configHorarios) {
+                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+            }
+
             const d = new Date(dataEscolhida + "T12:00:00"); const diaSemana = d.getDay(); 
             if (!configHorarios.dias_abertos.includes(diaSemana)) {
                 selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
@@ -353,13 +365,13 @@
         function renderizarDropdown(dataEscolhida, selectHora) {
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
-            let bStart = parseTempo(configHorarios.almoco_inicio); let bEnd = parseTempo(configHorarios.almoco_fim);
+            let bStart = parseTempo("11:00"); let bEnd = parseTempo("13:00");
             
             let todosHorarios = [];
             while(cur <= end) {
                 let hStr = Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0');
                 
-                // VERIFICA SE ESTÁ DENTRO DO INTERVALO DE ALMOÇO (DESDE O INÍCIO ATÉ ANTES DO FIM)
+                // BLOQUEIA RIGOROSAMENTE DAS 11:00 ATÉ ÀS 13:00
                 if (cur >= bStart && cur < bEnd) {
                     todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Almoço" });
                 } else {
