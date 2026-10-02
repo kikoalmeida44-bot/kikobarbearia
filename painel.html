@@ -18,9 +18,10 @@
         .section-title { color: #c8a355; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .dash-box { background-color: #222; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; }
-        .ganhos-box { border-left: 3px solid #ffd700; } .agend-box { border-left: 3px solid #00bfff; }
+        .ganhos-box { border-left: 3px solid #ffd700; grid-column: span 2; text-align: center;} 
+        .agend-box { border-left: 3px solid #00bfff; }
         .box-label { font-size: 0.7rem; color: #aaaaaa; font-weight: 600; margin-bottom: 5px; }
-        .box-value { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
+        .box-value { font-size: 1.5rem; font-weight: 700; color: #ffffff; }
         .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
         .menu-btn:hover { background-color: #1a1a1a; border-color: #c8a355; }
         .logout-btn { width: 100%; background-color: transparent; color: #ff4c4c; border: 1px solid #333; padding: 12px; font-size: 0.75rem; border-radius: 6px; margin-top: 20px; cursor: pointer; }
@@ -50,23 +51,35 @@
     
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo">Kiko Barbearia Pro</h1>
+        
         <div class="section-card">
             <div class="section-title">📊 RESUMO DO MÊS</div>
             <div class="dashboard-grid">
-                <div class="dash-box ganhos-box"><div class="box-label">TOTAL DE GANHOS</div><div class="box-value" id="ganhos-estimados">R$ 0,00</div></div>
-                <div class="dash-box agend-box"><div class="box-label">AGENDAMENTOS</div><div class="box-value" id="total-agendamentos">0</div></div>
+                <div class="dash-box ganhos-box">
+                    <div class="box-label">TOTAL DE GANHOS</div>
+                    <div class="box-value" id="ganhos-estimados" style="color: #ffd700;">R$ 0,00</div>
+                    <div style="display:flex; justify-content: space-around; margin-top: 10px; font-size: 0.75rem; color: #aaa;">
+                        <span>✂️ Serviços: <span id="ganhos-servicos" style="color: #fff;">R$ 0,00</span></span>
+                        <span>🛒 Produtos: <span id="ganhos-produtos" style="color: #fff;">R$ 0,00</span></span>
+                    </div>
+                </div>
+                <div class="dash-box agend-box" style="grid-column: span 2; text-align: center; flex-direction: row; justify-content: space-between; align-items: center;">
+                    <div class="box-label" style="margin: 0;">CLIENTES ATENDIDOS:</div>
+                    <div class="box-value" id="total-agendamentos" style="font-size: 1.2rem;">0</div>
+                </div>
             </div>
         </div>
 
         <!-- BOTÕES DO SISTEMA -->
-        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL (30 Dias)</button>
+        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL</button>
         <button class="menu-btn" onclick="abrirModal('modal-financeiro')" style="border-color: #ffd700;">💰 FINANCEIRO DETALHADO</button>
         <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 LISTA DE CLIENTES (CRM)</button>
+        <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
         
         <!-- BOTÕES ANTIGOS -->
         <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
-        <button class="menu-btn" onclick="abrirModalServicos()">✂️️ GERENCIAR SERVIÇOS E PREÇOS</button>
+        <button class="menu-btn" onclick="abrirModalServicos()">✂ GERENCIAR SERVIÇOS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
@@ -77,32 +90,49 @@
     <div id="modal-agenda" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral</h2><div id="lista-agenda-container" style="max-height: 60vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-agenda')">Voltar</button></div></div>
     
     <!-- MODAL FINANCEIRO -->
-    <div id="modal-financeiro" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #ffd700;">💰 Financeiro Detalhado</h2><div style="background: #222; padding: 15px; border-radius: 6px; margin-bottom: 15px; text-align: center;"><p style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;">Faturamento Total Registado</p><h3 id="financeiro-total-big" style="color: #ffd700; font-size: 1.8rem;">R$ 0,00</h3></div><h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">💵 Últimos Serviços Pagos:</h3><div id="lista-financeiro-container" style="max-height: 40vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-financeiro')">Voltar</button></div></div>
+    <div id="modal-financeiro" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #ffd700;">💰 Financeiro Detalhado</h2><div style="background: #222; padding: 15px; border-radius: 6px; margin-bottom: 15px; text-align: center;"><p style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;">Faturamento Total Registado</p><h3 id="financeiro-total-big" style="color: #ffd700; font-size: 1.8rem;">R$ 0,00</h3></div><h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">💵 Últimas Transações:</h3><div id="lista-financeiro-container" style="max-height: 40vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-financeiro')">Voltar</button></div></div>
 
-    <!-- NOVO MODAL: LISTA DE CLIENTES -->
-    <div id="modal-clientes" class="modal">
+    <!-- MODAL CLIENTES -->
+    <div id="modal-clientes" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #28a745;">👥 Base de Clientes (VIP)</h2><div class="input-group"><input type="text" id="busca-cliente" placeholder="🔍 Buscar por nome ou telemóvel..." onkeyup="filtrarClientes()"></div><div id="lista-clientes-container" style="max-height: 50vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-clientes')">Voltar</button></div></div>
+
+    <!-- NOVO MODAL: PDV E ESTOQUE -->
+    <div id="modal-pdv" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #28a745;">👥 Base de Clientes (VIP)</h2>
-            <div class="input-group">
-                <input type="text" id="busca-cliente" placeholder="🔍 Buscar por nome ou telemóvel..." onkeyup="filtrarClientes()">
+            <h2 class="modal-title" style="color: #ff6b6b;">🛒 Venda de Balcão (PDV)</h2>
+            <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;">
+                <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #fff;">Registar Venda Rápida</h3>
+                <div class="input-group">
+                    <select id="pdv-produto-select" onchange="atualizarPrecoPdv()">
+                        <option value="">-- Selecione o Produto --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="pdv-produto-preco" placeholder="Valor (R$)" step="0.01">
+                </div>
+                <button class="action-btn" style="background-color: #ff6b6b; color: white;" onclick="salvarVendaPdv()">💲 Registar Venda</button>
             </div>
-            <div id="lista-clientes-container" style="max-height: 50vh; overflow-y: auto;">
-                <p style="color: #aaa; font-size: 0.8rem;">A carregar a sua lista de clientes...</p>
-            </div>
-            <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-clientes')">Voltar</button>
+            
+            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+            <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #aaa;">📦 Gerenciar Estoque (Lista de Produtos)</h3>
+            <div id="lista-produtos-container"></div>
+            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProduto('', '', '10')">+ Novo Produto</button>
+            <br><br>
+            <button class="action-btn" onclick="salvarEstoque()">Salvar Estoque</button>
+            <button class="close-btn" onclick="fecharModal('modal-pdv')">Fechar</button>
         </div>
     </div>
 
     <!-- OUTROS MODAIS -->
     <div id="modal-agendar" class="modal"><div class="modal-content"><h2 class="modal-title">📅 Agendar / Bloquear</h2><div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div><div style="display: flex; gap: 10px;"><div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div><div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div></div><div class="input-group"><select id="agend-duracao"><option value="20">20 min</option><option value="40">40 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="480">Dia todo</option></select></div><button class="action-btn" onclick="salvarAgendamento()">Confirmar</button><button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button></div></div>
-    <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂️ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
+    <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂️ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
     <div id="modal-horarios" class="modal"><div class="modal-content"><h2 class="modal-title">🕒 Horários</h2><div style="display: flex; gap: 10px;"><div class="input-group"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div><div class="input-group"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div></div><button class="action-btn" onclick="salvarHorarios()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button></div></div>
     <div id="modal-textos" class="modal"><div class="modal-content"><h2 class="modal-title">🎨 Textos do Site</h2><div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div><div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div><button class="action-btn" onclick="salvarTextos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button></div></div>
     <div id="modal-galeria" class="modal"><div class="modal-content"><h2 class="modal-title">📸 Galeria</h2><div class="input-group"><input type="text" id="nova-foto-url" placeholder="Cole o link da imagem"></div><button class="action-btn" onclick="salvarFotoGaleria()">Adicionar</button><div id="lista-galeria-container"></div><button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar</button></div></div>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
-        window.todosClientes = []; // Variável para a busca
+        window.todosClientes = []; 
+        window.produtosCarregados = [];
 
         function verificarSenha() { if (document.getElementById('senha-admin').value === "kiko2026") { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-dashboard').style.display = 'block'; atualizarPainelAdmin(); } else { document.getElementById('erro-senha').style.display = 'block'; } }
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -113,12 +143,14 @@
                 const res = await fetch(SCRIPT_URL + '?acao=dashboard'); 
                 const data = await res.json();
                 
-                const faturamentoFormatado = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('ganhos-estimados').innerText = faturamentoFormatado;
-                document.getElementById('financeiro-total-big').innerText = faturamentoFormatado;
+                // FINANCEIRO RESUMO DIVIDIDO
+                document.getElementById('ganhos-estimados').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('ganhos-servicos').innerText = (data.fatServicos || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('ganhos-produtos').innerText = (data.fatProdutos || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('financeiro-total-big').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 document.getElementById('total-agendamentos').innerText = data.agendamentosMes || 0; 
                 
-                // 1. AGENDA GERAL
+                // AGENDA
                 const containerAgenda = document.getElementById('lista-agenda-container');
                 containerAgenda.innerHTML = '';
                 if(data.agenda && data.agenda.length > 0) {
@@ -131,78 +163,116 @@
                             divData.innerText = "📅 " + ag.data.split('-').reverse().join('/');
                             containerAgenda.appendChild(divData);
                         }
-                        const div = document.createElement('div');
-                        div.className = 'linha-item';
-                        div.style.borderLeft = '3px solid #00bfff';
-                        div.style.justifyContent = 'space-between';
+                        const div = document.createElement('div'); div.className = 'linha-item'; div.style.borderLeft = '3px solid #00bfff'; div.style.justifyContent = 'space-between';
                         div.innerHTML = `<div><strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">${ag.servico}</span></div>`;
                         containerAgenda.appendChild(div);
                     });
                 } else { containerAgenda.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente agendado.</p>'; }
 
-                // 2. FINANCEIRO
+                // FINANCEIRO LISTA (MOSTRA TIPO)
                 const containerFinanceiro = document.getElementById('lista-financeiro-container');
                 containerFinanceiro.innerHTML = '';
                 if(data.financeiro && data.financeiro.length > 0) {
                     data.financeiro.forEach(fin => {
                         const valorStr = parseFloat(fin.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                        const div = document.createElement('div');
-                        div.className = 'linha-item';
-                        div.style.borderLeft = '3px solid #ffd700';
-                        div.style.justifyContent = 'space-between';
-                        div.innerHTML = `<div><strong>${fin.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">${fin.data.split('-').reverse().join('/')} - ${fin.servico}</span></div><div style="color: #ffd700; font-weight: bold; font-size: 1rem;">${valorStr}</div>`;
+                        const corBorda = fin.tipo === 'produto' ? '#ff6b6b' : '#ffd700'; // Vermelho para Produto
+                        const div = document.createElement('div'); div.className = 'linha-item'; div.style.borderLeft = `3px solid ${corBorda}`; div.style.justifyContent = 'space-between';
+                        div.innerHTML = `<div><strong>${fin.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">${fin.data.split('-').reverse().join('/')} - ${fin.servico}</span></div><div style="color: ${corBorda}; font-weight: bold; font-size: 1rem;">${valorStr}</div>`;
                         containerFinanceiro.appendChild(div);
                     });
                 } else { containerFinanceiro.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhuma venda registada.</p>'; }
 
-                // 3. BASE DE CLIENTES (NOVO)
-                if(data.clientes && data.clientes.length > 0) {
-                    window.todosClientes = data.clientes;
-                    renderizarClientes(data.clientes);
-                } else { 
-                    document.getElementById('lista-clientes-container').innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente no histórico.</p>'; 
-                }
+                // BASE DE CLIENTES
+                if(data.clientes && data.clientes.length > 0) { window.todosClientes = data.clientes; renderizarClientes(data.clientes); } 
+                else { document.getElementById('lista-clientes-container').innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente no histórico.</p>'; }
+
+                // ARMAZENA PRODUTOS PARA O PDV
+                window.produtosCarregados = data.produtos || [];
 
             } catch (e) {}
         }
 
-        // Função que desenha os clientes na tela
+        // FUNÇÕES DE CLIENTES
         function renderizarClientes(lista) {
-            const container = document.getElementById('lista-clientes-container');
-            container.innerHTML = '';
+            const container = document.getElementById('lista-clientes-container'); container.innerHTML = '';
             lista.forEach(cli => {
                 const valorStr = parseFloat(cli.gastoTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                const numZap = cli.telefone.replace(/\D/g, '');
-                const linkWhats = cli.telefone ? `href="https://wa.me/55${numZap}" target="_blank"` : 'href="#" onclick="alert(\'Cliente não tem telefone registado.\'); return false;"';
-                const btnStyle = cli.telefone ? 'background: #25D366; color: white;' : 'background: #555; color: #ccc; cursor: not-allowed;';
-                
-                const div = document.createElement('div');
-                div.className = 'linha-item';
-                div.style.borderLeft = '3px solid #28a745';
-                div.style.justifyContent = 'space-between';
-                div.innerHTML = `
-                    <div>
-                        <strong>${cli.nome}</strong><br>
-                        <span style="font-size: 0.75rem; color: #aaa;">Último corte: ${cli.ultimaVisita.split('-').reverse().join('/')} | ✂️ ${cli.visitas}x</span>
-                    </div>
-                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                        <div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Total: ${valorStr}</div>
-                        <a ${linkWhats} style="${btnStyle} padding: 4px 8px; text-decoration: none; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">WhatsApp</a>
-                    </div>
-                `;
+                const numZap = cli.telefone.replace(/\D/g, ''); const linkWhats = cli.telefone ? `href="https://wa.me/55${numZap}" target="_blank"` : 'href="#" onclick="alert(\'Cliente não tem telefone registado.\'); return false;"'; const btnStyle = cli.telefone ? 'background: #25D366; color: white;' : 'background: #555; color: #ccc; cursor: not-allowed;';
+                const div = document.createElement('div'); div.className = 'linha-item'; div.style.borderLeft = '3px solid #28a745'; div.style.justifyContent = 'space-between';
+                div.innerHTML = `<div><strong>${cli.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">Último corte: ${cli.ultimaVisita.split('-').reverse().join('/')} | ✂️ ${cli.visitas}x</span></div><div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;"><div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Total: ${valorStr}</div><a ${linkWhats} style="${btnStyle} padding: 4px 8px; text-decoration: none; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">WhatsApp</a></div>`;
                 container.appendChild(div);
             });
         }
+        function filtrarClientes() { const termo = document.getElementById('busca-cliente').value.toLowerCase(); if (!window.todosClientes) return; const filtrados = window.todosClientes.filter(cli => cli.nome.toLowerCase().includes(termo) || cli.telefone.includes(termo)); renderizarClientes(filtrados); }
 
-        // Função da barra de pesquisa de clientes
-        function filtrarClientes() {
-            const termo = document.getElementById('busca-cliente').value.toLowerCase();
-            if (!window.todosClientes) return;
-            const filtrados = window.todosClientes.filter(cli => cli.nome.toLowerCase().includes(termo) || cli.telefone.includes(termo));
-            renderizarClientes(filtrados);
+        // ==========================
+        // NOVAS FUNÇÕES DO PDV / ESTOQUE
+        // ==========================
+        function abrirModalPdv() {
+            abrirModal('modal-pdv');
+            document.getElementById('lista-produtos-container').innerHTML = '';
+            const selectPdv = document.getElementById('pdv-produto-select');
+            selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>';
+            
+            // Popula o select e a lista visual do estoque
+            if (window.produtosCarregados.length === 0) { adicionarLinhaProduto('Pomada', '25.00', '10'); adicionarLinhaProduto('Cerveja', '8.00', '20'); }
+            
+            window.produtosCarregados.forEach(p => {
+                adicionarLinhaProduto(p.nome, p.preco, p.estoque);
+                selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (Em stock: ${p.estoque})</option>`;
+            });
+            document.getElementById('pdv-produto-preco').value = "";
         }
 
-        // Funções Antigas
+        function adicionarLinhaProduto(n, p, e) { 
+            const div = document.createElement('div'); div.className = 'linha-item'; 
+            div.innerHTML = `<input type="text" value="${n}" class="p-nome" placeholder="Produto"><input type="number" value="${p}" class="p-preco" placeholder="R$" style="width:70px;" step="0.01"><input type="number" value="${e}" class="p-estoque" placeholder="Qtd" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; 
+            document.getElementById('lista-produtos-container').appendChild(div); 
+        }
+
+        function atualizarPrecoPdv() {
+            const select = document.getElementById('pdv-produto-select');
+            document.getElementById('pdv-produto-preco').value = select.value; // Puxa o preço
+        }
+
+        async function salvarVendaPdv() {
+            const select = document.getElementById('pdv-produto-select');
+            const precoManual = document.getElementById('pdv-produto-preco').value;
+            
+            if (select.selectedIndex === 0 || !precoManual) return alert("Selecione um produto e confirme o valor!");
+            const nomeProduto = select.options[select.selectedIndex].getAttribute('data-nome');
+            
+            const btn = document.querySelector('#modal-pdv .action-btn'); btn.innerText = "A registar..."; btn.disabled = true;
+            
+            const fd = new URLSearchParams(); 
+            fd.append('acao', 'vender_produto'); 
+            fd.append('nome_produto', nomeProduto); 
+            fd.append('valor_venda', precoManual); 
+            
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            
+            alert('Venda registada com sucesso! O valor já está no Financeiro.');
+            btn.innerText = "💲 Registar Venda"; btn.disabled = false;
+            fecharModal('modal-pdv');
+            atualizarPainelAdmin(); // Atualiza a tela na hora para ver o dinheiro a entrar
+        }
+
+        async function salvarEstoque() { 
+            let novos = []; 
+            document.querySelectorAll('#lista-produtos-container .linha-item').forEach(l => { 
+                const n = l.querySelector('.p-nome').value; 
+                const p = parseFloat(l.querySelector('.p-preco').value||0); 
+                const e = parseInt(l.querySelector('.p-estoque').value||0); 
+                if(n) novos.push({nome: n, preco: p, estoque: e}); 
+            }); 
+            const fd = new URLSearchParams(); fd.append('acao', 'salvar_produtos'); fd.append('produtos_json', JSON.stringify(novos)); 
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            window.produtosCarregados = novos;
+            alert('Estoque guardado com sucesso!'); 
+            fecharModal('modal-pdv'); 
+        }
+
+        // Funções Antigas mantidas
         async function abrirModalServicos() { abrirModal('modal-servicos'); document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); let servicos = JSON.parse(data.servicos || "[]"); document.getElementById('lista-servicos-container').innerHTML = ''; servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); }
         function adicionarLinhaServico(n, p, t) { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<input type="text" value="${n}" class="s-nome"><input type="number" value="${p}" class="s-preco" style="width:60px;"><input type="number" value="${t}" class="s-tempo" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; document.getElementById('lista-servicos-container').appendChild(div); }
         async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
