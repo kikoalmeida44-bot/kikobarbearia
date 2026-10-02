@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
     <title>Painel Admin - Kiko Barbearia Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
@@ -78,7 +79,7 @@
         <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
 
-    <!-- MODAL AGENDA COM BOTÃO DE CANCELAR -->
+    <!-- MODAL AGENDA -->
     <div id="modal-agenda" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral</h2>
@@ -138,7 +139,6 @@
                 document.getElementById('ganhos-produtos').innerText = (data.fatProdutos || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 document.getElementById('financeiro-total-big').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 
-                // AGENDA GERAL COM BOTÃO DE EXCLUIR/CANCELAR
                 const containerAgenda = document.getElementById('lista-agenda-container');
                 containerAgenda.innerHTML = '';
                 if(data.agenda && data.agenda.length > 0) {
@@ -166,7 +166,6 @@
                     });
                 } else { containerAgenda.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente agendado.</p>'; }
 
-                // FINANCEIRO
                 const containerFinanceiro = document.getElementById('lista-financeiro-container');
                 containerFinanceiro.innerHTML = '';
                 if(data.financeiro && data.financeiro.length > 0) {
@@ -187,19 +186,16 @@
             } catch (e) {}
         }
 
-        // FUNÇÃO PARA CANCELAR AGENDAMENTO DIRETAMENTE DO PAINEL
         async function cancelarAgendamento(data, hora, nome) {
             if (!confirm(`Tem certeza que deseja cancelar o horário de ${nome} às ${hora}?`)) return;
-            
             const fd = new URLSearchParams();
             fd.append('acao', 'cancelar_agendamento');
             fd.append('data', data);
             fd.append('hora', hora);
             fd.append('nome', nome);
-            
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
             alert('Agendamento cancelado com sucesso!');
-            atualizarPainelAdmin(); // Atualiza a agenda na hora
+            atualizarPainelAdmin();
         }
 
         function renderizarClientes(lista) {
