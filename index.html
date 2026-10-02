@@ -12,7 +12,7 @@
         
         /* FUNDO ANIMADO */
         #slideshow-fundo { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; background-color: #050505; }
-        .slide-imagem { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out; }
+        .slide-imagem { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out; will-change: opacity; }
         .slide-ativo { opacity: 0.4; } 
         
         .overlay-global { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom, rgba(5,5,5,0.7) 0%, rgba(5,5,5,0.95) 100%); z-index: -2; pointer-events: none;}
@@ -222,7 +222,6 @@
     </footer>
 
     <script>
-        // O SEU LINK CORRETO DO GOOGLE APPS SCRIPT JÁ ESTÁ CONECTADO AQUI:
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
         let agendamentosDaNuvem = [];
@@ -246,7 +245,8 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; }).catch(e => console.log("Erro offline"));
+            // Carregamento rápido em paralelo (assíncrono)
+            fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; }).catch(e => {});
 
             fetch(scriptURL + "?acao=obter_fotos").then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
@@ -265,7 +265,7 @@
                     document.getElementById('galeriaDinamica').innerHTML = htmlMidia;
                     iniciarSlideshow(fotosParaFundo);
                 }
-            });
+            }).catch(e => {});
 
             fetch(scriptURL + "?acao=obter_textos").then(res => res.json()).then(textos => {
                 if (textos.titulo) {
@@ -289,10 +289,10 @@
                     configHorarios = JSON.parse(textos.horarios);
                     document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:00 e das 13:00 às ${configHorarios.fecha}</span>`;
                 }
-            });
+            }).catch(e => {});
         };
 
-        // --- CHATBOT INTELIGENTE LOCAL (SUPER RÁPIDO E EFICIENTE) ---
+        // --- CHATBOT INTELIGENTE LOCAL ---
         function alternarChat() {
             const janela = document.getElementById('chatJanela');
             janela.style.display = (janela.style.display === 'block') ? 'none' : 'block';
@@ -307,7 +307,7 @@
             processarMensagemUsuario();
         }
 
-        async function processarMensagemUsuario() {
+        function processarMensagemUsuario() {
             const input = document.getElementById('chatInput');
             const textoStr = input.value.trim();
             if(textoStr === "") return;
@@ -363,7 +363,7 @@
                 menuOpcoes.style.opacity = '1';
                 menuOpcoes.style.pointerEvents = 'auto';
 
-            }, 600);
+            }, 500);
         }
 
         // FORMULÁRIO DE AGENDAMENTO
