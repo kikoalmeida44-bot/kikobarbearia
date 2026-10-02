@@ -59,7 +59,7 @@
         </div>
 
         <!-- NOVOS BOTÕES DO SISTEMA -->
-        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL (HOJE)</button>
+        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL (30 Dias)</button>
         <button class="menu-btn" onclick="abrirModal('modal-financeiro')" style="border-color: #ffd700;">💰 FINANCEIRO DETALHADO</button>
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
         
@@ -75,7 +75,7 @@
     <!-- MODAL AGENDA GERAL -->
     <div id="modal-agenda" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral (Próximos Clientes)</h2>
+            <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral</h2>
             <div id="lista-agenda-container" style="max-height: 60vh; overflow-y: auto;">
                 <p style="color: #aaa; font-size: 0.8rem;">A carregar a sua agenda...</p>
             </div>
@@ -99,8 +99,7 @@
         </div>
     </div>
 
-    <!-- OUTROS MODAIS EXISTENTES (Servicos, Horarios, Textos, Galeria, Bloquear) -->
-    <!-- (Deixei todos compactos aqui para não quebrar o que já funcionava) -->
+    <!-- OUTROS MODAIS EXISTENTES -->
     <div id="modal-agendar" class="modal"><div class="modal-content"><h2 class="modal-title">📅 Agendar / Bloquear</h2><div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div><div style="display: flex; gap: 10px;"><div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div><div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div></div><div class="input-group"><select id="agend-duracao"><option value="20">20 min</option><option value="40">40 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="480">Dia todo</option></select></div><button class="action-btn" onclick="salvarAgendamento()">Confirmar</button><button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button></div></div>
     <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂️ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
     <div id="modal-horarios" class="modal"><div class="modal-content"><h2 class="modal-title">🕒 Horários</h2><div style="display: flex; gap: 10px;"><div class="input-group"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div><div class="input-group"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div></div><button class="action-btn" onclick="salvarHorarios()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button></div></div>
@@ -124,16 +123,38 @@
                 document.getElementById('financeiro-total-big').innerText = faturamentoFormatado;
                 document.getElementById('total-agendamentos').innerText = data.agendamentosMes || 0; 
                 
-                // 1. MONTAR O ECRÃ DA AGENDA
+                // 1. MONTAR O ECRÃ DA AGENDA (Separada por Datas)
                 const containerAgenda = document.getElementById('lista-agenda-container');
                 containerAgenda.innerHTML = '';
                 if(data.agenda && data.agenda.length > 0) {
+                    let dataAtual = "";
+                    
                     data.agenda.forEach(ag => {
+                        // Verifica se a data mudou para criar o cabeçalho do dia
+                        if (ag.data !== dataAtual) {
+                            dataAtual = ag.data;
+                            const dataBrasileira = ag.data.split('-').reverse().join('/');
+                            
+                            // Cria a barra divisória com a data
+                            const divData = document.createElement('div');
+                            divData.style.backgroundColor = "#c8a355";
+                            divData.style.color = "#000";
+                            divData.style.fontWeight = "bold";
+                            divData.style.padding = "5px 10px";
+                            divData.style.marginTop = "15px";
+                            divData.style.marginBottom = "10px";
+                            divData.style.borderRadius = "4px";
+                            divData.style.fontSize = "0.85rem";
+                            divData.innerText = "📅 " + dataBrasileira;
+                            containerAgenda.appendChild(divData);
+                        }
+                        
+                        // Cria o card do cliente
                         const div = document.createElement('div');
                         div.className = 'linha-item';
                         div.style.borderLeft = '3px solid #00bfff';
                         div.style.justifyContent = 'space-between';
-                        div.innerHTML = `<div><strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">${ag.servico}</span></div><div style="font-size: 0.8rem; color: #fff;">${ag.data.split('-').reverse().join('/')}</div>`;
+                        div.innerHTML = `<div><strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">${ag.servico}</span></div>`;
                         containerAgenda.appendChild(div);
                     });
                 } else {
@@ -159,7 +180,7 @@
             } catch (e) {}
         }
 
-        // Funções Antigas mantidas para os outros botões continuarem a funcionar perfeitamente
+        // Funções Antigas Mantidas
         async function abrirModalServicos() { abrirModal('modal-servicos'); document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); let servicos = JSON.parse(data.servicos || "[]"); document.getElementById('lista-servicos-container').innerHTML = ''; servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); }
         function adicionarLinhaServico(n, p, t) { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<input type="text" value="${n}" class="s-nome"><input type="number" value="${p}" class="s-preco" style="width:60px;"><input type="number" value="${t}" class="s-tempo" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; document.getElementById('lista-servicos-container').appendChild(div); }
         async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
