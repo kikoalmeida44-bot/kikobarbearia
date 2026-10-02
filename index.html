@@ -284,7 +284,7 @@
                 }
                 if(textos.horarios) {
                     configHorarios = JSON.parse(textos.horarios);
-                    document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:00 e das 13:00 às ${configHorarios.fecha}</span>`;
+                    document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às ${configHorarios.almoco_inicio} e das ${configHorarios.almoco_fim} às ${configHorarios.fecha}</span>`;
                 }
             }).catch(e => {});
         };
@@ -326,7 +326,7 @@
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
         
-        // BLOQUEIO DE HORÁRIOS EM TEMPO REAL
+        // BLOQUEIO RIGOROSO DE HORÁRIOS E INTERVALO DE ALMOÇO
         function verificarHorarios() {
             const dataEscolhida = document.getElementById('data').value;
             if (!dataEscolhida || !configHorarios) return;
@@ -354,15 +354,30 @@
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
             let bStart = parseTempo(configHorarios.almoco_inicio); let bEnd = parseTempo(configHorarios.almoco_fim);
+            
             let todosHorarios = [];
             while(cur <= end) {
-                if (cur >= bStart && cur < bEnd) { cur += 20; continue; }
-                todosHorarios.push(Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0')); cur += 20;
+                let hStr = Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0');
+                
+                // VERIFICA SE ESTÁ DENTRO DO INTERVALO DE ALMOÇO (DESDE O INÍCIO ATÉ ANTES DO FIM)
+                if (cur >= bStart && cur < bEnd) {
+                    todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Almoço" });
+                } else {
+                    const ocupadoNuvem = agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr);
+                    todosHorarios.push({ hora: hStr, ocupado: ocupadoNuvem, motivo: "Ocupado" });
+                }
+                cur += 20;
             }
-            todosHorarios.forEach(hora => {
-                const ocupado = agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hora);
-                const opt = document.createElement('option'); opt.value = hora;
-                if(ocupado) { opt.text = hora + " (Ocupado)"; opt.disabled = true; opt.style.color = "#ff4444"; } else { opt.text = hora; }
+
+            todosHorarios.forEach(item => {
+                const opt = document.createElement('option'); opt.value = item.hora;
+                if(item.ocupado) {
+                    opt.text = item.hora + " (" + item.motivo + ")";
+                    opt.disabled = true;
+                    opt.style.color = "#ff4444";
+                } else {
+                    opt.text = item.hora;
+                }
                 selectHora.add(opt);
             });
         }
@@ -378,7 +393,6 @@
             let valorFinal = document.getElementById('valor_total_enviar').value;
             let duracaoFinal = document.getElementById('duracao_total').value;
 
-            // PREPARA OS DADOS EXATAMENTE COMO O SCRIPT ESPERA
             const fd = new URLSearchParams();
             fd.append('nome', document.getElementById('nome').value);
             fd.append('email', document.getElementById('email').value);
