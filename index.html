@@ -245,8 +245,8 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            // Carregamento rápido em paralelo (assíncrono)
-            fetch(scriptURL).then(res => res.json()).then(data => { agendamentosDaNuvem = data; }).catch(e => {});
+            // Carregamento de horários ocupados via JSONP para ignorar o bloqueio de CORS do Google
+            carregarAgendamentosNuvem();
 
             fetch(scriptURL + "?acao=obter_fotos").then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
@@ -291,6 +291,21 @@
                 }
             }).catch(e => {});
         };
+
+        // Função segura para buscar os horários ocupados sem bloqueio de CORS
+        function carregarAgendamentosNuvem() {
+            const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+            window[callbackName] = function(data) {
+                agendamentosDaNuvem = data;
+                delete window[callbackName];
+                document.getElementById(callbackName)?.remove();
+            };
+            const script = document.createElement('script');
+            script.id = callbackName;
+            script.src = scriptURL + '?callback=' + callbackName;
+            script.onerror = function() { agendamentosDaNuvem = []; };
+            document.body.appendChild(script);
+        }
 
         // --- CHATBOT INTELIGENTE LOCAL ---
         function alternarChat() {
