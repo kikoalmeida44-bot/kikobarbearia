@@ -245,9 +245,6 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            // Carregamento de horários ocupados via JSONP para ignorar o bloqueio de CORS do Google
-            carregarAgendamentosNuvem();
-
             fetch(scriptURL + "?acao=obter_fotos").then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
@@ -292,92 +289,28 @@
             }).catch(e => {});
         };
 
-        // Função segura para buscar os horários ocupados sem bloqueio de CORS
-        function carregarAgendamentosNuvem() {
-            const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
-            window[callbackName] = function(data) {
-                agendamentosDaNuvem = data;
-                delete window[callbackName];
-                document.getElementById(callbackName)?.remove();
-            };
-            const script = document.createElement('script');
-            script.id = callbackName;
-            script.src = scriptURL + '?callback=' + callbackName;
-            script.onerror = function() { agendamentosDaNuvem = []; };
-            document.body.appendChild(script);
-        }
-
         // --- CHATBOT INTELIGENTE LOCAL ---
-        function alternarChat() {
-            const janela = document.getElementById('chatJanela');
-            janela.style.display = (janela.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function verificarEnter(event) {
-            if (event.key === "Enter") processarMensagemUsuario();
-        }
-
-        function enviarOpcao(texto) {
-            document.getElementById('chatInput').value = texto;
-            processarMensagemUsuario();
-        }
+        function alternarChat() { const janela = document.getElementById('chatJanela'); janela.style.display = (janela.style.display === 'block') ? 'none' : 'block'; }
+        function verificarEnter(event) { if (event.key === "Enter") processarMensagemUsuario(); }
+        function enviarOpcao(texto) { document.getElementById('chatInput').value = texto; processarMensagemUsuario(); }
 
         function processarMensagemUsuario() {
-            const input = document.getElementById('chatInput');
-            const textoStr = input.value.trim();
-            if(textoStr === "") return;
-
-            const mensagensDiv = document.getElementById('chatMensagens');
-            const menuOpcoes = document.getElementById('chatOpcoes');
-            
-            mensagensDiv.innerHTML += `<div class="msg msg-user">${textoStr}</div>`;
-            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-            input.value = ""; 
-            
-            menuOpcoes.style.opacity = '0.5';
-            menuOpcoes.style.pointerEvents = 'none';
-
-            const digitandoDiv = document.createElement('div');
-            digitandoDiv.className = 'msg msg-digitando';
-            digitandoDiv.innerText = 'Kiko Bot a pensar... 🧠';
-            mensagensDiv.appendChild(digitandoDiv);
-            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+            const input = document.getElementById('chatInput'); const textoStr = input.value.trim(); if(textoStr === "") return;
+            const mensagensDiv = document.getElementById('chatMensagens'); const menuOpcoes = document.getElementById('chatOpcoes');
+            mensagensDiv.innerHTML += `<div class="msg msg-user">${textoStr}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; input.value = ""; 
+            menuOpcoes.style.opacity = '0.5'; menuOpcoes.style.pointerEvents = 'none';
+            const digitandoDiv = document.createElement('div'); digitandoDiv.className = 'msg msg-digitando'; digitandoDiv.innerText = 'Kiko Bot a pensar... 🧠'; mensagensDiv.appendChild(digitandoDiv); mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
 
             setTimeout(() => {
                 mensagensDiv.removeChild(digitandoDiv);
-                
-                const t = textoStr.toLowerCase();
-                let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
-
-                if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) {
-                    respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅";
-                    setTimeout(() => { window.location.hash = '#agendamento'; }, 1200);
-                } 
-                else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) {
-                    respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸";
-                    setTimeout(() => { window.location.hash = '#servicos'; }, 1200);
-                } 
-                else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) {
-                    respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳";
-                } 
-                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) {
-                    respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11h, e à tarde das 13h às 19:40h. ⏰";
-                } 
-                else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) {
-                    respostaBot = "A Kiko Barbearia fica na Avenida Mato Grosso do Sul, nº 207, em Coxim - MS. Passa por cá! 📍";
-                } 
-                else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) {
-                    respostaBot = "Fala chefe! Tudo ótimo por aqui na Kiko Barbearia. Como posso ajudar o seu visual hoje? 👊";
-                }
-                else if (t.includes('obrigado') || t.includes('valeu') || t.includes('tmj')) {
-                    respostaBot = "Tamo junto, meu caro! A Kiko Barbearia está sempre à disposição. ✂️💈";
-                }
-
-                mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`;
-                mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-                menuOpcoes.style.opacity = '1';
-                menuOpcoes.style.pointerEvents = 'auto';
-
+                const t = textoStr.toLowerCase(); let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
+                if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) { respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } 
+                else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) { respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸"; setTimeout(() => { window.location.hash = '#servicos'; }, 1200); } 
+                else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳"; } 
+                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11h, e à tarde das 13h às 19:40h. ⏰"; } 
+                else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "A Kiko Barbearia fica na Avenida Mato Grosso do Sul, nº 207, em Coxim - MS. Passa por cá! 📍"; } 
+                else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) { respostaBot = "Fala chefe! Tudo ótimo por aqui na Kiko Barbearia. Como posso ajudar o seu visual hoje? 👊"; }
+                mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; menuOpcoes.style.opacity = '1'; menuOpcoes.style.pointerEvents = 'auto';
             }, 500);
         }
 
@@ -388,13 +321,12 @@
             checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
             document.getElementById('duracao_total').value = totalT; document.getElementById('valor_total_enviar').value = totalV;
             const resumoBox = document.getElementById('resumo-pedido');
-            if (totalT > 0) {
-                resumoBox.style.display = 'block'; document.getElementById('total-valor').innerText = "R$ " + totalV; document.getElementById('total-tempo').innerText = totalT + " min";
-            } else { resumoBox.style.display = 'none'; }
+            if (totalT > 0) { resumoBox.style.display = 'block'; document.getElementById('total-valor').innerText = "R$ " + totalV; document.getElementById('total-tempo').innerText = totalT + " min"; } else { resumoBox.style.display = 'none'; }
         }
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
         
+        // BLOQUEIO DE HORÁRIOS EM TEMPO REAL
         function verificarHorarios() {
             const dataEscolhida = document.getElementById('data').value;
             if (!dataEscolhida || !configHorarios) return;
@@ -405,7 +337,21 @@
                 selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
             }
 
-            selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
+            selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>A consultar agenda online...</option>';
+            
+            const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+            window[callbackName] = function(data) {
+                agendamentosDaNuvem = data;
+                delete window[callbackName]; document.getElementById(callbackName)?.remove();
+                renderizarDropdown(dataEscolhida, selectHora);
+            };
+            const script = document.createElement('script'); script.id = callbackName; script.src = scriptURL + '?callback=' + callbackName;
+            script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
+            document.body.appendChild(script);
+        }
+
+        function renderizarDropdown(dataEscolhida, selectHora) {
+            selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
             let bStart = parseTempo(configHorarios.almoco_inicio); let bEnd = parseTempo(configHorarios.almoco_fim);
             let todosHorarios = [];
@@ -421,14 +367,29 @@
             });
         }
 
+        // SALVAR NA PLANILHA CORRETAMENTE
         document.getElementById('formAgendamento').addEventListener('submit', e => {
             e.preventDefault();
             if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
-            document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde, a agendar na nuvem...";
-            fetch(scriptURL, { method: 'POST', body: new FormData(e.target), mode: 'no-cors' }).then(() => {
-                var d = document.getElementById('data').value.split('-');
-                let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
-                let valorFinal = document.getElementById('valor_total_enviar').value;
+            document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde, a agendar e a bloquear horário...";
+            
+            var d = document.getElementById('data').value.split('-');
+            let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
+            let valorFinal = document.getElementById('valor_total_enviar').value;
+            let duracaoFinal = document.getElementById('duracao_total').value;
+
+            // PREPARA OS DADOS EXATAMENTE COMO O SCRIPT ESPERA
+            const fd = new URLSearchParams();
+            fd.append('nome', document.getElementById('nome').value);
+            fd.append('email', document.getElementById('email').value);
+            fd.append('telefone', document.getElementById('telefone').value);
+            fd.append('data', document.getElementById('data').value);
+            fd.append('hora', document.getElementById('hora').value);
+            fd.append('servico', nomes.join(" + "));
+            fd.append('valor_total', valorFinal);
+            fd.append('duracao_total', duracaoFinal);
+
+            fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
                 var texto = `Olá, Kiko Barbearia!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
                 
                 e.target.reset(); document.getElementById('hora').disabled = true; document.getElementById('resumo-pedido').style.display = 'none';
