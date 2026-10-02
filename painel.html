@@ -139,7 +139,9 @@
                 document.getElementById('ganhos-produtos').innerText = (data.fatProdutos || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 document.getElementById('financeiro-total-big').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 
-                // AGENDA COM COMANDA INTEGRADA
+                window.produtosCarregados = data.produtos || [];
+
+                // AGENDA COM COMANDA INTEGRADA PUXANDO OS PRODUTOS REAIS DO ESTOQUE
                 const containerAgenda = document.getElementById('lista-agenda-container');
                 containerAgenda.innerHTML = '';
                 if(data.agenda && data.agenda.length > 0) {
@@ -152,6 +154,13 @@
                             divData.innerText = "📅 " + ag.data.split('-').reverse().join('/');
                             containerAgenda.appendChild(divData);
                         }
+                        
+                        // Cria opções do select com os produtos reais cadastrados no estoque
+                        let optionsProdutos = '<option value="">-- Adicionar Produto à Comanda --</option>';
+                        window.produtosCarregados.forEach(p => {
+                            optionsProdutos += `<option value="${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`;
+                        });
+
                         const div = document.createElement('div'); 
                         div.className = 'linha-item'; 
                         div.style.borderLeft = '3px solid #00bfff'; 
@@ -168,11 +177,7 @@
                             </div>
                             <div style="display: flex; gap: 5px; border-top: 1px solid #333; padding-top: 8px;">
                                 <select id="prod-comanda-${ag.data}-${ag.hora}" style="flex: 1; padding: 6px; background: #111; color: white; border: 1px solid #444; border-radius: 4px; font-size: 0.75rem;">
-                                    <option value="">-- Adicionar Produto à Comanda --</option>
-                                    <option value="Pomada Modeladora|35">Pomada Modeladora (R$ 35)</option>
-                                    <option value="Óleo para Barba|30">Óleo para Barba (R$ 30)</option>
-                                    <option value="Pente Especial|20">Pente Especial (R$ 20)</option>
-                                    <option value="Cerveja|8">Cerveja (R$ 8)</option>
+                                    ${optionsProdutos}
                                 </select>
                                 <button onclick="adicionarProdutoComanda('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #c8a355; color: black; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">➕ Lançar</button>
                             </div>
@@ -195,8 +200,6 @@
 
                 if(data.clientes && data.clientes.length > 0) { window.todosClientes = data.clientes; renderizarClientes(data.clientes); } 
                 else { document.getElementById('lista-clientes-container').innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente no histórico.</p>'; }
-
-                window.produtosCarregados = data.produtos || [];
 
             } catch (e) {}
         }
@@ -231,7 +234,7 @@
             fd.append('valor', precoProduto);
 
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert(`Produto "${nomeProduto}" adicionado à comanda de ${nomeCliente} com sucesso!`);
+            alert(`Produto "${nomeProduto}" (R$ ${precoProduto}) adicionado à comanda de ${nomeCliente} com sucesso!`);
             atualizarPainelAdmin();
         }
 
@@ -252,10 +255,10 @@
             document.getElementById('lista-produtos-container').innerHTML = '';
             const selectPdv = document.getElementById('pdv-produto-select');
             selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>';
-            if (window.produtosCarregados.length === 0) { adicionarLinhaProduto('Pomada', '25.00', '10'); adicionarLinhaProduto('Cerveja', '8.00', '20'); }
+            if (window.produtosCarregados.length === 0) { adicionarLinhaProduto('Pomada', '50.00', '10'); }
             window.produtosCarregados.forEach(p => {
                 adicionarLinhaProduto(p.nome, p.preco, p.estoque);
-                selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (Em stock: ${p.estoque})</option>`;
+                selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (R$ ${p.preco} - Stock: ${p.estoque})</option>`;
             });
             document.getElementById('pdv-produto-preco').value = "";
         }
@@ -281,7 +284,7 @@
             let novos = []; document.querySelectorAll('#lista-produtos-container .linha-item').forEach(l => { const n = l.querySelector('.p-nome').value; const p = parseFloat(l.querySelector('.p-preco').value||0); const e = parseInt(l.querySelector('.p-estoque').value||0); if(n) novos.push({nome: n, preco: p, estoque: e}); }); 
             const fd = new URLSearchParams(); fd.append('acao', 'salvar_produtos'); fd.append('produtos_json', JSON.stringify(novos)); 
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            window.produtosCarregados = novos; alert('Estoque guardado!'); fecharModal('modal-pdv'); 
+            window.produtosCarregados = novos; alert('Estoque guardado com sucesso!'); fecharModal('modal-pdv'); atualizarPainelAdmin();
         }
 
         async function abrirModalServicos() { abrirModal('modal-servicos'); document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); let servicos = JSON.parse(data.servicos || "[]"); document.getElementById('lista-servicos-container').innerHTML = ''; servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); }
