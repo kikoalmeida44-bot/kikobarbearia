@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL</button>
+        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL E COMANDAS</button>
         <button class="menu-btn" onclick="abrirModal('modal-financeiro')" style="border-color: #ffd700;">💰 FINANCEIRO DETALHADO</button>
         <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 LISTA DE CLIENTES (CRM)</button>
         <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
@@ -79,10 +79,10 @@
         <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
 
-    <!-- MODAL AGENDA -->
+    <!-- MODAL AGENDA E COMANDAS -->
     <div id="modal-agenda" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral</h2>
+            <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral e Comandas</h2>
             <div id="lista-agenda-container" style="max-height: 60vh; overflow-y: auto;"></div>
             <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-agenda')">Voltar</button>
         </div>
@@ -139,6 +139,7 @@
                 document.getElementById('ganhos-produtos').innerText = (data.fatProdutos || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 document.getElementById('financeiro-total-big').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 
+                // AGENDA COM COMANDA INTEGRADA
                 const containerAgenda = document.getElementById('lista-agenda-container');
                 containerAgenda.innerHTML = '';
                 if(data.agenda && data.agenda.length > 0) {
@@ -154,13 +155,27 @@
                         const div = document.createElement('div'); 
                         div.className = 'linha-item'; 
                         div.style.borderLeft = '3px solid #00bfff'; 
-                        div.style.justifyContent = 'space-between';
+                        div.style.flexDirection = 'column';
+                        div.style.alignItems = 'stretch';
+                        
                         div.innerHTML = `
-                            <div>
-                                <strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
-                                <span style="font-size: 0.75rem; color: #aaa;">${ag.servico}</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <div>
+                                    <strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
+                                    <span style="font-size: 0.75rem; color: #aaa;">Serviço: ${ag.servico} | Total: R$ ${ag.valor_total || '0'}</span>
+                                </div>
+                                <button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌ Cancelar</button>
                             </div>
-                            <button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌ Cancelar</button>
+                            <div style="display: flex; gap: 5px; border-top: 1px solid #333; padding-top: 8px;">
+                                <select id="prod-comanda-${ag.data}-${ag.hora}" style="flex: 1; padding: 6px; background: #111; color: white; border: 1px solid #444; border-radius: 4px; font-size: 0.75rem;">
+                                    <option value="">-- Adicionar Produto à Comanda --</option>
+                                    <option value="Pomada Modeladora|35">Pomada Modeladora (R$ 35)</option>
+                                    <option value="Óleo para Barba|30">Óleo para Barba (R$ 30)</option>
+                                    <option value="Pente Especial|20">Pente Especial (R$ 20)</option>
+                                    <option value="Cerveja|8">Cerveja (R$ 8)</option>
+                                </select>
+                                <button onclick="adicionarProdutoComanda('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #c8a355; color: black; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">➕ Lançar</button>
+                            </div>
                         `;
                         containerAgenda.appendChild(div);
                     });
@@ -195,6 +210,28 @@
             fd.append('nome', nome);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
             alert('Agendamento cancelado com sucesso!');
+            atualizarPainelAdmin();
+        }
+
+        async function adicionarProdutoComanda(data, hora, nomeCliente) {
+            const select = document.getElementById(`prod-comanda-${data}-${hora}`);
+            const valorSelecionado = select.value;
+            if (!valorSelecionado) return alert("Selecione um produto para adicionar à comanda!");
+            
+            const partes = valorSelecionado.split('|');
+            const nomeProduto = partes[0];
+            const precoProduto = parseFloat(partes[1]);
+
+            const fd = new URLSearchParams();
+            fd.append('acao', 'adicionar_item_comanda');
+            fd.append('data', data);
+            fd.append('hora', hora);
+            fd.append('nome_cliente', nomeCliente);
+            fd.append('produto', nomeProduto);
+            fd.append('valor', precoProduto);
+
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+            alert(`Produto "${nomeProduto}" adicionado à comanda de ${nomeCliente} com sucesso!`);
             atualizarPainelAdmin();
         }
 
@@ -252,7 +289,7 @@
         async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
         async function abrirModalTextos() { abrirModal('modal-textos'); try { const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; } catch(e) {} }
         async function salvarTextos() { const titulo = document.getElementById('edit-titulo').value; const subtitulo = document.getElementById('edit-subtitulo').value; const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos'); if(titulo) fd.append('titulo', titulo); if(subtitulo) fd.append('subtitulo', subtitulo); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-textos'); }
-        async function salvarHorarios() { const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]})); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-horarios'); }
+        async function salvarHorarios() { const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]})); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-horarios'); }
         async function salvarFotoGaleria() { const urlFoto = document.getElementById('nova-foto-url').value; if (!urlFoto) return; const fd = new URLSearchParams(); fd.append('acao', 'salvar_foto'); fd.append('url_foto', urlFoto); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); document.getElementById('nova-foto-url').value = ''; alert('Adicionado!'); abrirModalGaleria(); }
         async function abrirModalGaleria() { abrirModal('modal-galeria'); const container = document.getElementById('lista-galeria-container'); container.innerHTML = '<p>A carregar...</p>'; try { const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); const fotos = await res.json(); container.innerHTML = ''; fotos.forEach(link => { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<span style="flex: 1; font-size: 0.75rem; overflow: hidden; color: #aaa;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; container.appendChild(div); }); } catch(e) {} }
         async function apagarFotoGaleria(link) { const fd = new URLSearchParams(); fd.append('acao', 'remover_foto'); fd.append('url_foto', link); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Removido!'); abrirModalGaleria(); }
