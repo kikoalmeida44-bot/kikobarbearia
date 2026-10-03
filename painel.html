@@ -32,7 +32,7 @@
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; font-family: inherit; }
         .action-btn { background-color: #c8a355; color: black; border: none; padding: 12px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
         .close-btn { background-color: #333; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
-        .linha-item { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px;}
+        .linha-item { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px; transition: 0.3s;}
         .linha-item input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
         .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;}
     </style>
@@ -83,7 +83,7 @@
     <div id="modal-agenda" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral e Comandas</h2>
-            <div id="lista-agenda-container" style="max-height: 60vh; overflow-y: auto;"></div>
+            <div id="lista-agenda-container" style="max-height: 65vh; overflow-y: auto; padding-right: 5px;"></div>
             <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-agenda')">Voltar</button>
         </div>
     </div>
@@ -115,15 +115,13 @@
 
     <!-- OUTROS MODAIS -->
     <div id="modal-agendar" class="modal"><div class="modal-content"><h2 class="modal-title">📅 Agendar / Bloquear</h2><div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div><div style="display: flex; gap: 10px;"><div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div><div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div></div><div class="input-group"><select id="agend-duracao"><option value="20">20 min</option><option value="40">40 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="480">Dia todo</option></select></div><button class="action-btn" onclick="salvarAgendamento()">Confirmar</button><button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button></div></div>
-    <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂️ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
+    <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
     <div id="modal-horarios" class="modal"><div class="modal-content"><h2 class="modal-title">🕒 Horários</h2><div style="display: flex; gap: 10px;"><div class="input-group"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div><div class="input-group"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div></div><button class="action-btn" onclick="salvarHorarios()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button></div></div>
     <div id="modal-textos" class="modal"><div class="modal-content"><h2 class="modal-title">🎨 Textos do Site</h2><div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div><div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div><button class="action-btn" onclick="salvarTextos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button></div></div>
     <div id="modal-galeria" class="modal"><div class="modal-content"><h2 class="modal-title">📸 Galeria</h2><div class="input-group"><input type="text" id="nova-foto-url" placeholder="Cole o link da imagem"></div><button class="action-btn" onclick="salvarFotoGaleria()">Adicionar</button><div id="lista-galeria-container"></div><button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar</button></div></div>
 
     <script>
-        // COLOQUE O LINK CORRETO GERADO NO PASSO ANTERIOR (GOOGLE APPS SCRIPT) ABAIXO:
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
-        
         window.todosClientes = []; 
         window.produtosCarregados = [];
 
@@ -158,12 +156,12 @@
                     let optionsComanda = '<option value="">-- Adicionar Item à Comanda --</option>';
                     if(servicosCarregados.length > 0) {
                         optionsComanda += '<optgroup label="✂️ SERVIÇOS">';
-                        servicosCarregados.forEach(s => { optionsComanda += `<option value="Serviço: ${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
+                        servicosCarregados.forEach(s => { optionsComanda += `<option value="${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
                     if(window.produtosCarregados.length > 0) {
                         optionsComanda += '<optgroup label="🛒 PRODUTOS">';
-                        window.produtosCarregados.forEach(p => { optionsComanda += `<option value="Produto: ${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`; });
+                        window.produtosCarregados.forEach(p => { optionsComanda += `<option value="${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
 
@@ -176,27 +174,54 @@
                             containerAgenda.appendChild(divData);
                         }
                         
+                        const isConcluido = ag.status === "Concluído";
+                        const opacityStyle = isConcluido ? "0.6" : "1";
                         const div = document.createElement('div'); 
                         div.className = 'linha-item'; 
-                        div.style.borderLeft = '3px solid #00bfff'; 
+                        div.style.borderLeft = isConcluido ? '3px solid #28a745' : '3px solid #00bfff'; 
                         div.style.flexDirection = 'column';
                         div.style.alignItems = 'stretch';
+                        div.style.opacity = opacityStyle;
                         
-                        div.innerHTML = `
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <div>
-                                    <strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
-                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br>
-                                    <span style="font-size: 0.85rem; color: #fff;">Total da Comanda: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
+                        let btnWpp = '';
+                        if (ag.telefone) {
+                            const numZap = ag.telefone.replace(/\D/g, '');
+                            const msgLink = `Fala *${ag.nome}*! Tudo beleza? ✂️\nPassando para confirmar o seu horário hoje às *${ag.hora}* na Kiko Barbearia. Te esperamos!`;
+                            btnWpp = `<a href="https://wa.me/55${numZap}?text=${encodeURIComponent(msgLink)}" target="_blank" style="background: #25D366; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-decoration: none; display: inline-block;">💬 Confirmar</a>`;
+                        } else {
+                            btnWpp = `<button onclick="alert('Este cliente não registrou telefone.')" style="background: #555; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">💬 Confirmar</button>`;
+                        }
+
+                        let acoesHTML = '';
+                        if (isConcluido) {
+                            acoesHTML = `<span style="color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 5px 0;">✔ ATENDIMENTO CONCLUÍDO</span>`;
+                        } else {
+                            acoesHTML = `
+                                <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
+                                    ${btnWpp}
+                                    <button onclick="finalizarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #28a745; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">✔ Baixa</button>
+                                    <button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌</button>
                                 </div>
-                                <button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌ Cancelar</button>
+                            `;
+                        }
+
+                        div.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
+                                <div style="flex: 1; min-width: 150px;">
+                                    <strong style="${isConcluido ? 'color: #28a745;' : 'color: #00bfff;'} font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
+                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br>
+                                    <span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
+                                </div>
+                                ${acoesHTML}
                             </div>
+                            ${!isConcluido ? `
                             <div style="display: flex; gap: 5px; border-top: 1px solid #333; padding-top: 8px;">
                                 <select id="prod-comanda-${ag.data}-${ag.hora}" style="flex: 1; padding: 6px; background: #111; color: white; border: 1px solid #444; border-radius: 4px; font-size: 0.75rem;">
                                     ${optionsComanda}
                                 </select>
                                 <button onclick="adicionarItemComanda('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #c8a355; color: black; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">➕ Lançar</button>
                             </div>
+                            ` : ''}
                         `;
                         containerAgenda.appendChild(div);
                     });
@@ -222,14 +247,16 @@
 
         async function cancelarAgendamento(data, hora, nome) {
             if (!confirm(`Tem certeza que deseja cancelar o horário de ${nome} às ${hora}?`)) return;
-            const fd = new URLSearchParams();
-            fd.append('acao', 'cancelar_agendamento');
-            fd.append('data', data);
-            fd.append('hora', hora);
-            fd.append('nome', nome);
+            const fd = new URLSearchParams(); fd.append('acao', 'cancelar_agendamento'); fd.append('data', data); fd.append('hora', hora); fd.append('nome', nome);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Agendamento cancelado com sucesso!');
-            atualizarPainelAdmin();
+            alert('Agendamento cancelado com sucesso!'); atualizarPainelAdmin();
+        }
+
+        async function finalizarAgendamento(data, hora, nome) {
+            if (!confirm(`Deseja dar baixa e finalizar o atendimento de ${nome}?`)) return;
+            const fd = new URLSearchParams(); fd.append('acao', 'finalizar_agendamento'); fd.append('data', data); fd.append('hora', hora); fd.append('nome', nome);
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+            alert('Atendimento concluído e baixa registada com sucesso!'); atualizarPainelAdmin();
         }
 
         async function adicionarItemComanda(data, hora, nomeCliente) {
@@ -237,26 +264,12 @@
             const valorSelecionado = select.value;
             if (!valorSelecionado) return alert("Selecione um produto ou serviço para adicionar à comanda!");
             
-            const partes = valorSelecionado.split('|');
-            const nomeItem = partes[0]; 
-            const precoItem = parseFloat(partes[1]);
+            const partes = valorSelecionado.split('|'); const nomeItem = partes[0]; const precoItem = parseFloat(partes[1]);
+            const btn = select.nextElementSibling; btn.innerText = "⏳ A lançar..."; btn.disabled = true;
 
-            const btn = select.nextElementSibling;
-            btn.innerText = "⏳ A lançar...";
-            btn.disabled = true;
-
-            const fd = new URLSearchParams();
-            fd.append('acao', 'adicionar_item_comanda');
-            fd.append('data', data);
-            fd.append('hora', hora);
-            fd.append('nome_cliente', nomeCliente);
-            fd.append('produto', nomeItem);
-            fd.append('valor', precoItem);
-
+            const fd = new URLSearchParams(); fd.append('acao', 'adicionar_item_comanda'); fd.append('data', data); fd.append('hora', hora); fd.append('nome_cliente', nomeCliente); fd.append('produto', nomeItem); fd.append('valor', precoItem);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert(`"${nomeItem}" (R$ ${precoItem}) adicionado à comanda de ${nomeCliente} com sucesso!`);
-            
-            atualizarPainelAdmin();
+            alert(`"${nomeItem}" (R$ ${precoItem}) adicionado à comanda de ${nomeCliente} com sucesso!`); atualizarPainelAdmin();
         }
 
         function renderizarClientes(lista) {
@@ -272,40 +285,23 @@
         function filtrarClientes() { const termo = document.getElementById('busca-cliente').value.toLowerCase(); if (!window.todosClientes) return; const filtrados = window.todosClientes.filter(cli => cli.nome.toLowerCase().includes(termo) || cli.telefone.includes(termo)); renderizarClientes(filtrados); }
 
         function abrirModalPdv() {
-            abrirModal('modal-pdv');
-            document.getElementById('lista-produtos-container').innerHTML = '';
-            const selectPdv = document.getElementById('pdv-produto-select');
-            selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>';
+            abrirModal('modal-pdv'); document.getElementById('lista-produtos-container').innerHTML = ''; const selectPdv = document.getElementById('pdv-produto-select'); selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>';
             if (window.produtosCarregados.length === 0) { adicionarLinhaProduto('Pomada', '50.00', '10'); }
-            window.produtosCarregados.forEach(p => {
-                adicionarLinhaProduto(p.nome, p.preco, p.estoque);
-                selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (R$ ${p.preco} - Stock: ${p.estoque})</option>`;
-            });
-            document.getElementById('pdv-produto-preco').value = "";
+            window.produtosCarregados.forEach(p => { adicionarLinhaProduto(p.nome, p.preco, p.estoque); selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (R$ ${p.preco} - Stock: ${p.estoque})</option>`; }); document.getElementById('pdv-produto-preco').value = "";
         }
-        function adicionarLinhaProduto(n, p, e) { 
-            const div = document.createElement('div'); div.className = 'linha-item'; 
-            div.innerHTML = `<input type="text" value="${n}" class="p-nome" placeholder="Produto"><input type="number" value="${p}" class="p-preco" placeholder="R$" style="width:70px;" step="0.01"><input type="number" value="${e}" class="p-estoque" placeholder="Qtd" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; 
-            document.getElementById('lista-produtos-container').appendChild(div); 
-        }
+        function adicionarLinhaProduto(n, p, e) { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<input type="text" value="${n}" class="p-nome" placeholder="Produto"><input type="number" value="${p}" class="p-preco" placeholder="R$" style="width:70px;" step="0.01"><input type="number" value="${e}" class="p-estoque" placeholder="Qtd" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; document.getElementById('lista-produtos-container').appendChild(div); }
         function atualizarPrecoPdv() { document.getElementById('pdv-produto-preco').value = document.getElementById('pdv-produto-select').value; }
         async function salvarVendaPdv() {
-            const select = document.getElementById('pdv-produto-select');
-            const precoManual = document.getElementById('pdv-produto-preco').value;
+            const select = document.getElementById('pdv-produto-select'); const precoManual = document.getElementById('pdv-produto-preco').value;
             if (select.selectedIndex === 0 || !precoManual) return alert("Selecione um produto e confirme o valor!");
-            const nomeProduto = select.options[select.selectedIndex].getAttribute('data-nome');
-            const btn = document.querySelector('#modal-pdv .action-btn'); btn.innerText = "A registar..."; btn.disabled = true;
+            const nomeProduto = select.options[select.selectedIndex].getAttribute('data-nome'); const btn = document.querySelector('#modal-pdv .action-btn'); btn.innerText = "A registar..."; btn.disabled = true;
             const fd = new URLSearchParams(); fd.append('acao', 'vender_produto'); fd.append('nome_produto', nomeProduto); fd.append('valor_venda', precoManual); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Venda registada com sucesso!');
-            btn.innerText = "💲 Registar Venda"; btn.disabled = false;
-            fecharModal('modal-pdv'); atualizarPainelAdmin();
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Venda registada com sucesso!'); btn.innerText = "💲 Registar Venda"; btn.disabled = false; fecharModal('modal-pdv'); atualizarPainelAdmin();
         }
         async function salvarEstoque() { 
             let novos = []; document.querySelectorAll('#lista-produtos-container .linha-item').forEach(l => { const n = l.querySelector('.p-nome').value; const p = parseFloat(l.querySelector('.p-preco').value||0); const e = parseInt(l.querySelector('.p-estoque').value||0); if(n) novos.push({nome: n, preco: p, estoque: e}); }); 
             const fd = new URLSearchParams(); fd.append('acao', 'salvar_produtos'); fd.append('produtos_json', JSON.stringify(novos)); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            window.produtosCarregados = novos; alert('Estoque guardado com sucesso!'); fecharModal('modal-pdv'); atualizarPainelAdmin();
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); window.produtosCarregados = novos; alert('Estoque guardado com sucesso!'); fecharModal('modal-pdv'); atualizarPainelAdmin();
         }
 
         async function abrirModalServicos() { abrirModal('modal-servicos'); document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); let servicos = JSON.parse(data.servicos || "[]"); document.getElementById('lista-servicos-container').innerHTML = ''; servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); }
