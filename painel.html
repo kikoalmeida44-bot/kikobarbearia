@@ -134,7 +134,6 @@
                 const res = await fetch(SCRIPT_URL + '?acao=dashboard'); 
                 const data = await res.json();
                 
-                // NOVA CHAMADA: Busca os serviços cadastrados na nuvem para pôr na comanda
                 let servicosCarregados = [];
                 try {
                     const resTex = await fetch(SCRIPT_URL + '?acao=obter_textos');
@@ -149,28 +148,20 @@
                 
                 window.produtosCarregados = data.produtos || [];
 
-                // AGENDA COM COMANDA (PRODUTOS + SERVIÇOS)
                 const containerAgenda = document.getElementById('lista-agenda-container');
                 containerAgenda.innerHTML = '';
                 if(data.agenda && data.agenda.length > 0) {
                     let dataAtual = "";
                     
-                    // Montar o menu do select dividido por Serviços e Produtos
                     let optionsComanda = '<option value="">-- Adicionar Item à Comanda --</option>';
-                    
                     if(servicosCarregados.length > 0) {
                         optionsComanda += '<optgroup label="✂️ SERVIÇOS">';
-                        servicosCarregados.forEach(s => {
-                            optionsComanda += `<option value="Serviço: ${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`;
-                        });
+                        servicosCarregados.forEach(s => { optionsComanda += `<option value="${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
-                    
                     if(window.produtosCarregados.length > 0) {
                         optionsComanda += '<optgroup label="🛒 PRODUTOS">';
-                        window.produtosCarregados.forEach(p => {
-                            optionsComanda += `<option value="Produto: ${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`;
-                        });
+                        window.produtosCarregados.forEach(p => { optionsComanda += `<option value="${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
 
@@ -193,7 +184,8 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <div>
                                     <strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
-                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico} | Total: R$ ${ag.valor_total || '0'}</span>
+                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br>
+                                    <span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
                                 </div>
                                 <button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌ Cancelar</button>
                             </div>
@@ -247,7 +239,6 @@
             const nomeItem = partes[0]; 
             const precoItem = parseFloat(partes[1]);
 
-            // Muda o texto do botão temporariamente para mostrar que está a processar
             const btn = select.nextElementSibling;
             btn.innerText = "⏳ A lançar...";
             btn.disabled = true;
@@ -263,7 +254,7 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
             alert(`"${nomeItem}" (R$ ${precoItem}) adicionado à comanda de ${nomeCliente} com sucesso!`);
             
-            atualizarPainelAdmin(); // Atualiza a lista automaticamente
+            atualizarPainelAdmin();
         }
 
         function renderizarClientes(lista) {
