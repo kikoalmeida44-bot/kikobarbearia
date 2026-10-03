@@ -121,7 +121,9 @@
     <div id="modal-galeria" class="modal"><div class="modal-content"><h2 class="modal-title">📸 Galeria</h2><div class="input-group"><input type="text" id="nova-foto-url" placeholder="Cole o link da imagem"></div><button class="action-btn" onclick="salvarFotoGaleria()">Adicionar</button><div id="lista-galeria-container"></div><button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar</button></div></div>
 
     <script>
+        // COLOQUE O LINK CORRETO GERADO NO PASSO ANTERIOR (GOOGLE APPS SCRIPT) ABAIXO:
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        
         window.todosClientes = []; 
         window.produtosCarregados = [];
 
@@ -156,12 +158,12 @@
                     let optionsComanda = '<option value="">-- Adicionar Item à Comanda --</option>';
                     if(servicosCarregados.length > 0) {
                         optionsComanda += '<optgroup label="✂️ SERVIÇOS">';
-                        servicosCarregados.forEach(s => { optionsComanda += `<option value="${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
+                        servicosCarregados.forEach(s => { optionsComanda += `<option value="Serviço: ${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
                     if(window.produtosCarregados.length > 0) {
                         optionsComanda += '<optgroup label="🛒 PRODUTOS">';
-                        window.produtosCarregados.forEach(p => { optionsComanda += `<option value="${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`; });
+                        window.produtosCarregados.forEach(p => { optionsComanda += `<option value="Produto: ${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
 
@@ -185,7 +187,7 @@
                                 <div>
                                     <strong style="color: #00bfff; font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
                                     <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br>
-                                    <span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
+                                    <span style="font-size: 0.85rem; color: #fff;">Total da Comanda: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
                                 </div>
                                 <button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌ Cancelar</button>
                             </div>
