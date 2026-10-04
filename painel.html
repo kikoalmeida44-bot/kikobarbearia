@@ -38,7 +38,7 @@
         .dash-box { background-color: #222; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; }
         .ganhos-box { border-left: 3px solid #ffd700; grid-column: span 2; text-align: center;} 
         .box-label { font-size: 0.7rem; color: #aaaaaa; font-weight: 600; margin-bottom: 5px; }
-        .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; }
         .menu-btn:hover { background-color: #1a1a1a; border-color: #c8a355; }
         .logout-btn { width: 100%; background-color: transparent; color: #ff4c4c; border: 1px solid #333; padding: 12px; font-size: 0.75rem; border-radius: 6px; margin-top: 20px; cursor: pointer; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
@@ -52,6 +52,7 @@
         .linha-item { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px; transition: 0.3s;}
         .linha-item input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
         .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;}
+        .badge-notif { background-color: #ff4c4c; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; float: right; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
@@ -85,7 +86,7 @@
             <canvas id="graficoFaturamento" height="150"></canvas>
         </div>
 
-        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL E COMANDAS</button>
+        <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL E COMANDAS <span id="badge-agenda" class="badge-notif">Novo</span></button>
         <button class="menu-btn" onclick="abrirModal('modal-financeiro')" style="border-color: #ffd700;">💰 FINANCEIRO DETALHADO</button>
         <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 LISTA DE CLIENTES (CRM)</button>
         <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
@@ -104,7 +105,7 @@
         <div class="modal-content">
             <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral e Comandas</h2>
             <div id="lista-agenda-container" style="max-height: 65vh; overflow-y: auto; padding-right: 5px;"></div>
-            <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-agenda')">Voltar</button>
+            <button class="close-btn" style="margin-top: 15px;" onclick="fecharModalAgenda()">Voltar</button>
         </div>
     </div>
     
@@ -172,9 +173,26 @@
         window.todosClientes = []; 
         window.produtosCarregados = [];
 
-        function verificarSenha() { if (document.getElementById('senha-admin').value === "kiko2026") { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-dashboard').style.display = 'block'; atualizarPainelAdmin(); } else { document.getElementById('erro-senha').style.display = 'block'; } }
+        function verificarSenha() { if (document.getElementById('senha-admin').value === "kiko2026") { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-dashboard').style.display = 'block'; atualizarPainelAdmin(); verificarNotificacoesPendentes(); } else { document.getElementById('erro-senha').style.display = 'block'; } }
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
         function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+        function fecharModalAgenda() { fecharModal('modal-agenda'); localStorage.setItem('kiko_ultima_leitura', new Date().toISOString().split('T')[0]); document.getElementById('badge-agenda').style.display = 'none'; }
+
+        async function verificarNotificacoesPendentes() {
+            try {
+                const res = await fetch(SCRIPT_URL + '?acao=dashboard');
+                const data = await res.json();
+                if(data.agenda && data.agenda.length > 0) {
+                    const ultimaLeitura = localStorage.getItem('kiko_ultima_leitura') || "";
+                    const hojeStr = new Date().toISOString().split('T')[0];
+                    // Se houver agendamentos para hoje ou futuro e não tiver lido hoje, mostra o distintivo (badge)
+                    const temNovo = data.agenda.some(ag => ag.data >= hojeStr && ag.status !== "Concluído");
+                    if(temNovo && ultimaLeitura !== hojeStr) {
+                        document.getElementById('badge-agenda').style.display = 'inline-block';
+                    }
+                }
+            } catch(e) {}
+        }
 
         async function atualizarPainelAdmin() {
             try { 
