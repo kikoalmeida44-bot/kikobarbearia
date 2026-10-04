@@ -1,18 +1,19 @@
 {
-  "name": "Kiko Barbearia Pro",
+  "name": "Kiko Barbearia",
   "short_name": "Kiko Barbearia",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0d0d0d",
   "theme_color": "#c8a355",
+  "description": "Aplicativo de Agendamento da Kiko Barbearia",
   "icons": [
     {
-      "src": "https://i.imgur.com/35N9c06.png",
+      "src": "icone.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://i.imgur.com/35N9c06.png",
+      "src": "icone.png",
       "sizes": "512x512",
       "type": "image/png"
     }
