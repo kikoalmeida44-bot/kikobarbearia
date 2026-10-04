@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
     <title>Painel Admin - Kiko Barbearia Pro</title>
+    
+    <!-- OneSignal Web SDK Setup -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "1e83688c-48b1-41f4-ac01-110152c17e6e",
+          notifyButton: {
+            enable: true,
+          },
+        });
+        OneSignal.Slidedown.promptPush();
+      });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
@@ -259,7 +275,6 @@
                             `;
                         }
                         
-                        // Etiqueta do profissional
                         let profLabel = ag.profissional ? `<span style="font-size: 0.65rem; background: #333; padding: 2px 6px; border-radius: 3px; margin-left: 5px;">👨‍💼 ${ag.profissional}</span>` : "";
 
                         div.innerHTML = `
@@ -363,7 +378,7 @@
 
         async function abrirModalServicos() { abrirModal('modal-servicos'); document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); let servicos = JSON.parse(data.servicos || "[]"); document.getElementById('lista-servicos-container').innerHTML = ''; servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); }
         function adicionarLinhaServico(n, p, t) { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<input type="text" value="${n}" class="s-nome"><input type="number" value="${p}" class="s-preco" style="width:60px;"><input type="number" value="${t}" class="s-tempo" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; document.getElementById('lista-servicos-container').appendChild(div); }
-        async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = newSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
+        async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
         async function abrirModalTextos() { abrirModal('modal-textos'); try { const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; } catch(e) {} }
         async function salvarTextos() { const titulo = document.getElementById('edit-titulo').value; const subtitulo = document.getElementById('edit-subtitulo').value; const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos'); if(titulo) fd.append('titulo', titulo); if(subtitulo) fd.append('subtitulo', subtitulo); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-textos'); }
         async function salvarHorarios() { const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]})); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-horarios'); }
