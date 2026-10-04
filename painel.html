@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
     <title>Painel Admin - Kiko Barbearia Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
@@ -63,6 +64,9 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="section-title" style="margin-top: 20px;">📈 FATURAMENTO DOS ÚLTIMOS 7 DIAS</div>
+            <canvas id="graficoFaturamento" height="150"></canvas>
         </div>
 
         <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL E COMANDAS</button>
@@ -113,8 +117,35 @@
         </div>
     </div>
 
-    <!-- OUTROS MODAIS -->
-    <div id="modal-agendar" class="modal"><div class="modal-content"><h2 class="modal-title">📅 Agendar / Bloquear</h2><div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div><div style="display: flex; gap: 10px;"><div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div><div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div></div><div class="input-group"><select id="agend-duracao"><option value="20">20 min</option><option value="40">40 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="480">Dia todo</option></select></div><button class="action-btn" onclick="salvarAgendamento()">Confirmar</button><button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button></div></div>
+    <!-- MODAL DE AGENDAR COM O NOVO PROFISSIONAL -->
+    <div id="modal-agendar" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">📅 Agendar / Bloquear</h2>
+            <div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div>
+            <div class="input-group">
+                <select id="agend-profissional">
+                    <option value="Kiko">💈 Barbeiro: Kiko</option>
+                    <option value="Colaborador 2">💈 Barbeiro: Colaborador 2</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div>
+                <div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div>
+            </div>
+            <div class="input-group">
+                <select id="agend-duracao">
+                    <option value="20">20 min</option>
+                    <option value="40">40 min</option>
+                    <option value="60">1 hora</option>
+                    <option value="120">2 horas</option>
+                    <option value="480">Dia todo</option>
+                </select>
+            </div>
+            <button class="action-btn" onclick="salvarAgendamento()">Confirmar</button>
+            <button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button>
+        </div>
+    </div>
+    
     <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
     <div id="modal-horarios" class="modal"><div class="modal-content"><h2 class="modal-title">🕒 Horários</h2><div style="display: flex; gap: 10px;"><div class="input-group"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div><div class="input-group"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div></div><button class="action-btn" onclick="salvarHorarios()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button></div></div>
     <div id="modal-textos" class="modal"><div class="modal-content"><h2 class="modal-title">🎨 Textos do Site</h2><div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div><div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div><button class="action-btn" onclick="salvarTextos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button></div></div>
@@ -147,6 +178,29 @@
                 document.getElementById('financeiro-total-big').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 
                 window.produtosCarregados = data.produtos || [];
+
+                // GERAR O GRÁFICO DE FATURAMENTO
+                if(window.meuGrafico) window.meuGrafico.destroy();
+                const ultimos7Dias = {};
+                for(let i=6; i>=0; i--) {
+                    let d = new Date(); d.setDate(d.getDate() - i);
+                    let dataStr = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+                    ultimos7Dias[dataStr] = 0;
+                }
+                if(data.financeiro) {
+                    data.financeiro.forEach(f => {
+                        if(ultimos7Dias[f.data] !== undefined) ultimos7Dias[f.data] += parseFloat(f.valor);
+                    });
+                }
+                const labelsGrafico = Object.keys(ultimos7Dias).map(d => d.split('-').reverse().slice(0,2).join('/'));
+                const valoresGrafico = Object.values(ultimos7Dias);
+                
+                const ctx = document.getElementById('graficoFaturamento').getContext('2d');
+                window.meuGrafico = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: labelsGrafico, datasets: [{ label: 'Receita (R$)', data: valoresGrafico, backgroundColor: '#c8a355', borderRadius: 4 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#aaa' } }, x: { grid: { display: false }, ticks: { color: '#aaa' } } } }
+                });
 
                 const containerAgenda = document.getElementById('lista-agenda-container');
                 containerAgenda.innerHTML = '';
@@ -204,11 +258,14 @@
                                 </div>
                             `;
                         }
+                        
+                        // Etiqueta do profissional
+                        let profLabel = ag.profissional ? `<span style="font-size: 0.65rem; background: #333; padding: 2px 6px; border-radius: 3px; margin-left: 5px;">👨‍💼 ${ag.profissional}</span>` : "";
 
                         div.innerHTML = `
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
                                 <div style="flex: 1; min-width: 150px;">
-                                    <strong style="${isConcluido ? 'color: #28a745;' : 'color: #00bfff;'} font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
+                                    <strong style="${isConcluido ? 'color: #28a745;' : 'color: #00bfff;'} font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong> ${profLabel}<br>
                                     <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br>
                                     <span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
                                 </div>
@@ -306,14 +363,25 @@
 
         async function abrirModalServicos() { abrirModal('modal-servicos'); document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); let servicos = JSON.parse(data.servicos || "[]"); document.getElementById('lista-servicos-container').innerHTML = ''; servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); }
         function adicionarLinhaServico(n, p, t) { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<input type="text" value="${n}" class="s-nome"><input type="number" value="${p}" class="s-preco" style="width:60px;"><input type="number" value="${t}" class="s-tempo" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; document.getElementById('lista-servicos-container').appendChild(div); }
-        async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
+        async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = newSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
         async function abrirModalTextos() { abrirModal('modal-textos'); try { const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; } catch(e) {} }
         async function salvarTextos() { const titulo = document.getElementById('edit-titulo').value; const subtitulo = document.getElementById('edit-subtitulo').value; const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos'); if(titulo) fd.append('titulo', titulo); if(subtitulo) fd.append('subtitulo', subtitulo); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-textos'); }
         async function salvarHorarios() { const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]})); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-horarios'); }
         async function salvarFotoGaleria() { const urlFoto = document.getElementById('nova-foto-url').value; if (!urlFoto) return; const fd = new URLSearchParams(); fd.append('acao', 'salvar_foto'); fd.append('url_foto', urlFoto); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); document.getElementById('nova-foto-url').value = ''; alert('Adicionado!'); abrirModalGaleria(); }
         async function abrirModalGaleria() { abrirModal('modal-galeria'); const container = document.getElementById('lista-galeria-container'); container.innerHTML = '<p>A carregar...</p>'; try { const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); const fotos = await res.json(); container.innerHTML = ''; fotos.forEach(link => { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<span style="flex: 1; font-size: 0.75rem; overflow: hidden; color: #aaa;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; container.appendChild(div); }); } catch(e) {} }
         async function apagarFotoGaleria(link) { const fd = new URLSearchParams(); fd.append('acao', 'remover_foto'); fd.append('url_foto', link); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Removido!'); abrirModalGaleria(); }
-        async function salvarAgendamento() { const nome = document.getElementById('agend-nome').value || "Bloqueio"; const data = document.getElementById('agend-data').value; const hora = document.getElementById('agend-hora').value; const duracao = document.getElementById('agend-duracao').value || 20; if(!data || !hora) return alert("Preencha data e hora!"); const fd = new URLSearchParams(); fd.append('nome', nome); fd.append('servico', 'Manual/Bloqueio'); fd.append('data', data); fd.append('hora', hora); fd.append('duracao_total', duracao); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Horário bloqueado com sucesso!'); fecharModal('modal-agendar'); atualizarPainelAdmin(); }
+        
+        async function salvarAgendamento() { 
+            const nome = document.getElementById('agend-nome').value || "Bloqueio"; 
+            const profissional = document.getElementById('agend-profissional').value; 
+            const data = document.getElementById('agend-data').value; 
+            const hora = document.getElementById('agend-hora').value; 
+            const duracao = document.getElementById('agend-duracao').value || 20; 
+            if(!data || !hora) return alert("Preencha data e hora!"); 
+            const fd = new URLSearchParams(); fd.append('nome', nome); fd.append('profissional', profissional); fd.append('servico', 'Manual/Bloqueio'); fd.append('data', data); fd.append('hora', hora); fd.append('duracao_total', duracao); 
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            alert('Horário bloqueado com sucesso!'); fecharModal('modal-agendar'); atualizarPainelAdmin(); 
+        }
     </script>
 </body>
 </html>
