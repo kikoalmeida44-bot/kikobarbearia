@@ -6,12 +6,12 @@
     <title>Kiko Barbearia | Estilo e Tradição</title>
     
     <!-- Configuração do PWA / Aplicativo -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icone.png" type="image/png">
-    <link rel="apple-touch-icon" href="/icone.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icone.png" type="image/png">
+    <link rel="apple-touch-icon" href="icone.png">
     <meta name="theme-color" content="#050505">
 
-    <!-- OneSignal Web SDK Integration (Código 2) -->
+    <!-- OneSignal Web SDK Integration -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -272,7 +272,9 @@
                     midiasSemRepetir.forEach(link => { 
                         let lkLower = link.toLowerCase();
                         if(lkLower.includes('<blockquote') || link.includes(' ')) return;
-                        if(lkLower.includes('.mp4') || lkLower.includes('.webm')) {
+                        
+                        // SUPORTE COMPLETO PARA VÍDEOS EM MP4 E WEBM
+                        if(lkLower.includes('.mp4') || lkLower.includes('.webm') || lkLower.includes('video')) {
                             htmlMidia += `<video src="${link}" autoplay loop muted playsinline></video>`;
                         } else {
                             htmlMidia += `<img src="${link}" onerror="this.style.display='none'">`;
@@ -303,7 +305,6 @@
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
                 }
                 
-                // FORÇA O ALMOÇO EXATO DAS 11:00 ATÉ ÀS 13:00 DE FORMA FIXA E SEGURA
                 configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
                 configHorarios.almoco_inicio = "11:00";
                 configHorarios.almoco_fim = "13:00";
@@ -354,7 +355,6 @@
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
         
-        // BLOQUEIO RIGOROSO DAS 11:00 ÀS 13:00
         function verificarHorarios() {
             const dataEscolhida = document.getElementById('data').value;
             if (!dataEscolhida) return;
@@ -391,7 +391,6 @@
             while(cur <= end) {
                 let hStr = Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0');
                 
-                // BLOQUEIA RIGOROSAMENTE DAS 11:00 ATÉ ÀS 13:00
                 if (cur >= bStart && cur < bEnd) {
                     todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Almoço" });
                 } else {
@@ -414,7 +413,6 @@
             });
         }
 
-        // SALVAR NA PLANILHA CORRETAMENTE
         document.getElementById('formAgendamento').addEventListener('submit', e => {
             e.preventDefault();
             if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
