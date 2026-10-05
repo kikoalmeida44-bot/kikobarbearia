@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Configuração do PWA / Aplicativo (Sem a barra para não dar erro no GitHub) -->
+    <!-- Configuração do PWA / Aplicativo -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icone.png" type="image/png">
     <link rel="apple-touch-icon" href="icone.png">
@@ -190,7 +190,6 @@
                 if(data.agenda && data.agenda.length > 0) {
                     const ultimaLeitura = localStorage.getItem('kiko_ultima_leitura') || "";
                     const hojeStr = new Date().toISOString().split('T')[0];
-                    // Se houver agendamentos para hoje ou futuro e não tiver lido hoje, mostra o distintivo (badge)
                     const temNovo = data.agenda.some(ag => ag.data >= hojeStr && ag.status !== "Concluído");
                     if(temNovo && ultimaLeitura !== hojeStr) {
                         document.getElementById('badge-agenda').style.display = 'inline-block';
@@ -218,7 +217,6 @@
                 
                 window.produtosCarregados = data.produtos || [];
 
-                // GERAR O GRÁFICO DE FATURAMENTO
                 if(window.meuGrafico) window.meuGrafico.destroy();
                 const ultimos7Dias = {};
                 for(let i=6; i>=0; i--) {
@@ -248,7 +246,7 @@
                     
                     let optionsComanda = '<option value="">-- Adicionar Item à Comanda --</option>';
                     if(servicosCarregados.length > 0) {
-                        optionsComanda += '<optgroup label="✂️️ SERVIÇOS">';
+                        optionsComanda += '<optgroup label="✂️ SERVIÇOS">';
                         servicosCarregados.forEach(s => { optionsComanda += `<option value="${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
