@@ -273,9 +273,9 @@
                         let lkLower = link.toLowerCase();
                         if(lkLower.includes('<blockquote') || link.includes(' ')) return;
                         
-                        // SUPORTE COMPLETO PARA VÍDEOS EM MP4 E WEBM
+                        // SUPORTE COMPLETO PARA VÍDEOS EM MP4 E WEBM (COM PRELOAD REFORÇADO)
                         if(lkLower.includes('.mp4') || lkLower.includes('.webm') || lkLower.includes('video')) {
-                            htmlMidia += `<video src="${link}" autoplay loop muted playsinline></video>`;
+                            htmlMidia += `<video src="${link}" autoplay loop muted playsinline preload="auto"></video>`;
                         } else {
                             htmlMidia += `<img src="${link}" onerror="this.style.display='none'">`;
                             fotosParaFundo.push(link);
