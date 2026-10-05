@@ -1,20 +1,21 @@
 {
   "name": "Kiko Barbearia",
   "short_name": "Barbearia",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0d0d0d",
   "theme_color": "#c8a355",
   "icons": [
     {
       "src": "icone.png",
-      "sizes": "any",
-      "type": "image/png"
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icone.png",
-      "sizes": "192x192 512x512",
-      "type": "image/png",
+      "src": "logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
