@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Configuração do PWA / Aplicativo (Sem a barra para não dar erro no GitHub) -->
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icone.png" type="image/png">
+    <link rel="apple-touch-icon" href="icone.png">
+    
     <title>Painel Admin - Kiko Barbearia Pro</title>
     
     <!-- OneSignal Web SDK Integration -->
@@ -243,7 +248,7 @@
                     
                     let optionsComanda = '<option value="">-- Adicionar Item à Comanda --</option>';
                     if(servicosCarregados.length > 0) {
-                        optionsComanda += '<optgroup label="✂️ SERVIÇOS">';
+                        optionsComanda += '<optgroup label="✂️️ SERVIÇOS">';
                         servicosCarregados.forEach(s => { optionsComanda += `<option value="${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
                         optionsComanda += '</optgroup>';
                     }
