@@ -171,7 +171,34 @@
     <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
     <div id="modal-horarios" class="modal"><div class="modal-content"><h2 class="modal-title">🕒 Horários</h2><div style="display: flex; gap: 10px;"><div class="input-group"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div><div class="input-group"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div></div><button class="action-btn" onclick="salvarHorarios()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button></div></div>
     <div id="modal-textos" class="modal"><div class="modal-content"><h2 class="modal-title">🎨 Textos do Site</h2><div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div><div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div><button class="action-btn" onclick="salvarTextos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button></div></div>
-    <div id="modal-galeria" class="modal"><div class="modal-content"><h2 class="modal-title">📸 Galeria</h2><div class="input-group"><input type="text" id="nova-foto-url" placeholder="Cole o link da imagem"></div><button class="action-btn" onclick="salvarFotoGaleria()">Adicionar</button><div id="lista-galeria-container"></div><button class="close-btn" onclick="fecharModal('modal-galeria')">Fechar</button></div></div>
+    
+    <!-- MODAL GALERIA COM UPLOAD DIRETO -->
+    <div id="modal-galeria" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">📸 Gerenciar Galeria (Fotos e Vídeos)</h2>
+            
+            <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;">
+                <h3 style="font-size: 0.85rem; margin-bottom: 8px; color: #fff;">Enviar Vídeo ou Foto do Telemóvel</h3>
+                <div class="input-group">
+                    <input type="file" id="input-arquivo-galeria" accept="image/*,video/mp4" style="background:#222; padding:8px; border-radius:4px; color:#fff; width:100%; border:1px solid #444; font-size: 0.8rem;">
+                </div>
+                <button class="action-btn" style="background-color: #28a745; color: white; margin-bottom: 0;" onclick="enviarArquivoGaleria()">📤 Enviar Ficheiro</button>
+            </div>
+
+            <div class="input-group">
+                <label>Ou cole o link direto (URL):</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="nova-foto-url" placeholder="https://..." style="flex: 1;">
+                    <button class="action-btn" style="width: 80px; margin-bottom: 0;" onclick="salvarFotoGaleria()">Add</button>
+                </div>
+            </div>
+
+            <h3 style="font-size: 0.85rem; margin: 15px 0 8px 0; color: #aaa;">Ficheiros Atuais:</h3>
+            <div id="lista-galeria-container" style="max-height: 40vh; overflow-y: auto;"></div>
+            
+            <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-galeria')">Fechar</button>
+        </div>
+    </div>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
@@ -403,9 +430,78 @@
         async function abrirModalTextos() { abrirModal('modal-textos'); try { const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; } catch(e) {} }
         async function salvarTextos() { const titulo = document.getElementById('edit-titulo').value; const subtitulo = document.getElementById('edit-subtitulo').value; const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos'); if(titulo) fd.append('titulo', titulo); if(subtitulo) fd.append('subtitulo', subtitulo); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-textos'); }
         async function salvarHorarios() { const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]})); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-horarios'); }
-        async function salvarFotoGaleria() { const urlFoto = document.getElementById('nova-foto-url').value; if (!urlFoto) return; const fd = new URLSearchParams(); fd.append('acao', 'salvar_foto'); fd.append('url_foto', urlFoto); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); document.getElementById('nova-foto-url').value = ''; alert('Adicionado!'); abrirModalGaleria(); }
-        async function abrirModalGaleria() { abrirModal('modal-galeria'); const container = document.getElementById('lista-galeria-container'); container.innerHTML = '<p>A carregar...</p>'; try { const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); const fotos = await res.json(); container.innerHTML = ''; fotos.forEach(link => { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<span style="flex: 1; font-size: 0.75rem; overflow: hidden; color: #aaa;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; container.appendChild(div); }); } catch(e) {} }
-        async function apagarFotoGaleria(link) { const fd = new URLSearchParams(); fd.append('acao', 'remover_foto'); fd.append('url_foto', link); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Removido!'); abrirModalGaleria(); }
+        
+        async function salvarFotoGaleria() { 
+            const urlFoto = document.getElementById('nova-foto-url').value; 
+            if (!urlFoto) return; 
+            const fd = new URLSearchParams(); fd.append('acao', 'salvar_foto'); fd.append('url_foto', urlFoto); 
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            document.getElementById('nova-foto-url').value = ''; alert('Adicionado!'); abrirModalGaleria(); 
+        }
+
+        async function enviarArquivoGaleria() {
+            const fileInput = document.getElementById('input-arquivo-galeria');
+            if (fileInput.files.length === 0) return alert("Selecione um ficheiro primeiro!");
+            const file = fileInput.files[0];
+            
+            const btn = event.target;
+            btn.innerText = "⏳ A enviar para o Google Drive...";
+            btn.disabled = true;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64 = e.target.result;
+                const fd = new URLSearchParams();
+                fd.append('acao', 'upload_midia');
+                fd.append('base64', base64);
+                fd.append('nome', file.name);
+                fd.append('mime', file.type);
+
+                try {
+                    await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+                    alert('Ficheiro enviado e adicionado à galeria com sucesso!');
+                    fileInput.value = '';
+                    btn.innerText = "📤 Enviar Ficheiro";
+                    btn.disabled = false;
+                    abrirModalGaleria();
+                } catch(err) {
+                    alert('Erro ao enviar ficheiro.');
+                    btn.innerText = "📤 Enviar Ficheiro";
+                    btn.disabled = false;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function abrirModalGaleria() { 
+            abrirModal('modal-galeria'); 
+            const container = document.getElementById('lista-galeria-container'); 
+            container.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">A carregar...</p>'; 
+            try { 
+                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); 
+                const fotos = await res.json(); 
+                container.innerHTML = ''; 
+                if(fotos.length === 0) {
+                    container.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhuma mídia na galeria.</p>';
+                    return;
+                }
+                fotos.forEach(link => { 
+                    const div = document.createElement('div'); 
+                    div.className = 'linha-item'; 
+                    div.innerHTML = `<span style="flex: 1; font-size: 0.7rem; overflow: hidden; color: #aaa; text-overflow: ellipsis; white-space: nowrap;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; 
+                    container.appendChild(div); 
+                }); 
+            } catch(e) {
+                container.innerHTML = '<p style="color:#ff4c4c; font-size:0.8rem;">Erro ao carregar galeria.</p>';
+            } 
+        }
+
+        async function apagarFotoGaleria(link) { 
+            if(!confirm("Deseja remover este item da galeria?")) return;
+            const fd = new URLSearchParams(); fd.append('acao', 'remover_foto'); fd.append('url_foto', link); 
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            alert('Removido!'); abrirModalGaleria(); 
+        }
         
         async function salvarAgendamento() { 
             const nome = document.getElementById('agend-nome').value || "Bloqueio"; 
