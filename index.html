@@ -11,6 +11,19 @@
     <link rel="apple-touch-icon" href="icone.png">
     <meta name="theme-color" content="#050505">
 
+    <!-- ATIVADOR DO APLICATIVO (SERVICE WORKER) -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').then(reg => {
+            console.log('App PWA ativada com sucesso!', reg);
+          }).catch(err => {
+            console.log('Erro ao ativar App PWA', err);
+          });
+        });
+      }
+    </script>
+
     <!-- OneSignal Web SDK Integration -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
@@ -149,7 +162,7 @@
             </div>
             <div class="chat-opcoes" id="chatOpcoes">
                 <button class="chat-opcao-btn" onclick="enviarOpcao('📅 Quero agendar um horário')">📅 Quero agendar um horário</button>
-                <button class="chat-opcao-btn" onclick="enviarOpcao('✂️ Quais são os preços?')">✂️ Quais são os preços?</button>
+                <button class="chat-opcao-btn" onclick="enviarOpcao('✂️️ Quais são os preços?')">✂️ Quais são os preços?</button>
             </div>
             <div class="chat-input-area">
                 <input type="text" id="chatInput" class="chat-input" placeholder="Escreva a sua dúvida..." onkeypress="verificarEnter(event)">
