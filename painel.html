@@ -3,41 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Configuração do PWA / Aplicativo -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icone.png" type="image/png">
     <link rel="apple-touch-icon" href="icone.png">
     <meta name="theme-color" content="#0d0d0d">
-    
-    <!-- ATIVADOR DO APLICATIVO (SERVICE WORKER) -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').then(reg => {
-            console.log('App PWA ativada no Painel!', reg);
-          });
-        });
-      }
-    </script>
-    
+    <script> if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); } </script>
     <title>Painel Admin - Kiko Barbearia Pro</title>
-    
-    <!-- OneSignal Web SDK Integration -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "1e83688c-48b1-41f4-ac01-110152c17e6e",
-          notifyButton: {
-            enable: true,
-          },
-        });
-        OneSignal.Slidedown.promptPush();
-      });
-    </script>
-
+    <script> window.OneSignalDeferred = window.OneSignalDeferred || []; OneSignalDeferred.push(async function(OneSignal) { await OneSignal.init({ appId: "1e83688c-48b1-41f4-ac01-110152c17e6e", notifyButton: { enable: true } }); OneSignal.Slidedown.promptPush(); }); </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
@@ -51,9 +24,9 @@
         .login-box button { width: 100%; padding: 12px; background-color: #c8a355; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .section-title { color: #c8a355; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .dash-box { background-color: #222; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; }
-        .ganhos-box { border-left: 3px solid #ffd700; grid-column: span 2; text-align: center;} 
+        .ganhos-box { border-left: 3px solid #ffd700; text-align: center;} 
         .box-label { font-size: 0.7rem; color: #aaaaaa; font-weight: 600; margin-bottom: 5px; }
         .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; }
         .menu-btn:hover { background-color: #1a1a1a; border-color: #c8a355; }
@@ -73,42 +46,31 @@
     </style>
 </head>
 <body>
-    <div id="login-screen">
-        <div class="login-box">
-            <h1 class="logo">KIKO BARBEARIA PRO</h1>
-            <p style="font-size: 0.8rem; color: #777;">Acesso Restrito</p>
-            <input type="password" id="senha-admin" placeholder="Digite a palavra-passe">
-            <button onclick="verificarSenha()">Entrar no Painel</button>
-            <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
-        </div>
-    </div>
+    <div id="login-screen"><div class="login-box"><h1 class="logo">KIKO BARBEARIA PRO</h1><p style="font-size: 0.8rem; color: #777;">Acesso Restrito</p><input type="password" id="senha-admin" placeholder="Digite a palavra-passe"><button onclick="verificarSenha()">Entrar no Painel</button><p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p></div></div>
     
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo">Kiko Barbearia Pro</h1>
         
         <div class="section-card">
-            <div class="section-title">📊 RESUMO DO MÊS</div>
+            <div class="section-title">📊 RESUMO FINANCEIRO (MÊS)</div>
             <div class="dashboard-grid">
                 <div class="dash-box ganhos-box">
-                    <div class="box-label">TOTAL DE GANHOS</div>
-                    <div class="box-value" id="ganhos-estimados" style="color: #ffd700; font-size: 1.5rem;">R$ 0,00</div>
-                    <div style="display:flex; justify-content: space-around; margin-top: 10px; font-size: 0.75rem; color: #aaa;">
-                        <span>✂️ Serviços: <span id="ganhos-servicos" style="color: #fff;">R$ 0,00</span></span>
-                        <span>🛒 Produtos: <span id="ganhos-produtos" style="color: #fff;">R$ 0,00</span></span>
+                    <div style="display:flex; justify-content: space-between; margin-top: 10px; font-size: 0.85rem;">
+                        <div style="text-align: center;">🟢 Entradas<br><span id="ganhos-estimados" style="color: #28a745; font-weight:bold;">R$ 0,00</span></div>
+                        <div style="text-align: center;">🔴 Saídas/Desp.<br><span id="total-despesas" style="color: #ff4c4c; font-weight:bold;">R$ 0,00</span></div>
+                        <div style="text-align: center;">💰 Líquido<br><span id="lucro-liquido" style="color: #ffd700; font-weight:bold; font-size: 1.1rem;">R$ 0,00</span></div>
                     </div>
                 </div>
             </div>
-            
             <div class="section-title" style="margin-top: 20px;">📈 FATURAMENTO DOS ÚLTIMOS 7 DIAS</div>
             <canvas id="graficoFaturamento" height="150"></canvas>
         </div>
 
         <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL E COMANDAS <span id="badge-agenda" class="badge-notif">Novo</span></button>
-        <button class="menu-btn" onclick="abrirModal('modal-financeiro')" style="border-color: #ffd700;">💰 FINANCEIRO DETALHADO</button>
-        <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 LISTA DE CLIENTES (CRM)</button>
+        <button class="menu-btn" onclick="abrirModal('modal-financeiro')" style="border-color: #ffd700;">💰 FINANCEIRO / DESPESAS</button>
+        <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 CRM / PACOTES CLIENTES</button>
         <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-        
         <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂ GERENCIAR SERVIÇOS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
@@ -117,415 +79,141 @@
         <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
 
-    <!-- MODAL AGENDA E COMANDAS -->
-    <div id="modal-agenda" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-title" style="color: #00bfff;">📋 Agenda Geral e Comandas</h2>
-            <div id="lista-agenda-container" style="max-height: 65vh; overflow-y: auto; padding-right: 5px;"></div>
-            <button class="close-btn" style="margin-top: 15px;" onclick="fecharModalAgenda()">Voltar</button>
-        </div>
-    </div>
+    <!-- MODAL AGENDA -->
+    <div id="modal-agenda" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #00bfff;">📋 Agenda e Comandas</h2><div id="lista-agenda-container" style="max-height: 65vh; overflow-y: auto; padding-right: 5px;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModalAgenda()">Voltar</button></div></div>
     
-    <!-- MODAL FINANCEIRO -->
-    <div id="modal-financeiro" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #ffd700;">💰 Financeiro Detalhado</h2><div style="background: #222; padding: 15px; border-radius: 6px; margin-bottom: 15px; text-align: center;"><p style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;">Faturamento Total Registado</p><h3 id="financeiro-total-big" style="color: #ffd700; font-size: 1.8rem;">R$ 0,00</h3></div><h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">💵 Últimas Transações:</h3><div id="lista-financeiro-container" style="max-height: 40vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-financeiro')">Voltar</button></div></div>
+    <!-- MODAL FINANCEIRO E DESPESAS -->
+    <div id="modal-financeiro" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #ffd700;">💰 Financeiro e Despesas</h2>
+        <button class="action-btn" style="background-color: #ff4c4c; color: white; margin-bottom: 15px;" onclick="abrirModalDespesa()">➖ Registar Saída / Despesa</button>
+        <h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">💵 Últimas Transações:</h3>
+        <div id="lista-financeiro-container" style="max-height: 40vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-financeiro')">Voltar</button>
+    </div></div>
 
-    <!-- MODAL CLIENTES -->
-    <div id="modal-clientes" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #28a745;">👥 Base de Clientes (VIP)</h2><div class="input-group"><input type="text" id="busca-cliente" placeholder="🔍 Buscar por nome ou telemóvel..." onkeyup="filtrarClientes()"></div><div id="lista-clientes-container" style="max-height: 50vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-clientes')">Voltar</button></div></div>
+    <!-- MODAL NOVA DESPESA -->
+    <div id="modal-despesa" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #ff4c4c;">➖ Nova Despesa</h2>
+        <div class="input-group"><input type="text" id="desp-desc" placeholder="Ex: Conta de Luz, Compra de Produtos..."></div>
+        <div class="input-group"><input type="number" id="desp-valor" placeholder="Valor (R$)" step="0.01"></div>
+        <button class="action-btn" style="background-color: #ff4c4c; color: white;" onclick="salvarDespesa()">Confirmar Despesa</button>
+        <button class="close-btn" onclick="fecharModal('modal-despesa'); abrirModal('modal-financeiro')">Cancelar</button>
+    </div></div>
 
-    <!-- MODAL PDV E ESTOQUE -->
-    <div id="modal-pdv" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-title" style="color: #ff6b6b;">🛒 Venda de Balcão (PDV)</h2>
-            <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;">
-                <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #fff;">Registar Venda Rápida</h3>
-                <div class="input-group"><select id="pdv-produto-select" onchange="atualizarPrecoPdv()"><option value="">-- Selecione o Produto --</option></select></div>
-                <div class="input-group"><input type="number" id="pdv-produto-preco" placeholder="Valor (R$)" step="0.01"></div>
-                <button class="action-btn" style="background-color: #ff6b6b; color: white;" onclick="salvarVendaPdv()">💲 Registar Venda</button>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-            <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #aaa;">📦 Gerenciar Estoque</h3>
-            <div id="lista-produtos-container"></div>
-            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProduto('', '', '10')">+ Novo Produto</button><br><br>
-            <button class="action-btn" onclick="salvarEstoque()">Salvar Estoque</button>
-            <button class="close-btn" onclick="fecharModal('modal-pdv')">Fechar</button>
-        </div>
-    </div>
+    <!-- MODAL CLIENTES CRM -->
+    <div id="modal-clientes" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #28a745;">👥 Clientes e Pacotes</h2><div class="input-group"><input type="text" id="busca-cliente" placeholder="🔍 Buscar por nome ou telemóvel..." onkeyup="filtrarClientes()"></div><div id="lista-clientes-container" style="max-height: 50vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-clientes')">Voltar</button></div></div>
 
-    <!-- MODAL DE AGENDAR COM O NOVO PROFISSIONAL -->
-    <div id="modal-agendar" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-title">📅 Agendar / Bloquear</h2>
-            <div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div>
-            <div class="input-group">
-                <select id="agend-profissional">
-                    <option value="Kiko">💈 Barbeiro: Kiko</option>
-                    <option value="Colaborador 2">💈 Barbeiro: Colaborador 2</option>
-                </select>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div>
-                <div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div>
-            </div>
-            <div class="input-group">
-                <select id="agend-duracao">
-                    <option value="20">20 min</option>
-                    <option value="40">40 min</option>
-                    <option value="60">1 hora</option>
-                    <option value="120">2 horas</option>
-                    <option value="480">Dia todo</option>
-                </select>
-            </div>
-            <button class="action-btn" onclick="salvarAgendamento()">Confirmar</button>
-            <button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button>
-        </div>
-    </div>
-    
+    <!-- MODAL PDV -->
+    <div id="modal-pdv" class="modal"><div class="modal-content"><h2 class="modal-title" style="color: #ff6b6b;">🛒 Venda de Balcão (PDV)</h2><div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;"><h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #fff;">Registar Venda Rápida</h3><div class="input-group"><select id="pdv-produto-select" onchange="atualizarPrecoPdv()"><option value="">-- Selecione o Produto --</option></select></div><div class="input-group"><input type="number" id="pdv-produto-preco" placeholder="Valor (R$)" step="0.01"></div><button class="action-btn" style="background-color: #ff6b6b; color: white;" onclick="salvarVendaPdv()">💲 Registar Venda</button></div><hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;"><h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #aaa;">📦 Gerenciar Estoque</h3><div id="lista-produtos-container"></div><button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProduto('', '', '10')">+ Novo Produto</button><br><br><button class="action-btn" onclick="salvarEstoque()">Salvar Estoque</button><button class="close-btn" onclick="fecharModal('modal-pdv')">Fechar</button></div></div>
+
+    <!-- OUTROS MODAIS -->
+    <div id="modal-agendar" class="modal"><div class="modal-content"><h2 class="modal-title">📅 Agendar / Bloquear</h2><div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div><div class="input-group"><select id="agend-profissional"><option value="Kiko">💈 Barbeiro: Kiko</option><option value="Colaborador 2">💈 Barbeiro: Colaborador 2</option></select></div><div style="display: flex; gap: 10px;"><div class="input-group" style="flex: 1;"><input type="date" id="agend-data"></div><div class="input-group" style="flex: 1;"><input type="time" id="agend-hora"></div></div><div class="input-group"><select id="agend-duracao"><option value="20">20 min</option><option value="40">40 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="480">Dia todo</option></select></div><button class="action-btn" onclick="salvarAgendamento()">Confirmar</button><button class="close-btn" onclick="fecharModal('modal-agendar')">Cancelar</button></div></div>
     <div id="modal-servicos" class="modal"><div class="modal-content"><h2 class="modal-title">✂ Serviços e Preços</h2><div id="lista-servicos-container"></div><button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br><button class="action-btn" onclick="salvarServicos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button></div></div>
     <div id="modal-horarios" class="modal"><div class="modal-content"><h2 class="modal-title">🕒 Horários</h2><div style="display: flex; gap: 10px;"><div class="input-group"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div><div class="input-group"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div></div><button class="action-btn" onclick="salvarHorarios()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button></div></div>
     <div id="modal-textos" class="modal"><div class="modal-content"><h2 class="modal-title">🎨 Textos do Site</h2><div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div><div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div><button class="action-btn" onclick="salvarTextos()">Guardar</button><button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button></div></div>
-    
-    <!-- MODAL GALERIA COM UPLOAD DIRETO -->
-    <div id="modal-galeria" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-title">📸 Gerenciar Galeria (Fotos e Vídeos)</h2>
-            
-            <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;">
-                <h3 style="font-size: 0.85rem; margin-bottom: 8px; color: #fff;">Enviar Vídeo ou Foto do Telemóvel</h3>
-                <div class="input-group">
-                    <input type="file" id="input-arquivo-galeria" accept="image/*,video/mp4" style="background:#222; padding:8px; border-radius:4px; color:#fff; width:100%; border:1px solid #444; font-size: 0.8rem;">
-                </div>
-                <button class="action-btn" style="background-color: #28a745; color: white; margin-bottom: 0;" onclick="enviarArquivoGaleria()">📤 Enviar Ficheiro</button>
-            </div>
-
-            <div class="input-group">
-                <label>Ou cole o link direto (URL):</label>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="nova-foto-url" placeholder="https://..." style="flex: 1;">
-                    <button class="action-btn" style="width: 80px; margin-bottom: 0;" onclick="salvarFotoGaleria()">Add</button>
-                </div>
-            </div>
-
-            <h3 style="font-size: 0.85rem; margin: 15px 0 8px 0; color: #aaa;">Ficheiros Atuais:</h3>
-            <div id="lista-galeria-container" style="max-height: 40vh; overflow-y: auto;"></div>
-            
-            <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-galeria')">Fechar</button>
-        </div>
-    </div>
+    <div id="modal-galeria" class="modal"><div class="modal-content"><h2 class="modal-title">📸 Gerenciar Galeria</h2><div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;"><h3 style="font-size: 0.85rem; margin-bottom: 8px; color: #fff;">Enviar Vídeo ou Foto</h3><div class="input-group"><input type="file" id="input-arquivo-galeria" accept="image/*,video/mp4" style="background:#222; padding:8px; border-radius:4px; color:#fff; width:100%; border:1px solid #444; font-size: 0.8rem;"></div><button class="action-btn" style="background-color: #28a745; color: white; margin-bottom: 0;" onclick="enviarArquivoGaleria()">📤 Enviar Ficheiro</button></div><div class="input-group"><label>Ou cole o link direto (URL):</label><div style="display: flex; gap: 5px;"><input type="text" id="nova-foto-url" placeholder="https://..." style="flex: 1;"><button class="action-btn" style="width: 80px; margin-bottom: 0;" onclick="salvarFotoGaleria()">Add</button></div></div><h3 style="font-size: 0.85rem; margin: 15px 0 8px 0; color: #aaa;">Ficheiros Atuais:</h3><div id="lista-galeria-container" style="max-height: 40vh; overflow-y: auto;"></div><button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-galeria')">Fechar</button></div></div>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
-        window.todosClientes = []; 
-        window.produtosCarregados = [];
+        window.todosClientes = []; window.produtosCarregados = [];
 
         function verificarSenha() { if (document.getElementById('senha-admin').value === "kiko2026") { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-dashboard').style.display = 'block'; atualizarPainelAdmin(); verificarNotificacoesPendentes(); } else { document.getElementById('erro-senha').style.display = 'block'; } }
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
         function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
         function fecharModalAgenda() { fecharModal('modal-agenda'); localStorage.setItem('kiko_ultima_leitura', new Date().toISOString().split('T')[0]); document.getElementById('badge-agenda').style.display = 'none'; }
 
-        async function verificarNotificacoesPendentes() {
-            try {
-                const res = await fetch(SCRIPT_URL + '?acao=dashboard');
-                const data = await res.json();
-                if(data.agenda && data.agenda.length > 0) {
-                    const ultimaLeitura = localStorage.getItem('kiko_ultima_leitura') || "";
-                    const hojeStr = new Date().toISOString().split('T')[0];
-                    const temNovo = data.agenda.some(ag => ag.data >= hojeStr && ag.status !== "Concluído");
-                    if(temNovo && ultimaLeitura !== hojeStr) {
-                        document.getElementById('badge-agenda').style.display = 'inline-block';
-                    }
-                }
-            } catch(e) {}
-        }
+        async function verificarNotificacoesPendentes() { try { const res = await fetch(SCRIPT_URL + '?acao=dashboard'); const data = await res.json(); if(data.agenda && data.agenda.length > 0) { const ultimaLeitura = localStorage.getItem('kiko_ultima_leitura') || ""; const hojeStr = new Date().toISOString().split('T')[0]; const temNovo = data.agenda.some(ag => ag.data >= hojeStr && ag.status !== "Concluído"); if(temNovo && ultimaLeitura !== hojeStr) { document.getElementById('badge-agenda').style.display = 'inline-block'; } } } catch(e) {} }
 
         async function atualizarPainelAdmin() {
             try { 
-                const res = await fetch(SCRIPT_URL + '?acao=dashboard'); 
-                const data = await res.json();
-                
-                let servicosCarregados = [];
-                try {
-                    const resTex = await fetch(SCRIPT_URL + '?acao=obter_textos');
-                    const tex = await resTex.json();
-                    if(tex.servicos) servicosCarregados = JSON.parse(tex.servicos);
-                } catch(e){}
+                const res = await fetch(SCRIPT_URL + '?acao=dashboard'); const data = await res.json();
+                let servicosCarregados = []; try { const resTex = await fetch(SCRIPT_URL + '?acao=obter_textos'); const tex = await resTex.json(); if(tex.servicos) servicosCarregados = JSON.parse(tex.servicos); } catch(e){}
                 
                 document.getElementById('ganhos-estimados').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('ganhos-servicos').innerText = (data.fatServicos || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('ganhos-produtos').innerText = (data.fatProdutos || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('financeiro-total-big').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('total-despesas').innerText = (data.despesas || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('lucro-liquido').innerText = (data.lucroLiquido || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 
                 window.produtosCarregados = data.produtos || [];
-
                 if(window.meuGrafico) window.meuGrafico.destroy();
-                const ultimos7Dias = {};
-                for(let i=6; i>=0; i--) {
-                    let d = new Date(); d.setDate(d.getDate() - i);
-                    let dataStr = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
-                    ultimos7Dias[dataStr] = 0;
-                }
-                if(data.financeiro) {
-                    data.financeiro.forEach(f => {
-                        if(ultimos7Dias[f.data] !== undefined) ultimos7Dias[f.data] += parseFloat(f.valor);
-                    });
-                }
-                const labelsGrafico = Object.keys(ultimos7Dias).map(d => d.split('-').reverse().slice(0,2).join('/'));
-                const valoresGrafico = Object.values(ultimos7Dias);
-                
-                const ctx = document.getElementById('graficoFaturamento').getContext('2d');
-                window.meuGrafico = new Chart(ctx, {
-                    type: 'bar',
-                    data: { labels: labelsGrafico, datasets: [{ label: 'Receita (R$)', data: valoresGrafico, backgroundColor: '#c8a355', borderRadius: 4 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#aaa' } }, x: { grid: { display: false }, ticks: { color: '#aaa' } } } }
-                });
+                const ultimos7Dias = {}; for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); let dataStr = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); ultimos7Dias[dataStr] = 0; }
+                if(data.financeiro) { data.financeiro.forEach(f => { if(ultimos7Dias[f.data] !== undefined && f.tipo !== 'despesa') ultimos7Dias[f.data] += parseFloat(f.valor); }); }
+                const ctx = document.getElementById('graficoFaturamento').getContext('2d'); window.meuGrafico = new Chart(ctx, { type: 'bar', data: { labels: Object.keys(ultimos7Dias).map(d => d.split('-').reverse().slice(0,2).join('/')), datasets: [{ label: 'Receita (R$)', data: Object.values(ultimos7Dias), backgroundColor: '#c8a355', borderRadius: 4 }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#aaa' } }, x: { grid: { display: false }, ticks: { color: '#aaa' } } } } });
 
-                const containerAgenda = document.getElementById('lista-agenda-container');
-                containerAgenda.innerHTML = '';
+                const containerAgenda = document.getElementById('lista-agenda-container'); containerAgenda.innerHTML = '';
                 if(data.agenda && data.agenda.length > 0) {
-                    let dataAtual = "";
-                    
-                    let optionsComanda = '<option value="">-- Adicionar Item à Comanda --</option>';
-                    if(servicosCarregados.length > 0) {
-                        optionsComanda += '<optgroup label="✂️ SERVIÇOS">';
-                        servicosCarregados.forEach(s => { optionsComanda += `<option value="${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; });
-                        optionsComanda += '</optgroup>';
-                    }
-                    if(window.produtosCarregados.length > 0) {
-                        optionsComanda += '<optgroup label="🛒 PRODUTOS">';
-                        window.produtosCarregados.forEach(p => { optionsComanda += `<option value="${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`; });
-                        optionsComanda += '</optgroup>';
-                    }
+                    let dataAtual = ""; let optionsComanda = '<option value="">-- Adicionar Item à Comanda --</option>';
+                    if(servicosCarregados.length > 0) { optionsComanda += '<optgroup label="✂️ SERVIÇOS">'; servicosCarregados.forEach(s => { optionsComanda += `<option value="${s.nome}|${s.preco}">${s.nome} (R$ ${s.preco})</option>`; }); optionsComanda += '</optgroup>'; }
+                    if(window.produtosCarregados.length > 0) { optionsComanda += '<optgroup label="🛒 PRODUTOS">'; window.produtosCarregados.forEach(p => { optionsComanda += `<option value="${p.nome}|${p.preco}">${p.nome} (R$ ${p.preco})</option>`; }); optionsComanda += '</optgroup>'; }
 
                     data.agenda.forEach(ag => {
-                        if (ag.data !== dataAtual) {
-                            dataAtual = ag.data;
-                            const divData = document.createElement('div');
-                            divData.style.cssText = "background-color: #c8a355; color: #000; font-weight: bold; padding: 5px 10px; margin: 15px 0 10px 0; border-radius: 4px; font-size: 0.85rem;";
-                            divData.innerText = "📅 " + ag.data.split('-').reverse().join('/');
-                            containerAgenda.appendChild(divData);
-                        }
-                        
-                        const isConcluido = ag.status === "Concluído";
-                        const opacityStyle = isConcluido ? "0.6" : "1";
-                        const div = document.createElement('div'); 
-                        div.className = 'linha-item'; 
-                        div.style.borderLeft = isConcluido ? '3px solid #28a745' : '3px solid #00bfff'; 
-                        div.style.flexDirection = 'column';
-                        div.style.alignItems = 'stretch';
-                        div.style.opacity = opacityStyle;
-                        
-                        let btnWpp = '';
-                        if (ag.telefone) {
-                            const numZap = ag.telefone.replace(/\D/g, '');
-                            const msgLink = `Fala *${ag.nome}*! Tudo beleza? ✂\nPassando para confirmar o seu horário hoje às *${ag.hora}* na Kiko Barbearia. Te esperamos!`;
-                            btnWpp = `<a href="https://wa.me/55${numZap}?text=${encodeURIComponent(msgLink)}" target="_blank" style="background: #25D366; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-decoration: none; display: inline-block;">💬 Confirmar</a>`;
-                        } else {
-                            btnWpp = `<button onclick="alert('Este cliente não registrou telefone.')" style="background: #555; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">💬 Confirmar</button>`;
-                        }
-
-                        let acoesHTML = '';
-                        if (isConcluido) {
-                            acoesHTML = `<span style="color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 5px 0;">✔ ATENDIMENTO CONCLUÍDO</span>`;
-                        } else {
-                            acoesHTML = `
-                                <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
-                                    ${btnWpp}
-                                    <button onclick="finalizarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #28a745; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">✔ Baixa</button>
-                                    <button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌</button>
-                                </div>
-                            `;
-                        }
-                        
-                        let profLabel = ag.profissional ? `<span style="font-size: 0.65rem; background: #333; padding: 2px 6px; border-radius: 3px; margin-left: 5px;">👨‍💼 ${ag.profissional}</span>` : "";
-
-                        div.innerHTML = `
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
-                                <div style="flex: 1; min-width: 150px;">
-                                    <strong style="${isConcluido ? 'color: #28a745;' : 'color: #00bfff;'} font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong> ${profLabel}<br>
-                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br>
-                                    <span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
-                                </div>
-                                ${acoesHTML}
-                            </div>
-                            ${!isConcluido ? `
-                            <div style="display: flex; gap: 5px; border-top: 1px solid #333; padding-top: 8px;">
-                                <select id="prod-comanda-${ag.data}-${ag.hora}" style="flex: 1; padding: 6px; background: #111; color: white; border: 1px solid #444; border-radius: 4px; font-size: 0.75rem;">
-                                    ${optionsComanda}
-                                </select>
-                                <button onclick="adicionarItemComanda('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #c8a355; color: black; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">➕ Lançar</button>
-                            </div>
-                            ` : ''}
-                        `;
+                        if (ag.data !== dataAtual) { dataAtual = ag.data; const divData = document.createElement('div'); divData.style.cssText = "background-color: #c8a355; color: #000; font-weight: bold; padding: 5px 10px; margin: 15px 0 10px 0; border-radius: 4px; font-size: 0.85rem;"; divData.innerText = "📅 " + ag.data.split('-').reverse().join('/'); containerAgenda.appendChild(divData); }
+                        const isConcluido = ag.status === "Concluído"; const opacityStyle = isConcluido ? "0.6" : "1";
+                        const div = document.createElement('div'); div.className = 'linha-item'; div.style.borderLeft = isConcluido ? '3px solid #28a745' : '3px solid #00bfff'; div.style.flexDirection = 'column'; div.style.alignItems = 'stretch'; div.style.opacity = opacityStyle;
+                        let btnWpp = ag.telefone ? `<a href="https://wa.me/55${ag.telefone.replace(/\D/g, '')}?text=${encodeURIComponent('Fala *'+ag.nome+'*! Passando para confirmar o seu horário hoje às *'+ag.hora+'* na Kiko Barbearia.')}" target="_blank" style="background: #25D366; color: white; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-decoration: none;">💬 WhatsApp</a>` : `<button onclick="alert('Sem telefone.')" style="background: #555; color: white; border: none; padding: 6px; border-radius: 4px; font-size: 0.7rem;">💬 Sem Wpp</button>`;
+                        let acoesHTML = isConcluido ? `<span style="color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 5px 0;">✔ CONCLUÍDO</span>` : `<div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">${btnWpp}<button onclick="finalizarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #28a745; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">✔ Baixa</button><button onclick="cancelarAgendamento('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #ff4c4c; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">❌</button></div>`;
+                        div.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;"><div style="flex: 1; min-width: 150px;"><strong style="${isConcluido ? 'color: #28a745;' : 'color: #00bfff;'} font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br><span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span></div>${acoesHTML}</div>${!isConcluido ? `<div style="display: flex; gap: 5px; border-top: 1px solid #333; padding-top: 8px;"><select id="prod-comanda-${ag.data}-${ag.hora}" style="flex: 1; padding: 6px; background: #111; color: white; border: 1px solid #444; border-radius: 4px; font-size: 0.75rem;">${optionsComanda}</select><button onclick="adicionarItemComanda('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #c8a355; color: black; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">➕ Lançar</button></div>` : ''}`;
                         containerAgenda.appendChild(div);
                     });
                 } else { containerAgenda.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente agendado.</p>'; }
 
-                const containerFinanceiro = document.getElementById('lista-financeiro-container');
-                containerFinanceiro.innerHTML = '';
+                const containerFinanceiro = document.getElementById('lista-financeiro-container'); containerFinanceiro.innerHTML = '';
                 if(data.financeiro && data.financeiro.length > 0) {
                     data.financeiro.forEach(fin => {
-                        const valorStr = parseFloat(fin.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                        const corBorda = fin.tipo === 'produto' ? '#ff6b6b' : '#ffd700';
+                        let isDesp = fin.tipo === 'despesa';
+                        let corBorda = isDesp ? '#ff4c4c' : (fin.tipo === 'produto' ? '#ff6b6b' : '#ffd700');
+                        let valorExibido = isDesp ? "- " + parseFloat(fin.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : parseFloat(fin.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                         const div = document.createElement('div'); div.className = 'linha-item'; div.style.borderLeft = `3px solid ${corBorda}`; div.style.justifyContent = 'space-between';
-                        div.innerHTML = `<div><strong>${fin.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">${fin.data.split('-').reverse().join('/')} - ${fin.servico}</span></div><div style="color: ${corBorda}; font-weight: bold; font-size: 1rem;">${valorStr}</div>`;
+                        div.innerHTML = `<div><strong style="${isDesp ? 'color:#ff4c4c;' : ''}">${fin.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">${fin.data.split('-').reverse().join('/')} - ${fin.servico}</span></div><div style="color: ${corBorda}; font-weight: bold; font-size: 1rem;">${valorExibido}</div>`;
                         containerFinanceiro.appendChild(div);
                     });
-                } else { containerFinanceiro.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhuma venda registada.</p>'; }
+                } else { containerFinanceiro.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhuma transação registada.</p>'; }
 
-                if(data.clientes && data.clientes.length > 0) { window.todosClientes = data.clientes; renderizarClientes(data.clientes); } 
-                else { document.getElementById('lista-clientes-container').innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente no histórico.</p>'; }
+                if(data.clientes && data.clientes.length > 0) { window.todosClientes = data.clientes; renderizarClientes(data.clientes); } else { document.getElementById('lista-clientes-container').innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum cliente no histórico.</p>'; }
 
             } catch (e) {}
         }
 
-        async function cancelarAgendamento(data, hora, nome) {
-            if (!confirm(`Tem certeza que deseja cancelar o horário de ${nome} às ${hora}?`)) return;
-            const fd = new URLSearchParams(); fd.append('acao', 'cancelar_agendamento'); fd.append('data', data); fd.append('hora', hora); fd.append('nome', nome);
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Agendamento cancelado com sucesso!'); atualizarPainelAdmin();
-        }
+        function abrirModalDespesa() { fecharModal('modal-financeiro'); abrirModal('modal-despesa'); }
+        async function salvarDespesa() { const desc = document.getElementById('desp-desc').value; const valor = document.getElementById('desp-valor').value; if(!desc || !valor) return alert("Preencha descrição e valor!"); const btn = event.target; btn.innerText = "A registar..."; btn.disabled = true; const fd = new URLSearchParams(); fd.append('acao', 'registrar_despesa'); fd.append('descricao', desc); fd.append('valor', valor); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert("Despesa registada!"); btn.innerText = "Confirmar Despesa"; btn.disabled = false; document.getElementById('desp-desc').value = ''; document.getElementById('desp-valor').value = ''; fecharModal('modal-despesa'); atualizarPainelAdmin(); }
 
-        async function finalizarAgendamento(data, hora, nome) {
-            if (!confirm(`Deseja dar baixa e finalizar o atendimento de ${nome}?`)) return;
-            const fd = new URLSearchParams(); fd.append('acao', 'finalizar_agendamento'); fd.append('data', data); fd.append('hora', hora); fd.append('nome', nome);
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Atendimento concluído e baixa registada com sucesso!'); atualizarPainelAdmin();
-        }
-
-        async function adicionarItemComanda(data, hora, nomeCliente) {
-            const select = document.getElementById(`prod-comanda-${data}-${hora}`);
-            const valorSelecionado = select.value;
-            if (!valorSelecionado) return alert("Selecione um produto ou serviço para adicionar à comanda!");
-            
-            const partes = valorSelecionado.split('|'); const nomeItem = partes[0]; const precoItem = parseFloat(partes[1]);
-            const btn = select.nextElementSibling; btn.innerText = "⏳ A lançar..."; btn.disabled = true;
-
-            const fd = new URLSearchParams(); fd.append('acao', 'adicionar_item_comanda'); fd.append('data', data); fd.append('hora', hora); fd.append('nome_cliente', nomeCliente); fd.append('produto', nomeItem); fd.append('valor', precoItem);
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert(`"${nomeItem}" (R$ ${precoItem}) adicionado à comanda de ${nomeCliente} com sucesso!`); atualizarPainelAdmin();
-        }
+        async function venderPacote(telefone, nome) { if(!telefone) return alert("Cliente sem telefone registado!"); const qtd = prompt(`Quantos cortes/serviços quer adicionar ao pacote de ${nome}?`); if(!qtd || isNaN(qtd) || qtd <= 0) return; const valor = prompt(`Qual o valor total pago pelos ${qtd} serviços? (Ex: 150.00)`); if(!valor || isNaN(valor.replace(',','.'))) return; const fd = new URLSearchParams(); fd.append('acao', 'vender_pacote'); fd.append('telefone', telefone); fd.append('nome_cliente', nome); fd.append('qtd', qtd); fd.append('valor', valor); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert(`Pacote vendido para ${nome}! O saldo foi atualizado.`); atualizarPainelAdmin(); }
+        async function usarPacote(telefone, nome, saldoAtual) { if(!telefone) return alert("Cliente sem telefone!"); if(saldoAtual <= 0) return alert("Este cliente não tem saldo no pacote!"); if(!confirm(`Descontar 1 serviço do pacote de ${nome}? (Ele passará a ter ${saldoAtual - 1})`)) return; const novoSaldo = saldoAtual - 1; const fd = new URLSearchParams(); fd.append('acao', 'atualizar_pacote_cliente'); fd.append('telefone', telefone); fd.append('saldo', novoSaldo); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert("Saldo descontado com sucesso! Lembre-se de dar Baixa no agendamento dele na agenda."); atualizarPainelAdmin(); }
 
         function renderizarClientes(lista) {
             const container = document.getElementById('lista-clientes-container'); container.innerHTML = '';
             lista.forEach(cli => {
-                const valorStr = parseFloat(cli.gastoTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                const numZap = cli.telefone.replace(/\D/g, ''); const linkWhats = cli.telefone ? `href="https://wa.me/55${numZap}" target="_blank"` : 'href="#" onclick="alert(\'Cliente não tem telefone registado.\'); return false;"'; const btnStyle = cli.telefone ? 'background: #25D366; color: white;' : 'background: #555; color: #ccc; cursor: not-allowed;';
-                const div = document.createElement('div'); div.className = 'linha-item'; div.style.borderLeft = '3px solid #28a745'; div.style.justifyContent = 'space-between';
-                div.innerHTML = `<div><strong>${cli.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">Último corte: ${cli.ultimaVisita.split('-').reverse().join('/')} | ✂ ${cli.visitas}x</span></div><div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;"><div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Total: ${valorStr}</div><a ${linkWhats} style="${btnStyle} padding: 4px 8px; text-decoration: none; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">WhatsApp</a></div>`;
+                const saldo = cli.saldoPacote || 0;
+                const div = document.createElement('div'); div.className = 'linha-item'; div.style.borderLeft = '3px solid #28a745'; div.style.justifyContent = 'space-between'; div.style.flexWrap = "wrap";
+                div.innerHTML = `
+                    <div style="flex:1; min-width:180px;"><strong>${cli.nome}</strong><br><span style="font-size: 0.75rem; color: #aaa;">Último: ${cli.ultimaVisita.split('-').reverse().join('/')} | ✂ ${cli.visitas}x</span><br><span style="color:#00bfff; font-size:0.75rem; font-weight:bold;">📦 Pacote: ${saldo} disponíveis</span></div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                        <div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Gasto: R$ ${parseFloat(cli.gastoTotal).toFixed(2)}</div>
+                        <div style="display: flex; gap:5px;">
+                            <button onclick="venderPacote('${cli.telefone}', '${cli.nome}')" style="background:#c8a355; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">🛒 Vender Pacote</button>
+                            ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✂️ Usar 1</button>` : ''}
+                        </div>
+                    </div>`;
                 container.appendChild(div);
             });
         }
-        function filtrarClientes() { const termo = document.getElementById('busca-cliente').value.toLowerCase(); if (!window.todosClientes) return; const filtrados = window.todosClientes.filter(cli => cli.nome.toLowerCase().includes(termo) || cli.telefone.includes(termo)); renderizarClientes(filtrados); }
+        function filtrarClientes() { const termo = document.getElementById('busca-cliente').value.toLowerCase(); if (!window.todosClientes) return; renderizarClientes(window.todosClientes.filter(cli => cli.nome.toLowerCase().includes(termo) || cli.telefone.includes(termo))); }
 
-        function abrirModalPdv() {
-            abrirModal('modal-pdv'); document.getElementById('lista-produtos-container').innerHTML = ''; const selectPdv = document.getElementById('pdv-produto-select'); selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>';
-            if (window.produtosCarregados.length === 0) { adicionarLinhaProduto('Pomada', '50.00', '10'); }
-            window.produtosCarregados.forEach(p => { adicionarLinhaProduto(p.nome, p.preco, p.estoque); selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (R$ ${p.preco} - Stock: ${p.estoque})</option>`; }); document.getElementById('pdv-produto-preco').value = "";
-        }
+        async function cancelarAgendamento(data, hora, nome) { if (!confirm(`Tem certeza que deseja cancelar o horário de ${nome} às ${hora}?`)) return; const fd = new URLSearchParams(); fd.append('acao', 'cancelar_agendamento'); fd.append('data', data); fd.append('hora', hora); fd.append('nome', nome); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Cancelado com sucesso!'); atualizarPainelAdmin(); }
+        async function finalizarAgendamento(data, hora, nome) { if (!confirm(`Deseja dar baixa no atendimento de ${nome}?`)) return; const fd = new URLSearchParams(); fd.append('acao', 'finalizar_agendamento'); fd.append('data', data); fd.append('hora', hora); fd.append('nome', nome); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Baixa registada!'); atualizarPainelAdmin(); }
+        async function adicionarItemComanda(data, hora, nomeCliente) { const select = document.getElementById(`prod-comanda-${data}-${hora}`); const val = select.value; if (!val) return alert("Selecione um produto!"); const partes = val.split('|'); const nItem = partes[0]; const pItem = parseFloat(partes[1]); select.nextElementSibling.innerText = "⏳"; select.nextElementSibling.disabled = true; const fd = new URLSearchParams(); fd.append('acao', 'adicionar_item_comanda'); fd.append('data', data); fd.append('hora', hora); fd.append('nome_cliente', nomeCliente); fd.append('produto', nItem); fd.append('valor', pItem); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Lançado!'); atualizarPainelAdmin(); }
+        function abrirModalPdv() { abrirModal('modal-pdv'); document.getElementById('lista-produtos-container').innerHTML = ''; const selectPdv = document.getElementById('pdv-produto-select'); selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>'; window.produtosCarregados.forEach(p => { adicionarLinhaProduto(p.nome, p.preco, p.estoque); selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (R$ ${p.preco} - Stock: ${p.estoque})</option>`; }); document.getElementById('pdv-produto-preco').value = ""; }
         function adicionarLinhaProduto(n, p, e) { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<input type="text" value="${n}" class="p-nome" placeholder="Produto"><input type="number" value="${p}" class="p-preco" placeholder="R$" style="width:70px;" step="0.01"><input type="number" value="${e}" class="p-estoque" placeholder="Qtd" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; document.getElementById('lista-produtos-container').appendChild(div); }
         function atualizarPrecoPdv() { document.getElementById('pdv-produto-preco').value = document.getElementById('pdv-produto-select').value; }
-        async function salvarVendaPdv() {
-            const select = document.getElementById('pdv-produto-select'); const precoManual = document.getElementById('pdv-produto-preco').value;
-            if (select.selectedIndex === 0 || !precoManual) return alert("Selecione um produto e confirme o valor!");
-            const nomeProduto = select.options[select.selectedIndex].getAttribute('data-nome'); const btn = document.querySelector('#modal-pdv .action-btn'); btn.innerText = "A registar..."; btn.disabled = true;
-            const fd = new URLSearchParams(); fd.append('acao', 'vender_produto'); fd.append('nome_produto', nomeProduto); fd.append('valor_venda', precoManual); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Venda registada com sucesso!'); btn.innerText = "💲 Registar Venda"; btn.disabled = false; fecharModal('modal-pdv'); atualizarPainelAdmin();
-        }
-        async function salvarEstoque() { 
-            let novos = []; document.querySelectorAll('#lista-produtos-container .linha-item').forEach(l => { const n = l.querySelector('.p-nome').value; const p = parseFloat(l.querySelector('.p-preco').value||0); const e = parseInt(l.querySelector('.p-estoque').value||0); if(n) novos.push({nome: n, preco: p, estoque: e}); }); 
-            const fd = new URLSearchParams(); fd.append('acao', 'salvar_produtos'); fd.append('produtos_json', JSON.stringify(novos)); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); window.produtosCarregados = novos; alert('Estoque guardado com sucesso!'); fecharModal('modal-pdv'); atualizarPainelAdmin();
-        }
-
+        async function salvarVendaPdv() { const select = document.getElementById('pdv-produto-select'); const preco = document.getElementById('pdv-produto-preco').value; if (select.selectedIndex === 0 || !preco) return; const n = select.options[select.selectedIndex].getAttribute('data-nome'); document.querySelector('#modal-pdv .action-btn').disabled = true; const fd = new URLSearchParams(); fd.append('acao', 'vender_produto'); fd.append('nome_produto', n); fd.append('valor_venda', preco); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Venda registada!'); fecharModal('modal-pdv'); atualizarPainelAdmin(); }
+        async function salvarEstoque() { let novos = []; document.querySelectorAll('#lista-produtos-container .linha-item').forEach(l => { const n = l.querySelector('.p-nome').value; const p = parseFloat(l.querySelector('.p-preco').value||0); const e = parseInt(l.querySelector('.p-estoque').value||0); if(n) novos.push({nome: n, preco: p, estoque: e}); }); const fd = new URLSearchParams(); fd.append('acao', 'salvar_produtos'); fd.append('produtos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Estoque guardado!'); fecharModal('modal-pdv'); atualizarPainelAdmin(); }
         async function abrirModalServicos() { abrirModal('modal-servicos'); document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); let servicos = JSON.parse(data.servicos || "[]"); document.getElementById('lista-servicos-container').innerHTML = ''; servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); }
         function adicionarLinhaServico(n, p, t) { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<input type="text" value="${n}" class="s-nome"><input type="number" value="${p}" class="s-preco" style="width:60px;"><input type="number" value="${t}" class="s-tempo" style="width:60px;"><button class="remove-btn" onclick="this.parentElement.remove()">X</button>`; document.getElementById('lista-servicos-container').appendChild(div); }
         async function salvarServicos() { let novos = []; document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { const n = l.querySelector('.s-nome').value; const p = parseFloat(l.querySelector('.s-preco').value||0); const t = parseInt(l.querySelector('.s-tempo').value||0); if(n) novos.push({nome: n, preco: p, tempo: t}); }); const fd = new URLSearchParams(); fd.append('acao', 'salvar_servicos'); fd.append('servicos_json', JSON.stringify(novos)); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-servicos'); }
         async function abrirModalTextos() { abrirModal('modal-textos'); try { const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); const data = await res.json(); if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; } catch(e) {} }
-        async function salvarTextos() { const titulo = document.getElementById('edit-titulo').value; const subtitulo = document.getElementById('edit-subtitulo').value; const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos'); if(titulo) fd.append('titulo', titulo); if(subtitulo) fd.append('subtitulo', subtitulo); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-textos'); }
+        async function salvarTextos() { const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos'); fd.append('titulo', document.getElementById('edit-titulo').value); fd.append('subtitulo', document.getElementById('edit-subtitulo').value); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-textos'); }
         async function salvarHorarios() { const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('horarios_json', JSON.stringify({abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6]})); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Guardado!'); fecharModal('modal-horarios'); }
-        
-        async function salvarFotoGaleria() { 
-            const urlFoto = document.getElementById('nova-foto-url').value; 
-            if (!urlFoto) return; 
-            const fd = new URLSearchParams(); fd.append('acao', 'salvar_foto'); fd.append('url_foto', urlFoto); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            document.getElementById('nova-foto-url').value = ''; alert('Adicionado!'); abrirModalGaleria(); 
-        }
-
-        async function enviarArquivoGaleria() {
-            const fileInput = document.getElementById('input-arquivo-galeria');
-            if (fileInput.files.length === 0) return alert("Selecione um ficheiro primeiro!");
-            const file = fileInput.files[0];
-            
-            const btn = event.target;
-            btn.innerText = "⏳ A enviar para o Google Drive...";
-            btn.disabled = true;
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64 = e.target.result;
-                const fd = new URLSearchParams();
-                fd.append('acao', 'upload_midia');
-                fd.append('base64', base64);
-                fd.append('nome', file.name);
-                fd.append('mime', file.type);
-
-                try {
-                    await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-                    alert('Ficheiro enviado e adicionado à galeria com sucesso!');
-                    fileInput.value = '';
-                    btn.innerText = "📤 Enviar Ficheiro";
-                    btn.disabled = false;
-                    setTimeout(() => { abrirModalGaleria(); }, 1500);
-                } catch(err) {
-                    alert('Erro ao enviar ficheiro.');
-                    btn.innerText = "📤 Enviar Ficheiro";
-                    btn.disabled = false;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        async function abrirModalGaleria() { 
-            abrirModal('modal-galeria'); 
-            const container = document.getElementById('lista-galeria-container'); 
-            container.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">A carregar...</p>'; 
-            try { 
-                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); 
-                const fotos = await res.json(); 
-                container.innerHTML = ''; 
-                if(fotos.length === 0) {
-                    container.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhuma mídia na galeria.</p>';
-                    return;
-                }
-                fotos.forEach(link => { 
-                    const div = document.createElement('div'); 
-                    div.className = 'linha-item'; 
-                    div.innerHTML = `<span style="flex: 1; font-size: 0.7rem; overflow: hidden; color: #aaa; text-overflow: ellipsis; white-space: nowrap;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; 
-                    container.appendChild(div); 
-                }); 
-            } catch(e) {
-                container.innerHTML = '<p style="color:#ff4c4c; font-size:0.8rem;">Erro ao carregar galeria.</p>';
-            } 
-        }
-
-        async function apagarFotoGaleria(link) { 
-            if(!confirm("Deseja remover este item da galeria?")) return;
-            const fd = new URLSearchParams(); fd.append('acao', 'remover_foto'); fd.append('url_foto', link); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Removido!'); abrirModalGaleria(); 
-        }
-        
-        async function salvarAgendamento() { 
-            const nome = document.getElementById('agend-nome').value || "Bloqueio"; 
-            const profissional = document.getElementById('agend-profissional').value; 
-            const data = document.getElementById('agend-data').value; 
-            const hora = document.getElementById('agend-hora').value; 
-            const duracao = document.getElementById('agend-duracao').value || 20; 
-            if(!data || !hora) return alert("Preencha data e hora!"); 
-            const fd = new URLSearchParams(); fd.append('nome', nome); fd.append('profissional', profissional); fd.append('servico', 'Manual/Bloqueio'); fd.append('data', data); fd.append('hora', hora); fd.append('duracao_total', duracao); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Horário bloqueado com sucesso!'); fecharModal('modal-agendar'); atualizarPainelAdmin(); 
-        }
+        async function salvarFotoGaleria() { const url = document.getElementById('nova-foto-url').value; if (!url) return; const fd = new URLSearchParams(); fd.append('acao', 'salvar_foto'); fd.append('url_foto', url); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); document.getElementById('nova-foto-url').value = ''; alert('Adicionado!'); abrirModalGaleria(); }
+        async function enviarArquivoGaleria() { const fi = document.getElementById('input-arquivo-galeria'); if (fi.files.length === 0) return; const file = fi.files[0]; const btn = event.target; btn.innerText = "⏳ A enviar..."; btn.disabled = true; const r = new FileReader(); r.onload = async function(e) { const fd = new URLSearchParams(); fd.append('acao', 'upload_midia'); fd.append('base64', e.target.result); fd.append('nome', file.name); fd.append('mime', file.type); try { await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Enviado!'); fi.value = ''; btn.innerText = "📤 Enviar Ficheiro"; btn.disabled = false; setTimeout(() => { abrirModalGaleria(); }, 1500); } catch(err) { alert('Erro.'); btn.innerText = "📤 Enviar Ficheiro"; btn.disabled = false; } }; r.readAsDataURL(file); }
+        async function abrirModalGaleria() { abrirModal('modal-galeria'); const c = document.getElementById('lista-galeria-container'); c.innerHTML = '<p style="color:#aaa;">A carregar...</p>'; try { const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); const fotos = await res.json(); c.innerHTML = ''; if(fotos.length === 0) { c.innerHTML = '<p style="color:#aaa;">Nenhuma mídia.</p>'; return; } fotos.forEach(link => { const div = document.createElement('div'); div.className = 'linha-item'; div.innerHTML = `<span style="flex:1; font-size:0.7rem; overflow:hidden; color:#aaa; text-overflow:ellipsis; white-space:nowrap;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; c.appendChild(div); }); } catch(e) { c.innerHTML = '<p style="color:#ff4c4c;">Erro.</p>'; } }
+        async function apagarFotoGaleria(link) { if(!confirm("Remover da galeria?")) return; const fd = new URLSearchParams(); fd.append('acao', 'remover_foto'); fd.append('url_foto', link); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Removido!'); abrirModalGaleria(); }
+        async function salvarAgendamento() { const nome = document.getElementById('agend-nome').value || "Bloqueio"; const prof = document.getElementById('agend-profissional').value; const data = document.getElementById('agend-data').value; const hora = document.getElementById('agend-hora').value; const dur = document.getElementById('agend-duracao').value || 20; if(!data || !hora) return alert("Preencha data e hora!"); const fd = new URLSearchParams(); fd.append('nome', nome); fd.append('profissional', prof); fd.append('servico', 'Manual/Bloqueio'); fd.append('data', data); fd.append('hora', hora); fd.append('duracao_total', dur); await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); alert('Confirmado!'); fecharModal('modal-agendar'); atualizarPainelAdmin(); }
     </script>
 </body>
 </html>
