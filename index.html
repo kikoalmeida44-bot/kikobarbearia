@@ -162,7 +162,7 @@
             </div>
             <div class="chat-opcoes" id="chatOpcoes">
                 <button class="chat-opcao-btn" onclick="enviarOpcao('📅 Quero agendar um horário')">📅 Quero agendar um horário</button>
-                <button class="chat-opcao-btn" onclick="enviarOpcao('✂️️ Quais são os preços?')">✂️ Quais são os preços?</button>
+                <button class="chat-opcao-btn" onclick="enviarOpcao('✂ Quais são os preços?')">✂️ Quais são os preços?</button>
             </div>
             <div class="chat-input-area">
                 <input type="text" id="chatInput" class="chat-input" placeholder="Escreva a sua dúvida..." onkeypress="verificarEnter(event)">
@@ -212,10 +212,13 @@
                     <label for="email">O Seu E-mail (Opcional):</label>
                     <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
                 </div>
+                
+                <!-- NOVO CAMPO DE TELEFONE COM MÁSCARA AUTOMÁTICA -->
                 <div class="form-group">
                     <label for="telefone">O Seu WhatsApp (Com DDD):</label>
-                    <input type="tel" id="telefone" name="telefone" placeholder="Ex: 67999999999" required>
+                    <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
                 </div>
+                
                 <div class="form-group">
                     <label>Quais serviços deseja hoje?</label>
                     <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
@@ -453,6 +456,41 @@
                 setTimeout(() => { window.open("https://wa.me/5567999673200?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1500);
             });
         });
+
+        // MÁSCARA INTELIGENTE DE TELEFONE (+55 DD XXXXX-XXXX)
+        function mascaraTelefone(input) {
+            let val = input.value;
+            
+            // Identifica se o cliente usou a sugestão do teclado ou apagou números
+            if (val.startsWith('+55 ')) {
+                val = val.substring(4);
+            } else if (val.startsWith('+55')) {
+                val = val.substring(3);
+            } else if (val.startsWith('55') && val.length >= 12) {
+                // Se o telemóvel preencher colando o 55 direto, ignoramos para não duplicar
+                val = val.substring(2);
+            }
+            
+            // Remove qualquer símbolo e deixa só o que for número
+            let v = val.replace(/\D/g, ''); 
+
+            // Limita o tamanho ao padrão do Brasil (2 do DDD + 9 do número)
+            if (v.length > 11) v = v.substring(0, 11);
+
+            // Constrói o visual exato: +55 XX XXXXX-XXXX
+            let formatado = '';
+            if (v.length > 0) {
+                formatado = '+55 ' + v.substring(0, 2);
+            }
+            if (v.length > 2) {
+                formatado += ' ' + v.substring(2, 7);
+            }
+            if (v.length > 7) {
+                formatado += '-' + v.substring(7, 11);
+            }
+            
+            input.value = formatado;
+        }
     </script>
 </body>
 </html>
