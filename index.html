@@ -213,7 +213,7 @@
                     <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
                 </div>
                 
-                <!-- NOVO CAMPO DE TELEFONE COM MÁSCARA AUTOMÁTICA -->
+                <!-- CAMPO DE TELEFONE COM MÁSCARA AUTOMÁTICA -->
                 <div class="form-group">
                     <label for="telefone">O Seu WhatsApp (Com DDD):</label>
                     <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
@@ -289,7 +289,6 @@
                         let lkLower = link.toLowerCase();
                         if(lkLower.includes('<blockquote') || link.includes(' ')) return;
                         
-                        // SUPORTE COMPLETO PARA VÍDEOS EM MP4 E WEBM (COM PRELOAD REFORÇADO)
                         if(lkLower.includes('.mp4') || lkLower.includes('.webm') || lkLower.includes('video')) {
                             htmlMidia += `<video src="${link}" autoplay loop muted playsinline preload="auto"></video>`;
                         } else {
@@ -403,11 +402,23 @@
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
             let bStart = parseTempo("11:00"); let bEnd = parseTempo("13:00");
             
+            // VERIFICAÇÃO INTELIGENTE: Bloqueia horários passados se for o dia de hoje
+            let agora = new Date();
+            let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
+            let horaAtualMinutos = agora.getHours() * 60 + agora.getMinutes();
+            
             let todosHorarios = [];
             while(cur <= end) {
                 let hStr = Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0');
                 
-                if (cur >= bStart && cur < bEnd) {
+                let horarioPassado = false;
+                if (dataEscolhida === hojeStr && cur <= horaAtualMinutos) {
+                    horarioPassado = true;
+                }
+
+                if (horarioPassado) {
+                    todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Passado" });
+                } else if (cur >= bStart && cur < bEnd) {
                     todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Almoço" });
                 } else {
                     const ocupadoNuvem = agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr);
@@ -439,7 +450,6 @@
             let valorFinal = document.getElementById('valor_total_enviar').value;
             let duracaoFinal = document.getElementById('duracao_total').value;
 
-            // ESTA É A CORREÇÃO QUE SALVA O SMS! Limpa todos os símbolos antes de enviar.
             const fd = new URLSearchParams();
             fd.append('nome', document.getElementById('nome').value);
             fd.append('email', document.getElementById('email').value);
@@ -462,7 +472,6 @@
         function mascaraTelefone(input) {
             let val = input.value;
             
-            // Identifica se o cliente usou a sugestão do teclado ou apagou números
             if (val.startsWith('+55 ')) {
                 val = val.substring(4);
             } else if (val.startsWith('+55')) {
@@ -471,13 +480,10 @@
                 val = val.substring(2);
             }
             
-            // Remove qualquer símbolo e deixa só o que for número
             let v = val.replace(/\D/g, ''); 
 
-            // Limita o tamanho ao padrão do Brasil (2 do DDD + 9 do número)
             if (v.length > 11) v = v.substring(0, 11);
 
-            // Constrói o visual exato: +55 XX XXXXX-XXXX
             let formatado = '';
             if (v.length > 0) {
                 formatado = '+55 ' + v.substring(0, 2);
