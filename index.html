@@ -439,10 +439,11 @@
             let valorFinal = document.getElementById('valor_total_enviar').value;
             let duracaoFinal = document.getElementById('duracao_total').value;
 
+            // ESTA É A CORREÇÃO QUE SALVA O SMS! Limpa todos os símbolos antes de enviar.
             const fd = new URLSearchParams();
             fd.append('nome', document.getElementById('nome').value);
             fd.append('email', document.getElementById('email').value);
-            fd.append('telefone', document.getElementById('telefone').value);
+            fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
             fd.append('data', document.getElementById('data').value);
             fd.append('hora', document.getElementById('hora').value);
             fd.append('servico', nomes.join(" + "));
@@ -467,7 +468,6 @@
             } else if (val.startsWith('+55')) {
                 val = val.substring(3);
             } else if (val.startsWith('55') && val.length >= 12) {
-                // Se o telemóvel preencher colando o 55 direto, ignoramos para não duplicar
                 val = val.substring(2);
             }
             
