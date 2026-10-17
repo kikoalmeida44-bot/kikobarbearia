@@ -289,8 +289,9 @@
                         let lkLower = link.toLowerCase();
                         if(lkLower.includes('<blockquote') || link.includes(' ')) return;
                         
+                        // FUSÃO NOVA AQUI: Adicionado "controls" à tag do video para evitar ecrã preto
                         if(lkLower.includes('.mp4') || lkLower.includes('.webm') || lkLower.includes('video')) {
-                            htmlMidia += `<video src="${link}" autoplay loop muted playsinline preload="auto"></video>`;
+                            htmlMidia += `<video src="${link}" autoplay loop muted playsinline controls preload="auto"></video>`;
                         } else {
                             htmlMidia += `<img src="${link}" onerror="this.style.display='none'">`;
                             fotosParaFundo.push(link);
