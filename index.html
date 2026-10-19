@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Kiko Barbearia | Estilo e Tradição</title>
+    <title>Kiko Barbearia | Estilo e Tradição</title>
     
     <!-- Configuração do PWA / Aplicativo -->
     <link rel="manifest" href="manifest.json">
@@ -191,7 +191,7 @@
     <div id="servicos" class="section">
         <h2 class="section-title">Nossos Serviços</h2>
         <div class="services" id="quadro_servicos_dinamicos">
-            <p style="color:#777;">A carregar serviços...</p>
+            <p style="color:#777;">A carregar serviços da Kiko Barbearia...</p>
         </div>
     </div>
 
@@ -213,6 +213,7 @@
                     <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
                 </div>
                 
+                <!-- CAMPO DE TELEFONE COM MÁSCARA AUTOMÁTICA -->
                 <div class="form-group">
                     <label for="telefone">O Seu WhatsApp (Com DDD):</label>
                     <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
@@ -259,13 +260,13 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // Pega o ID da barbearia pela URL (ex: index.html?id=outra_barbearia) ou usa 'kiko_barbearia' por padrão
+        // CAPTURA DO ID DA BARBEARIA PELA URL (SaaS)
         const urlParams = new URLSearchParams(window.location.search);
         const idBarbearia = urlParams.get('id') || 'kiko_barbearia';
 
-        // Atualiza o link do rodapé para apontar para o admin da barbearia correta
+        // Atualiza o link do painel admin com o ID correto
         document.getElementById('link-admin').href = `admin.html?id=${idBarbearia}`;
-
+        
         let agendamentosDaNuvem = [];
         let configHorarios = null;
 
@@ -287,7 +288,7 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            // Carregar Fotos com suporte à barbearia da URL
+            // BUSCA FOTOS COM SUPORTE AO ID DA BARBEARIA
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
@@ -308,7 +309,7 @@
                 }
             }).catch(e => {});
 
-            // Carregar Textos e Serviços com suporte à barbearia da URL
+            // BUSCA TEXTOS E SERVIÇOS COM SUPORTE AO ID DA BARBEARIA
             fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia).then(res => res.json()).then(textos => {
                 if (textos.titulo) {
                     document.getElementById('txt_titulo').innerText = textos.titulo;
@@ -321,7 +322,7 @@
                     let listaServicos = JSON.parse(textos.servicos);
                     let htmlCards = ""; let htmlCaixas = "";
                     listaServicos.forEach(servico => {
-                        htmlCards += `<div class="service-card"><h3>${servico.nome}</h3><p>Cuidado profissional.</p><div class="service-price">R$ ${servico.preco}</div></div>`;
+                        htmlCards += `<div class="service-card"><h3>${servico.nome}</h3><p>Cuidado profissional na barbearia.</p><div class="service-price">R$ ${servico.preco}</div></div>`;
                         htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${servico.preco}" data-tempo="${servico.tempo}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${servico.tempo}m)</span><span class="checkbox-price">R$ ${servico.preco}</span></div></label>`;
                     });
                     document.getElementById('quadro_servicos_dinamicos').innerHTML = htmlCards;
@@ -358,8 +359,9 @@
                 const t = textoStr.toLowerCase(); let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
                 if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) { respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } 
                 else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) { respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸"; setTimeout(() => { window.location.hash = '#servicos'; }, 1200); } 
-                else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão e Dinheiro diretamente no estabelecimento após o atendimento. 💳"; } 
+                else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳"; } 
                 else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11h, e à tarde das 13h às 19:40h. ⏰"; } 
+                else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "Ficamos localizados em Coxim - MS. Passa por cá! 📍"; } 
                 else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) { respostaBot = "Fala chefe! Tudo ótimo por aqui. Como posso ajudar o seu visual hoje? 👊"; }
                 mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; menuOpcoes.style.opacity = '1'; menuOpcoes.style.pointerEvents = 'auto';
             }, 500);
@@ -399,6 +401,8 @@
                 delete window[callbackName]; document.getElementById(callbackName)?.remove();
                 renderizarDropdown(dataEscolhida, selectHora);
             };
+            
+            // PASSANDO O ID DA BARBEARIA NA CONSULTA DE HORÁRIOS JSONP
             const script = document.createElement('script'); script.id = callbackName; script.src = scriptURL + '?acao=dashboard&id_barbearia=' + idBarbearia + '&callback=' + callbackName;
             script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
             document.body.appendChild(script);
@@ -458,7 +462,7 @@
 
             const fd = new URLSearchParams();
             fd.append('acao', 'agendar');
-            fd.append('id_barbearia', idBarbearia);
+            fd.append('id_barbearia', idBarbearia); // INCLUI O ID DA BARBEARIA NO AGENDAMENTO
             fd.append('nome', document.getElementById('nome').value);
             fd.append('email', document.getElementById('email').value);
             fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
