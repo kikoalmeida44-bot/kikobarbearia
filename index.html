@@ -147,6 +147,7 @@
             <a href="#agendamento">Agendar</a>
             <a href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
+            <a href="login.html" style="color: #d4af37;">Painel Admin</a>
         </nav>
     </header>
 
@@ -253,19 +254,19 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 <a href="admin.html" id="link-admin" style="color: inherit; text-decoration: none;">Kiko Barbearia</a>. Todos os direitos reservados.</p>
+        <p>&copy; 2026 <a href="login.html" id="link-admin" style="color: #d4af37; text-decoration: none;">Kiko Barbearia</a>. Todos os direitos reservados.</p>
         <p style="margin-top: 15px; font-size: 0.85em; color: #888;">👀 Visitantes online hoje: <span id="contadorVisitas" style="color: #d4af37; font-weight: bold;">142</span></p>
     </footer>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        const scriptURL = 'AQUI_VAI_O_URL_DO_TEU_WEB_APP_APPS_SCRIPT';
         
         // CAPTURA DO ID DA BARBEARIA PELA URL (SaaS)
         const urlParams = new URLSearchParams(window.location.search);
         const idBarbearia = urlParams.get('id') || 'kiko_barbearia';
 
         // Atualiza o link do painel admin com o ID correto
-        document.getElementById('link-admin').href = `admin.html?id=${idBarbearia}`;
+        document.getElementById('link-admin').href = `login.html?id=${idBarbearia}`;
         
         let agendamentosDaNuvem = [];
         let configHorarios = null;
@@ -402,7 +403,6 @@
                 renderizarDropdown(dataEscolhida, selectHora);
             };
             
-            // PASSANDO O ID DA BARBEARIA NA CONSULTA DE HORÁRIOS JSONP
             const script = document.createElement('script'); script.id = callbackName; script.src = scriptURL + '?acao=dashboard&id_barbearia=' + idBarbearia + '&callback=' + callbackName;
             script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
             document.body.appendChild(script);
@@ -462,7 +462,7 @@
 
             const fd = new URLSearchParams();
             fd.append('acao', 'agendar');
-            fd.append('id_barbearia', idBarbearia); // INCLUI O ID DA BARBEARIA NO AGENDAMENTO
+            fd.append('id_barbearia', idBarbearia);
             fd.append('nome', document.getElementById('nome').value);
             fd.append('email', document.getElementById('email').value);
             fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
