@@ -41,12 +41,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; min-height: 100vh; padding: 20px 10px; position: relative; }
-        .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid #c8a355; border-radius: 8px; padding: 20px; display: none; }
+        .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid #c8a355; border-radius: 8px; padding: 20px; display: block; }
         h1.logo { text-align: center; color: #c8a355; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0d0d0d; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .login-box { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #c8a355; text-align: center; width: 90%; max-width: 350px; }
-        .login-box input { width: 100%; padding: 12px; margin: 15px 0; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; text-align: center; font-size: 1rem; }
-        .login-box button { width: 100%; padding: 12px; background-color: #c8a355; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .section-title { color: #c8a355; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
@@ -71,18 +67,9 @@
     </style>
 </head>
 <body>
-    <div id="login-screen">
-        <div class="login-box">
-            <h1 class="logo">KIKO BARBEARIA PRO</h1>
-            <p style="font-size: 0.8rem; color: #777;">Acesso Restrito</p>
-            <input type="password" id="senha-admin" placeholder="Digite a palavra-passe">
-            <button onclick="verificarSenha()">Entrar no Painel</button>
-            <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
-        </div>
-    </div>
     
     <div class="admin-container" id="main-dashboard">
-        <h1 class="logo">Kiko Barbearia Pro</h1>
+        <h1 class="logo" id="titulo-barbearia">Kiko Barbearia Pro</h1>
         
         <div class="section-card">
             <div class="section-title">📊 RESUMO FINANCEIRO (MÊS)</div>
@@ -111,7 +98,7 @@
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
-        <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
+        <button class="logout-btn" onclick="fazerLogout()">🔒 Sair do Sistema</button>
     </div>
 
     <!-- MODAL AGENDA E COMANDAS -->
@@ -274,19 +261,28 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        
+        // RECUPERA O ID DA BARBEARIA DO LOGIN SaaS
+        const idBarbearia = localStorage.getItem("kiko_saas_id");
+        const nomeBarbearia = localStorage.getItem("kiko_saas_nome");
+
+        if (!idBarbearia) {
+            alert("Acesso restrito! Por favor, faça o login.");
+            window.location.href = "login_saas.html";
+        } else {
+            document.getElementById('titulo-barbearia').innerText = nomeBarbearia || "Kiko Barbearia Pro";
+            atualizarPainelAdmin();
+            verificarNotificacoesPendentes();
+        }
+
+        function fazerLogout() {
+            localStorage.removeItem("kiko_saas_id");
+            localStorage.removeItem("kiko_saas_nome");
+            window.location.href = "login_saas.html";
+        }
+
         window.todosClientes = []; 
         window.produtosCarregados = [];
-
-        function verificarSenha() { 
-            if (document.getElementById('senha-admin').value === "kiko2026") { 
-                document.getElementById('login-screen').style.display = 'none'; 
-                document.getElementById('main-dashboard').style.display = 'block'; 
-                atualizarPainelAdmin(); 
-                verificarNotificacoesPendentes(); 
-            } else { 
-                document.getElementById('erro-senha').style.display = 'block'; 
-            } 
-        }
 
         function abrirModal(id) { 
             document.getElementById(id).style.display = 'flex'; 
@@ -298,16 +294,16 @@
         
         function fecharModalAgenda() { 
             fecharModal('modal-agenda'); 
-            localStorage.setItem('kiko_ultima_leitura', new Date().toISOString().split('T')[0]); 
+            localStorage.setItem('kiko_ultima_leitura_' + idBarbearia, new Date().toISOString().split('T')[0]); 
             document.getElementById('badge-agenda').style.display = 'none'; 
         }
 
         async function verificarNotificacoesPendentes() {
             try {
-                const res = await fetch(SCRIPT_URL + '?acao=dashboard');
+                const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + idBarbearia);
                 const data = await res.json();
                 if(data.agenda && data.agenda.length > 0) {
-                    const ultimaLeitura = localStorage.getItem('kiko_ultima_leitura') || "";
+                    const ultimaLeitura = localStorage.getItem('kiko_ultima_leitura_' + idBarbearia) || "";
                     const hojeStr = new Date().toISOString().split('T')[0];
                     const temNovo = data.agenda.some(ag => ag.data >= hojeStr && ag.status !== "Concluído");
                     if(temNovo && ultimaLeitura !== hojeStr) {
@@ -319,12 +315,12 @@
 
         async function atualizarPainelAdmin() {
             try { 
-                const res = await fetch(SCRIPT_URL + '?acao=dashboard'); 
+                const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + idBarbearia); 
                 const data = await res.json();
                 
                 let servicosCarregados = [];
                 try {
-                    const resTex = await fetch(SCRIPT_URL + '?acao=obter_textos');
+                    const resTex = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
                     const tex = await resTex.json();
                     if(tex.servicos) servicosCarregados = JSON.parse(tex.servicos);
                 } catch(e){}
@@ -410,7 +406,7 @@
                         let btnWpp = '';
                         if (ag.telefone) {
                             const numZap = ag.telefone.replace(/\D/g, '');
-                            const msgLink = `Fala *${ag.nome}*! Tudo beleza? ✂\nPassando para confirmar o seu horário hoje às *${ag.hora}* na Kiko Barbearia. Te esperamos!`;
+                            const msgLink = `Fala *${ag.nome}*! Tudo beleza? ✂\nPassando para confirmar o seu horário hoje às *${ag.hora}* na barbearia. Te esperamos!`;
                             btnWpp = `<a href="https://wa.me/55${numZap}?text=${encodeURIComponent(msgLink)}" target="_blank" style="background: #25D366; color: white; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-decoration: none;">💬 WhatsApp</a>`;
                         } else {
                             btnWpp = `<button onclick="alert('Sem telefone.')" style="background: #555; color: white; border: none; padding: 6px; border-radius: 4px; font-size: 0.7rem;">💬 Sem Wpp</button>`;
@@ -507,6 +503,7 @@
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'registrar_despesa'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('descricao', desc); 
             fd.append('valor', valor); 
             
@@ -533,6 +530,7 @@
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'vender_pacote'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('telefone', telefone); 
             fd.append('nome_cliente', nome); 
             fd.append('qtd', qtd); 
@@ -551,6 +549,7 @@
             const novoSaldo = saldoAtual - 1; 
             const fd = new URLSearchParams(); 
             fd.append('acao', 'atualizar_pacote_cliente'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('telefone', telefone); 
             fd.append('saldo', novoSaldo); 
             
@@ -575,11 +574,11 @@
                 div.innerHTML = `
                     <div style="flex:1; min-width:180px;">
                         <strong>${cli.nome}</strong><br>
-                        <span style="font-size: 0.75rem; color: #aaa;">Último: ${cli.ultimaVisita.split('-').reverse().join('/')} | ✂ ${cli.visitas}x</span><br>
+                        <span style="font-size: 0.75rem; color: #aaa;">Último: ${cli.ultimaVisita ? cli.ultimaVisita.split('-').reverse().join('/') : '-'} | ✂ ${cli.visitas}x</span><br>
                         <span style="color:#00bfff; font-size:0.75rem; font-weight:bold;">📦 Pacote: ${saldo} disponíveis</span>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                        <div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Gasto: R$ ${parseFloat(cli.gastoTotal).toFixed(2)}</div>
+                        <div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Gasto: R$ ${parseFloat(cli.gastoTotal || 0).toFixed(2)}</div>
                         <div style="display: flex; gap:5px;">
                             <button onclick="venderPacote('${cli.telefone}', '${cli.nome}')" style="background:#c8a355; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">🛒 Vender Pacote</button>
                             ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✂️ Usar 1</button>` : ''}
@@ -600,6 +599,7 @@
             if (!confirm(`Tem certeza que deseja cancelar o horário de ${nome} às ${hora}?`)) return; 
             const fd = new URLSearchParams(); 
             fd.append('acao', 'cancelar_agendamento'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('data', data); 
             fd.append('hora', hora); 
             fd.append('nome', nome); 
@@ -612,6 +612,7 @@
             if (!confirm(`Deseja dar baixa no atendimento de ${nome}?`)) return; 
             const fd = new URLSearchParams(); 
             fd.append('acao', 'finalizar_agendamento'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('data', data); 
             fd.append('hora', hora); 
             fd.append('nome', nome); 
@@ -623,7 +624,7 @@
         async function adicionarItemComanda(data, hora, nomeCliente) { 
             const select = document.getElementById(`prod-comanda-${data}-${hora}`); 
             const val = select.value; 
-            if (!val) return alert("Selecione um produto!"); 
+            if (!val) return alert("Selecione um produto ou serviço!"); 
             
             const partes = val.split('|'); 
             const nItem = partes[0]; 
@@ -634,6 +635,7 @@
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'adicionar_item_comanda'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('data', data); 
             fd.append('hora', hora); 
             fd.append('nome_cliente', nomeCliente); 
@@ -655,12 +657,15 @@
             if(!data || !hora) return alert("Preencha data e hora!"); 
             
             const fd = new URLSearchParams(); 
+            fd.append('acao', 'agendar');
+            fd.append('id_barbearia', idBarbearia);
             fd.append('nome', nome); 
             fd.append('profissional', prof); 
             fd.append('servico', 'Manual/Bloqueio'); 
             fd.append('data', data); 
             fd.append('hora', hora); 
             fd.append('duracao_total', dur); 
+            fd.append('valor_total', '0');
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
             alert('Confirmado!'); 
@@ -702,13 +707,14 @@
             const select = document.getElementById('pdv-produto-select'); 
             const preco = document.getElementById('pdv-produto-preco').value; 
             
-            if (select.selectedIndex === 0 || !preco) return; 
+            if (select.selectedIndex === 0 || !preco) return alert("Selecione um produto e informe o valor!"); 
             
             const n = select.options[select.selectedIndex].getAttribute('data-nome'); 
             document.querySelector('#modal-pdv .action-btn').disabled = true; 
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'vender_produto'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('nome_produto', n); 
             fd.append('valor_venda', preco); 
             
@@ -729,6 +735,7 @@
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'salvar_produtos'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('produtos_json', JSON.stringify(novos)); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
@@ -741,7 +748,7 @@
         async function abrirModalServicos() { 
             abrirModal('modal-servicos'); 
             document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; 
-            const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); 
+            const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia); 
             const data = await res.json(); 
             let servicos = JSON.parse(data.servicos || "[]"); 
             document.getElementById('lista-servicos-container').innerHTML = ''; 
@@ -771,6 +778,7 @@
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'salvar_servicos'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('servicos_json', JSON.stringify(novos)); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
@@ -781,7 +789,7 @@
         async function abrirModalTextos() { 
             abrirModal('modal-textos'); 
             try { 
-                const res = await fetch(SCRIPT_URL + '?acao=obter_textos'); 
+                const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia); 
                 const data = await res.json(); 
                 if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; 
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
@@ -791,6 +799,7 @@
         async function salvarTextos() { 
             const fd = new URLSearchParams(); 
             fd.append('acao', 'salvar_textos'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('titulo', document.getElementById('edit-titulo').value); 
             fd.append('subtitulo', document.getElementById('edit-subtitulo').value); 
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
@@ -801,6 +810,7 @@
         async function salvarHorarios() { 
             const fd = new URLSearchParams(); 
             fd.append('acao', 'salvar_horarios'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('horarios_json', JSON.stringify({
                 abre: document.getElementById('edit-abre').value, 
                 fecha: document.getElementById('edit-fecha').value, 
@@ -820,6 +830,7 @@
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'salvar_foto'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('url_foto', url); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
@@ -841,6 +852,7 @@
             r.onload = async function(e) { 
                 const fd = new URLSearchParams(); 
                 fd.append('acao', 'upload_midia'); 
+                fd.append('id_barbearia', idBarbearia);
                 fd.append('base64', e.target.result); 
                 fd.append('nome', file.name); 
                 fd.append('mime', file.type); 
@@ -867,7 +879,7 @@
             c.innerHTML = '<p style="color:#aaa;">A carregar...</p>'; 
             
             try { 
-                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos'); 
+                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos&id_barbearia=' + idBarbearia); 
                 const fotos = await res.json(); 
                 c.innerHTML = ''; 
                 if(fotos.length === 0) { 
@@ -890,6 +902,7 @@
             
             const fd = new URLSearchParams(); 
             fd.append('acao', 'remover_foto'); 
+            fd.append('id_barbearia', idBarbearia);
             fd.append('url_foto', link); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
