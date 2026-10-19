@@ -259,7 +259,8 @@
     </footer>
 
     <script>
-        const scriptURL = 'AQUI_VAI_O_URL_DO_TEU_WEB_APP_APPS_SCRIPT';
+        // AQUI ESTÁ O TEU LINK VERDADEIRO INTEGRADO NO JAVA!
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
         // CAPTURA DO ID DA BARBEARIA PELA URL (SaaS)
         const urlParams = new URLSearchParams(window.location.search);
@@ -308,7 +309,7 @@
                     document.getElementById('galeriaDinamica').innerHTML = htmlMidia;
                     iniciarSlideshow(fotosParaFundo);
                 }
-            }).catch(e => {});
+            }).catch(e => { console.error("Erro ao carregar fotos:", e) });
 
             // BUSCA TEXTOS E SERVIÇOS COM SUPORTE AO ID DA BARBEARIA
             fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia).then(res => res.json()).then(textos => {
