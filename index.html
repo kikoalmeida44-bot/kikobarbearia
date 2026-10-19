@@ -139,7 +139,7 @@
     <div class="overlay-global"></div>
 
     <header>
-        <h1 id="header-title">Kiko Barbearia</h1>
+        <h1 id="header-title">A Carregar...</h1>
         <nav>
             <a href="#sobre">Sobre Nós</a>
             <a href="#servicos">Serviços</a>
@@ -147,15 +147,15 @@
             <a href="#agendamento">Agendar</a>
             <a href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
             <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
-            <a href="login.html" style="color: #d4af37;">Painel Admin</a>
+            <a href="login.html" id="link-admin" style="color: #d4af37;">Painel Admin</a>
         </nav>
     </header>
 
     <div class="chat-widget">
-        <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Kiko</button>
+        <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Rápido</button>
         <div class="chat-janela" id="chatJanela">
             <div class="chat-header">
-                <span>⚡ Kiko Bot Inteligente</span>
+                <span>⚡ Assistente Virtual</span>
                 <span style="cursor:pointer; color:#aaa; font-size: 1.1em;" onclick="alternarChat()">✕</span>
             </div>
             <div class="chat-mensagens" id="chatMensagens">
@@ -174,7 +174,7 @@
 
     <div class="hero">
         <div class="hero-content">
-            <h2 id="txt_titulo">Kiko Barbearia</h2>
+            <h2 id="txt_titulo">A Carregar...</h2>
             <p id="txt_subtitulo">A carregar...</p>
             <div class="hero-buttons">
                 <a href="#agendamento" class="btn-gold">Agendar Horário</a>
@@ -192,7 +192,7 @@
     <div id="servicos" class="section">
         <h2 class="section-title">Nossos Serviços</h2>
         <div class="services" id="quadro_servicos_dinamicos">
-            <p style="color:#777;">A carregar serviços da Kiko Barbearia...</p>
+            <p style="color:#777;">A carregar serviços disponíveis...</p>
         </div>
     </div>
 
@@ -214,7 +214,6 @@
                     <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
                 </div>
                 
-                <!-- CAMPO DE TELEFONE COM MÁSCARA AUTOMÁTICA -->
                 <div class="form-group">
                     <label for="telefone">O Seu WhatsApp (Com DDD):</label>
                     <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
@@ -254,19 +253,25 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 <a href="login.html" id="link-admin" style="color: #d4af37; text-decoration: none;">Kiko Barbearia</a>. Todos os direitos reservados.</p>
+        <p>&copy; 2026 <span id="rodape-nome">Sistema Barbearia</span>. Todos os direitos reservados.</p>
         <p style="margin-top: 15px; font-size: 0.85em; color: #888;">👀 Visitantes online hoje: <span id="contadorVisitas" style="color: #d4af37; font-weight: bold;">142</span></p>
     </footer>
 
     <script>
-        // AQUI ESTÁ O TEU LINK VERDADEIRO INTEGRADO NO JAVA!
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // CAPTURA DO ID DA BARBEARIA PELA URL (SaaS)
+        // CAPTURA INTELIGENTE DO ID (CORREÇÃO SAAS 1)
         const urlParams = new URLSearchParams(window.location.search);
-        const idBarbearia = urlParams.get('id') || 'kiko_barbearia';
+        let idBarbearia = urlParams.get('id');
+        if (idBarbearia) {
+            localStorage.setItem('id_barbearia_ativo', idBarbearia);
+        } else {
+            idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barbearia';
+        }
 
-        // Atualiza o link do painel admin com o ID correto
+        // Variável para guardar o número de WhatsApp dinâmico da barbearia
+        let numeroWhatsappDono = "5567999673200"; // Fallback se não houver
+
         document.getElementById('link-admin').href = `login.html?id=${idBarbearia}`;
         
         let agendamentosDaNuvem = [];
@@ -290,7 +295,6 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            // BUSCA FOTOS COM SUPORTE AO ID DA BARBEARIA
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
@@ -311,15 +315,17 @@
                 }
             }).catch(e => { console.error("Erro ao carregar fotos:", e) });
 
-            // BUSCA TEXTOS E SERVIÇOS COM SUPORTE AO ID DA BARBEARIA
             fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia).then(res => res.json()).then(textos => {
                 if (textos.titulo) {
                     document.getElementById('txt_titulo').innerText = textos.titulo;
                     document.getElementById('header-title').innerText = textos.titulo;
+                    document.getElementById('rodape-nome').innerText = textos.titulo;
                     document.title = textos.titulo + " | Estilo e Tradição";
                 }
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
+                if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); // Atualiza o WhatsApp dinamicamente
+                
                 if (textos.servicos) {
                     let listaServicos = JSON.parse(textos.servicos);
                     let htmlCards = ""; let htmlCaixas = "";
@@ -354,7 +360,7 @@
             const mensagensDiv = document.getElementById('chatMensagens'); const menuOpcoes = document.getElementById('chatOpcoes');
             mensagensDiv.innerHTML += `<div class="msg msg-user">${textoStr}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; input.value = ""; 
             menuOpcoes.style.opacity = '0.5'; menuOpcoes.style.pointerEvents = 'none';
-            const digitandoDiv = document.createElement('div'); digitandoDiv.className = 'msg msg-digitando'; digitandoDiv.innerText = 'Kiko Bot a pensar... 🧠'; mensagensDiv.appendChild(digitandoDiv); mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+            const digitandoDiv = document.createElement('div'); digitandoDiv.className = 'msg msg-digitando'; digitandoDiv.innerText = 'Bot a pensar... 🧠'; mensagensDiv.appendChild(digitandoDiv); mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
 
             setTimeout(() => {
                 mensagensDiv.removeChild(digitandoDiv);
@@ -363,13 +369,12 @@
                 else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) { respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸"; setTimeout(() => { window.location.hash = '#servicos'; }, 1200); } 
                 else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳"; } 
                 else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11h, e à tarde das 13h às 19:40h. ⏰"; } 
-                else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "Ficamos localizados em Coxim - MS. Passa por cá! 📍"; } 
+                else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "O endereço exato está no final da página. Passa por cá! 📍"; } 
                 else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) { respostaBot = "Fala chefe! Tudo ótimo por aqui. Como posso ajudar o seu visual hoje? 👊"; }
                 mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; menuOpcoes.style.opacity = '1'; menuOpcoes.style.pointerEvents = 'auto';
             }, 500);
         }
 
-        // FORMULÁRIO DE AGENDAMENTO
         function atualizarResumo() {
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
@@ -472,13 +477,15 @@
             fd.append('servico', nomes.join(" + "));
             fd.append('valor_total', valorFinal);
             fd.append('duracao_total', duracaoFinal);
-            fd.append('profissional', 'Kiko');
+            fd.append('profissional', 'Principal');
 
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
                 var texto = `Olá!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
                 
                 e.target.reset(); document.getElementById('hora').disabled = true; document.getElementById('resumo-pedido').style.display = 'none';
-                setTimeout(() => { window.open("https://wa.me/5567999673200?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1500);
+                
+                // CORREÇÃO SAAS 2: Usa o número dinâmico da barbearia que está logada, em vez do teu fixo
+                setTimeout(() => { window.open("https://wa.me/" + numeroWhatsappDono + "?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1500);
             });
         });
 
