@@ -307,11 +307,23 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
+        // CAPTURA INTELIGENTE E ISOLADA DO ID DA BARBEARIA
         const urlParams = new URLSearchParams(window.location.search);
-        const idBarbearia = urlParams.get('id') || localStorage.getItem('id_barbearia_ativo') || 'kiko_barbearia';
+        let idBarbearia = urlParams.get('id');
 
-        // Atualiza o subtítulo do login com o ID da barbearia que está a tentar entrar
-        document.getElementById('subtitulo-login-modal').innerText = "Barbearia: " + idBarbearia.toUpperCase();
+        if (idBarbearia) {
+            localStorage.setItem('id_barbearia_ativo', idBarbearia);
+        } else {
+            idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barbearia';
+        }
+
+        // Garante que o URL reflete sempre a barbearia ativa corretamente
+        if (!urlParams.get('id') && idBarbearia) {
+            window.history.replaceState({}, '', `admin.html?id=${idBarbearia}`);
+        }
+
+        // Atualiza o subtítulo do login com o ID da barbearia correta
+        document.getElementById('subtitulo-login-modal').innerText = "Unidade: " + idBarbearia.toUpperCase();
 
         window.todosClientes = []; 
         window.produtosCarregados = [];
@@ -325,8 +337,7 @@
                 return;
             }
 
-            // SE FOR O DONO MESTRE OU QUALQUER CLIENTE DO SAAS COM SENHA VÁLIDA
-            // Permite a entrada se for a senha mestra ("kiko2026") OU se tiver qualquer senha com 3+ carateres (para os clientes novos)
+            // PERMITE O ACESSO SE FOR A SENHA MESTRA DO DONO OU QUALQUER SENHA DO CLIENTE SAAS
             if (senha === "kiko2026" || senha.length >= 3) { 
                 localStorage.setItem('id_barbearia_ativo', idBarbearia);
                 document.getElementById('login-screen').style.display = 'none'; 
@@ -665,7 +676,7 @@
         
         async function usarPacote(telefone, nome, saldoAtual) { 
             if(!telefone) return alert("Cliente sem telefone!"); 
-            if(saldoAtual <= 0) return alert("Este cliente não tem saldo no pacote!"); 
+            if(saldoAtual <= 0) return alert("Este cliente não tiene saldo no pacote!"); 
             if(!confirm(`Descontar 1 serviço do pacote de ${nome}? (Ele passará a ter ${saldoAtual - 1})`)) return; 
             
             const novoSaldo = saldoAtual - 1; 
