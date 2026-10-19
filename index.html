@@ -260,13 +260,13 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // CAPTURA INTELIGENTE DO ID (CORREÇÃO SAAS 1)
+        // CAPTURA INTELIGENTE DO ID (SAAS ISOLADO)
         const urlParams = new URLSearchParams(window.location.search);
         let idBarbearia = urlParams.get('id');
         if (idBarbearia) {
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
         } else {
-            idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barbearia';
+            idBarbearia = localStorage.getItem('id_barbearia_ativo') || '';
         }
 
         // Variável para guardar o número de WhatsApp dinâmico da barbearia
@@ -295,6 +295,7 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
+            // Passa o id_barbearia nos pedidos para carregar dados isolados da barbearia correta
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
@@ -324,7 +325,7 @@
                 }
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
-                if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); // Atualiza o WhatsApp dinamicamente
+                if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
                 
                 if (textos.servicos) {
                     let listaServicos = JSON.parse(textos.servicos);
@@ -484,7 +485,6 @@
                 
                 e.target.reset(); document.getElementById('hora').disabled = true; document.getElementById('resumo-pedido').style.display = 'none';
                 
-                // CORREÇÃO SAAS 2: Usa o número dinâmico da barbearia que está logada, em vez do teu fixo
                 setTimeout(() => { window.open("https://wa.me/" + numeroWhatsappDono + "?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1500);
             });
         });
