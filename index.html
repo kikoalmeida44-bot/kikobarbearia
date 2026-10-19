@@ -260,17 +260,26 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // CAPTURA INTELIGENTE DO ID (SAAS ISOLADO)
+        // CAPTURA INTELIGENTE E LIMPEZA DO ID AUTOMÁTICA
         const urlParams = new URLSearchParams(window.location.search);
-        let idBarbearia = urlParams.get('id');
-        if (idBarbearia) {
+        let idBruto = urlParams.get('id');
+        let idBarbearia = '';
+
+        if (idBruto) {
+            // TRAVA DE SEGURANÇA: Limpa lixo do link caso ele cole duplicado (ex: testebarberhttps://...)
+            if (idBruto.includes('http')) idBruto = idBruto.split('http')[0];
+            if (idBruto.includes(']')) idBruto = idBruto.split(']')[0];
+            
+            // Remove qualquer outro caractere especial, mantendo só letras, números, traços e underscores
+            idBarbearia = idBruto.replace(/[^a-zA-Z0-9_-]/g, '');
+            
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
         } else {
             idBarbearia = localStorage.getItem('id_barbearia_ativo') || '';
         }
 
         // Variável para guardar o número de WhatsApp dinâmico da barbearia
-        let numeroWhatsappDono = "5567999673200"; // Fallback se não houver
+        let numeroWhatsappDono = "5567999673200"; 
 
         document.getElementById('link-admin').href = `login.html?id=${idBarbearia}`;
         
@@ -295,7 +304,7 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            // Passa o id_barbearia nos pedidos para carregar dados isolados da barbearia correta
+            // Puxa as fotos
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
@@ -316,6 +325,7 @@
                 }
             }).catch(e => { console.error("Erro ao carregar fotos:", e) });
 
+            // Puxa os Textos da planilha baseados no ID limpo
             fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia).then(res => res.json()).then(textos => {
                 if (textos.titulo) {
                     document.getElementById('txt_titulo').innerText = textos.titulo;
@@ -327,7 +337,7 @@
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
                 if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
                 
-                if (textos.servicos) {
+                if (textos.servicos && textos.servicos !== "[]") {
                     let listaServicos = JSON.parse(textos.servicos);
                     let htmlCards = ""; let htmlCaixas = "";
                     listaServicos.forEach(servico => {
@@ -336,6 +346,9 @@
                     });
                     document.getElementById('quadro_servicos_dinamicos').innerHTML = htmlCards;
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
+                } else {
+                    document.getElementById('quadro_servicos_dinamicos').innerHTML = "<p>Nenhum serviço registado.</p>";
+                    document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p>Nenhum serviço registado.</p>";
                 }
                 
                 configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
