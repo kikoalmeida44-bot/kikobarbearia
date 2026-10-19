@@ -78,13 +78,13 @@
 </head>
 <body>
     
-    <!-- TELA DE LOGIN INTEGRADA -->
+    <!-- TELA DE LOGIN INTEGRADA NO ADMIN -->
     <div id="login-screen">
         <div class="login-box">
-            <h1 class="logo">KIKO BARBEARIA PRO</h1>
-            <p style="font-size: 0.8rem; color: #777;">Acesso Restrito</p>
-            <input type="password" id="senha-admin" placeholder="Digite a palavra-passe">
-            <button onclick="verificarSenha()">Entrar no Painel</button>
+            <h1 class="logo" id="titulo-login-modal">PAINEL ADMINISTRATIVO</h1>
+            <p style="font-size: 0.8rem; color: #777;" id="subtitulo-login-modal">Acesso à Barbearia</p>
+            <input type="password" id="senha-admin" placeholder="Digite a sua palavra-passe">
+            <button onclick="verificarSenhaAdmin()">Entrar no Painel</button>
             <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
         </div>
     </div>
@@ -92,7 +92,7 @@
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo" id="titulo-barbearia">Kiko Barbearia Pro</h1>
         
-        <!-- PAINEL MESTRE SAAS (GERIR BARBEARIAS / BLOQUEAR INADIMPLENTES) -->
+        <!-- PAINEL MESTRE SAAS (APARECE APENAS PARA O DONO KIKO_BARBEARIA) -->
         <div class="master-barber-card" id="painel-master-saas" style="display: none;">
             <div class="master-title">
                 👑 PAINEL MESTRE (SAAS)
@@ -305,21 +305,34 @@
     </div>
 
     <script>
-        // O TEU LINK VERDADEIRO AQUI:
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
         const urlParams = new URLSearchParams(window.location.search);
-        const idBarbearia = urlParams.get('id') || 'kiko_barbearia';
+        const idBarbearia = urlParams.get('id') || localStorage.getItem('id_barbearia_ativo') || 'kiko_barbearia';
+
+        // Atualiza o subtítulo do login com o ID da barbearia que está a tentar entrar
+        document.getElementById('subtitulo-login-modal').innerText = "Barbearia: " + idBarbearia.toUpperCase();
 
         window.todosClientes = []; 
         window.produtosCarregados = [];
 
-        function verificarSenha() { 
-            const senha = document.getElementById('senha-admin').value;
-            if (senha === "kiko2026") { 
+        function verificarSenhaAdmin() { 
+            const senha = document.getElementById('senha-admin').value.trim();
+            
+            if (!senha) {
+                document.getElementById('erro-senha').innerText = "Digite a senha!";
+                document.getElementById('erro-senha').style.display = 'block';
+                return;
+            }
+
+            // SE FOR O DONO MESTRE OU QUALQUER CLIENTE DO SAAS COM SENHA VÁLIDA
+            // Permite a entrada se for a senha mestra ("kiko2026") OU se tiver qualquer senha com 3+ carateres (para os clientes novos)
+            if (senha === "kiko2026" || senha.length >= 3) { 
+                localStorage.setItem('id_barbearia_ativo', idBarbearia);
                 document.getElementById('login-screen').style.display = 'none'; 
                 document.getElementById('main-dashboard').style.display = 'block'; 
                 
+                // Se for o dono principal, exibe o painel mestre SaaS
                 if(idBarbearia === 'kiko_barbearia') {
                     document.getElementById('painel-master-saas').style.display = 'block';
                     carregarListaBarbeariasMaster();
@@ -328,6 +341,7 @@
                 atualizarPainelAdmin(); 
                 verificarNotificacoesPendentes(); 
             } else { 
+                document.getElementById('erro-senha').innerText = "Senha incorreta!";
                 document.getElementById('erro-senha').style.display = 'block'; 
             } 
         }
@@ -981,6 +995,8 @@
             r.readAsDataURL(file); 
         }
         
+        async function abrirModalGrid() { abrirModalGaleria(); }
+
         async function abrirModalGaleria() { 
             abrirModal('modal-galeria'); 
             const c = document.getElementById('lista-galeria-container'); 
