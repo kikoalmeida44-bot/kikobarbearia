@@ -46,9 +46,10 @@
     </div>
 
     <script>
-        // O TEU LINK VERDADEIRO AQUI:
+        // O TEU LINK VERDADEIRO INTEGRADO NO SISTEMA:
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
 
+        // Preenche automaticamente o ID da barbearia se vier na URL
         const urlParams = new URLSearchParams(window.location.search);
         const idParam = urlParams.get('id');
         if (idParam) {
@@ -67,6 +68,15 @@
             btn.innerText = "A autenticar...";
             msgErro.style.display = 'none';
 
+            // 👑 CHAVE MESTRA DO DONO DO SISTEMA (SUPER ADMIN)
+            // Como és o criador, tens acesso imediato sem depender de validação na nuvem
+            if (idBarb === 'kiko_barbearia' && senha === 'kiko2026') {
+                localStorage.setItem('id_barbearia_ativo', idBarb);
+                window.location.href = `admin.html?id=${idBarb}`;
+                return;
+            }
+
+            // FLUXO DE VALIDAÇÃO NA NUVEM PARA OUTRAS BARBEARIAS CLIENTES (SaaS)
             const callbackName = 'login_cb_' + Math.round(100000 * Math.random());
             window[callbackName] = function(resposta) {
                 delete window[callbackName];
