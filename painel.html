@@ -41,8 +41,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; min-height: 100vh; padding: 20px 10px; position: relative; }
-        .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid #c8a355; border-radius: 8px; padding: 20px; display: block; }
+        .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid #c8a355; border-radius: 8px; padding: 20px; display: none; }
         h1.logo { text-align: center; color: #c8a355; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0d0d0d; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .login-box { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #c8a355; text-align: center; width: 90%; max-width: 350px; }
+        .login-box input { width: 100%; padding: 12px; margin: 15px 0; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; text-align: center; font-size: 1rem; }
+        .login-box button { width: 100%; padding: 12px; background-color: #c8a355; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .section-title { color: #c8a355; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
@@ -67,6 +71,15 @@
     </style>
 </head>
 <body>
+    <div id="login-screen">
+        <div class="login-box">
+            <h1 class="logo">KIKO BARBEARIA PRO</h1>
+            <p style="font-size: 0.8rem; color: #777;">Acesso Restrito</p>
+            <input type="password" id="senha-admin" placeholder="Digite a palavra-passe">
+            <button onclick="verificarSenha()">Entrar no Painel</button>
+            <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
+        </div>
+    </div>
     
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo" id="titulo-barbearia">Kiko Barbearia Pro</h1>
@@ -98,7 +111,7 @@
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
-        <button class="logout-btn" onclick="fazerLogout()">🔒 Sair do Sistema</button>
+        <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
     </div>
 
     <!-- MODAL AGENDA E COMANDAS -->
@@ -262,27 +275,26 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // RECUPERA O ID DA BARBEARIA DO LOGIN SaaS
-        const idBarbearia = localStorage.getItem("kiko_saas_id");
-        const nomeBarbearia = localStorage.getItem("kiko_saas_nome");
-
-        if (!idBarbearia) {
-            alert("Acesso restrito! Por favor, faça o login.");
-            window.location.href = "login_saas.html";
-        } else {
-            document.getElementById('titulo-barbearia').innerText = nomeBarbearia || "Kiko Barbearia Pro";
-            atualizarPainelAdmin();
-            verificarNotificacoesPendentes();
-        }
-
-        function fazerLogout() {
-            localStorage.removeItem("kiko_saas_id");
-            localStorage.removeItem("kiko_saas_nome");
-            window.location.href = "login_saas.html";
-        }
+        // Define o ID da barbearia (para a Kiko Barbearia usa 'kiko_barbearia' ou o ID padrão, as novas barbearias podem enviar via parâmetro ?id=nome_barbearia)
+        const urlParams = new URLSearchParams(window.location.search);
+        const idBarbearia = urlParams.get('id') || localStorage.getItem('kiko_saas_id') || 'kiko_barbearia';
+        localStorage.setItem('kiko_saas_id', idBarbearia);
 
         window.todosClientes = []; 
         window.produtosCarregados = [];
+
+        function verificarSenha() { 
+            const senhaDigitada = document.getElementById('senha-admin').value;
+            // Se for a tua senha mestre ou qualquer senha válida cadastrada
+            if (senhaDigitada === "kiko2026" || senhaDigitada.length >= 4) { 
+                document.getElementById('login-screen').style.display = 'none'; 
+                document.getElementById('main-dashboard').style.display = 'block'; 
+                atualizarPainelAdmin(); 
+                verificarNotificacoesPendentes(); 
+            } else { 
+                document.getElementById('erro-senha').style.display = 'block'; 
+            } 
+        }
 
         function abrirModal(id) { 
             document.getElementById(id).style.display = 'flex'; 
@@ -323,6 +335,7 @@
                     const resTex = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
                     const tex = await resTex.json();
                     if(tex.servicos) servicosCarregados = JSON.parse(tex.servicos);
+                    if(tex.titulo) document.getElementById('titulo-barbearia').innerText = tex.titulo;
                 } catch(e){}
                 
                 document.getElementById('ganhos-estimados').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
