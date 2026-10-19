@@ -19,6 +19,12 @@
         .links-uteis a { color: #d4af37; text-decoration: none; font-weight: 600; }
         .links-uteis a:hover { text-decoration: underline; }
         .mensagem-erro { color: #ff4444; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; }
+        
+        /* ÁREA DO QR CODE PIX */
+        #area-pix { display: none; text-align: center; }
+        #qrcode-container { background: #fff; padding: 15px; border-radius: 8px; display: inline-block; margin: 15px 0; }
+        #qrcode-container img { width: 200px; height: 200px; }
+        .pix-copia-cola { background: #111; border: 1px solid #444; color: #d4af37; padding: 10px; font-size: 0.70em; word-break: break-all; border-radius: 4px; margin-bottom: 15px; max-height: 80px; overflow-y: auto; text-align: left; }
     </style>
 </head>
 <body>
@@ -27,7 +33,8 @@
         <h1>Criar Barbearia</h1>
         <div id="msgErro" class="mensagem-erro"></div>
         
-        <form id="formRegistro" onsubmit="registarBarbearia(event)">
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <form id="formRegistro" onsubmit="avancarParaPagamento(event)">
             <div class="form-group">
                 <label for="id_barbearia">ID Único da Barbearia (ex: barbearia_lider):</label>
                 <input type="text" id="id_barbearia" name="id_barbearia" placeholder="Sem espaços ou acentos" required>
@@ -44,8 +51,19 @@
                 <label for="senha">Palavra-passe (Senha):</label>
                 <input type="password" id="senha" name="senha" placeholder="********" required>
             </div>
-            <button type="submit" id="btnRegistar" class="btn-gold">Criar Conta e Painel</button>
+            <button type="submit" id="btnRegistar" class="btn-gold">Avançar para Pagamento (Pix R$ 60,00)</button>
         </form>
+
+        <!-- SECÇÃO DO QR CODE PIX -->
+        <div id="area-pix">
+            <p style="font-size: 0.9em; color: #ccc;">Escaneie o QR Code abaixo (Valor: <strong style="color:#d4af37;">R$ 60,00</strong>) para ativar o seu sistema:</p>
+            <div id="qrcode-container">
+                <img id="imgQrcode" src="" alt="QR Code Pix PagSeguro">
+            </div>
+            <p style="font-size: 0.8em; color: #aaa; margin-bottom: 5px;">Ou copie o código Pix Copia e Cola:</p>
+            <div class="pix-copia-cola" id="textoPixCopiaCola"></div>
+            <button type="button" class="btn-gold" onclick="confirmarPagamentoEAtivar()">Já Paguei / Ativar Sistema</button>
+        </div>
 
         <div class="links-uteis">
             <p>Já tens uma conta? <a href="login.html">Fazer Login</a></p>
@@ -53,38 +71,50 @@
     </div>
 
     <script>
-        // O TEU LINK VERDADEIRO AQUI:
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        let dadosTemporarios = {};
 
-        function registarBarbearia(e) {
+        // O TEU PIX REAL DO PAGSEGURO (R$ 60,00)
+        const payloadPixReal = "00020126790014br.gov.bcb.pix013620af615e-f4aa-4bb0-bb39-3dd561a7a3370217sistema barbearia27600016BR.COM.PAGSEGURO01361D8B2860-CC46-470A-97FF-50D736F2FED5520472305303986540560.005802BR5925FRANCISCO ALMEIDA DE OLIV6005Coxim62290525PAGS0000060002610190410526304F874";
+
+        function avancarParaPagamento(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnRegistar');
-            const msgErro = document.getElementById('msgErro');
             
-            btn.disabled = true;
-            btn.innerText = "A criar barbearia...";
-            msgErro.style.display = 'none';
+            dadosTemporarios.id = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
+            dadosTemporarios.nome = document.getElementById('nome_barbearia').value.trim();
+            dadosTemporarios.email = document.getElementById('email').value.trim();
+            dadosTemporarios.senha = document.getElementById('senha').value.trim();
 
-            const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
-            const nomeBarb = document.getElementById('nome_barbearia').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const senha = document.getElementById('senha').value.trim();
+            // Esconde o formulário e mostra o Pix
+            document.getElementById('formRegistro').style.display = 'none';
+            document.getElementById('area-pix').style.display = 'block';
+
+            // Insere o teu Pix real do PagSeguro no bloco Copia e Cola
+            document.getElementById('textoPixCopiaCola').innerText = payloadPixReal;
+            
+            // Gera o QR Code visual com o teu payload do PagSeguro
+            document.getElementById('imgQrcode').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(payloadPixReal)}`;
+        }
+
+        function confirmarPagamentoEAtivar() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerText = "A validar ativação...";
 
             const fd = new URLSearchParams();
             fd.append('acao', 'registar_barbearia');
-            fd.append('id_barbearia', idBarb);
-            fd.append('nome_barbearia', nomeBarb);
-            fd.append('email', email);
-            fd.append('senha', senha);
+            fd.append('id_barbearia', dadosTemporarios.id);
+            fd.append('nome_barbearia', dadosTemporarios.nome);
+            fd.append('email', dadosTemporarios.email);
+            fd.append('senha', dadosTemporarios.senha);
 
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
-                alert("Barbearia criada com sucesso! Redirecionando para o login...");
-                window.location.href = `login.html?id=${idBarb}`;
+                alert("Barbearia registada com sucesso! Redirecionando para o login...");
+                window.location.href = `login.html?id=${dadosTemporarios.id}`;
             }).catch(err => {
-                msgErro.innerText = "Erro ao conectar com o servidor. Tente novamente.";
-                msgErro.style.display = 'block';
+                alert("Erro ao ativar. Tenta novamente.");
                 btn.disabled = false;
-                btn.innerText = "Criar Conta e Painel";
+                btn.innerText = "Já Paguei / Ativar Sistema";
             });
         }
     </script>
