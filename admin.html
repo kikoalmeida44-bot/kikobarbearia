@@ -104,13 +104,24 @@
             </div>
         </div>
 
-        <!-- CAIXA DO LINK DE AGENDAMENTO (Onde o cliente pega a própria URL dele) -->
+        <!-- CAIXA DO LINK DE AGENDAMENTO -->
         <div class="section-card" style="border-color: #00bfff; background: linear-gradient(135deg, #111, #001f33); padding: 15px; border-radius: 6px; margin-bottom: 20px;">
             <div class="section-title" style="color: #00bfff; margin-bottom: 5px;">🔗 O Seu Link de Agendamento</div>
             <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Copie o link abaixo e coloque no seu Instagram ou WhatsApp:</p>
             <div style="display: flex; gap: 5px;">
                 <input type="text" id="link-compartilhamento" readonly style="flex: 1; padding: 10px; background: #050505; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 0.75rem;">
                 <button onclick="copiarLinkCliente()" style="background: #00bfff; color: #000; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s;">Copiar</button>
+            </div>
+        </div>
+
+        <!-- CONEXÃO WHATSAPP SAAS (QR CODE) -->
+        <div class="section-card" style="border-color: #ffd700; background: rgba(10,10,10,0.9); padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+            <div class="section-title" style="color: #ffd700; margin-bottom: 5px; justify-content: center;">📱 Conexão WhatsApp</div>
+            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 12px;">Conecte o WhatsApp desta barbearia para disparar confirmações e lembretes automáticos:</p>
+            <button onclick="gerarQrCodeWhatsApp()" id="btnConnectWa" style="background: #ffd700; color: #000; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">⚡ Gerar QR Code WhatsApp</button>
+            <div id="areaQrCode" style="display: none; margin-top: 15px;">
+                <p style="color: #888; font-size: 0.75rem; margin-bottom: 8px;">Abra o WhatsApp > Aparelhos Conectados > Conectar Aparelho:</p>
+                <div id="imgQrContainer"></div>
             </div>
         </div>
 
@@ -351,6 +362,39 @@
             }).catch(err => {
                 alert("Erro ao copiar. Selecione o texto e copie manualmente.");
             });
+        }
+
+        // GERAR QR CODE DO WHATSAPP NO PAINEL
+        function gerarQrCodeWhatsApp() {
+            const btn = document.getElementById('btnConnectWa');
+            const area = document.getElementById('areaQrCode');
+            const imgCont = document.getElementById('imgQrContainer');
+
+            btn.disabled = true;
+            btn.innerText = "⚡ A conectar ao servidor...";
+
+            fetch(`${SCRIPT_URL}?acao=conectar_whatsapp&id_barbearia=${idBarbearia}`)
+                .then(res => res.json())
+                .then(data => {
+                    btn.innerText = "⚡ Gerar Novo QR Code";
+                    btn.disabled = false;
+                    area.style.display = 'block';
+
+                    if (data.qrcode) {
+                        if (data.qrcode.startsWith("data:image")) {
+                            imgCont.innerHTML = `<img src="${data.qrcode}" style="width: 200px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">`;
+                        } else {
+                            imgCont.innerHTML = `<p style="color:#28a745; font-weight:bold; margin-top:10px;">${data.qrcode}</p>`;
+                        }
+                    } else {
+                        imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Não foi possível obter o QR Code. Tente novamente.</p>`;
+                    }
+                })
+                .catch(err => {
+                    btn.innerText = "⚡ Gerar QR Code WhatsApp";
+                    btn.disabled = false;
+                    alert("Erro ao conectar com o serviço do WhatsApp.");
+                });
         }
 
         window.todosClientes = []; 
