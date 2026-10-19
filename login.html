@@ -46,9 +46,9 @@
     </div>
 
     <script>
-        const scriptURL = 'AQUI_VAI_O_URL_DO_TEU_WEB_APP_APPS_SCRIPT';
+        // O TEU LINK VERDADEIRO AQUI:
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
 
-        // Preenche automaticamente o ID da barbearia se vier na URL
         const urlParams = new URLSearchParams(window.location.search);
         const idParam = urlParams.get('id');
         if (idParam) {
@@ -67,14 +67,12 @@
             btn.innerText = "A autenticar...";
             msgErro.style.display = 'none';
 
-            // Validação via JSONP / GET ao Apps Script para verificar credenciais
             const callbackName = 'login_cb_' + Math.round(100000 * Math.random());
             window[callbackName] = function(resposta) {
                 delete window[callbackName];
                 document.getElementById(callbackName)?.remove();
 
                 if (resposta && resposta.sucesso) {
-                    // Guarda o ID na sessão do navegador e redireciona para o admin.html completo
                     localStorage.setItem('id_barbearia_ativo', idBarb);
                     window.location.href = `admin.html?id=${idBarb}`;
                 } else {
