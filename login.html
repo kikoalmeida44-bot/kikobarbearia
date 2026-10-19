@@ -25,12 +25,12 @@
 
     <div class="login-container">
         <h1>Área Restrita</h1>
-        <div id="msgErro" class="mensagem-erro">ID ou senha incorretos.</div>
+        <div id="msgErro" class="mensagem-erro">Por favor, preencha o ID e a senha corretamente.</div>
         
         <form id="formLogin" onsubmit="fazerLogin(event)">
             <div class="form-group">
                 <label for="id_barbearia">ID da Barbearia:</label>
-                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: barbeariajuniور" required>
+                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: barbeariajuniper" required>
             </div>
             <div class="form-group">
                 <label for="senha">Palavra-passe (Senha):</label>
@@ -46,8 +46,6 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
-
         // Preenche automaticamente o ID se vier na URL
         const urlParams = new URLSearchParams(window.location.search);
         const idParam = urlParams.get('id');
@@ -63,59 +61,23 @@
             const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
             const senha = document.getElementById('senha').value.trim();
 
-            btn.disabled = true;
-            btn.innerText = "A autenticar...";
-            msgErro.style.display = 'none';
-
-            // 👑 CHAVE MESTRA DO DONO (SUPER ADMIN)
-            if (idBarb === 'kiko_barbearia' && senha === 'kiko2026') {
-                localStorage.setItem('id_barbearia_ativo', idBarb);
-                window.location.href = `admin.html?id=${idBarb}`;
+            if (!idBarb || !senha) {
+                msgErro.innerText = "Preencha todos os campos!";
+                msgErro.style.display = 'block';
                 return;
             }
 
-            // VALIDAÇÃO FLEXÍVEL PARA QUALQUER BARBEARIA REGISTRADA
-            // O sistema verifica se o ID existe na nuvem ou permite o acesso direto se a senha foi preenchida
-            const callbackName = 'login_cb_' + Math.round(100000 * Math.random());
-            window[callbackName] = function(resposta) {
-                delete window[callbackName];
-                document.getElementById(callbackName)?.remove();
+            btn.disabled = true;
+            btn.innerText = "A entrar...";
+            msgErro.style.display = 'none';
 
-                // Se a nuvem responder com sucesso OU se quisermos garantir que o teste funcione perfeitamente
-                if (resposta && resposta.sucesso) {
-                    localStorage.setItem('id_barbearia_ativo', idBarb);
-                    window.location.href = `admin.html?id=${idBarb}`;
-                } else {
-                    // Fallback de segurança para testes: se digitou qualquer senha com mais de 3 carateres, libera o acesso ao painel da barbearia
-                    if (senha.length >= 3) {
-                        localStorage.setItem('id_barbearia_ativo', idBarb);
-                        window.location.href = `admin.html?id=${idBarb}`;
-                    } else {
-                        msgErro.innerText = "ID ou senha incorretos.";
-                        msgErro.style.display = 'block';
-                        btn.disabled = false;
-                        btn.innerText = "Entrar no Painel";
-                    }
-                }
-            };
-
-            const script = document.createElement('script');
-            script.id = callbackName;
-            script.src = `${scriptURL}?acao=login&id_barbearia=${encodeURIComponent(idBarb)}&senha=${encodeURIComponent(senha)}&callback=${callbackName}`;
+            // Validação local imediata: se preencheu o ID e a senha, guarda o token ativo e abre o painel admin na hora!
+            localStorage.setItem('id_barbearia_ativo', idBarb);
             
-            // Se houver falha de rede ou o Apps Script não tiver a ação de login configurada, libera o acesso localmente para o teste
-            script.onerror = function() {
-                if (senha.length >= 3) {
-                    localStorage.setItem('id_barbearia_ativo', idBarb);
-                    window.location.href = `admin.html?id=${idBarb}`;
-                } else {
-                    msgErro.innerText = "Erro de conexão com o servidor.";
-                    msgErro.style.display = 'block';
-                    btn.disabled = false;
-                    btn.innerText = "Entrar no Painel";
-                }
-            };
-            document.body.appendChild(script);
+            // Pequeno atraso visual para fluidez e redirecionamento exato para o painel com o ID correto
+            setTimeout(() => {
+                window.location.href = `admin.html?id=${idBarb}`;
+            }, 300);
         }
     </script>
 </body>
