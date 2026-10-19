@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registar Barbearia | Kiko Barbearia SaaS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; color: #ffffff; background-color: #050505; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .registro-container { background-color: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px); padding: 40px; border: 1px solid rgba(212, 175, 55, 0.4); width: 100%; max-width: 450px; border-radius: 8px; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        h1 { color: #d4af37; text-align: center; font-size: 1.8em; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #dddddd; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
+        .form-group input { width: 100%; padding: 14px; background-color: rgba(0,0,0,0.5); color: #ffffff; border: 1px solid #444; box-sizing: border-box; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
+        .form-group input:focus { border-color: #d4af37; outline: none; }
+        .btn-gold { background-color: #d4af37; color: #050505; width: 100%; padding: 15px; text-decoration: none; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-gold:hover { background-color: #b38f27; border-color: #b38f27; }
+        .links-uteis { text-align: center; margin-top: 20px; font-size: 0.9em; }
+        .links-uteis a { color: #d4af37; text-decoration: none; font-weight: 600; }
+        .links-uteis a:hover { text-decoration: underline; }
+        .mensagem-erro { color: #ff4444; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="registro-container">
+        <h1>Criar Barbearia</h1>
+        <div id="msgErro" class="mensagem-erro"></div>
+        
+        <form id="formRegistro" onsubmit="registarBarbearia(event)">
+            <div class="form-group">
+                <label for="id_barbearia">ID Único da Barbearia (ex: barbearia_lider):</label>
+                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="Sem espaços ou acentos" required>
+            </div>
+            <div class="form-group">
+                <label for="nome_barbearia">Nome Comercial:</label>
+                <input type="text" id="nome_barbearia" name="nome_barbearia" placeholder="Ex: Barbearia do João" required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail de Acesso:</label>
+                <input type="email" id="email" name="email" placeholder="teu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="senha">Palavra-passe (Senha):</label>
+                <input type="password" id="senha" name="senha" placeholder="********" required>
+            </div>
+            <button type="submit" id="btnRegistar" class="btn-gold">Criar Conta e Painel</button>
+        </form>
+
+        <div class="links-uteis">
+            <p>Já tens uma conta? <a href="login.html">Fazer Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = 'AQUI_VAI_O_URL_DO_TEU_WEB_APP_APPS_SCRIPT';
+
+        function registarBarbearia(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnRegistar');
+            const msgErro = document.getElementById('msgErro');
+            
+            btn.disabled = true;
+            btn.innerText = "A criar barbearia...";
+            msgErro.style.display = 'none';
+
+            const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
+            const nomeBarb = document.getElementById('nome_barbearia').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value.trim();
+
+            const fd = new URLSearchParams();
+            fd.append('acao', 'registar_barbearia');
+            fd.append('id_barbearia', idBarb);
+            fd.append('nome_barbearia', nomeBarb);
+            fd.append('email', email);
+            fd.append('senha', senha);
+
+            fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
+                alert("Barbearia criada com sucesso! Redirecionando para o login...");
+                window.location.href = `login.html?id=${idBarb}`;
+            }).catch(err => {
+                msgErro.innerText = "Erro ao conectar com o servidor. Tente novamente.";
+                msgErro.style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = "Criar Conta e Painel";
+            });
+        }
+    </script>
+</body>
+</html>
