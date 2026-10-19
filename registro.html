@@ -20,21 +20,18 @@
         .links-uteis a:hover { text-decoration: underline; }
         .mensagem-erro { color: #ff4444; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; }
         
-        /* ÁREA DO QR CODE PIX */
-        #area-pix { display: none; text-align: center; }
-        #qrcode-container { background: #fff; padding: 15px; border-radius: 8px; display: inline-block; margin: 15px 0; }
-        #qrcode-container img { width: 200px; height: 200px; }
-        .pix-copia-cola { background: #111; border: 1px solid #444; color: #d4af37; padding: 10px; font-size: 0.70em; word-break: break-all; border-radius: 4px; margin-bottom: 15px; max-height: 80px; overflow-y: auto; text-align: left; }
+        .badge-trial { background: rgba(40,167,69,0.2); border: 1px solid #28a745; color: #28a745; padding: 10px; border-radius: 4px; font-size: 0.8em; text-align: center; margin-bottom: 20px; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div class="registro-container">
         <h1>Criar Barbearia</h1>
+        <div class="badge-trial">🔥 Oferta Especial: Ganhe 3 Dias Grátis de Teste Completo!</div>
         <div id="msgErro" class="mensagem-erro"></div>
         
         <!-- FORMULÁRIO DE CADASTRO -->
-        <form id="formRegistro" onsubmit="avancarParaPagamento(event)">
+        <form id="formRegistro" onsubmit="registarComTrial(event)">
             <div class="form-group">
                 <label for="id_barbearia">ID Único da Barbearia (ex: barbearia_lider):</label>
                 <input type="text" id="id_barbearia" name="id_barbearia" placeholder="Sem espaços ou acentos" required>
@@ -51,19 +48,8 @@
                 <label for="senha">Palavra-passe (Senha):</label>
                 <input type="password" id="senha" name="senha" placeholder="********" required>
             </div>
-            <button type="submit" id="btnRegistar" class="btn-gold">Avançar para Pagamento (Pix R$ 60,00)</button>
+            <button type="submit" id="btnRegistar" class="btn-gold">Começar 3 Dias Grátis</button>
         </form>
-
-        <!-- SECÇÃO DO QR CODE PIX -->
-        <div id="area-pix">
-            <p style="font-size: 0.9em; color: #ccc;">Escaneie o QR Code abaixo (Valor: <strong style="color:#d4af37;">R$ 60,00</strong>) para ativar o seu sistema:</p>
-            <div id="qrcode-container">
-                <img id="imgQrcode" src="" alt="QR Code Pix PagSeguro">
-            </div>
-            <p style="font-size: 0.8em; color: #aaa; margin-bottom: 5px;">Ou copie o código Pix Copia e Cola:</p>
-            <div class="pix-copia-cola" id="textoPixCopiaCola"></div>
-            <button type="button" class="btn-gold" onclick="confirmarPagamentoEAtivar()">Já Paguei / Ativar Sistema</button>
-        </div>
 
         <div class="links-uteis">
             <p>Já tens uma conta? <a href="login.html">Fazer Login</a></p>
@@ -72,49 +58,40 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
-        let dadosTemporarios = {};
 
-        // O TEU PIX REAL DO PAGSEGURO (R$ 60,00)
-        const payloadPixReal = "00020126790014br.gov.bcb.pix013620af615e-f4aa-4bb0-bb39-3dd561a7a3370217sistema barbearia27600016BR.COM.PAGSEGURO01361D8B2860-CC46-470A-97FF-50D736F2FED5520472305303986540560.005802BR5925FRANCISCO ALMEIDA DE OLIV6005Coxim62290525PAGS0000060002610190410526304F874";
-
-        function avancarParaPagamento(e) {
+        function registarComTrial(e) {
             e.preventDefault();
             
-            dadosTemporarios.id = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
-            dadosTemporarios.nome = document.getElementById('nome_barbearia').value.trim();
-            dadosTemporarios.email = document.getElementById('email').value.trim();
-            dadosTemporarios.senha = document.getElementById('senha').value.trim();
-
-            // Esconde o formulário e mostra o Pix
-            document.getElementById('formRegistro').style.display = 'none';
-            document.getElementById('area-pix').style.display = 'block';
-
-            // Insere o teu Pix real do PagSeguro no bloco Copia e Cola
-            document.getElementById('textoPixCopiaCola').innerText = payloadPixReal;
-            
-            // Gera o QR Code visual com o teu payload do PagSeguro
-            document.getElementById('imgQrcode').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(payloadPixReal)}`;
-        }
-
-        function confirmarPagamentoEAtivar() {
-            const btn = event.target;
+            const btn = document.getElementById('btnRegistar');
             btn.disabled = true;
-            btn.innerText = "A validar ativação...";
+            btn.innerText = "A criar o seu sistema...";
+
+            const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
+            const nomeBarb = document.getElementById('nome_barbearia').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value.trim();
+
+            // Calcula a data de Expiração (Hoje + 3 dias)
+            let dataExpiracao = new Date();
+            dataExpiracao.setDate(dataExpiracao.getDate() + 3);
+            let dataExpiracaoStr = dataExpiracao.toISOString().split('T')[0];
 
             const fd = new URLSearchParams();
             fd.append('acao', 'registar_barbearia');
-            fd.append('id_barbearia', dadosTemporarios.id);
-            fd.append('nome_barbearia', dadosTemporarios.nome);
-            fd.append('email', dadosTemporarios.email);
-            fd.append('senha', dadosTemporarios.senha);
+            fd.append('id_barbearia', idBarb);
+            fd.append('nome_barbearia', nomeBarb);
+            fd.append('email', email);
+            fd.append('senha', senha);
+            fd.append('status', 'trial');
+            fd.append('expiracao', dataExpiracaoStr);
 
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
-                alert("Barbearia registada com sucesso! Redirecionando para o login...");
-                window.location.href = `login.html?id=${dadosTemporarios.id}`;
+                alert("🎉 Parabéns! O seu teste gratuito de 3 dias foi ativado com sucesso. Aproveite todas as funcionalidades do sistema!");
+                window.location.href = `login.html?id=${idBarb}`;
             }).catch(err => {
-                alert("Erro ao ativar. Tenta novamente.");
+                alert("Erro ao criar conta. Tente novamente.");
                 btn.disabled = false;
-                btn.innerText = "Já Paguei / Ativar Sistema";
+                btn.innerText = "Começar 3 Dias Grátis";
             });
         }
     </script>
