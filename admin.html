@@ -90,7 +90,7 @@
     </div>
 
     <div class="admin-container" id="main-dashboard">
-        <h1 class="logo" id="titulo-barbearia">Kiko Barbearia Pro</h1>
+        <h1 class="logo" id="titulo-barbearia">A Carregar...</h1>
         
         <!-- PAINEL MESTRE SAAS (APARECE APENAS PARA O DONO KIKO_BARBEARIA) -->
         <div class="master-barber-card" id="painel-master-saas" style="display: none;">
@@ -101,6 +101,16 @@
             <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Gerencie as unidades clientes e controle os pagamentos:</p>
             <div id="lista-barbearias-saas" style="max-height: 150px; overflow-y: auto;">
                 <p style="font-size: 0.75rem; color: #888;">A carregar barbearias...</p>
+            </div>
+        </div>
+
+        <!-- CAIXA DO LINK DE AGENDAMENTO (Onde o cliente pega a própria URL dele) -->
+        <div class="section-card" style="border-color: #00bfff; background: linear-gradient(135deg, #111, #001f33); padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <div class="section-title" style="color: #00bfff; margin-bottom: 5px;">🔗 O Seu Link de Agendamento</div>
+            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Copie o link abaixo e coloque no seu Instagram ou WhatsApp:</p>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="link-compartilhamento" readonly style="flex: 1; padding: 10px; background: #050505; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 0.75rem;">
+                <button onclick="copiarLinkCliente()" style="background: #00bfff; color: #000; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s;">Copiar</button>
             </div>
         </div>
 
@@ -222,8 +232,8 @@
             <div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div>
             <div class="input-group">
                 <select id="agend-profissional">
-                    <option value="Kiko">💈 Barbeiro: Kiko</option>
-                    <option value="Colaborador 2">💈 Barbeiro: Colaborador 2</option>
+                    <option value="Kiko">💈 Barbeiro Principal</option>
+                    <option value="Colaborador 2">💈 Colaborador 2</option>
                 </select>
             </div>
             <div style="display: flex; gap: 10px;">
@@ -271,6 +281,7 @@
             <h2 class="modal-title">🎨 Textos do Site</h2>
             <div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div>
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
+            <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
             <button class="action-btn" onclick="salvarTextos()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
         </div>
@@ -317,13 +328,30 @@
             idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barbearia';
         }
 
-        // Garante que o URL reflete sempre a barbearia ativa corretamente
         if (!urlParams.get('id') && idBarbearia) {
             window.history.replaceState({}, '', `admin.html?id=${idBarbearia}`);
         }
 
-        // Atualiza o subtítulo do login com o ID da barbearia correta
         document.getElementById('subtitulo-login-modal').innerText = "Unidade: " + idBarbearia.toUpperCase();
+
+        // GERAR O LINK DE AGENDAMENTO AUTOMÁTICO PARA O CLIENTE
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlBase = window.location.href.split('admin.html')[0];
+            const linkPronto = `${urlBase}index.html?id=${idBarbearia}`;
+            const inputLink = document.getElementById('link-compartilhamento');
+            if(inputLink) inputLink.value = linkPronto;
+        });
+
+        function copiarLinkCliente() {
+            const inputLink = document.getElementById('link-compartilhamento');
+            inputLink.select();
+            inputLink.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(inputLink.value).then(() => {
+                alert("✅ Link copiado com sucesso! Agora é só colar no Instagram ou WhatsApp.");
+            }).catch(err => {
+                alert("Erro ao copiar. Selecione o texto e copie manualmente.");
+            });
+        }
 
         window.todosClientes = []; 
         window.produtosCarregados = [];
@@ -337,13 +365,11 @@
                 return;
             }
 
-            // PERMITE O ACESSO SE FOR A SENHA MESTRA DO DONO OU QUALQUER SENHA DO CLIENTE SAAS
             if (senha === "kiko2026" || senha.length >= 3) { 
                 localStorage.setItem('id_barbearia_ativo', idBarbearia);
                 document.getElementById('login-screen').style.display = 'none'; 
                 document.getElementById('main-dashboard').style.display = 'block'; 
                 
-                // Se for o dono principal, exibe o painel mestre SaaS
                 if(idBarbearia === 'kiko_barbearia') {
                     document.getElementById('painel-master-saas').style.display = 'block';
                     carregarListaBarbeariasMaster();
@@ -416,13 +442,8 @@
             carregarListaBarbeariasMaster();
         }
 
-        function abrirModal(id) { 
-            document.getElementById(id).style.display = 'flex'; 
-        }
-        
-        function fecharModal(id) { 
-            document.getElementById(id).style.display = 'none'; 
-        }
+        function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
         
         function fecharModalAgenda() { 
             fecharModal('modal-agenda'); 
@@ -618,7 +639,6 @@
             } catch (e) {}
         }
 
-        // FUNÇÕES DESPESAS
         function abrirModalDespesa() { 
             fecharModal('modal-financeiro'); 
             abrirModal('modal-despesa'); 
@@ -651,7 +671,6 @@
             atualizarPainelAdmin(); 
         }
 
-        // FUNÇÕES PACOTES
         async function venderPacote(telefone, nome) { 
             if(!telefone) return alert("Cliente sem telefone registado!"); 
             
@@ -676,7 +695,7 @@
         
         async function usarPacote(telefone, nome, saldoAtual) { 
             if(!telefone) return alert("Cliente sem telefone!"); 
-            if(saldoAtual <= 0) return alert("Este cliente não tiene saldo no pacote!"); 
+            if(saldoAtual <= 0) return alert("Este cliente não tem saldo no pacote!"); 
             if(!confirm(`Descontar 1 serviço do pacote de ${nome}? (Ele passará a ter ${saldoAtual - 1})`)) return; 
             
             const novoSaldo = saldoAtual - 1; 
@@ -691,7 +710,6 @@
             atualizarPainelAdmin(); 
         }
 
-        // FUNÇÕES CLIENTES CRM
         function renderizarClientes(lista) {
             const container = document.getElementById('lista-clientes-container'); 
             container.innerHTML = '';
@@ -727,7 +745,6 @@
             renderizarClientes(window.todosClientes.filter(cli => cli.nome.toLowerCase().includes(termo) || cli.telefone.includes(termo))); 
         }
 
-        // FUNÇÕES AGENDA
         async function cancelarAgendamento(data, hora, nome) { 
             if (!confirm(`Tem certeza que deseja cancelar o horário de ${nome} às ${hora}?`)) return; 
             const fd = new URLSearchParams(); 
@@ -806,7 +823,6 @@
             atualizarPainelAdmin(); 
         }
 
-        // FUNÇÕES PDV E ESTOQUE
         function abrirModalPdv() { 
             abrirModal('modal-pdv'); 
             document.getElementById('lista-produtos-container').innerHTML = ''; 
@@ -877,7 +893,6 @@
             atualizarPainelAdmin(); 
         }
 
-        // FUNÇÕES SERVIÇOS E CONFIGURAÇÕES
         async function abrirModalServicos() { 
             abrirModal('modal-servicos'); 
             document.getElementById('lista-servicos-container').innerHTML = '<p>A carregar...</p>'; 
@@ -926,6 +941,7 @@
                 const data = await res.json(); 
                 if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; 
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
+                if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
             } catch(e) {} 
         }
         
@@ -935,6 +951,7 @@
             fd.append('id_barbearia', idBarbearia);
             fd.append('titulo', document.getElementById('edit-titulo').value); 
             fd.append('subtitulo', document.getElementById('edit-subtitulo').value); 
+            fd.append('telefone', document.getElementById('edit-telefone').value); 
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
             alert('Guardado!'); 
             fecharModal('modal-textos'); 
@@ -956,7 +973,6 @@
             fecharModal('modal-horarios'); 
         }
 
-        // FUNÇÕES GALERIA
         async function salvarFotoGaleria() { 
             const url = document.getElementById('nova-foto-url').value; 
             if (!url) return; 
@@ -1006,8 +1022,6 @@
             r.readAsDataURL(file); 
         }
         
-        async function abrirModalGrid() { abrirModalGaleria(); }
-
         async function abrirModalGaleria() { 
             abrirModal('modal-galeria'); 
             const c = document.getElementById('lista-galeria-container'); 
