@@ -21,13 +21,17 @@
         .mensagem-erro { color: #ff4444; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; }
         
         .badge-trial { background: rgba(40,167,69,0.2); border: 1px solid #28a745; color: #28a745; padding: 10px; border-radius: 4px; font-size: 0.8em; text-align: center; margin-bottom: 20px; font-weight: 600; }
+        
+        /* SECÇÃO DO PIX INCORPORADA */
+        .pix-box-info { background: #111; border: 1px solid #333; padding: 15px; border-radius: 6px; margin-top: 20px; text-align: center; }
+        .pix-copia-cola { background: #050505; border: 1px solid #444; color: #d4af37; padding: 8px; font-size: 0.65em; word-break: break-all; border-radius: 4px; margin: 10px 0; max-height: 60px; overflow-y: auto; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="registro-container">
         <h1>Criar Barbearia</h1>
-        <div class="badge-trial">🔥 Oferta Especial: Ganhe 3 Dias Grátis de Teste Completo!</div>
+        <div class="badge-trial">🔥 3 Dias Grátis de Teste Completo!</div>
         <div id="msgErro" class="mensagem-erro"></div>
         
         <!-- FORMULÁRIO DE CADASTRO -->
@@ -48,8 +52,16 @@
                 <label for="senha">Palavra-passe (Senha):</label>
                 <input type="password" id="senha" name="senha" placeholder="********" required>
             </div>
-            <button type="submit" id="btnRegistar" class="btn-gold">Começar 3 Dias Grátis</button>
+            
+            <button type="submit" id="btnRegistar" class="btn-gold">Ativar 3 Dias Grátis</button>
         </form>
+
+        <!-- CAIXA INFORMATIVA DO PIX DO PAGSEGURO (R$ 60,00) PARA QUISER PAGAR ANTES OU DEPOIS -->
+        <div class="pix-box-info">
+            <p style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">💳 Chave Pix para ativação/renovação (R$ 60,00):</p>
+            <div class="pix-copia-cola" id="textoPixCopiaCola">00020126790014br.gov.bcb.pix013620af615e-f4aa-4bb0-bb39-3dd561a7a3370217sistema barbearia27600016BR.COM.PAGSEGURO01361D8B2860-CC46-470A-97FF-50D736F2FED5520472305303986540560.005802BR5925FRANCISCO ALMEIDA DE OLIV6005Coxim62290525PAGS0000060002610190410526304F874</div>
+            <p style="font-size: 0.7em; color: #777;">Após os 3 dias, efetue o pagamento por este Pix para manter a conta ativa.</p>
+        </div>
 
         <div class="links-uteis">
             <p>Já tens uma conta? <a href="login.html">Fazer Login</a></p>
@@ -71,7 +83,7 @@
             const email = document.getElementById('email').value.trim();
             const senha = document.getElementById('senha').value.trim();
 
-            // Calcula a data de Expiração (Hoje + 3 dias)
+            // Calcula a data de Expiração (Hoje + 3 dias grátis)
             let dataExpiracao = new Date();
             dataExpiracao.setDate(dataExpiracao.getDate() + 3);
             let dataExpiracaoStr = dataExpiracao.toISOString().split('T')[0];
@@ -86,12 +98,12 @@
             fd.append('expiracao', dataExpiracaoStr);
 
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
-                alert("🎉 Parabéns! O seu teste gratuito de 3 dias foi ativado com sucesso. Aproveite todas as funcionalidades do sistema!");
+                alert("🎉 Parabéns! O seu teste gratuito de 3 dias foi ativado com sucesso. Pode entrar e testar todas as ferramentas!");
                 window.location.href = `login.html?id=${idBarb}`;
             }).catch(err => {
                 alert("Erro ao criar conta. Tente novamente.");
                 btn.disabled = false;
-                btn.innerText = "Começar 3 Dias Grátis";
+                btn.innerText = "Ativar 3 Dias Grátis";
             });
         }
     </script>
