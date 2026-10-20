@@ -21,21 +21,6 @@
     
     <title>Painel Admin - Kiko Barbearia Pro</title>
     
-    <!-- OneSignal Web SDK Integration -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "1e83688c-48b1-41f4-ac01-110152c17e6e",
-          notifyButton: {
-            enable: true,
-          },
-        });
-        OneSignal.Slidedown.promptPush();
-      });
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
@@ -92,7 +77,7 @@
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo" id="titulo-barbearia">A Carregar...</h1>
         
-        <!-- PAINEL MESTRE SAAS (APARECE APENAS PARA O DONO KIKO_BARBEARIA) -->
+        <!-- PAINEL MESTRE SAAS -->
         <div class="master-barber-card" id="painel-master-saas" style="display: none;">
             <div class="master-title">
                 👑 PAINEL MESTRE (SAAS)
@@ -329,7 +314,6 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // CAPTURA INTELIGENTE E ISOLADA DO ID DA BARBEARIA
         const urlParams = new URLSearchParams(window.location.search);
         let idBarbearia = urlParams.get('id');
 
@@ -345,7 +329,6 @@
 
         document.getElementById('subtitulo-login-modal').innerText = "Unidade: " + idBarbearia.toUpperCase();
 
-        // GERAR O LINK DE AGENDAMENTO AUTOMÁTICO PARA O CLIENTE
         window.addEventListener('DOMContentLoaded', () => {
             const urlBase = window.location.href.split('admin.html')[0];
             const linkPronto = `${urlBase}index.html?id=${idBarbearia}`;
@@ -364,7 +347,6 @@
             });
         }
 
-        // GERAR QR CODE DO WHATSAPP NO PAINEL
         function gerarQrCodeWhatsApp() {
             const btn = document.getElementById('btnConnectWa');
             const area = document.getElementById('areaQrCode');
