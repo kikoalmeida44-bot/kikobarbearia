@@ -266,19 +266,15 @@
         let idBarbearia = '';
 
         if (idBruto) {
-            // TRAVA DE SEGURANÇA: Limpa lixo do link caso ele cole duplicado (ex: testebarberhttps://...)
             if (idBruto.includes('http')) idBruto = idBruto.split('http')[0];
             if (idBruto.includes(']')) idBruto = idBruto.split(']')[0];
             
-            // Remove qualquer outro caractere especial, mantendo só letras, números, traços e underscores
             idBarbearia = idBruto.replace(/[^a-zA-Z0-9_-]/g, '');
-            
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
         } else {
             idBarbearia = localStorage.getItem('id_barbearia_ativo') || '';
         }
 
-        // Variável para guardar o número de WhatsApp dinâmico da barbearia
         let numeroWhatsappDono = "5567999673200"; 
 
         document.getElementById('link-admin').href = `login.html?id=${idBarbearia}`;
@@ -304,7 +300,6 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            // Puxa as fotos
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
@@ -325,7 +320,6 @@
                 }
             }).catch(e => { console.error("Erro ao carregar fotos:", e) });
 
-            // Puxa os Textos da planilha baseados no ID limpo
             fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia).then(res => res.json()).then(textos => {
                 if (textos.titulo) {
                     document.getElementById('txt_titulo').innerText = textos.titulo;
@@ -423,7 +417,8 @@
                 renderizarDropdown(dataEscolhida, selectHora);
             };
             
-            const script = document.createElement('script'); script.id = callbackName; script.src = scriptURL + '?acao=dashboard&id_barbearia=' + idBarbearia + '&callback=' + callbackName;
+            // CORREÇÃO APLICADA: Chama diretamente a API de horários expandidos do Google Apps Script
+            const script = document.createElement('script'); script.id = callbackName; script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&callback=' + callbackName;
             script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
             document.body.appendChild(script);
         }
@@ -451,7 +446,7 @@
                 } else if (cur >= bStart && cur < bEnd) {
                     todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Almoço" });
                 } else {
-                    const ocupadoNuvem = agendamentosDaNuvem && agendamentosDaNuvem.agenda ? agendamentosDaNuvem.agenda.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr) : false;
+                    const ocupadoNuvem = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr) : false;
                     todosHorarios.push({ hora: hStr, ocupado: ocupadoNuvem, motivo: "Ocupado" });
                 }
                 cur += 20;
