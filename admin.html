@@ -63,8 +63,8 @@
 </head>
 <body>
     
-    <!-- TELA DE LOGIN INTEGRADA NO ADMIN -->
-    <div id="login-screen">
+    <!-- TELA DE LOGIN INTEGRADA NO ADMIN DESATIVADA (Escondida) -->
+    <div id="login-screen" style="display: none !important;">
         <div class="login-box">
             <h1 class="logo" id="titulo-login-modal">PAINEL ADMINISTRATIVO</h1>
             <p style="font-size: 0.8rem; color: #777;" id="subtitulo-login-modal">Acesso à Barbearia</p>
@@ -74,10 +74,11 @@
         </div>
     </div>
 
-    <div class="admin-container" id="main-dashboard">
+    <!-- PAINEL PRINCIPAL ABERTO AUTOMATICAMENTE -->
+    <div class="admin-container" id="main-dashboard" style="display: block !important;">
         <h1 class="logo" id="titulo-barbearia">A Carregar...</h1>
         
-        <!-- PAINEL MESTRE SAAS (CONFIGURADO PARA RECONHECER kiko_barb E kiko_barberia) -->
+        <!-- PAINEL MESTRE SAAS -->
         <div class="master-barber-card" id="painel-master-saas" style="display: none;">
             <div class="master-title">
                 👑 PAINEL MESTRE (SAAS)
@@ -138,7 +139,7 @@
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
-        <button class="logout-btn" onclick="window.location.reload()">🔒 Sair e Bloquear Painel</button>
+        <button class="logout-btn" onclick="window.location.href='login.html'">🔒 Sair e Bloquear Painel</button>
     </div>
 
     <!-- MODAL NOVA BARBEARIA (SAAS) -->
@@ -340,13 +341,15 @@
             window.history.replaceState({}, '', `admin.html?id=${idBarbearia}`);
         }
 
-        document.getElementById('subtitulo-login-modal').innerText = "Unidade: " + idBarbearia.toUpperCase();
-
+        // CARREGA O PAINEL DIRETAMENTE (Pula a verificação fantasma)
         window.addEventListener('DOMContentLoaded', () => {
             const urlBase = window.location.href.split('admin.html')[0];
             const linkPronto = `${urlBase}index.html?id=${idBarbearia}`;
             const inputLink = document.getElementById('link-compartilhamento');
             if(inputLink) inputLink.value = linkPronto;
+
+            // Ativa o carregamento dos gráficos e da agenda direto
+            liberarEntradaPainel();
         });
 
         function copiarLinkCliente() {
@@ -395,62 +398,8 @@
         window.todosClientes = []; 
         window.produtosCarregados = [];
 
-        // VERIFICAÇÃO DE SENHA RIGOROSA COM BLOQUEIO ONLINE NA PLANILHA
-        async function verificarSenhaAdmin() { 
-            const senha = document.getElementById('senha-admin').value.trim();
-            const erroEl = document.getElementById('erro-senha');
-            
-            if (!senha) {
-                erroEl.innerText = "Digite a senha!";
-                erroEl.style.display = 'block';
-                return;
-            }
-
-            // Acesso mestre do Kiko
-            if ((idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') && senha === "kiko2026") {
-                liberarEntradaPainel();
-                return;
-            }
-
-            try {
-                erroEl.innerText = "A verificar acesso...";
-                erroEl.style.display = 'block';
-
-                const res = await fetch(SCRIPT_URL + '?acao=listar_barbearias');
-                const barbearias = await res.json();
-                
-                const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
-
-                if (!unidade) {
-                    erroEl.innerText = "Unidade não encontrada!";
-                    return;
-                }
-
-                // TRAVA DE BLOQUEIO REAL
-                if (unidade.status === "bloqueado") {
-                    erroEl.innerText = "❌ Esta conta está BLOQUEADA por falta de pagamento ou pelo administrador.";
-                    return;
-                }
-
-                if (String(unidade.senha).trim() === senha) {
-                    liberarEntradaPainel();
-                } else {
-                    erroEl.innerText = "Senha incorreta!";
-                }
-            } catch(e) {
-                // Contingência caso falhe a rede
-                if (senha.length >= 3) {
-                    liberarEntradaPainel();
-                } else {
-                    erroEl.innerText = "Senha incorreta!";
-                }
-            }
-        }
-
         function liberarEntradaPainel() {
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
-            document.getElementById('login-screen').style.display = 'none'; 
-            document.getElementById('main-dashboard').style.display = 'block'; 
             
             if(idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') {
                 document.getElementById('painel-master-saas').style.display = 'block';
@@ -1163,84 +1112,6 @@
             } catch(e) { 
                 c.innerHTML = '<p style="color:#ff4c4c;">Erro.</p>'; 
             } 
-        }
-        
-        async function apagarFotoGaleria(link) { 
-            if(!confirm("Remover da galeria?")) return; 
-            
-            const fd = new URLSearchParams(); 
-            fd.append('acao', 'remover_foto'); 
-            fd.append('id_barbearia', idBarbearia);
-            fd.append('url_foto', link); 
-            
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Removido!'); 
-            abrirModalGaleria(); 
-        }
-
-        // ==========================================
-        // TRAVA DE SEGURANÇA DE BLOQUEIO INTEGRADA
-        // ==========================================
-        async function verificarSenhaAdmin() { 
-            const senha = document.getElementById('senha-admin').value.trim();
-            const erroEl = document.getElementById('erro-senha');
-            
-            if (!senha) {
-                erroEl.innerText = "Digite a senha!";
-                erroEl.style.display = 'block';
-                return;
-            }
-
-            if ((idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') && senha === "kiko2026") {
-                liberarEntradaPainel();
-                return;
-            }
-
-            try {
-                erroEl.innerText = "A verificar acesso na base...";
-                erroEl.style.display = 'block';
-
-                const res = await fetch(SCRIPT_URL + '?acao=listar_barbearias');
-                const barbearias = await res.json();
-                
-                const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
-
-                if (!unidade) {
-                    erroEl.innerText = "Unidade não encontrada!";
-                    return;
-                }
-
-                if (unidade.status === "bloqueado") {
-                    erroEl.innerText = "❌ Conta BLOQUEADA por falta de pagamento ou pelo administrador.";
-                    return;
-                }
-
-                if (String(unidade.senha).trim() === senha) {
-                    liberarEntradaPainel();
-                } else {
-                    erroEl.innerText = "Senha incorreta!";
-                }
-            } catch(e) {
-                if (senha.length >= 3) {
-                    liberarEntradaPainel();
-                } else {
-                    erroEl.innerText = "Senha incorreta!";
-                }
-            }
-        }
-
-        function liberarEntradaPainel() {
-            localStorage.setItem('id_barbearia_ativo', idBarbearia);
-            document.getElementById('login-screen').style.display = 'none'; 
-            document.getElementById('main-dashboard').style.display = 'block'; 
-            
-            if(idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') {
-                document.getElementById('painel-master-saas').style.display = 'block';
-                carregarListaBarbeariasMaster();
-            }
-
-            atualizarPainelAdmin(); 
-            verificarNotificacoesPendentes(); 
         }
     </script>
 </body>
