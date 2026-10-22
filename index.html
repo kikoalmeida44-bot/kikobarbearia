@@ -383,13 +383,30 @@
             }, 500);
         }
 
+        // AGORA RECARREGA OS HORÁRIOS SE O CLIENTE MUDAR OS SERVIÇOS DEPOIS DE ESCOLHER A DATA
         function atualizarResumo() {
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
             checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
-            document.getElementById('duracao_total').value = totalT; document.getElementById('valor_total_enviar').value = totalV;
+            
+            document.getElementById('duracao_total').value = totalT; 
+            document.getElementById('valor_total_enviar').value = totalV;
+            
             const resumoBox = document.getElementById('resumo-pedido');
-            if (totalT > 0) { resumoBox.style.display = 'block'; document.getElementById('total-valor').innerText = "R$ " + totalV; document.getElementById('total-tempo').innerText = totalT + " min"; } else { resumoBox.style.display = 'none'; }
+            if (totalT > 0) { 
+                resumoBox.style.display = 'block'; 
+                document.getElementById('total-valor').innerText = "R$ " + totalV; 
+                document.getElementById('total-tempo').innerText = totalT + " min"; 
+            } else { 
+                resumoBox.style.display = 'none'; 
+            }
+
+            // ATUALIZAÇÃO MÁGICA: Se a data já estiver escolhida, recalcula os blocos na hora!
+            const dataEscolhida = document.getElementById('data').value;
+            if (dataEscolhida && typeof agendamentosDaNuvem !== 'undefined') {
+                const selectHora = document.getElementById('hora');
+                renderizarDropdown(dataEscolhida, selectHora);
+            }
         }
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
@@ -417,41 +434,72 @@
                 renderizarDropdown(dataEscolhida, selectHora);
             };
             
-            // CORREÇÃO APLICADA: Chama diretamente a API de horários expandidos do Google Apps Script
             const script = document.createElement('script'); script.id = callbackName; script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&callback=' + callbackName;
             script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
             document.body.appendChild(script);
         }
 
+        // LÓGICA DE JUNÇÃO: AGORA ELE VERIFICA SE O SERVIÇO INTEIRO CABE!
         function renderizarDropdown(dataEscolhida, selectHora) {
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
-            let bStart = parseTempo("11:00"); let bEnd = parseTempo("13:00");
-            
+            let bStart = parseTempo(configHorarios.almoco_inicio || "11:00"); let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
+
             let agora = new Date();
             let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
             let horaAtualMinutos = agora.getHours() * 60 + agora.getMinutes();
-            
-            let todosHorarios = [];
-            while(cur <= end) {
-                let hStr = Math.floor(cur/60).toString().padStart(2,'0') + ":" + (cur%60).toString().padStart(2,'0');
-                
-                let horarioPassado = false;
-                if (dataEscolhida === hojeStr && cur <= horaAtualMinutos) {
-                    horarioPassado = true;
-                }
 
-                if (horarioPassado) {
-                    todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Passado" });
-                } else if (cur >= bStart && cur < bEnd) {
-                    todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Almoço" });
+            // Pega a duração dos serviços selecionados no momento (ou 20 min padrão)
+            let duracaoMinutos = parseInt(document.getElementById('duracao_total').value) || 20;
+            let blocosNecessarios = Math.ceil(duracaoMinutos / 20);
+
+            // PASSO 1: Mapear todos os slots de 20 min (livre ou ocupado?)
+            let mapaSlots = {};
+            for (let c = cur; c <= end; c += 20) {
+                let hStr = Math.floor(c/60).toString().padStart(2,'0') + ":" + (c%60).toString().padStart(2,'0');
+                let ocupado = false;
+                let motivo = "";
+
+                if (dataEscolhida === hojeStr && c <= horaAtualMinutos) {
+                    ocupado = true; motivo = "Passado";
+                } else if (c >= bStart && c < bEnd) {
+                    ocupado = true; motivo = "Almoço";
                 } else {
-                    const ocupadoNuvem = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr) : false;
-                    todosHorarios.push({ hora: hStr, ocupado: ocupadoNuvem, motivo: "Ocupado" });
+                    ocupado = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr) : false;
+                    if(ocupado) motivo = "Ocupado";
                 }
-                cur += 20;
+                mapaSlots[c] = { hora: hStr, ocupado: ocupado, motivo: motivo };
             }
 
+            // PASSO 2: Validar se há blocos consecutivos suficientes para o serviço
+            let todosHorarios = [];
+            for (let c = cur; c <= end; c += 20) {
+                let hStr = mapaSlots[c].hora;
+
+                if (mapaSlots[c].ocupado) {
+                    // Já está ocupado na raiz
+                    todosHorarios.push({ hora: hStr, ocupado: true, motivo: mapaSlots[c].motivo });
+                } else {
+                    // Está livre, mas será que cabem X blocos para a frente?
+                    let cabe = true;
+                    for (let b = 1; b < blocosNecessarios; b++) {
+                        let nextC = c + (b * 20);
+                        // Se o próximo bloco não existir (fim expediente) ou estiver ocupado
+                        if (!mapaSlots[nextC] || mapaSlots[nextC].ocupado) {
+                            cabe = false;
+                            break;
+                        }
+                    }
+
+                    if (cabe) {
+                        todosHorarios.push({ hora: hStr, ocupado: false, motivo: "" });
+                    } else {
+                        todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Espaço insuf." });
+                    }
+                }
+            }
+
+            // PASSO 3: Renderizar as bolinhas (options do select)
             todosHorarios.forEach(item => {
                 const opt = document.createElement('option'); opt.value = item.hora;
                 if(item.ocupado) {
