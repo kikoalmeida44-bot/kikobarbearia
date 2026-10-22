@@ -56,7 +56,7 @@
             <button type="submit" id="btnRegistar" class="btn-gold">Ativar 3 Dias Grátis</button>
         </form>
 
-        <!-- CAIXA INFORMATIVA DO PIX DO PAGSEGURO (R$ 60,00) PARA QUISER PAGAR ANTES OU DEPOIS -->
+        <!-- CAIXA INFORMATIVA DO PIX (R$ 60,00) -->
         <div class="pix-box-info">
             <p style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">💳 Chave Pix para ativação/renovação (R$ 60,00):</p>
             <div class="pix-copia-cola" id="textoPixCopiaCola">00020126790014br.gov.bcb.pix013620af615e-f4aa-4bb0-bb39-3dd561a7a3370217sistema barbearia27600016BR.COM.PAGSEGURO01361D8B2860-CC46-470A-97FF-50D736F2FED5520472305303986540560.005802BR5925FRANCISCO ALMEIDA DE OLIV6005Coxim62290525PAGS0000060002610190410526304F874</div>
@@ -69,6 +69,7 @@
     </div>
 
     <script>
+        // Link exato do Google Apps Script integrado
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
 
         function registarComTrial(e) {
@@ -83,7 +84,6 @@
             const email = document.getElementById('email').value.trim();
             const senha = document.getElementById('senha').value.trim();
 
-            // Calcula a data de Expiração (Hoje + 3 dias grátis)
             let dataExpiracao = new Date();
             dataExpiracao.setDate(dataExpiracao.getDate() + 3);
             let dataExpiracaoStr = dataExpiracao.toISOString().split('T')[0];
