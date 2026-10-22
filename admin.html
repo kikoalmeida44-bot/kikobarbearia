@@ -341,14 +341,31 @@
             window.history.replaceState({}, '', `admin.html?id=${idBarbearia}`);
         }
 
-        // CARREGA O PAINEL DIRETAMENTE (Pula a verificação fantasma)
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlBase = window.location.href.split('admin.html')[0];
-            const linkPronto = `${urlBase}index.html?id=${idBarbearia}`;
+        // 1. CARREGAMENTO BLINDADO: SÓ ENTRA SE NÃO ESTIVER BLOQUEADO
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Arruma o link de agendamento forçando o domínio correto
+            const linkPronto = `https://kikobarbearia.com.br/index.html?id=${idBarbearia}`;
             const inputLink = document.getElementById('link-compartilhamento');
             if(inputLink) inputLink.value = linkPronto;
 
-            // Ativa o carregamento dos gráficos e da agenda direto
+            // Verifica bloqueio real antes de liberar o painel (exceto para o Kiko)
+            if (idBarbearia !== 'kiko_barberia' && idBarbearia !== 'kiko_barb') {
+                try {
+                    const res = await fetch(SCRIPT_URL + '?acao=listar_barbearias');
+                    const barbearias = await res.json();
+                    const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
+                    
+                    if (unidade && (unidade.status.toLowerCase() === "bloqueado" || unidade.status.toLowerCase() === "bloqueio")) {
+                        alert("❌ CONTA BLOQUEADA. O seu acesso foi suspenso. Por favor, contacte o administrador.");
+                        window.location.href = "login.html"; // Chuta o utilizador para fora
+                        return; // Para o carregamento
+                    }
+                } catch(e) {
+                    console.log("Erro ao verificar bloqueio.");
+                }
+            }
+            
+            // Se passar no teste de bloqueio, carrega tudo
             liberarEntradaPainel();
         });
 
@@ -363,35 +380,39 @@
             });
         }
 
+        // 2. SISTEMA DE QR CODE MAIS INTELIGENTE E RESILIENTE
         function gerarQrCodeWhatsApp() {
             const btn = document.getElementById('btnConnectWa');
             const area = document.getElementById('areaQrCode');
             const imgCont = document.getElementById('imgQrContainer');
 
             btn.disabled = true;
-            btn.innerText = "⚡ A conectar ao servidor...";
+            btn.innerText = "⚡ A acordar servidor... (Aguarde 10s)";
+            area.style.display = 'block';
+            imgCont.innerHTML = `<p style="color:#c8a355; margin-top:10px;">A preparar a conexão, aguarde...</p>`;
 
             fetch(`${SCRIPT_URL}?acao=conectar_whatsapp&id_barbearia=${idBarbearia}`)
                 .then(res => res.json())
                 .then(data => {
                     btn.innerText = "⚡ Gerar Novo QR Code";
                     btn.disabled = false;
-                    area.style.display = 'block';
 
-                    if (data.qrcode) {
-                        if (data.qrcode.startsWith("data:image")) {
-                            imgCont.innerHTML = `<img src="${data.qrcode}" style="width: 200px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">`;
-                        } else {
-                            imgCont.innerHTML = `<p style="color:#28a745; font-weight:bold; margin-top:10px;">${data.qrcode}</p>`;
+                    if (data.qrcode && data.qrcode.length > 20) {
+                        let src = data.qrcode;
+                        // Garante que a imagem renderiza mesmo se a API devolver apenas a base64 crua
+                        if (!src.startsWith("data:image")) {
+                            src = "data:image/png;base64," + src;
                         }
+                        imgCont.innerHTML = `<img src="${src}" style="width: 200px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">`;
                     } else {
-                        imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Não foi possível obter o QR Code. Tente novamente.</p>`;
+                        // Se a API ainda estiver a iniciar, avisa o cliente para tentar de novo
+                        imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">O servidor está a iniciar. <b>Clique no botão "Gerar" novamente agora!</b></p>`;
                     }
                 })
                 .catch(err => {
                     btn.innerText = "⚡ Gerar QR Code WhatsApp";
                     btn.disabled = false;
-                    alert("Erro ao conectar com o serviço do WhatsApp.");
+                    imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de rede. Tente de novo.</p>`;
                 });
         }
 
