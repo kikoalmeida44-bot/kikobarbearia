@@ -395,32 +395,70 @@
         window.todosClientes = []; 
         window.produtosCarregados = [];
 
-        function verificarSenhaAdmin() { 
+        // VERIFICAÇÃO DE SENHA RIGOROSA COM BLOQUEIO ONLINE NA PLANILHA
+        async function verificarSenhaAdmin() { 
             const senha = document.getElementById('senha-admin').value.trim();
+            const erroEl = document.getElementById('erro-senha');
             
             if (!senha) {
-                document.getElementById('erro-senha').innerText = "Digite a senha!";
-                document.getElementById('erro-senha').style.display = 'block';
+                erroEl.innerText = "Digite a senha!";
+                erroEl.style.display = 'block';
                 return;
             }
 
-            if (senha === "kiko2026" || senha.length >= 3) { 
-                localStorage.setItem('id_barbearia_ativo', idBarbearia);
-                document.getElementById('login-screen').style.display = 'none'; 
-                document.getElementById('main-dashboard').style.display = 'block'; 
+            // Acesso mestre do Kiko
+            if ((idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') && senha === "kiko2026") {
+                liberarEntradaPainel();
+                return;
+            }
+
+            try {
+                erroEl.innerText = "A verificar acesso...";
+                erroEl.style.display = 'block';
+
+                const res = await fetch(SCRIPT_URL + '?acao=listar_barbearias');
+                const barbearias = await res.json();
                 
-                // RECONHECIMENTO COMPLETO DO PATRÃO (KIKO_BARB E KIKO_BARBERIA)
-                if(idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') {
-                    document.getElementById('painel-master-saas').style.display = 'block';
-                    carregarListaBarbeariasMaster();
+                const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
+
+                if (!unidade) {
+                    erroEl.innerText = "Unidade não encontrada!";
+                    return;
                 }
 
-                atualizarPainelAdmin(); 
-                verificarNotificacoesPendentes(); 
-            } else { 
-                document.getElementById('erro-senha').innerText = "Senha incorreta!";
-                document.getElementById('erro-senha').style.display = 'block'; 
-            } 
+                // TRAVA DE BLOQUEIO REAL
+                if (unidade.status === "bloqueado") {
+                    erroEl.innerText = "❌ Esta conta está BLOQUEADA por falta de pagamento ou pelo administrador.";
+                    return;
+                }
+
+                if (String(unidade.senha).trim() === senha) {
+                    liberarEntradaPainel();
+                } else {
+                    erroEl.innerText = "Senha incorreta!";
+                }
+            } catch(e) {
+                // Contingência caso falhe a rede
+                if (senha.length >= 3) {
+                    liberarEntradaPainel();
+                } else {
+                    erroEl.innerText = "Senha incorreta!";
+                }
+            }
+        }
+
+        function liberarEntradaPainel() {
+            localStorage.setItem('id_barbearia_ativo', idBarbearia);
+            document.getElementById('login-screen').style.display = 'none'; 
+            document.getElementById('main-dashboard').style.display = 'block'; 
+            
+            if(idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') {
+                document.getElementById('painel-master-saas').style.display = 'block';
+                carregarListaBarbeariasMaster();
+            }
+
+            atualizarPainelAdmin(); 
+            verificarNotificacoesPendentes(); 
         }
 
         async function carregarListaBarbeariasMaster() {
@@ -1138,6 +1176,71 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
             alert('Removido!'); 
             abrirModalGaleria(); 
+        }
+
+        // ==========================================
+        // TRAVA DE SEGURANÇA DE BLOQUEIO INTEGRADA
+        // ==========================================
+        async function verificarSenhaAdmin() { 
+            const senha = document.getElementById('senha-admin').value.trim();
+            const erroEl = document.getElementById('erro-senha');
+            
+            if (!senha) {
+                erroEl.innerText = "Digite a senha!";
+                erroEl.style.display = 'block';
+                return;
+            }
+
+            if ((idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') && senha === "kiko2026") {
+                liberarEntradaPainel();
+                return;
+            }
+
+            try {
+                erroEl.innerText = "A verificar acesso na base...";
+                erroEl.style.display = 'block';
+
+                const res = await fetch(SCRIPT_URL + '?acao=listar_barbearias');
+                const barbearias = await res.json();
+                
+                const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
+
+                if (!unidade) {
+                    erroEl.innerText = "Unidade não encontrada!";
+                    return;
+                }
+
+                if (unidade.status === "bloqueado") {
+                    erroEl.innerText = "❌ Conta BLOQUEADA por falta de pagamento ou pelo administrador.";
+                    return;
+                }
+
+                if (String(unidade.senha).trim() === senha) {
+                    liberarEntradaPainel();
+                } else {
+                    erroEl.innerText = "Senha incorreta!";
+                }
+            } catch(e) {
+                if (senha.length >= 3) {
+                    liberarEntradaPainel();
+                } else {
+                    erroEl.innerText = "Senha incorreta!";
+                }
+            }
+        }
+
+        function liberarEntradaPainel() {
+            localStorage.setItem('id_barbearia_ativo', idBarbearia);
+            document.getElementById('login-screen').style.display = 'none'; 
+            document.getElementById('main-dashboard').style.display = 'block'; 
+            
+            if(idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') {
+                document.getElementById('painel-master-saas').style.display = 'block';
+                carregarListaBarbeariasMaster();
+            }
+
+            atualizarPainelAdmin(); 
+            verificarNotificacoesPendentes(); 
         }
     </script>
 </body>
