@@ -77,7 +77,7 @@
     <div class="admin-container" id="main-dashboard">
         <h1 class="logo" id="titulo-barbearia">A Carregar...</h1>
         
-        <!-- PAINEL MESTRE SAAS -->
+        <!-- PAINEL MESTRE SAAS (CONFIGURADO PARA RECONHECER kiko_barb E kiko_barberia) -->
         <div class="master-barber-card" id="painel-master-saas" style="display: none;">
             <div class="master-title">
                 👑 PAINEL MESTRE (SAAS)
@@ -290,7 +290,6 @@
             <div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div>
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
             <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
-            <!-- CAMPO DO ENDEREÇO ADICIONADO AQUI 👇 -->
             <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço da Barbearia"></div>
             <button class="action-btn" onclick="salvarTextos()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
@@ -334,7 +333,7 @@
         if (idBarbearia) {
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
         } else {
-            idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barberia';
+            idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barb';
         }
 
         if (!urlParams.get('id') && idBarbearia) {
@@ -410,7 +409,8 @@
                 document.getElementById('login-screen').style.display = 'none'; 
                 document.getElementById('main-dashboard').style.display = 'block'; 
                 
-                if(idBarbearia === 'kiko_barberia') {
+                // RECONHECIMENTO COMPLETO DO PATRÃO (KIKO_BARB E KIKO_BARBERIA)
+                if(idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') {
                     document.getElementById('painel-master-saas').style.display = 'block';
                     carregarListaBarbeariasMaster();
                 }
@@ -774,7 +774,7 @@
                             <button onclick="venderPacote('${cli.telefone}', '${cli.nome}')" style="background:#c8a355; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">🛒 Vender Pacote</button>
                             ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✂️ Usar 1</button>` : ''}
                         </div>
-                    </div>`;
+                    `;
                 container.appendChild(div);
             });
         }
@@ -1020,7 +1020,6 @@
                 if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; 
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
                 if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
-                
                 if(data.endereco) document.getElementById('edit-endereco').value = data.endereco; 
             } catch(e) {} 
         }
