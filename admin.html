@@ -134,6 +134,7 @@
         
         <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂ GERENCIAR SERVIÇOS</button>
+        <button class="menu-btn" onclick="abrirModalProfissionais()">💈 GERENCIAR PROFISSIONAIS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
@@ -257,6 +258,17 @@
             <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br>
             <button class="action-btn" onclick="salvarServicos()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL PROFISSIONAIS -->
+    <div id="modal-profissionais" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title" style="color: #c8a355;">💈 Gerenciar Profissionais</h2>
+            <div id="lista-profissionais-container"></div>
+            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProfissional('')">+ Novo Profissional</button><br><br>
+            <button class="action-btn" onclick="salvarProfissionais()">Guardar Profissionais</button>
+            <button class="close-btn" onclick="fecharModal('modal-profissionais')">Cancelar</button>
         </div>
     </div>
     
@@ -609,7 +621,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
                                 <div style="flex: 1; min-width: 150px;">
                                     <strong style="${isConcluido ? 'color: #28a745;' : 'color: #00bfff;'} font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
-                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico}</span><br>
+                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico} | 👤 ${ag.profissional || 'Equipa'}</span><br>
                                     <span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
                                 </div>
                                 ${acoesHTML}
@@ -958,6 +970,44 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
             alert('Guardado!'); 
             fecharModal('modal-servicos'); 
+        }
+
+        async function abrirModalProfissionais() {
+            abrirModal('modal-profissionais');
+            document.getElementById('lista-profissionais-container').innerHTML = '<p>A carregar...</p>';
+            const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
+            const data = await res.json();
+            let profissionais = JSON.parse(data.profissionais || '[{"nome":"Equipa"}]');
+            document.getElementById('lista-profissionais-container').innerHTML = '';
+            profissionais.forEach(pr => adicionarLinhaProfissional(pr.nome));
+        }
+
+        function adicionarLinhaProfissional(nome) {
+            const div = document.createElement('div');
+            div.className = 'linha-item';
+            div.innerHTML = `
+                <input type="text" value="${nome}" class="pr-nome" placeholder="Nome do Barbeiro / Profissional">
+                <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
+            `;
+            document.getElementById('lista-profissionais-container').appendChild(div);
+        }
+
+        async function salvarProfissionais() {
+            let novos = [];
+            document.querySelectorAll('#lista-profissionais-container .linha-item').forEach(l => {
+                const n = l.querySelector('.pr-nome').value.trim();
+                if(n) novos.push({nome: n});
+            });
+            if(novos.length === 0) novos.push({nome: "Equipa"});
+
+            const fd = new URLSearchParams();
+            fd.append('acao', 'salvar_profissionais');
+            fd.append('id_barbearia', idBarbearia);
+            fd.append('profissionais_json', JSON.stringify(novos));
+
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+            alert('Profissionais guardados com sucesso!');
+            fecharModal('modal-profissionais');
         }
         
         async function abrirModalTextos() { 
