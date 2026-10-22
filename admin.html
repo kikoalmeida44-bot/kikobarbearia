@@ -290,7 +290,6 @@
             <div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div>
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
             <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
-            <!-- CAMPO DO ENDEREÇO ADICIONADO AQUI 👇 -->
             <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço da Barbearia"></div>
             <button class="action-btn" onclick="salvarTextos()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
@@ -1020,8 +1019,6 @@
                 if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; 
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
                 if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
-                
-                // PUXA O ENDEREÇO DO SERVIDOR 👇
                 if(data.endereco) document.getElementById('edit-endereco').value = data.endereco; 
             } catch(e) {} 
         }
@@ -1033,8 +1030,6 @@
             fd.append('titulo', document.getElementById('edit-titulo').value); 
             fd.append('subtitulo', document.getElementById('edit-subtitulo').value); 
             fd.append('telefone', document.getElementById('edit-telefone').value); 
-            
-            // SALVA O ENDEREÇO NO SERVIDOR 👇
             fd.append('endereco', document.getElementById('edit-endereco').value); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
