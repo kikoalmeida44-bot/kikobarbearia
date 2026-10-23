@@ -451,6 +451,7 @@
                             <div style="display:flex; gap:5px;">
                                 <a href="?id=${b.id}" style="background:#00bfff; color:#000; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; text-decoration:none;">Aceder</a>
                                 <button onclick="alternarBloqueio('${b.id}', '${ativo ? 'bloqueado' : 'ativo'}')" style="background:${ativo ? '#ff4c4c' : '#28a745'}; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">${ativo ? 'Bloquear' : 'Ativar'}</button>
+                                <button onclick="excluirBarbearia('${b.id}')" style="background:#dc3545; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">🗑️ Excluir</button>
                             </div>
                         `;
                         container.appendChild(div);
@@ -472,6 +473,18 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
             alert('Atualizado com sucesso!');
             carregarListaBarbeariasMaster();
+        }
+
+        // FUNÇÃO DELETAR CONTA COMPLETA (ADICIONADO)
+        async function excluirBarbearia(idDaBarbearia) {
+            if (confirm("Tem certeza que quer DELETAR esta barbearia? Todos os dados vão desaparecer e não tem como voltar atrás!")) {
+                const fd = new URLSearchParams();
+                fd.append('acao', 'excluir_barbearia');
+                fd.append('id_barbearia', idDaBarbearia);
+                await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+                alert('Barbearia excluída com sucesso!');
+                carregarListaBarbeariasMaster();
+            }
         }
 
         async function salvarNovaBarbearia() {
