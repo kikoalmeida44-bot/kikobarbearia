@@ -11,14 +11,14 @@
         h1 { color: #d4af37; text-align: center; font-size: 1.8em; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #dddddd; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
-        .form-group input { width: 100%; padding: 14px; background-color: rgba(0,0,0,0.5); color: #ffffff; border: 1px solid #444; box-sizing: border-box; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
-        .form-group input:focus { border-color: #d4af37; outline: none; }
+        .form-group input { width: 100%; padding: 14px; background-color: rgba(0,0,0,0.5); color: #ffffff; border: 1px solid #444; box-sizing: border-box; border-radius: 4px; font-family: 'Montserrat', sans-serif; transition: 0.3s; }
+        .form-group input:focus { border-color: #d4af37; outline: none; background-color: rgba(20, 20, 20, 0.8); }
         .btn-gold { background-color: #d4af37; color: #050505; width: 100%; padding: 15px; text-decoration: none; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-gold:hover { background-color: #b38f27; border-color: #b38f27; }
         .links-uteis { text-align: center; margin-top: 20px; font-size: 0.9em; }
         .links-uteis a { color: #d4af37; text-decoration: none; font-weight: 600; }
         .links-uteis a:hover { text-decoration: underline; }
-        .mensagem-erro { color: #ff4444; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; }
+        .mensagem-erro { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; padding: 10px; border-radius: 4px; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; font-weight: 600; }
         
         .badge-trial { background: rgba(40,167,69,0.2); border: 1px solid #28a745; color: #28a745; padding: 10px; border-radius: 4px; font-size: 0.8em; text-align: center; margin-bottom: 20px; font-weight: 600; }
         
@@ -31,9 +31,10 @@
     <div class="registro-container">
         <h1>Criar Barbearia</h1>
         <div class="badge-trial">🔥 3 Dias Grátis de Teste Completo!</div>
+        
+        <!-- MENSAGEM DE ERRO (Aparece se houver duplicados) -->
         <div id="msgErro" class="mensagem-erro"></div>
         
-        <!-- FORMULÁRIO DE CADASTRO UNIFICADO -->
         <form id="formRegistro" onsubmit="registarComTrial(event)">
             <div class="form-group">
                 <label for="id_barbearia">ID Único da Barbearia (ex: barbearia_lider):</label>
@@ -49,13 +50,12 @@
             </div>
             <div class="form-group">
                 <label for="senha">Palavra-passe (Senha):</label>
-                <input type="password" id="senha" name="senha" placeholder="********" required>
+                <input type="password" id="senha" name="senha" placeholder="********" required minlength="6">
             </div>
             
             <button type="submit" id="btnRegistar" class="btn-gold">Ativar 3 Dias Grátis</button>
         </form>
 
-        <!-- CAIXA INFORMATIVA DO PIX -->
         <div class="pix-box-info">
             <p style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">💳 Chave Pix para ativação/renovação (R$ 60,00):</p>
             <div class="pix-copia-cola" id="textoPixCopiaCola">00020126790014br.gov.bcb.pix013620af615e-f4aa-4bb0-bb39-3dd561a7a3370217sistema barbearia27600016BR.COM.PAGSEGURO01361D8B2860-CC46-470A-97FF-50D736F2FED5520472305303986540560.005802BR5925FRANCISCO ALMEIDA DE OLIV6005Coxim62290525PAGS0000060002610190410526304F874</div>
@@ -68,18 +68,22 @@
     </div>
 
     <script>
+        // O TEU LINK DO GOOGLE SCRIPT MANTIDO
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
 
         function formatarID(input) {
             input.value = input.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
         }
 
-        function registarComTrial(e) {
+        async function registarComTrial(e) {
             e.preventDefault();
             
             const btn = document.getElementById('btnRegistar');
+            const msgErro = document.getElementById('msgErro');
+            
             btn.disabled = true;
-            btn.innerText = "A criar o seu sistema...";
+            btn.innerText = "A verificar dados e criar sistema... ⏳";
+            msgErro.style.display = "none";
 
             const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase();
             const nomeBarb = document.getElementById('nome_barbearia').value.trim();
@@ -87,23 +91,40 @@
             const senha = document.getElementById('senha').value.trim();
 
             const fd = new URLSearchParams();
-            fd.append('acao', 'criar_barbearia'); // Ação unificada que o Google Script processa perfeitamente
+            fd.append('acao', 'cadastrar_barbearia'); 
             fd.append('id_barbearia', idBarb);
             fd.append('nome', nomeBarb);
-            fd.append('login', email); // Salva o e-mail no campo de login da planilha
+            fd.append('email', email); // Envia o e-mail para verificar
+            fd.append('login', idBarb); // Usa o ID como login
             fd.append('senha', senha);
 
-            fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' })
-            .then(() => {
-                alert("🎉 Parabéns! O seu teste gratuito de 3 dias foi ativado com sucesso. Pode entrar e testar todas as ferramentas!");
-                localStorage.setItem('id_barbearia_ativo', idBarb);
-                window.location.href = `admin.html?id=${idBarb}`;
-            })
-            .catch(err => {
-                alert("Erro ao criar conta. Tente novamente.");
+            try {
+                // ATENÇÃO: Retiramos o 'no-cors' para podermos ler a resposta do Google Script
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: fd.toString()
+                });
+
+                const data = await response.json();
+
+                if (data.status === "erro") {
+                    // SE DER ERRO NO GOOGLE SCRIPT (E-mail repetido, ID repetido) MOSTRA AQUI:
+                    msgErro.innerText = "❌ " + data.msg;
+                    msgErro.style.display = "block";
+                    btn.disabled = false;
+                    btn.innerText = "Ativar 3 Dias Grátis";
+                } else {
+                    // SE DEU SUCESSO:
+                    alert("🎉 Parabéns! O seu teste gratuito de 3 dias foi ativado com sucesso. Pode entrar e testar todas as ferramentas!");
+                    localStorage.setItem('id_barbearia_ativo', idBarb);
+                    window.location.href = `admin.html?id=${idBarb}`;
+                }
+            } catch (err) {
+                msgErro.innerText = "❌ Erro de conexão. Verifique a internet e tente novamente.";
+                msgErro.style.display = "block";
                 btn.disabled = false;
                 btn.innerText = "Ativar 3 Dias Grátis";
-            });
+            }
         }
     </script>
 </body>
