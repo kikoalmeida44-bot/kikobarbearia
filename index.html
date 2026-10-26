@@ -248,7 +248,8 @@
         <h2 class="section-title">Atendimento</h2>
         <div class="horarios-box">
             <p id="txt-horarios-info" style="color:#fff;">A carregar horários...</p>
-            <a href="https://www.google.com/maps/search/?api=1&query=Avenida+Mato+Grosso+do+Sul,+207,+Coxim,+MS" target="_blank" class="mapa-link">📍 Avenida Mato Grosso do Sul, 207 <br> Coxim, MS</a>
+            <!-- AQUI FOI ALTERADO: Agora é um link dinâmico que o JS vai preencher! -->
+            <a id="link-mapa" href="#" target="_blank" class="mapa-link">📍 A carregar endereço...</a>
         </div>
     </div>
 
@@ -329,7 +330,18 @@
                 }
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
+                
+                // --- NOVIDADE AQUI: Atualiza o telefone dinâmico que vai para o botão de finalizar ---
                 if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
+                
+                // --- NOVIDADE AQUI: Atualiza o Endereço escrito na tela e a rota no Google Maps! ---
+                if (textos.endereco) {
+                    let linkMapa = document.getElementById('link-mapa');
+                    if(linkMapa) {
+                        linkMapa.innerHTML = "📍 " + textos.endereco;
+                        linkMapa.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(textos.endereco);
+                    }
+                }
                 
                 if (textos.servicos && textos.servicos !== "[]") {
                     let listaServicos = JSON.parse(textos.servicos);
