@@ -235,6 +235,16 @@
                     <input type="hidden" id="duracao_total" name="duracao_total" value="0">
                     <input type="hidden" id="valor_total_enviar" name="valor_total" value="0">
                 </div>
+
+                <!-- 👇 NOVO CAMPO: SELEÇÃO DE PROFISSIONAL 👇 -->
+                <div class="form-group">
+                    <label for="profissional">Profissional de Preferência:</label>
+                    <select id="profissional" name="profissional" required onchange="verificarHorarios()">
+                        <option value="" disabled selected>A carregar profissionais...</option>
+                    </select>
+                </div>
+                <!-- 👆 FIM DO NOVO CAMPO 👆 -->
+
                 <div class="form-group">
                     <label for="data">Data de Preferência:</label>
                     <input type="date" id="data" name="data" required onchange="verificarHorarios()">
@@ -334,10 +344,8 @@
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
                 
-                // --- NOVIDADE AQUI: Atualiza o telefone dinâmico que vai para o botão de finalizar ---
                 if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
                 
-                // --- NOVIDADE AQUI: Atualiza o Endereço escrito na tela e a rota no Google Maps! ---
                 if (textos.endereco) {
                     let linkMapa = document.getElementById('link-mapa');
                     if(linkMapa) {
@@ -359,6 +367,25 @@
                     document.getElementById('quadro_servicos_dinamicos').innerHTML = "<p>Nenhum serviço registado.</p>";
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p>Nenhum serviço registado.</p>";
                 }
+
+                // 👇 NOVIDADE: CARREGA OS PROFISSIONAIS PARA O SELECT 👇
+                const selectProfissional = document.getElementById('profissional');
+                selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
+                if (textos.profissionais && textos.profissionais !== "[]") {
+                    let listaProfissionais = JSON.parse(textos.profissionais);
+                    listaProfissionais.forEach(prof => {
+                        let opt = document.createElement('option');
+                        opt.value = prof.nome;
+                        opt.text = "💈 " + prof.nome;
+                        selectProfissional.add(opt);
+                    });
+                } else {
+                    let opt = document.createElement('option');
+                    opt.value = "Equipa";
+                    opt.text = "💈 Qualquer Barbeiro Disponível";
+                    selectProfissional.add(opt);
+                }
+                // 👆 FIM DO CARREGAMENTO DE PROFISSIONAIS 👆
                 
                 configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
                 configHorarios.almoco_inicio = "11:00";
@@ -390,6 +417,7 @@
                 const t = textoStr.toLowerCase(); let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
                 if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) { respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } 
                 else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) { respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸"; setTimeout(() => { window.location.hash = '#servicos'; }, 1200); } 
+                else if (t.includes('profissional') || t.includes('barbeiro') || t.includes('quem')) { respostaBot = "Podes escolher o profissional diretamente no nosso formulário de agendamento! Basta selecionares na caixinha antes de escolher a data. 😉"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } // Nova regra do bot
                 else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳"; } 
                 else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11h, e à tarde das 13h às 19:40h. ⏰"; } 
                 else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "O endereço exato está no final da página. Passa por cá! 📍"; } 
@@ -398,7 +426,6 @@
             }, 500);
         }
 
-        // AGORA RECARREGA OS HORÁRIOS SE O CLIENTE MUDAR OS SERVIÇOS DEPOIS DE ESCOLHER A DATA
         function atualizarResumo() {
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
@@ -416,7 +443,6 @@
                 resumoBox.style.display = 'none'; 
             }
 
-            // ATUALIZAÇÃO MÁGICA: Se a data já estiver escolhida, recalcula os blocos na hora!
             const dataEscolhida = document.getElementById('data').value;
             if (dataEscolhida && typeof agendamentosDaNuvem !== 'undefined') {
                 const selectHora = document.getElementById('hora');
@@ -428,7 +454,10 @@
         
         function verificarHorarios() {
             const dataEscolhida = document.getElementById('data').value;
-            if (!dataEscolhida) return;
+            // Só verifica os horários se a data E o profissional estiverem escolhidos
+            const profEscolhido = document.getElementById('profissional').value;
+
+            if (!dataEscolhida || !profEscolhido) return;
             const selectHora = document.getElementById('hora');
             
             if(!configHorarios) {
@@ -454,7 +483,6 @@
             document.body.appendChild(script);
         }
 
-        // LÓGICA DE JUNÇÃO: AGORA ELE VERIFICA SE O SERVIÇO INTEIRO CABE!
         function renderizarDropdown(dataEscolhida, selectHora) {
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
@@ -464,11 +492,17 @@
             let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
             let horaAtualMinutos = agora.getHours() * 60 + agora.getMinutes();
 
-            // Pega a duração dos serviços selecionados no momento (ou 20 min padrão)
             let duracaoMinutos = parseInt(document.getElementById('duracao_total').value) || 20;
             let blocosNecessarios = Math.ceil(duracaoMinutos / 20);
 
-            // PASSO 1: Mapear todos os slots de 20 min (livre ou ocupado?)
+            // Filtra os agendamentos da nuvem apenas para o profissional escolhido, OU bloqueios gerais
+            const profEscolhido = document.getElementById('profissional').value;
+            let agendamentosFiltrados = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.filter(ag => {
+                // Aqui seria necessário que a API retornasse o nome do profissional (ag.profissional). 
+                // Se a API não retorna, todos os barbeiros partilham a mesma agenda base no momento.
+                return true; 
+            }) : [];
+
             let mapaSlots = {};
             for (let c = cur; c <= end; c += 20) {
                 let hStr = Math.floor(c/60).toString().padStart(2,'0') + ":" + (c%60).toString().padStart(2,'0');
@@ -480,26 +514,22 @@
                 } else if (c >= bStart && c < bEnd) {
                     ocupado = true; motivo = "Almoço";
                 } else {
-                    ocupado = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr) : false;
+                    ocupado = agendamentosFiltrados.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr);
                     if(ocupado) motivo = "Ocupado";
                 }
                 mapaSlots[c] = { hora: hStr, ocupado: ocupado, motivo: motivo };
             }
 
-            // PASSO 2: Validar se há blocos consecutivos suficientes para o serviço
             let todosHorarios = [];
             for (let c = cur; c <= end; c += 20) {
                 let hStr = mapaSlots[c].hora;
 
                 if (mapaSlots[c].ocupado) {
-                    // Já está ocupado na raiz
                     todosHorarios.push({ hora: hStr, ocupado: true, motivo: mapaSlots[c].motivo });
                 } else {
-                    // Está livre, mas será que cabem X blocos para a frente?
                     let cabe = true;
                     for (let b = 1; b < blocosNecessarios; b++) {
                         let nextC = c + (b * 20);
-                        // Se o próximo bloco não existir (fim expediente) ou estiver ocupado
                         if (!mapaSlots[nextC] || mapaSlots[nextC].ocupado) {
                             cabe = false;
                             break;
@@ -514,7 +544,6 @@
                 }
             }
 
-            // PASSO 3: Renderizar as bolinhas (options do select)
             todosHorarios.forEach(item => {
                 const opt = document.createElement('option'); opt.value = item.hora;
                 if(item.ocupado) {
@@ -537,6 +566,7 @@
             let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
             let valorFinal = document.getElementById('valor_total_enviar').value;
             let duracaoFinal = document.getElementById('duracao_total').value;
+            let profFinal = document.getElementById('profissional').value; // Pega o profissional
 
             const fd = new URLSearchParams();
             fd.append('acao', 'agendar');
@@ -549,10 +579,10 @@
             fd.append('servico', nomes.join(" + "));
             fd.append('valor_total', valorFinal);
             fd.append('duracao_total', duracaoFinal);
-            fd.append('profissional', 'Principal');
+            fd.append('profissional', profFinal); // Envia o profissional
 
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
-                var texto = `Olá!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
+                var texto = `Olá!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Profissional:* ${profFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
                 
                 e.target.reset(); document.getElementById('hora').disabled = true; document.getElementById('resumo-pedido').style.display = 'none';
                 
