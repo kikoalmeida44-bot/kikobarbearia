@@ -292,6 +292,9 @@
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
             <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
             <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço da Barbearia"></div>
+            <!-- 👇 NOVO CAMPO ADICIONADO AQUI 👇 -->
+            <div class="input-group"><input type="text" id="edit-link-google" placeholder="Link do Google Meu Negócio (Para Avaliações)"></div>
+            <!-- 👆 NOVO CAMPO ADICIONADO AQUI 👆 -->
             <button class="action-btn" onclick="salvarTextos()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
         </div>
@@ -1042,6 +1045,8 @@
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
                 if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
                 if(data.endereco) document.getElementById('edit-endereco').value = data.endereco; 
+                // 👇 CARREGA O LINK DO GOOGLE 👇
+                if(data.link_google) document.getElementById('edit-link-google').value = data.link_google; 
             } catch(e) {} 
         }
         
@@ -1053,6 +1058,8 @@
             fd.append('subtitulo', document.getElementById('edit-subtitulo').value); 
             fd.append('telefone', document.getElementById('edit-telefone').value); 
             fd.append('endereco', document.getElementById('edit-endereco').value); 
+            // 👇 ENVIA O LINK DO GOOGLE 👇
+            fd.append('link_google', document.getElementById('edit-link-google').value); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
             alert('Guardado!'); 
