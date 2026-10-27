@@ -139,7 +139,6 @@
     <div class="overlay-global"></div>
 
     <header>
-        <!-- AQUI ESTÁ A ATUALIZAÇÃO DA LOGO -->
         <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
             <img src="icone.png" alt="Logo Sistema KB" style="height: 45px; border-radius: 8px;">
             <h1 id="header-title" style="margin: 0; font-size: 1.8em;">A Carregar...</h1>
@@ -236,14 +235,12 @@
                     <input type="hidden" id="valor_total_enviar" name="valor_total" value="0">
                 </div>
 
-                <!-- 👇 NOVO CAMPO: SELEÇÃO DE PROFISSIONAL 👇 -->
                 <div class="form-group">
                     <label for="profissional">Profissional de Preferência:</label>
                     <select id="profissional" name="profissional" required onchange="verificarHorarios()">
                         <option value="" disabled selected>A carregar profissionais...</option>
                     </select>
                 </div>
-                <!-- 👆 FIM DO NOVO CAMPO 👆 -->
 
                 <div class="form-group">
                     <label for="data">Data de Preferência:</label>
@@ -274,7 +271,6 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // CAPTURA INTELIGENTE E LIMPEZA DO ID AUTOMÁTICA
         const urlParams = new URLSearchParams(window.location.search);
         let idBruto = urlParams.get('id');
         let idBarbearia = '';
@@ -358,8 +354,10 @@
                     let listaServicos = JSON.parse(textos.servicos);
                     let htmlCards = ""; let htmlCaixas = "";
                     listaServicos.forEach(servico => {
-                        htmlCards += `<div class="service-card"><h3>${servico.nome}</h3><p>Cuidado profissional na barbearia.</p><div class="service-price">R$ ${servico.preco}</div></div>`;
-                        htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${servico.preco}" data-tempo="${servico.tempo}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${servico.tempo}m)</span><span class="checkbox-price">R$ ${servico.preco}</span></div></label>`;
+                        let precoServ = servico.preco !== undefined ? servico.preco : (servico.valor !== undefined ? servico.valor : 0);
+                        let tempoServ = servico.tempo !== undefined ? servico.tempo : (servico.duracao !== undefined ? servico.duracao : 20);
+                        htmlCards += `<div class="service-card"><h3>${servico.nome}</h3><p>Cuidado profissional na barbearia.</p><div class="service-price">R$ ${precoServ}</div></div>`;
+                        htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${precoServ}" data-tempo="${tempoServ}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${tempoServ}m)</span><span class="checkbox-price">R$ ${precoServ}</span></div></label>`;
                     });
                     document.getElementById('quadro_servicos_dinamicos').innerHTML = htmlCards;
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
@@ -368,7 +366,6 @@
                     document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p>Nenhum serviço registado.</p>";
                 }
 
-                // 👇 NOVIDADE: CARREGA OS PROFISSIONAIS PARA O SELECT 👇
                 const selectProfissional = document.getElementById('profissional');
                 selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
                 if (textos.profissionais && textos.profissionais !== "[]") {
@@ -381,26 +378,24 @@
                     });
                 } else {
                     let opt = document.createElement('option');
-                    opt.value = "Equipa";
+                    opt.value = "Equipe";
                     opt.text = "💈 Qualquer Barbeiro Disponível";
                     selectProfissional.add(opt);
                 }
-                // 👆 FIM DO CARREGAMENTO DE PROFISSIONAIS 👆
                 
                 configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
-                configHorarios.almoco_inicio = "11:00";
+                configHorarios.almoco_inicio = "11:40";
                 configHorarios.almoco_fim = "13:00";
                 if(!configHorarios.abre) configHorarios.abre = "08:00";
                 if(!configHorarios.fecha) configHorarios.fecha = "19:40";
                 if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
 
-                document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:00 e das 13:00 às ${configHorarios.fecha}</span>`;
+                document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:40 e das 13:00 às ${configHorarios.fecha}</span>`;
             }).catch(e => {
-                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
             });
         };
 
-        // --- CHATBOT INTELIGENTE LOCAL ---
         function alternarChat() { const janela = document.getElementById('chatJanela'); janela.style.display = (janela.style.display === 'block') ? 'none' : 'block'; }
         function verificarEnter(event) { if (event.key === "Enter") processarMensagemUsuario(); }
         function enviarOpcao(texto) { document.getElementById('chatInput').value = texto; processarMensagemUsuario(); }
@@ -417,9 +412,9 @@
                 const t = textoStr.toLowerCase(); let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
                 if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) { respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } 
                 else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) { respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸"; setTimeout(() => { window.location.hash = '#servicos'; }, 1200); } 
-                else if (t.includes('profissional') || t.includes('barbeiro') || t.includes('quem')) { respostaBot = "Podes escolher o profissional diretamente no nosso formulário de agendamento! Basta selecionares na caixinha antes de escolher a data. 😉"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } // Nova regra do bot
+                else if (t.includes('profissional') || t.includes('barbeiro') || t.includes('quem')) { respostaBot = "Podes escolher o profissional diretamente no nosso formulário de agendamento! Basta selecionares na caixinha antes de escolher a data. 😉"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); }
                 else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳"; } 
-                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11h, e à tarde das 13h às 19:40h. ⏰"; } 
+                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11:40, e à tarde das 13h às 19:40h. ⏰"; } 
                 else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "O endereço exato está no final da página. Passa por cá! 📍"; } 
                 else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) { respostaBot = "Fala chefe! Tudo ótimo por aqui. Como posso ajudar o seu visual hoje? 👊"; }
                 mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; menuOpcoes.style.opacity = '1'; menuOpcoes.style.pointerEvents = 'auto';
@@ -452,16 +447,18 @@
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
         
+        // =========================================================================
+        // CORREÇÃO CRUCIAL: ENVIA O PROFISSIONAL SELECIONADO NA REQUISIÇÃO AO APPS SCRIPT
+        // =========================================================================
         function verificarHorarios() {
             const dataEscolhida = document.getElementById('data').value;
-            // Só verifica os horários se a data E o profissional estiverem escolhidos
             const profEscolhido = document.getElementById('profissional').value;
 
             if (!dataEscolhida || !profEscolhido) return;
             const selectHora = document.getElementById('hora');
             
             if(!configHorarios) {
-                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:00", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
             }
 
             const d = new Date(dataEscolhida + "T12:00:00"); const diaSemana = d.getDay(); 
@@ -478,7 +475,11 @@
                 renderizarDropdown(dataEscolhida, selectHora);
             };
             
-            const script = document.createElement('script'); script.id = callbackName; script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&callback=' + callbackName;
+            // ADICIONADO &profissional= NO FETCH PARA FILTRAR CORRETAMENTE NO BACKEND
+            const script = document.createElement('script'); 
+            script.id = callbackName; 
+            script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(profEscolhido) + '&callback=' + callbackName;
+            
             script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
             document.body.appendChild(script);
         }
@@ -486,7 +487,7 @@
         function renderizarDropdown(dataEscolhida, selectHora) {
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
             let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
-            let bStart = parseTempo(configHorarios.almoco_inicio || "11:00"); let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
+            let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
 
             let agora = new Date();
             let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
@@ -495,12 +496,13 @@
             let duracaoMinutos = parseInt(document.getElementById('duracao_total').value) || 20;
             let blocosNecessarios = Math.ceil(duracaoMinutos / 20);
 
-            // Filtra os agendamentos da nuvem apenas para o profissional escolhido, OU bloqueios gerais
-            const profEscolhido = document.getElementById('profissional').value;
+            // Filtro rigoroso por profissional no lado do cliente também
+            const profEscolhido = (document.getElementById('profissional').value || "").trim().toLowerCase();
             let agendamentosFiltrados = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.filter(ag => {
-                // Aqui seria necessário que a API retornasse o nome do profissional (ag.profissional). 
-                // Se a API não retorna, todos os barbeiros partilham a mesma agenda base no momento.
-                return true; 
+                if (!ag.profissional) return true; // Compatibilidade com agendamentos antigos
+                let pAg = ag.profissional.trim().toLowerCase();
+                if (profEscolhido === "" || profEscolhido === "equipe" || pAg === "equipe" || pAg === "sistema") return true;
+                return pAg === profEscolhido;
             }) : [];
 
             let mapaSlots = {};
@@ -566,7 +568,7 @@
             let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
             let valorFinal = document.getElementById('valor_total_enviar').value;
             let duracaoFinal = document.getElementById('duracao_total').value;
-            let profFinal = document.getElementById('profissional').value; // Pega o profissional
+            let profFinal = document.getElementById('profissional').value;
 
             const fd = new URLSearchParams();
             fd.append('acao', 'agendar');
@@ -579,7 +581,7 @@
             fd.append('servico', nomes.join(" + "));
             fd.append('valor_total', valorFinal);
             fd.append('duracao_total', duracaoFinal);
-            fd.append('profissional', profFinal); // Envia o profissional
+            fd.append('profissional', profFinal);
 
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
                 var texto = `Olá!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Profissional:* ${profFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
