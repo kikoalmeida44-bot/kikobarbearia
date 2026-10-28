@@ -23,37 +23,45 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        /* Importando paleta de fontes profissionais */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&family=Oswald:wght@400;600&family=Poppins:wght@400;600;700&display=swap');
+        
+        :root {
+            /* Variáveis Dinâmicas para White-Label (Serão injetadas via JS) */
+            --cor-principal: #c8a355; 
+            --fonte-principal: 'Montserrat', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--fonte-principal); }
         body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; min-height: 100vh; padding: 20px 10px; position: relative; }
-        .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid #c8a355; border-radius: 8px; padding: 20px; display: none; }
-        h1.logo { text-align: center; color: #c8a355; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
+        .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid var(--cor-principal); border-radius: 8px; padding: 20px; display: none; }
+        h1.logo { text-align: center; color: var(--cor-principal); font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
         
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0d0d0d; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .login-box { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #c8a355; text-align: center; width: 90%; max-width: 350px; }
+        .login-box { background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid var(--cor-principal); text-align: center; width: 90%; max-width: 350px; }
         .login-box input { width: 100%; padding: 12px; margin: 15px 0; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; text-align: center; font-size: 1rem; }
-        .login-box button { width: 100%; padding: 12px; background-color: #c8a355; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .login-box button { width: 100%; padding: 12px; background-color: var(--cor-principal); color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
         /* ESTILO DO PAINEL MESTRE SAAS */
         .master-barber-card { background: linear-gradient(135deg, #1a1a1a, #2a2211); border: 1px dashed #ffd700; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .master-title { color: #ffd700; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
         .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
-        .section-title { color: #c8a355; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .section-title { color: var(--cor-principal); font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .dash-box { background-color: #222; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; }
         .ganhos-box { border-left: 3px solid #ffd700; text-align: center;} 
         .box-label { font-size: 0.7rem; color: #aaaaaa; font-weight: 600; margin-bottom: 5px; }
-        .menu-btn { width: 100%; background-color: transparent; color: #c8a355; border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; }
-        .menu-btn:hover { background-color: #1a1a1a; border-color: #c8a355; }
+        .menu-btn { width: 100%; background-color: transparent; color: var(--cor-principal); border: 1px solid #333; padding: 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; }
+        .menu-btn:hover { background-color: #1a1a1a; border-color: var(--cor-principal); }
         .logout-btn { width: 100%; background-color: transparent; color: #ff4c4c; border: 1px solid #333; padding: 12px; font-size: 0.75rem; border-radius: 6px; margin-top: 20px; cursor: pointer; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
-        .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #c8a355; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
-        .modal-title { color: #c8a355; margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
+        .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-principal); width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+        .modal-title { color: var(--cor-principal); margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; font-family: inherit; }
-        .action-btn { background-color: #c8a355; color: black; border: none; padding: 12px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
+        .action-btn { background-color: var(--cor-principal); color: black; border: none; padding: 12px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
         .close-btn { background-color: #333; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
         .linha-item { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px; transition: 0.3s; justify-content: space-between;}
         .linha-item input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
@@ -137,7 +145,7 @@
         <button class="menu-btn" onclick="abrirModalServicos()">✂ GERENCIAR SERVIÇOS</button>
         <button class="menu-btn" onclick="abrirModalProfissionais()">💈 GERENCIAR PROFISSIONAIS</button>
         <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
-        <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS DO SITE</button>
+        <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS E VISUAL DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
         <button class="logout-btn" onclick="window.location.href='login.html'">🔒 Sair e Bloquear Painel</button>
     </div>
@@ -265,7 +273,7 @@
     <!-- MODAL PROFISSIONAIS -->
     <div id="modal-profissionais" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #c8a355;">💈 Gerenciar Profissionais</h2>
+            <h2 class="modal-title" style="color: var(--cor-principal);">💈 Gerenciar Profissionais</h2>
             <div id="lista-profissionais-container"></div>
             <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProfissional('')">+ Novo Profissional</button><br><br>
             <button class="action-btn" onclick="salvarProfissionais()">Guardar Profissionais</button>
@@ -285,17 +293,37 @@
         </div>
     </div>
     
+    <!-- MODAL TEXTOS E ESTÉTICA -->
     <div id="modal-textos" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">🎨 Textos do Site</h2>
+            <h2 class="modal-title">🎨 Textos e Visual do Site</h2>
+            
+            <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Configurações de Textos:</h3>
             <div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div>
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
             <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
             <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço da Barbearia"></div>
-            <!-- 👇 NOVO CAMPO ADICIONADO AQUI 👇 -->
-            <div class="input-group"><input type="text" id="edit-link-google" placeholder="Link do Google Meu Negócio (Para Avaliações)"></div>
-            <!-- 👆 NOVO CAMPO ADICIONADO AQUI 👆 -->
-            <button class="action-btn" onclick="salvarTextos()">Guardar</button>
+            <div class="input-group"><input type="text" id="edit-link-google" placeholder="Link do Google Meu Negócio"></div>
+            
+            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
+            <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Estética e Branding (SaaS):</h3>
+            
+            <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                <label style="margin: 0; min-width: 120px;">Cor Principal:</label>
+                <input type="color" id="edit-cor-primaria" style="width: 60px; height: 40px; padding: 0; border: none; background: transparent; cursor: pointer;">
+            </div>
+            
+            <div class="input-group">
+                <label>Fonte do Site/App:</label>
+                <select id="edit-fonte-texto">
+                    <option value="Montserrat">Montserrat (Moderna/Padrão)</option>
+                    <option value="Roboto">Roboto (Clássica)</option>
+                    <option value="Oswald">Oswald (Forte/Impactante)</option>
+                    <option value="Poppins">Poppins (Redonda/Elegante)</option>
+                </select>
+            </div>
+
+            <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
         </div>
     </div>
@@ -392,7 +420,7 @@
             btn.disabled = true;
             btn.innerText = "⚡ A acordar servidor... (Aguarde 10s)";
             area.style.display = 'block';
-            imgCont.innerHTML = `<p style="color:#c8a355; margin-top:10px;">A preparar a conexão, aguarde...</p>`;
+            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">A preparar a conexão, aguarde...</p>`;
 
             fetch(`${SCRIPT_URL}?acao=conectar_whatsapp&id_barbearia=${idBarbearia}`)
                 .then(res => res.json())
@@ -478,7 +506,6 @@
             carregarListaBarbeariasMaster();
         }
 
-        // FUNÇÃO DELETAR CONTA COMPLETA (ADICIONADO)
         async function excluirBarbearia(idDaBarbearia) {
             if (confirm("Tem certeza que quer DELETAR esta barbearia? Todos os dados vão desaparecer e não tem como voltar atrás!")) {
                 const fd = new URLSearchParams();
@@ -541,6 +568,16 @@
                     const tex = await resTex.json();
                     if(tex.servicos) servicosCarregados = JSON.parse(tex.servicos);
                     if(tex.titulo) document.getElementById('titulo-barbearia').innerText = tex.titulo;
+                    
+                    // APLICA AS CORES E FONTES RECEBIDAS DA API NO PAINEL ADMIN E SALVA NO MODAL
+                    if(tex.cor_primaria) {
+                        document.documentElement.style.setProperty('--cor-principal', tex.cor_primaria);
+                        document.getElementById('edit-cor-primaria').value = tex.cor_primaria;
+                    }
+                    if(tex.fonte_texto) {
+                        document.documentElement.style.setProperty('--fonte-principal', `'${tex.fonte_texto}', sans-serif`);
+                        document.getElementById('edit-fonte-texto').value = tex.fonte_texto;
+                    }
                 } catch(e){}
                 
                 document.getElementById('ganhos-estimados').innerText = (data.faturamento || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -565,6 +602,10 @@
                 }
                 
                 const ctx = document.getElementById('graficoFaturamento').getContext('2d');
+                
+                // Lendo a cor principal para usar no gráfico
+                const corG = getComputedStyle(document.documentElement).getPropertyValue('--cor-principal').trim() || '#c8a355';
+
                 window.meuGrafico = new Chart(ctx, {
                     type: 'bar',
                     data: { 
@@ -572,7 +613,7 @@
                         datasets: [{ 
                             label: 'Receita (R$)', 
                             data: Object.values(ultimos7Dias), 
-                            backgroundColor: '#c8a355', 
+                            backgroundColor: corG, 
                             borderRadius: 4 
                         }] 
                     },
@@ -607,7 +648,7 @@
                         if (ag.data !== dataAtual) {
                             dataAtual = ag.data;
                             const divData = document.createElement('div');
-                            divData.style.cssText = "background-color: #c8a355; color: #000; font-weight: bold; padding: 5px 10px; margin: 15px 0 10px 0; border-radius: 4px; font-size: 0.85rem;";
+                            divData.style.cssText = "background-color: var(--cor-principal); color: #000; font-weight: bold; padding: 5px 10px; margin: 15px 0 10px 0; border-radius: 4px; font-size: 0.85rem;";
                             divData.innerText = "📅 " + ag.data.split('-').reverse().join('/');
                             containerAgenda.appendChild(divData);
                         }
@@ -657,7 +698,7 @@
                                 <select id="prod-comanda-${ag.data}-${ag.hora}" style="flex: 1; padding: 6px; background: #111; color: white; border: 1px solid #444; border-radius: 4px; font-size: 0.75rem;">
                                     ${optionsComanda}
                                 </select>
-                                <button onclick="adicionarItemComanda('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: #c8a355; color: black; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">➕ Lançar</button>
+                                <button onclick="adicionarItemComanda('${ag.data}', '${ag.hora}', '${ag.nome}')" style="background: var(--cor-principal); color: black; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">➕ Lançar</button>
                             </div>
                             ` : ''}
                         `;
@@ -795,7 +836,7 @@
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
                         <div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Gasto: R$ ${parseFloat(cli.gastoTotal || 0).toFixed(2)}</div>
                         <div style="display: flex; gap:5px;">
-                            <button onclick="venderPacote('${cli.telefone}', '${cli.nome}')" style="background:#c8a355; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">🛒 Vender Pacote</button>
+                            <button onclick="venderPacote('${cli.telefone}', '${cli.nome}')" style="background:var(--cor-principal); color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">🛒 Vender Pacote</button>
                             ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✂️ Usar 1</button>` : ''}
                         </div>
                     `;
@@ -1045,12 +1086,14 @@
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
                 if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
                 if(data.endereco) document.getElementById('edit-endereco').value = data.endereco; 
-                // 👇 CARREGA O LINK DO GOOGLE 👇
                 if(data.link_google) document.getElementById('edit-link-google').value = data.link_google; 
+                if(data.cor_primaria) document.getElementById('edit-cor-primaria').value = data.cor_primaria;
+                if(data.fonte_texto) document.getElementById('edit-fonte-texto').value = data.fonte_texto;
             } catch(e) {} 
         }
         
         async function salvarTextos() { 
+            // 1. Salvar os textos base
             const fd = new URLSearchParams(); 
             fd.append('acao', 'salvar_textos'); 
             fd.append('id_barbearia', idBarbearia);
@@ -1058,12 +1101,22 @@
             fd.append('subtitulo', document.getElementById('edit-subtitulo').value); 
             fd.append('telefone', document.getElementById('edit-telefone').value); 
             fd.append('endereco', document.getElementById('edit-endereco').value); 
-            // 👇 ENVIA O LINK DO GOOGLE 👇
             fd.append('link_google', document.getElementById('edit-link-google').value); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Guardado!'); 
+
+            // 2. Salvar as cores e fontes (Branding SaaS)
+            const fd2 = new URLSearchParams();
+            fd2.append('acao', 'salvar_aparencia');
+            fd2.append('id_barbearia', idBarbearia);
+            fd2.append('cor_primaria', document.getElementById('edit-cor-primaria').value);
+            fd2.append('fonte_texto', document.getElementById('edit-fonte-texto').value);
+
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd2.toString(), mode: 'no-cors' });
+
+            alert('Textos e Visual guardados!'); 
             fecharModal('modal-textos'); 
+            atualizarPainelAdmin(); // Refresh no painel para aplicar a nova cor instantaneamente
         }
         
         async function salvarHorarios() { 
