@@ -137,6 +137,7 @@
 
         <button class="menu-btn" onclick="abrirModal('modal-agenda')" style="border-color: #00bfff;">📋 VER AGENDA GERAL E COMANDAS <span id="badge-agenda" class="badge-notif">Novo</span></button>
         <button class="menu-btn" onclick="abrirModal('modal-financeiro')" style="border-color: #ffd700;">💰 FINANCEIRO / DESPESAS</button>
+        <button class="menu-btn" onclick="abrirModalComissoes()" style="border-color: #28a745;">💵 RELATÓRIO DE COMISSÕES</button>
         <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 CRM / PACOTES CLIENTES</button>
         <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
@@ -182,6 +183,48 @@
             <div id="lista-financeiro-container" style="max-height: 40vh; overflow-y: auto;"></div>
             
             <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-financeiro')">Voltar</button>
+        </div>
+    </div>
+
+    <!-- MODAL RELATÓRIO DE COMISSÕES -->
+    <div id="modal-comissoes" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title" style="color: #28a745;">💵 Relatório de Comissões</h2>
+            
+            <div class="input-group">
+                <label>Selecione o Profissional:</label>
+                <select id="comissao-profissional" onchange="calcularComissoes()">
+                    <option value="todos">-- Todos os Profissionais --</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Porcentagem de Comissão Padrão (%):</label>
+                <input type="number" id="comissao-porcentagem" value="50" min="0" max="100" oninput="calcularComissoes()">
+            </div>
+
+            <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; text-align: center;">
+                <div style="font-size: 0.75rem; color: #aaa;">FATURAMENTO TOTAL DOS SERVIÇOS</div>
+                <div id="comissao-total-servicos" style="font-size: 1.2rem; color: #fff; font-weight: bold; margin-bottom: 10px;">R$ 0,00</div>
+                
+                <div style="display: flex; justify-content: space-around; border-top: 1px solid #222; padding-top: 10px;">
+                    <div>
+                        <div style="font-size: 0.7rem; color: #28a745;">COMISSÃO PROFISSIONAL</div>
+                        <span id="comissao-valor-profissional" style="font-size: 1rem; color: #28a745; font-weight: bold;">R$ 0,00</span>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.7rem; color: #ffd700;">CAIXA EMPRESA</div>
+                        <span id="comissao-valor-empresa" style="font-size: 1rem; color: #ffd700; font-weight: bold;">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">📋 Detalhes dos Atendimentos Concluídos:</h3>
+            <div id="lista-comissoes-container" style="max-height: 30vh; overflow-y: auto;">
+                <p style="color: #888; font-size: 0.8rem;">Carregando...</p>
+            </div>
+
+            <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-comissoes')">Fechar</button>
         </div>
     </div>
 
@@ -374,12 +417,10 @@
 
         // 1. CARREGAMENTO BLINDADO: SÓ ENTRA SE NÃO ESTIVER BLOQUEADO
         window.addEventListener('DOMContentLoaded', async () => {
-            // Arruma o link de agendamento forçando o domínio correto
             const linkPronto = `https://kikobarbearia.com.br/index.html?id=${idBarbearia}`;
             const inputLink = document.getElementById('link-compartilhamento');
             if(inputLink) inputLink.value = linkPronto;
 
-            // Verifica bloqueio real antes de liberar o painel (exceto para o Kiko)
             if (idBarbearia !== 'kiko_barberia' && idBarbearia !== 'kiko_barb') {
                 try {
                     const res = await fetch(SCRIPT_URL + '?acao=listar_barbearias');
@@ -388,15 +429,13 @@
                     
                     if (unidade && (unidade.status.toLowerCase() === "bloqueado" || unidade.status.toLowerCase() === "bloqueio")) {
                         alert("❌ CONTA BLOQUEADA. O seu acesso foi suspenso. Por favor, contacte o administrador.");
-                        window.location.href = "login.html"; // Chuta o utilizador para fora
-                        return; // Para o carregamento
+                        window.location.href = "login.html";
+                        return;
                     }
                 } catch(e) {
                     console.log("Erro ao verificar bloqueio.");
                 }
             }
-            
-            // Se passar no teste de bloqueio, carrega tudo
             liberarEntradaPainel();
         });
 
@@ -411,7 +450,6 @@
             });
         }
 
-        // 2. SISTEMA DE QR CODE MAIS INTELIGENTE E RESILIENTE
         function gerarQrCodeWhatsApp() {
             const btn = document.getElementById('btnConnectWa');
             const area = document.getElementById('areaQrCode');
@@ -430,13 +468,11 @@
 
                     if (data.qrcode && data.qrcode.length > 20) {
                         let src = data.qrcode;
-                        // Garante que a imagem renderiza mesmo se a API devolver apenas a base64 crua
                         if (!src.startsWith("data:image")) {
                             src = "data:image/png;base64," + src;
                         }
                         imgCont.innerHTML = `<img src="${src}" style="width: 200px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">`;
                     } else {
-                        // Se a API ainda estiver a iniciar, avisa o cliente para tentar de novo
                         imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">O servidor está a iniciar. <b>Clique no botão "Gerar" novamente agora!</b></p>`;
                     }
                 })
@@ -449,6 +485,7 @@
 
         window.todosClientes = []; 
         window.produtosCarregados = [];
+        window.dadosDashboardCache = null; // Cache para usar no relatório de comissões
 
         function liberarEntradaPainel() {
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
@@ -561,6 +598,7 @@
             try { 
                 const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + idBarbearia); 
                 const data = await res.json();
+                window.dadosDashboardCache = data; // Guarda no cache
                 
                 let servicosCarregados = [];
                 try {
@@ -569,7 +607,6 @@
                     if(tex.servicos) servicosCarregados = JSON.parse(tex.servicos);
                     if(tex.titulo) document.getElementById('titulo-barbearia').innerText = tex.titulo;
                     
-                    // APLICA AS CORES E FONTES RECEBIDAS DA API NO PAINEL ADMIN E SALVA NO MODAL
                     if(tex.cor_primaria) {
                         document.documentElement.style.setProperty('--cor-principal', tex.cor_primaria);
                         document.getElementById('edit-cor-primaria').value = tex.cor_primaria;
@@ -602,8 +639,6 @@
                 }
                 
                 const ctx = document.getElementById('graficoFaturamento').getContext('2d');
-                
-                // Lendo a cor principal para usar no gráfico
                 const corG = getComputedStyle(document.documentElement).getPropertyValue('--cor-principal').trim() || '#c8a355';
 
                 window.meuGrafico = new Chart(ctx, {
@@ -742,6 +777,75 @@
                 }
 
             } catch (e) {}
+        }
+
+        // --- LÓGICA DO RELATÓRIO DE COMISSÕES ---
+        async function abrirModalComissoes() {
+            abrirModal('modal-comissoes');
+            const selectProf = document.getElementById('comissao-profissional');
+            selectProf.innerHTML = '<option value="todos">-- Todos os Profissionais --</option>';
+
+            try {
+                const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
+                const data = await res.json();
+                if (data.profissionais) {
+                    let profs = JSON.parse(data.profissionais);
+                    profs.forEach(p => {
+                        selectProf.innerHTML += `<option value="${p.nome}">${p.nome}</option>`;
+                    });
+                }
+            } catch(e) {}
+
+            calcularComissoes();
+        }
+
+        function calcularComissoes() {
+            if (!window.dadosDashboardCache || !window.dadosDashboardCache.agenda) {
+                document.getElementById('lista-comissoes-container').innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum dado financeiro carregado.</p>';
+                return;
+            }
+
+            const profSelecionado = document.getElementById('comissao-profissional').value;
+            const percentual = parseFloat(document.getElementById('comissao-porcentagem').value) || 0;
+            const agenda = window.dadosDashboardCache.agenda;
+
+            let totalServicos = 0;
+            const containerDetalhes = document.getElementById('lista-comissoes-container');
+            containerDetalhes.innerHTML = '';
+
+            let atendimentosConcluidos = agenda.filter(ag => {
+                let concl = ag.status === "Concluído";
+                let matchProf = (profSelecionado === "todos" || (ag.profissional && ag.profissional.trim().toLowerCase() === profSelecionado.trim().toLowerCase()));
+                return concl && matchProf;
+            });
+
+            if (atendimentosConcluidos.length === 0) {
+                containerDetalhes.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum atendimento concluído encontrado.</p>';
+            } else {
+                atendimentosConcluidos.forEach(at => {
+                    let valor = parseFloat(at.valor_total || 0);
+                    totalServicos += valor;
+
+                    const div = document.createElement('div');
+                    div.className = 'linha-item';
+                    div.style.borderLeft = '3px solid #28a745';
+                    div.innerHTML = `
+                        <div>
+                            <strong>${at.nome}</strong> (${at.servico})<br>
+                            <span style="font-size:0.7rem; color:#aaa;">${at.data.split('-').reverse().join('/')} às ${at.hora} | 💈 ${at.profissional || 'Equipa'}</span>
+                        </div>
+                        <div style="color:#28a745; font-weight:bold;">R$ ${valor.toFixed(2)}</div>
+                    `;
+                    containerDetalhes.appendChild(div);
+                });
+            }
+
+            let valorComissao = (totalServicos * percentual) / 100;
+            let valorEmpresa = totalServicos - valorComissao;
+
+            document.getElementById('comissao-total-servicos').innerText = totalServicos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('comissao-valor-profissional').innerText = valorComissao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('comissao-valor-empresa').innerText = valorEmpresa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         function abrirModalDespesa() { 
@@ -1093,7 +1197,6 @@
         }
         
         async function salvarTextos() { 
-            // 1. Salvar os textos base
             const fd = new URLSearchParams(); 
             fd.append('acao', 'salvar_textos'); 
             fd.append('id_barbearia', idBarbearia);
@@ -1105,7 +1208,6 @@
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
 
-            // 2. Salvar as cores e fontes (Branding SaaS)
             const fd2 = new URLSearchParams();
             fd2.append('acao', 'salvar_aparencia');
             fd2.append('id_barbearia', idBarbearia);
@@ -1116,7 +1218,7 @@
 
             alert('Textos e Visual guardados!'); 
             fecharModal('modal-textos'); 
-            atualizarPainelAdmin(); // Refresh no painel para aplicar a nova cor instantaneamente
+            atualizarPainelAdmin(); 
         }
         
         async function salvarHorarios() { 
