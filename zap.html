@@ -3,258 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendamento Rápido</title>
+    <title>Agendamento Rápido | WhatsApp</title>
+    
+    <!-- Importando fontes profissionais -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #121212; color: #f5f5f5; margin: 0; padding: 20px; }
-        .container { max-width: 480px; margin: 0 auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h3 { text-align: center; color: #d4af37; margin-bottom: 5px; }
-        .subtitulo { text-align: center; font-size: 12px; color: #888; margin-bottom: 20px; }
-        label { display: block; margin-top: 15px; font-size: 14px; color: #ccc; }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .lista-horarios { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; max-height: 180px; overflow-y: auto; }
-        .btn-horario { background: #2a2a2a; border: 1px solid #d4af37; color: #d4af37; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; flex: 1 1 22%; text-align: center; }
-        .btn-horario.selecionado, .btn-horario:hover { background: #d4af37; color: #121212; font-weight: bold; }
-        .resumo { margin-top: 20px; background: #252525; padding: 12px; border-radius: 8px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-confirmar { width: 100%; margin-top: 20px; background: #d4af37; color: #121212; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
-        .btn-confirmar:hover { background: #c19b2e; }
-        .carregando { color: #d4af37; font-size: 13px; font-style: italic; margin-top: 5px; }
+        :root {
+            --cor-principal: #d4af37;
+            --fonte-principal: 'Montserrat', sans-serif;
+        }
+
+        body { font-family: var(--fonte-principal); margin: 0; padding: 20px; color: #ffffff; background-color: #050505; }
+        .container { max-width: 500px; margin: 20px auto; background: rgba(10, 10, 10, 0.9); padding: 30px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        h3 { text-align: center; color: var(--cor-principal); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .subtitulo { text-align: center; font-size: 12px; color: #888; margin-bottom: 25px; text-transform: uppercase; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #dddddd; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
+        .form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"], .form-group input[type="date"], .form-group select { width: 100%; padding: 12px; background-color: rgba(0,0,0,0.6); color: #ffffff; border: 1px solid #444; box-sizing: border-box; border-radius: 6px; font-family: var(--fonte-principal); font-size: 15px; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--cor-principal); outline: none; }
+
+        .checkbox-group { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; border: 1px solid #333; }
+        .checkbox-item { display: flex; align-items: center; background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid #333; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+        .checkbox-item:hover { border-color: var(--cor-principal); }
+        .checkbox-item input { margin-right: 12px; transform: scale(1.3); accent-color: var(--cor-principal); cursor: pointer; }
+        .checkbox-details { display: flex; justify-content: space-between; flex-grow: 1; align-items: center; }
+        .checkbox-title { font-weight: 600; color: #fff; font-size: 0.9em; }
+        .checkbox-price { color: var(--cor-principal); font-weight: 700; font-size: 0.95em; }
+
+        .resumo-box { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.7); border-left: 4px solid var(--cor-principal); display: none; border-radius: 4px; }
+        .resumo-box p { margin: 4px 0; font-size: 1em; color: #ccc; }
+        .resumo-box strong { color: var(--cor-principal); }
+
+        .btn-gold { background-color: var(--cor-principal); color: #050505; width: 100%; padding: 15px; text-decoration: none; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 6px; border: none; cursor: pointer; font-family: var(--fonte-principal); margin-top: 15px; transition: 0.3s; }
+        .btn-gold:hover { background-color: #c19b2e; }
+        .carregando-txt { text-align: center; color: var(--cor-principal); font-size: 14px; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h3 id="titulo-empresa">A CARREGAR...</h3>
-    <div class="subtitulo">Agendamento Rápido</div>
+    <div class="subtitulo">Agendamento Rápido via WhatsApp</div>
 
-    <form id="form-agendamento" onsubmit="enviarAgendamento(event)">
-        <label>SEU NOME</label>
-        <input type="text" id="nome" placeholder="Digite seu nome completo" required>
-
-        <label>SEU WHATSAPP</label>
-        <input type="tel" id="telefone" placeholder="5567999999999" required>
-
-        <label>O QUE VAMOS FAZER?</label>
-        <select id="servico" onchange="atualizarResumo()" required>
-            <option value="">A carregar serviços...</option>
-        </select>
-
-        <label>PROFISSIONAL</label>
-        <select id="profissional" onchange="mudarProfissional()" required>
-            <option value="Equipe">Equipe</option>
-        </select>
-
-        <label>PARA QUANDO?</label>
-        <input type="date" id="data" onchange="carregarHorarios()" required>
-
-        <label>HORÁRIOS LIVRES</label>
-        <div id="lista-horarios" class="lista-horarios">
-            <span class="carregando">Selecione uma data acima.</span>
+    <form id="formAgendamento">
+        <div class="form-group">
+            <label for="nome">O Seu Nome:</label>
+            <input type="text" id="nome" placeholder="Digite seu nome completo" required>
         </div>
 
-        <div class="resumo">
-            <div>
-                <span style="font-size: 12px; color: #aaa;">Tempo estimado</span><br>
-                <strong id="lbl-tempo">0 min</strong>
-            </div>
-            <div style="text-align: right;">
-                <span style="font-size: 12px; color: #aaa;">Total</span><br>
-                <strong id="lbl-valor" style="color: #d4af37; font-size: 18px;">R$ 0,00</strong>
-            </div>
+        <div class="form-group">
+            <label for="telefone">O Seu WhatsApp (Com DDD):</label>
+            <input type="tel" id="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
         </div>
 
-        <button type="submit" class="btn-confirmar">CONFIRMAR AGENDAMENTO</button>
+        <div class="form-group">
+            <label>Quais serviços deseja hoje?</label>
+            <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
+                 <p class="carregando-txt">A carregar serviços...</p>
+            </div>
+            <div id="resumo-pedido" class="resumo-box">
+                <p>Total Estimado: <strong id="total-valor">R$ 0</strong></p>
+                <p>Tempo Estimado: <strong id="total-tempo">0 min</strong></p>
+            </div>
+            <input type="hidden" id="duracao_total" value="0">
+            <input type="hidden" id="valor_total_enviar" value="0">
+        </div>
+
+        <div class="form-group">
+            <label for="profissional">Profissional de Preferência:</label>
+            <select id="profissional" required onchange="verificarHorarios()">
+                <option value="" disabled selected>A carregar profissionais...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="data">Data de Preferência:</label>
+            <input type="date" id="data" required onchange="verificarHorarios()">
+        </div>
+
+        <div class="form-group">
+            <label for="hora">Horário de Preferência:</label>
+            <select id="hora" required disabled>
+                <option value="" disabled selected>Selecione a data primeiro...</option>
+            </select>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-gold">Confirmar Agendamento</button>
     </form>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
-
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+    
     const urlParams = new URLSearchParams(window.location.search);
-    const idBarbearia = urlParams.get('id') || 'kiko_barb';
-    const telUrl = urlParams.get('tel');
+    let idBarbearia = urlParams.get('id') || localStorage.getItem('id_barbearia_ativo') || 'kiko_barb';
+    let telUrl = urlParams.get('tel');
+    let numeroWhatsappDono = "5567999673200";
+    let agendamentosDaNuvem = [];
+    let configHorarios = null;
 
     if (telUrl) {
         document.getElementById('telefone').value = telUrl;
+        mascaraTelefone(document.getElementById('telefone'));
     }
 
-    const hojeIso = new Date().toISOString().split('T')[0];
-    document.getElementById('data').value = hojeIso;
-    document.getElementById('data').min = hojeIso;
+    window.onload = function() {
+        let hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('data').setAttribute('min', hoje);
+        document.getElementById('data').value = hoje;
 
-    let servicosGlobal = [];
-    let horaSelecionada = null;
+        // Puxa os dados da mesma forma que o site principal
+        fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia)
+            .then(res => res.json())
+            .then(textos => {
+                if (textos.titulo) {
+                    document.getElementById('titulo-empresa').innerText = textos.titulo;
+                    document.title = textos.titulo + " | Agendamento Rápido";
+                }
+                if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, '');
 
-    function chamarScriptJSONP(paramsUrl, callbackName, sucessoCallback) {
-        window[callbackName] = function(data) {
-            sucessoCallback(data);
-            delete window[callbackName];
-            if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
-        };
+                if (textos.servicos && textos.servicos !== "[]") {
+                    let listaServicos = JSON.parse(textos.servicos);
+                    let htmlCaixas = "";
+                    listaServicos.forEach(servico => {
+                        let precoServ = servico.preco !== undefined ? servico.preco : (servico.valor !== undefined ? servico.valor : 0);
+                        let tempoServ = servico.tempo !== undefined ? servico.tempo : (servico.duracao !== undefined ? servico.duracao : 20);
+                        htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${precoServ}" data-tempo="${tempoServ}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${tempoServ}m)</span><span class="checkbox-price">R$ ${precoServ}</span></div></label>`;
+                    });
+                    document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
+                } else {
+                    document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p class='carregando-txt'>Nenhum serviço registado.</p>";
+                }
 
-        let scriptEl = document.createElement('script');
-        scriptEl.src = `${URL_SCRIPT}?${paramsUrl}&callback=${callbackName}`;
-        scriptEl.onerror = function() {
-            console.error("Erro ao carregar via JSONP");
-            document.getElementById('titulo-empresa').innerText = "ERRO DE CONEXÃO";
-        };
-        document.body.appendChild(scriptEl);
-    }
+                const selectProfissional = document.getElementById('profissional');
+                selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
+                if (textos.profissionais && textos.profissionais !== "[]") {
+                    let listaProfissionais = JSON.parse(textos.profissionais);
+                    listaProfissionais.forEach(prof => {
+                        let opt = document.createElement('option');
+                        opt.value = prof.nome;
+                        opt.text = "💈 " + prof.nome;
+                        selectProfissional.add(opt);
+                    });
+                } else {
+                    let opt = document.createElement('option');
+                    opt.value = "Equipe";
+                    opt.text = "💈 Qualquer Barbeiro Disponível";
+                    selectProfissional.add(opt);
+                }
+                
+                configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
+                configHorarios.almoco_inicio = "11:40";
+                configHorarios.almoco_fim = "13:00";
+                if(!configHorarios.abre) configHorarios.abre = "08:00";
+                if(!configHorarios.fecha) configHorarios.fecha = "19:40";
+                if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
 
-    function carregarDadosIniciais() {
-        document.getElementById('titulo-empresa').innerText = "A CARREGAR...";
-
-        chamarScriptJSONP(`acao=obter_textos&id_barbearia=${idBarbearia}`, "retornoTextos", function(data) {
-            if (data.titulo) {
-                document.getElementById('titulo-empresa').innerText = data.titulo.toUpperCase();
-                document.title = data.titulo;
-            }
-
-            try {
-                servicosGlobal = typeof data.servicos === 'string' ? JSON.parse(data.servicos) : data.servicos;
-            } catch(e) {
-                servicosGlobal = [{nome: "Corte", valor: 35, duracao: 20}];
-            }
-
-            let selServico = document.getElementById('servico');
-            selServico.innerHTML = '<option value="">Selecione o serviço...</option>';
-            servicosGlobal.forEach(s => {
-                let opt = document.createElement('option');
-                opt.value = s.nome;
-                opt.setAttribute('data-valor', s.valor || s.preco || 0);
-                opt.setAttribute('data-duracao', s.duracao || 20);
-                opt.text = `${s.nome} - R$ ${Number(s.valor || s.preco || 0).toFixed(2)}`;
-                selServico.appendChild(opt);
+                verificarHorarios();
+            })
+            .catch(e => {
+                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+                document.getElementById('titulo-empresa').innerText = "KIKO BARBEARIA";
+                verificarHorarios();
             });
-
-            let profs = [];
-            try {
-                profs = typeof data.profissionais === 'string' ? JSON.parse(data.profissionais) : data.profissionais;
-            } catch(e) { profs = [{nome: "Equipe"}]; }
-
-            let selProf = document.getElementById('profissional');
-            selProf.innerHTML = '';
-            profs.forEach(p => {
-                let opt = document.createElement('option');
-                opt.value = p.nome;
-                opt.text = p.nome;
-                selProf.appendChild(opt);
-            });
-
-            carregarHorarios();
-        });
-    }
+    };
 
     function atualizarResumo() {
-        let sel = document.getElementById('servico');
-        let opt = sel.options[sel.selectedIndex];
-        if (!opt || !opt.value) {
-            document.getElementById('lbl-tempo').innerText = "0 min";
-            document.getElementById('lbl-valor').innerText = "R$ 0,00";
-            return;
-        }
-        let valor = parseFloat(opt.getAttribute('data-valor')) || 0;
-        let duracao = parseInt(opt.getAttribute('data-duracao')) || 20;
-
-        document.getElementById('lbl-tempo').innerText = duracao + " min";
-        document.getElementById('lbl-valor').innerText = "R$ " + valor.toFixed(2);
-        carregarHorarios();
-    }
-
-    function mudarProfissional() {
-        carregarHorarios();
-    }
-
-    function carregarHorarios() {
-        let dataVal = document.getElementById('data').value;
-        let profVal = document.getElementById('profissional').value || 'Equipe';
-        let divHorarios = document.getElementById('lista-horarios');
+        let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
+        let totalV = 0, totalT = 0;
+        checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
         
-        divHorarios.innerHTML = '<span class="carregando">A carregar horários...</span>';
-        horaSelecionada = null;
-
-        // USA EXATAMENTE A MESMA CHAMADA QUE O SITE PRINCIPAL USA PARA OBTER OS HORÁRIOS LIVRES
-        chamarScriptJSONP(`data=${dataVal}&id_barbearia=${idBarbearia}&profissional=${encodeURIComponent(profVal)}`, "retornoHorarios", function(horarios) {
-            divHorarios.innerHTML = '';
-            
-            let listaLimpa = [];
-            if (Array.isArray(horarios)) {
-                horarios.forEach(h => {
-                    if (typeof h === 'string') listaLimpa.push(h);
-                    else if (h && h.hora) listaLimpa.push(h.hora);
-                });
-            }
-
-            if (listaLimpa.length === 0) {
-                divHorarios.innerHTML = '<span style="color:#ff6b6b; font-size:13px;">Sem horários livres nesta data.</span>';
-                return;
-            }
-
-            listaLimpa.forEach(h => {
-                let btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'btn-horario';
-                btn.innerText = h;
-                btn.onclick = () => {
-                    document.querySelectorAll('.btn-horario').forEach(b => b.classList.remove('selecionado'));
-                    btn.classList.add('selecionado');
-                    horaSelecionada = h;
-                };
-                divHorarios.appendChild(btn);
-            });
-        });
-    }
-
-    function enviarAgendamento(e) {
-        e.preventDefault();
-        if (!horaSelecionada) {
-            alert("Por favor, selecione um horário livre!");
-            return;
+        document.getElementById('duracao_total').value = totalT; 
+        document.getElementById('valor_total_enviar').value = totalV;
+        
+        const resumoBox = document.getElementById('resumo-pedido');
+        if (totalT > 0) { 
+            resumoBox.style.display = 'block'; 
+            document.getElementById('total-valor').innerText = "R$ " + totalV; 
+            document.getElementById('total-tempo').innerText = totalT + " min"; 
+        } else { 
+            resumoBox.style.display = 'none'; 
         }
 
-        let sel = document.getElementById('servico');
-        let opt = sel.options[sel.selectedIndex];
-        let nomeServico = sel.value;
-        let valorServico = opt.getAttribute('data-valor');
-        let duracaoServico = opt.getAttribute('data-duracao');
+        const dataEscolhida = document.getElementById('data').value;
+        if (dataEscolhida && typeof agendamentosDaNuvem !== 'undefined') {
+            renderizarDropdown(dataEscolhida, document.getElementById('hora'));
+        }
+    }
 
-        let payload = {
-            id_barbearia: idBarbearia,
-            nome: document.getElementById('nome').value,
-            telefone: document.getElementById('telefone').value,
-            servico: nomeServico,
-            valor_total: valorServico,
-            duracao: duracaoServico,
-            profissional: document.getElementById('profissional').value,
-            data: document.getElementById('data').value,
-            hora: horaSelecionada
+    function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
+    
+    function verificarHorarios() {
+        const dataEscolhida = document.getElementById('data').value;
+        const profEscolhido = document.getElementById('profissional').value;
+
+        if (!dataEscolhida || !profEscolhido) return;
+        const selectHora = document.getElementById('hora');
+        
+        if(!configHorarios) {
+            configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+        }
+
+        const d = new Date(dataEscolhida + "T12:00:00"); const diaSemana = d.getDay(); 
+        if (!configHorarios.dias_abertos.includes(diaSemana)) {
+            selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
+        }
+
+        selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>A consultar agenda online...</option>';
+        
+        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+        window[callbackName] = function(data) {
+            agendamentosDaNuvem = data;
+            delete window[callbackName]; document.getElementById(callbackName)?.remove();
+            renderizarDropdown(dataEscolhida, selectHora);
         };
+        
+        const script = document.createElement('script'); 
+        script.id = callbackName; 
+        script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(profEscolhido) + '&callback=' + callbackName;
+        
+        script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
+        document.body.appendChild(script);
+    }
 
-        let btnSub = document.querySelector('.btn-confirmar');
-        btnSub.innerText = "A AGENDAR...";
-        btnSub.disabled = true;
+    function renderizarDropdown(dataEscolhida, selectHora) {
+        selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
+        let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
+        let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
 
-        fetch(URL_SCRIPT, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(res => {
-            if (res.result === "success" || res.status === "sucesso") {
-                alert("Agendamento realizado com sucesso!");
-                window.location.reload();
+        let agora = new Date();
+        let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
+        let horaAtualMinutos = agora.getHours() * 60 + agora.getMinutes();
+
+        let duracaoMinutos = parseInt(document.getElementById('duracao_total').value) || 20;
+        let blocosNecessarios = Math.ceil(duracaoMinutos / 20);
+
+        const profEscolhido = (document.getElementById('profissional').value || "").trim().toLowerCase();
+        let agendamentosFiltrados = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.filter(ag => {
+            if (!ag.profissional) return true; 
+            let pAg = ag.profissional.trim().toLowerCase();
+            if (profEscolhido === "" || profEscolhido === "equipe" || pAg === "equipe" || pAg === "sistema") return true;
+            return pAg === profEscolhido;
+        }) : [];
+
+        let mapaSlots = {};
+        for (let c = cur; c <= end; c += 20) {
+            let hStr = Math.floor(c/60).toString().padStart(2,'0') + ":" + (c%60).toString().padStart(2,'0');
+            let ocupado = false;
+            let motivo = "";
+
+            if (dataEscolhida === hojeStr && c <= horaAtualMinutos) {
+                ocupado = true; motivo = "Passado";
+            } else if (c >= bStart && c < bEnd) {
+                ocupado = true; motivo = "Almoço";
             } else {
-                alert("Erro ao agendar: " + (res.msg || "Horário indisponível"));
-                btnSub.innerText = "CONFIRMAR AGENDAMENTO";
-                btnSub.disabled = false;
+                ocupado = agendamentosFiltrados.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr);
+                if(ocupado) motivo = "Ocupado";
             }
-        })
-        .catch(err => {
-            alert("Agendamento enviado com sucesso!");
-            window.location.reload();
+            mapaSlots[c] = { hora: hStr, ocupado: ocupado, motivo: motivo };
+        }
+
+        let todosHorarios = [];
+        for (let c = cur; c <= end; c += 20) {
+            let hStr = mapaSlots[c].hora;
+
+            if (mapaSlots[c].ocupado) {
+                todosHorarios.push({ hora: hStr, ocupado: true, motivo: mapaSlots[c].motivo });
+            } else {
+                let cabe = true;
+                for (let b = 1; b < blocosNecessarios; b++) {
+                    let nextC = c + (b * 20);
+                    if (!mapaSlots[nextC] || mapaSlots[nextC].ocupado) {
+                        cabe = false;
+                        break;
+                    }
+                }
+
+                if (cabe) {
+                    todosHorarios.push({ hora: hStr, ocupado: false, motivo: "" });
+                } else {
+                    todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Espaço insuf." });
+                }
+            }
+        }
+
+        todosHorarios.forEach(item => {
+            const opt = document.createElement('option'); opt.value = item.hora;
+            if(item.ocupado) {
+                opt.text = item.hora + " (" + item.motivo + ")";
+                opt.disabled = true;
+                opt.style.color = "#ff4444";
+            } else {
+                opt.text = item.hora;
+            }
+            selectHora.add(opt);
         });
     }
 
-    window.onload = carregarDadosIniciais;
+    document.getElementById('formAgendamento').addEventListener('submit', e => {
+        e.preventDefault();
+        if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
+        document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde, a agendar e a bloquear...";
+        
+        var d = document.getElementById('data').value.split('-');
+        let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
+        let valorFinal = document.getElementById('valor_total_enviar').value;
+        let duracaoFinal = document.getElementById('duracao_total').value;
+        let profFinal = document.getElementById('profissional').value;
+
+        const fd = new URLSearchParams();
+        fd.append('acao', 'agendar');
+        fd.append('id_barbearia', idBarbearia);
+        fd.append('nome', document.getElementById('nome').value);
+        fd.append('email', '');
+        fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
+        fd.append('data', document.getElementById('data').value);
+        fd.append('hora', document.getElementById('hora').value);
+        fd.append('servico', nomes.join(" + "));
+        fd.append('valor_total', valorFinal);
+        fd.append('duracao_total', duracaoFinal);
+        fd.append('profissional', profFinal);
+
+        fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
+            var texto = `Olá!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Profissional:* ${profFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
+            
+            alert("Agendamento realizado com sucesso!");
+            setTimeout(() => { window.open("https://wa.me/" + numeroWhatsappDono + "?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1000);
+        });
+    });
+
+    function mascaraTelefone(input) {
+        let val = input.value;
+        if (val.startsWith('+55 ')) { val = val.substring(4); } 
+        else if (val.startsWith('+55')) { val = val.substring(3); } 
+        else if (val.startsWith('55') && val.length >= 12) { val = val.substring(2); }
+        
+        let v = val.replace(/\D/g, ''); 
+        if (v.length > 11) v = v.substring(0, 11);
+
+        let formatado = '';
+        if (v.length > 0) { formatado = '+55 ' + v.substring(0, 2); }
+        if (v.length > 2) { formatado += ' ' + v.substring(2, 7); }
+        if (v.length > 7) { formatado += '-' + v.substring(7, 11); }
+        
+        input.value = formatado;
+    }
 </script>
 
 </body>
