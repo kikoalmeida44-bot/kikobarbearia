@@ -142,10 +142,12 @@
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('cli-data').setAttribute('min', hoje);
 
-            // BUSCA DIRETA AO BACKEND (COM CORREÇÃO DE URL)
-            fetch(scriptURL + '?acao=obter_textos&id_barbearia=' + idBarbearia)
-            .then(res => res.json())
-            .then(textos => {
+            // CARREGAR DADOS VIA JSONP PARA EVITAR BLOQUEIO DE CORS
+            let cbName = 'jsonp_init_' + Math.round(Math.random() * 100000);
+            window[cbName] = function(textos) {
+                delete window[cbName];
+                document.getElementById(cbName)?.remove();
+
                 if (textos.cor_primaria) document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
                 if (textos.titulo) document.getElementById('header-nome').innerText = textos.titulo;
 
@@ -183,10 +185,15 @@
                 if(!configHorarios.abre) configHorarios.abre = "08:00";
                 if(!configHorarios.fecha) configHorarios.fecha = "19:40";
                 if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
-            })
-            .catch(err => {
-                document.getElementById('box-servicos').innerHTML = '<p style="color:#ff4444; font-size: 0.9rem;">Erro ao conectar com a barbearia. Tente novamente.</p>';
-            });
+            };
+
+            let scriptTag = document.createElement('script');
+            scriptTag.id = cbName;
+            scriptTag.src = scriptURL + '?acao=obter_textos&id_barbearia=' + idBarbearia + '&callback=' + cbName;
+            scriptTag.onerror = function() {
+                document.getElementById('box-servicos').innerHTML = '<p style="color:#ff4444; font-size: 0.9rem;">Erro ao conectar com o painel administrativo.</p>';
+            };
+            document.body.appendChild(scriptTag);
         };
 
         function toggleServico(card, nome, preco, tempo) {
@@ -253,16 +260,22 @@
             document.getElementById('loading-msg').style.display = "inline";
             boxHorarios.innerHTML = '';
 
-            fetch(scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(state.profissional))
-            .then(res => res.json())
-            .then(data => {
+            let cbAgenda = 'jsonp_agenda_' + Math.round(Math.random() * 100000);
+            window[cbAgenda] = function(data) {
+                delete window[cbAgenda];
+                document.getElementById(cbAgenda)?.remove();
                 agendamentosDaNuvem = data;
                 renderizarBotoesHora(dataEscolhida);
-            })
-            .catch(() => {
+            };
+
+            let scriptAgenda = document.createElement('script');
+            scriptAgenda.id = cbAgenda;
+            scriptAgenda.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(state.profissional) + '&callback=' + cbAgenda;
+            scriptAgenda.onerror = function() {
                 agendamentosDaNuvem = [];
                 renderizarBotoesHora(dataEscolhida);
-            });
+            };
+            document.body.appendChild(scriptAgenda);
         }
 
         function renderizarBotoesHora(dataEscolhida) {
