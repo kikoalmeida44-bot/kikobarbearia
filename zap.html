@@ -330,7 +330,19 @@
         fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' })
         .then(() => {
             alert("✅ Agendamento realizado com sucesso!\nA confirmação e os detalhes foram enviados para o seu WhatsApp.");
-            window.location.reload();
+            
+            // Tenta fechar a aba automaticamente (Funciona bem no navegador interno do WhatsApp)
+            window.open('','_self').close();
+            setTimeout(() => { window.close(); }, 300);
+
+            // Fallback: Se o navegador bloquear o fechamento, limpa a tela e exibe aviso de sucesso
+            document.body.innerHTML = `
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center; padding: 20px; font-family: 'Montserrat', sans-serif; background-color: #050505;">
+                    <h1 style="color: #d4af37; font-size: 2.2em; margin-bottom: 10px;">VAGA GARANTIDA! ✂️</h1>
+                    <p style="color: #fff; font-size: 1.1em; margin-bottom: 30px;">O seu horário foi marcado com sucesso e o nosso assistente já enviou a confirmação no seu WhatsApp.</p>
+                    <p style="color: #888; font-size: 0.9em;">Pode fechar esta aba e voltar ao WhatsApp.</p>
+                </div>
+            `;
         })
         .catch(() => {
             alert("⚠️ Ocorreu um erro ao processar o agendamento. Tente novamente.");
