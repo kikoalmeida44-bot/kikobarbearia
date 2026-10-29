@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Agendamento Rápido</title>
+    <title>Agendamento Rápido - Kiko Barbearia</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -12,22 +12,23 @@
             --cor-fundo: #0a0a0a;
             --cor-card: #161616;
             --cor-texto: #ffffff;
+            --fonte-principal: 'Montserrat', sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 100px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: var(--fonte-principal); }
+        body { background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 100px; }
 
         header { position: sticky; top: 0; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 100; display: flex; align-items: center; justify-content: space-between; }
-        header h1 { font-size: 1.2rem; font-weight: 700; color: var(--cor-principal); text-transform: uppercase; }
-        header span { font-size: 0.8rem; color: #888; }
+        header h1 { font-size: 1.1rem; font-weight: 700; color: var(--cor-principal); text-transform: uppercase; }
+        header span { font-size: 0.75rem; color: #888; }
 
         .container { padding: 20px; }
-        .section-title { font-size: 0.9rem; color: #888; text-transform: uppercase; font-weight: 700; margin-bottom: 12px; margin-top: 25px; letter-spacing: 1px;}
+        .section-title { font-size: 0.85rem; color: #888; text-transform: uppercase; font-weight: 700; margin-bottom: 12px; margin-top: 25px; letter-spacing: 1px;}
         .section-title:first-child { margin-top: 0; }
 
         .input-group { margin-bottom: 15px; }
-        .input-group input { width: 100%; padding: 16px; background: var(--cor-card); border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 1rem; font-family: inherit; outline: none; transition: 0.3s; }
-        .input-group input:focus { border-color: var(--cor-principal); }
+        .input-group input, .input-group select { width: 100%; padding: 16px; background: var(--cor-card); border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 1rem; font-family: inherit; outline: none; transition: 0.3s; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--cor-principal); }
 
         .servicos-grid { display: flex; flex-direction: column; gap: 10px; }
         .servico-card { display: flex; justify-content: space-between; align-items: center; background: var(--cor-card); padding: 18px; border-radius: 12px; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
@@ -120,11 +121,25 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
-        const urlParams = new URLSearchParams(window.location.search);
-        let idBarbearia = urlParams.get('id') || 'kiko_barb';
         
+        const urlParams = new URLSearchParams(window.location.search);
+        let idBruto = urlParams.get('id');
+        let idBarbearia = 'kiko_barb';
+
+        if (idBruto) {
+            if (idBruto.includes('http')) idBruto = idBruto.split('http')[0];
+            if (idBruto.includes(']')) idBruto = idBruto.split(']')[0];
+            idBarbearia = idBruto.replace(/[^a-zA-Z0-9_-]/g, '') || 'kiko_barb';
+            localStorage.setItem('id_barbearia_ativo', idBarbearia);
+        } else {
+            idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barb';
+        }
+
         let paramTel = urlParams.get('tel');
-        if(paramTel) { document.getElementById('cli-telefone').value = '+' + paramTel; mascaraTelefone(document.getElementById('cli-telefone')); }
+        if(paramTel) { 
+            document.getElementById('cli-telefone').value = '+' + paramTel; 
+            mascaraTelefone(document.getElementById('cli-telefone')); 
+        }
 
         let agendamentosDaNuvem = [];
         let configHorarios = {};
@@ -142,14 +157,18 @@
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('cli-data').setAttribute('min', hoje);
 
-            // CARREGAR DADOS VIA JSONP PARA EVITAR BLOQUEIO DE CORS
-            let cbName = 'jsonp_init_' + Math.round(Math.random() * 100000);
-            window[cbName] = function(textos) {
-                delete window[cbName];
-                document.getElementById(cbName)?.remove();
+            // CARREGAMENTO USANDO JSONP IDÊNTICO AO INDEX (BLINDADO CONTRA CORS)
+            const callbackNameConfig = 'jsonp_config_' + Math.round(100000 * Math.random());
+            window[callbackNameConfig] = function(textos) {
+                delete window[callbackNameConfig]; 
+                document.getElementById(callbackNameConfig)?.remove();
 
-                if (textos.cor_primaria) document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
-                if (textos.titulo) document.getElementById('header-nome').innerText = textos.titulo;
+                if (textos.cor_primaria) {
+                    document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
+                }
+                if (textos.titulo) {
+                    document.getElementById('header-nome').innerText = textos.titulo;
+                }
 
                 if (textos.servicos && textos.servicos !== "[]") {
                     let servsArray = typeof textos.servicos === 'string' ? JSON.parse(textos.servicos) : textos.servicos;
@@ -177,23 +196,27 @@
                     });
                     document.getElementById('box-profissionais').innerHTML = htmlP;
                 } else {
-                    document.getElementById('box-profissionais').innerHTML = '<div class="pílula ativo">Equipe</div>';
+                    document.getElementById('box-profissionais').innerHTML = '<div class="pílula ativo" onclick="selecionarProfissional(this, \'Equipe\')">Equipe</div>';
+                    state.profissional = "Equipe";
                 }
 
                 configHorarios = textos.horarios ? (typeof textos.horarios === 'string' ? JSON.parse(textos.horarios) : textos.horarios) : {};
-                configHorarios.almoco_inicio = "11:40"; configHorarios.almoco_fim = "13:00";
+                configHorarios.almoco_inicio = "11:40"; 
+                configHorarios.almoco_fim = "13:00";
                 if(!configHorarios.abre) configHorarios.abre = "08:00";
                 if(!configHorarios.fecha) configHorarios.fecha = "19:40";
                 if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
             };
 
-            let scriptTag = document.createElement('script');
-            scriptTag.id = cbName;
-            scriptTag.src = scriptURL + '?acao=obter_textos&id_barbearia=' + idBarbearia + '&callback=' + cbName;
-            scriptTag.onerror = function() {
+            const scriptConfig = document.createElement('script'); 
+            scriptConfig.id = callbackNameConfig; 
+            scriptConfig.src = scriptURL + '?acao=obter_textos&id_barbearia=' + idBarbearia + '&callback=' + callbackNameConfig;
+            
+            scriptConfig.onerror = function() {
                 document.getElementById('box-servicos').innerHTML = '<p style="color:#ff4444; font-size: 0.9rem;">Erro ao conectar com o painel administrativo.</p>';
             };
-            document.body.appendChild(scriptTag);
+            
+            document.body.appendChild(scriptConfig);
         };
 
         function toggleServico(card, nome, preco, tempo) {
@@ -252,7 +275,7 @@
 
             const boxHorarios = document.getElementById('box-horarios');
             const d = new Date(dataEscolhida + "T12:00:00"); 
-            if (!configHorarios.dias_abertos.includes(d.getDay())) {
+            if (configHorarios.dias_abertos && !configHorarios.dias_abertos.includes(d.getDay())) {
                 boxHorarios.innerHTML = '<p style="grid-column: span 4; text-align: center; color: #ff4444;">Fechado neste dia.</p>';
                 return;
             }
@@ -260,22 +283,23 @@
             document.getElementById('loading-msg').style.display = "inline";
             boxHorarios.innerHTML = '';
 
-            let cbAgenda = 'jsonp_agenda_' + Math.round(Math.random() * 100000);
-            window[cbAgenda] = function(data) {
-                delete window[cbAgenda];
-                document.getElementById(cbAgenda)?.remove();
+            const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+            window[callbackName] = function(data) {
                 agendamentosDaNuvem = data;
+                delete window[callbackName]; 
+                document.getElementById(callbackName)?.remove();
                 renderizarBotoesHora(dataEscolhida);
             };
-
-            let scriptAgenda = document.createElement('script');
-            scriptAgenda.id = cbAgenda;
-            scriptAgenda.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(state.profissional) + '&callback=' + cbAgenda;
-            scriptAgenda.onerror = function() {
-                agendamentosDaNuvem = [];
-                renderizarBotoesHora(dataEscolhida);
+            
+            const script = document.createElement('script'); 
+            script.id = callbackName; 
+            script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(state.profissional) + '&callback=' + callbackName;
+            
+            script.onerror = function() { 
+                document.getElementById('loading-msg').style.display = "none";
+                renderizarBotoesHora(dataEscolhida); 
             };
-            document.body.appendChild(scriptAgenda);
+            document.body.appendChild(script);
         }
 
         function renderizarBotoesHora(dataEscolhida) {
@@ -283,10 +307,15 @@
             const boxHorarios = document.getElementById('box-horarios');
             boxHorarios.innerHTML = "";
 
-            let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
-            let bStart = parseTempo(configHorarios.almoco_inicio); let bEnd = parseTempo(configHorarios.almoco_fim);
+            let abreStr = configHorarios.abre || "08:00";
+            let fechaStr = configHorarios.fecha || "19:40";
+            let cur = parseTempo(abreStr); 
+            let end = parseTempo(fechaStr);
+            let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); 
+            let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
 
-            let agora = new Date(); let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
+            let agora = new Date(); 
+            let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
             let horaAtualMinutos = agora.getHours() * 60 + agora.getMinutes();
             let blocosNecessarios = Math.ceil(state.tempoTotal / 20);
 
