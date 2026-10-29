@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -160,18 +161,21 @@
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('cli-data').setAttribute('min', hoje);
 
-            // CARREGAR DADOS DO BACKEND
-            fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia)
-            .then(res => res.json())
-            .then(textos => {
+            // CARREGAR DADOS DO BACKEND VIA JSONP (BLINDADO CONTRA CORS)
+            const callbackNameConfig = 'jsonp_config_' + Math.round(100000 * Math.random());
+            window[callbackNameConfig] = function(textos) {
+                delete window[callbackNameConfig]; 
+                document.getElementById(callbackNameConfig)?.remove();
+
                 // Branding Visual
                 if (textos.cor_primaria) document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
                 if (textos.titulo) document.getElementById('header-nome').innerText = textos.titulo;
 
                 // Renderizar Serviços
                 if (textos.servicos && textos.servicos !== "[]") {
+                    let servsArray = typeof textos.servicos === 'string' ? JSON.parse(textos.servicos) : textos.servicos;
                     let htmlS = "";
-                    JSON.parse(textos.servicos).forEach(s => {
+                    servsArray.forEach(s => {
                         let preco = s.preco !== undefined ? s.preco : (s.valor || 0);
                         let tempo = s.tempo !== undefined ? s.tempo : (s.duracao || 20);
                         htmlS += `<div class="servico-card" onclick="toggleServico(this, '${s.nome}', ${preco}, ${tempo})">
@@ -184,8 +188,9 @@
 
                 // Renderizar Profissionais
                 if (textos.profissionais && textos.profissionais !== "[]") {
+                    let profsArray = typeof textos.profissionais === 'string' ? JSON.parse(textos.profissionais) : textos.profissionais;
                     let htmlP = "";
-                    JSON.parse(textos.profissionais).forEach((p, idx) => {
+                    profsArray.forEach((p, idx) => {
                         let classAtivo = idx === 0 ? "ativo" : "";
                         if(idx === 0) state.profissional = p.nome; // Seleciona o primeiro por padrão
                         htmlP += `<div class="pílula ${classAtivo}" onclick="selecionarProfissional(this, '${p.nome}')">${p.nome}</div>`;
@@ -194,12 +199,22 @@
                 }
 
                 // Configurações de Horário
-                configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
+                configHorarios = textos.horarios ? (typeof textos.horarios === 'string' ? JSON.parse(textos.horarios) : textos.horarios) : {};
                 configHorarios.almoco_inicio = "11:40"; configHorarios.almoco_fim = "13:00";
                 if(!configHorarios.abre) configHorarios.abre = "08:00";
                 if(!configHorarios.fecha) configHorarios.fecha = "19:40";
                 if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
-            });
+            };
+
+            const scriptConfig = document.createElement('script'); 
+            scriptConfig.id = callbackNameConfig; 
+            scriptConfig.src = scriptURL + '?acao=obter_textos&id_barbearia=' + idBarbearia + '&callback=' + callbackNameConfig;
+            
+            scriptConfig.onerror = function() {
+                document.getElementById('box-servicos').innerHTML = '<p style="color:#ff4444; font-size: 0.9rem;">Erro ao carregar serviços. Verifique a conexão.</p>';
+            };
+            
+            document.body.appendChild(scriptConfig);
         };
 
         // FUNÇÕES DE INTERAÇÃO NA TELA
