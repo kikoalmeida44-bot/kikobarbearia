@@ -303,10 +303,13 @@
     document.getElementById('formAgendamento').addEventListener('submit', e => {
         e.preventDefault();
         if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
-        document.getElementById('btnSubmit').disabled = true; document.getElementById('btnSubmit').innerText = "Aguarde, a agendar e a bloquear...";
         
-        var d = document.getElementById('data').value.split('-');
-        let nomes = []; document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
+        const btnSubmit = document.getElementById('btnSubmit');
+        btnSubmit.disabled = true; 
+        btnSubmit.innerText = "Aguarde, a agendar...";
+        
+        let nomes = []; 
+        document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
         let valorFinal = document.getElementById('valor_total_enviar').value;
         let duracaoFinal = document.getElementById('duracao_total').value;
         let profFinal = document.getElementById('profissional').value;
@@ -324,11 +327,15 @@
         fd.append('duracao_total', duracaoFinal);
         fd.append('profissional', profFinal);
 
-        fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
-            var texto = `Olá!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Profissional:* ${profFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
-            
-            // Redireciona automaticamente para o WhatsApp com a mensagem pronta
-            window.location.href = "https://wa.me/" + numeroWhatsappDono + "?text=" + encodeURIComponent(texto);
+        fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' })
+        .then(() => {
+            alert("✅ Agendamento realizado com sucesso!\nA confirmação e os detalhes foram enviados para o seu WhatsApp.");
+            window.location.reload();
+        })
+        .catch(() => {
+            alert("⚠️ Ocorreu um erro ao processar o agendamento. Tente novamente.");
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Confirmar Agendamento";
         });
     });
 
