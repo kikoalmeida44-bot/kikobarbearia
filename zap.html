@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendamento Rápido | WhatsApp</title>
     
-    <!-- Importando fontes profissionais -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -114,7 +113,6 @@
         document.getElementById('data').setAttribute('min', hoje);
         document.getElementById('data').value = hoje;
 
-        // Puxa os dados da mesma forma que o site principal
         fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia)
             .then(res => res.json())
             .then(textos => {
@@ -329,8 +327,8 @@
         fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
             var texto = `Olá!\n\n*Nome:* ${document.getElementById('nome').value}\n*WhatsApp:* ${document.getElementById('telefone').value}\n*Serviço:* ${nomes.join(" + ")}\n*Valor:* R$ ${valorFinal}\n*Profissional:* ${profFinal}\n*Data:* ${d[2]}/${d[1]}/${d[0]} às ${document.getElementById('hora').value}`;
             
-            alert("Agendamento realizado com sucesso!");
-            setTimeout(() => { window.open("https://wa.me/" + numeroWhatsappDono + "?text=" + encodeURIComponent(texto), '_blank'); location.reload(); }, 1000);
+            // Redireciona automaticamente para o WhatsApp com a mensagem pronta
+            window.location.href = "https://wa.me/" + numeroWhatsappDono + "?text=" + encodeURIComponent(texto);
         });
     });
 
