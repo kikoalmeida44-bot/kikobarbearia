@@ -67,8 +67,8 @@
 </div>
 
 <script>
-    // URL DO SEU GOOGLE APPS SCRIPT
-    const URL_SCRIPT = "https://script.google.com/macros/s/SEU_ID_DO_APPS_SCRIPT_AQUI/exec";
+    // URL DO GOOGLE APPS SCRIPT JÁ CONFIGURADA
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
     const idBarbearia = urlParams.get('id') || 'kiko_barb';
@@ -78,7 +78,6 @@
         document.getElementById('telefone').value = telUrl;
     }
 
-    // Define a data de hoje por padrão no input de data
     const hojeIso = new Date().toISOString().split('T')[0];
     document.getElementById('data').value = hojeIso;
     document.getElementById('data').min = hojeIso;
@@ -86,52 +85,64 @@
     let servicosGlobal = [];
     let horaSelecionada = null;
 
+    function chamarScriptJSONP(paramsUrl, callbackName, sucessoCallback) {
+        window[callbackName] = function(data) {
+            sucessoCallback(data);
+            delete window[callbackName];
+            if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+        };
+
+        let scriptEl = document.createElement('script');
+        scriptEl.src = `${URL_SCRIPT}?${paramsUrl}&callback=${callbackName}`;
+        scriptEl.onerror = function() {
+            console.error("Erro ao carregar via JSONP");
+            document.getElementById('titulo-empresa').innerText = "ERRO DE CONEXÃO";
+        };
+        document.body.appendChild(scriptEl);
+    }
+
     function carregarDadosIniciais() {
-        fetch(`${URL_SCRIPT}?acao=obter_textos&id_barbearia=${idBarbearia}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.titulo) {
-                    document.getElementById('titulo-empresa').innerText = data.titulo.toUpperCase();
-                    document.title = data.titulo;
-                }
+        document.getElementById('titulo-empresa').innerText = "A CARREGAR...";
 
-                try {
-                    servicosGlobal = typeof data.servicos === 'string' ? JSON.parse(data.servicos) : data.servicos;
-                } catch(e) {
-                    servicosGlobal = [{nome: "Corte", valor: 35, duracao: 20}];
-                }
+        chamarScriptJSONP(`acao=obter_textos&id_barbearia=${idBarbearia}`, "retornoTextos", function(data) {
+            if (data.titulo) {
+                document.getElementById('titulo-empresa').innerText = data.titulo.toUpperCase();
+                document.title = data.titulo;
+            }
 
-                let selServico = document.getElementById('servico');
-                selServico.innerHTML = '<option value="">Selecione o serviço...</option>';
-                servicosGlobal.forEach(s => {
-                    let opt = document.createElement('option');
-                    opt.value = s.nome;
-                    opt.setAttribute('data-valor', s.valor || s.preco || 0);
-                    opt.setAttribute('data-duracao', s.duracao || 20);
-                    opt.text = `${s.nome} - R$ ${Number(s.valor || s.preco || 0).toFixed(2)}`;
-                    selServico.appendChild(opt);
-                });
+            try {
+                servicosGlobal = typeof data.servicos === 'string' ? JSON.parse(data.servicos) : data.servicos;
+            } catch(e) {
+                servicosGlobal = [{nome: "Corte", valor: 35, duracao: 20}];
+            }
 
-                let profs = [];
-                try {
-                    profs = typeof data.profissionais === 'string' ? JSON.parse(data.profissionais) : data.profissionais;
-                } catch(e) { profs = [{nome: "Equipe"}]; }
-
-                let selProf = document.getElementById('profissional');
-                selProf.innerHTML = '';
-                profs.forEach(p => {
-                    let opt = document.createElement('option');
-                    opt.value = p.nome;
-                    opt.text = p.nome;
-                    selProf.appendChild(opt);
-                });
-
-                carregarHorarios();
-            })
-            .catch(err => {
-                console.error("Erro ao carregar do Apps Script:", err);
-                document.getElementById('titulo-empresa').innerText = "ERRO DE CONEXÃO";
+            let selServico = document.getElementById('servico');
+            selServico.innerHTML = '<option value="">Selecione o serviço...</option>';
+            servicosGlobal.forEach(s => {
+                let opt = document.createElement('option');
+                opt.value = s.nome;
+                opt.setAttribute('data-valor', s.valor || s.preco || 0);
+                opt.setAttribute('data-duracao', s.duracao || 20);
+                opt.text = `${s.nome} - R$ ${Number(s.valor || s.preco || 0).toFixed(2)}`;
+                selServico.appendChild(opt);
             });
+
+            let profs = [];
+            try {
+                profs = typeof data.profissionais === 'string' ? JSON.parse(data.profissionais) : data.profissionais;
+            } catch(e) { profs = [{nome: "Equipe"}]; }
+
+            let selProf = document.getElementById('profissional');
+            selProf.innerHTML = '';
+            profs.forEach(p => {
+                let opt = document.createElement('option');
+                opt.value = p.nome;
+                opt.text = p.nome;
+                selProf.appendChild(opt);
+            });
+
+            carregarHorarios();
+        });
     }
 
     function atualizarResumo() {
@@ -162,31 +173,26 @@
         divHorarios.innerHTML = '<span class="carregando">A carregar horários...</span>';
         horaSelecionada = null;
 
-        fetch(`${URL_SCRIPT}?data=${dataVal}&id_barbearia=${idBarbearia}&profissional=${encodeURIComponent(profVal)}`)
-            .then(res => res.json())
-            .then(horarios => {
-                divHorarios.innerHTML = '';
-                if (!horarios || horarios.length === 0) {
-                    divHorarios.innerHTML = '<span style="color:#ff6b6b; font-size:13px;">Sem horários livres nesta data.</span>';
-                    return;
-                }
+        chamarScriptJSONP(`data=${dataVal}&id_barbearia=${idBarbearia}&profissional=${encodeURIComponent(profVal)}`, "retornoHorarios", function(horarios) {
+            divHorarios.innerHTML = '';
+            if (!horarios || horarios.length === 0) {
+                divHorarios.innerHTML = '<span style="color:#ff6b6b; font-size:13px;">Sem horários livres nesta data.</span>';
+                return;
+            }
 
-                horarios.forEach(h => {
-                    let btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'btn-horario';
-                    btn.innerText = h;
-                    btn.onclick = () => {
-                        document.querySelectorAll('.btn-horario').forEach(b => b.classList.remove('selecionado'));
-                        btn.classList.add('selecionado');
-                        horaSelecionada = h;
-                    };
-                    divHorarios.appendChild(btn);
-                });
-            })
-            .catch(err => {
-                divHorarios.innerHTML = '<span style="color:#ff6b6b; font-size:13px;">Erro ao buscar horários.</span>';
+            horarios.forEach(h => {
+                let btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn-horario';
+                btn.innerText = h;
+                btn.onclick = () => {
+                    document.querySelectorAll('.btn-horario').forEach(b => b.classList.remove('selecionado'));
+                    btn.classList.add('selecionado');
+                    horaSelecionada = h;
+                };
+                divHorarios.appendChild(btn);
             });
+        });
     }
 
     function enviarAgendamento(e) {
