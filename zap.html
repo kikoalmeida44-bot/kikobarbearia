@@ -167,22 +167,15 @@
     function carregarHorarios() {
         let dataVal = document.getElementById('data').value;
         let profVal = document.getElementById('profissional').value || 'Equipe';
-        let selServ = document.getElementById('servico');
-        let duracaoServ = 20;
-        
-        if (selServ.selectedIndex > 0) {
-            let optServ = selServ.options[selServ.selectedIndex];
-            duracaoServ = parseInt(optServ.getAttribute('data-duracao')) || 20;
-        }
-
         let divHorarios = document.getElementById('lista-horarios');
+        
         divHorarios.innerHTML = '<span class="carregando">A carregar horários...</span>';
         horaSelecionada = null;
 
-        chamarScriptJSONP(`data=${dataVal}&duracao=${duracaoServ}&id_barbearia=${idBarbearia}&profissional=${encodeURIComponent(profVal)}`, "retornoHorarios", function(horarios) {
+        // USA EXATAMENTE A MESMA CHAMADA QUE O SITE PRINCIPAL USA PARA OBTER OS HORÁRIOS LIVRES
+        chamarScriptJSONP(`data=${dataVal}&id_barbearia=${idBarbearia}&profissional=${encodeURIComponent(profVal)}`, "retornoHorarios", function(horarios) {
             divHorarios.innerHTML = '';
             
-            // Corrige caso venha formato de objeto ou array de objetos
             let listaLimpa = [];
             if (Array.isArray(horarios)) {
                 horarios.forEach(h => {
