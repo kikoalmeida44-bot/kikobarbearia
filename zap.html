@@ -67,7 +67,6 @@
 </div>
 
 <script>
-    // URL DO GOOGLE APPS SCRIPT JÁ CONFIGURADA
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -168,19 +167,36 @@
     function carregarHorarios() {
         let dataVal = document.getElementById('data').value;
         let profVal = document.getElementById('profissional').value || 'Equipe';
-        let divHorarios = document.getElementById('lista-horarios');
+        let selServ = document.getElementById('servico');
+        let duracaoServ = 20;
         
+        if (selServ.selectedIndex > 0) {
+            let optServ = selServ.options[selServ.selectedIndex];
+            duracaoServ = parseInt(optServ.getAttribute('data-duracao')) || 20;
+        }
+
+        let divHorarios = document.getElementById('lista-horarios');
         divHorarios.innerHTML = '<span class="carregando">A carregar horários...</span>';
         horaSelecionada = null;
 
-        chamarScriptJSONP(`data=${dataVal}&id_barbearia=${idBarbearia}&profissional=${encodeURIComponent(profVal)}`, "retornoHorarios", function(horarios) {
+        chamarScriptJSONP(`data=${dataVal}&duracao=${duracaoServ}&id_barbearia=${idBarbearia}&profissional=${encodeURIComponent(profVal)}`, "retornoHorarios", function(horarios) {
             divHorarios.innerHTML = '';
-            if (!horarios || horarios.length === 0) {
+            
+            // Corrige caso venha formato de objeto ou array de objetos
+            let listaLimpa = [];
+            if (Array.isArray(horarios)) {
+                horarios.forEach(h => {
+                    if (typeof h === 'string') listaLimpa.push(h);
+                    else if (h && h.hora) listaLimpa.push(h.hora);
+                });
+            }
+
+            if (listaLimpa.length === 0) {
                 divHorarios.innerHTML = '<span style="color:#ff6b6b; font-size:13px;">Sem horários livres nesta data.</span>';
                 return;
             }
 
-            horarios.forEach(h => {
+            listaLimpa.forEach(h => {
                 let btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'btn-horario';
