@@ -1,9 +1,7 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- Bloqueia o zoom para parecer uma app nativa -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Agendamento Rápido</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -19,7 +17,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 100px; }
 
-        /* HEADER FIXO */
         header { position: sticky; top: 0; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 100; display: flex; align-items: center; justify-content: space-between; }
         header h1 { font-size: 1.2rem; font-weight: 700; color: var(--cor-principal); text-transform: uppercase; }
         header span { font-size: 0.8rem; color: #888; }
@@ -28,12 +25,10 @@
         .section-title { font-size: 0.9rem; color: #888; text-transform: uppercase; font-weight: 700; margin-bottom: 12px; margin-top: 25px; letter-spacing: 1px;}
         .section-title:first-child { margin-top: 0; }
 
-        /* INPUTS MODERNOS */
         .input-group { margin-bottom: 15px; }
         .input-group input { width: 100%; padding: 16px; background: var(--cor-card); border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 1rem; font-family: inherit; outline: none; transition: 0.3s; }
         .input-group input:focus { border-color: var(--cor-principal); }
 
-        /* CARDS DE SERVIÇO DE TOQUE */
         .servicos-grid { display: flex; flex-direction: column; gap: 10px; }
         .servico-card { display: flex; justify-content: space-between; align-items: center; background: var(--cor-card); padding: 18px; border-radius: 12px; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
         .servico-card.ativo { border-color: var(--cor-principal); background: rgba(212, 175, 55, 0.05); }
@@ -41,13 +36,11 @@
         .servico-info p { font-size: 0.8rem; color: #888; }
         .servico-preco { font-weight: 700; color: var(--cor-principal); font-size: 1.1rem; }
 
-        /* PÍLULAS PARA PROFISSIONAL */
         .pílulas-grid { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; scrollbar-width: none; }
         .pílulas-grid::-webkit-scrollbar { display: none; }
         .pílula { flex: 0 0 auto; background: var(--cor-card); border: 1px solid #333; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .pílula.ativo { background: var(--cor-principal); color: #000; border-color: var(--cor-principal); }
 
-        /* GRID DE HORÁRIOS */
         .horarios-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .hora-btn { background: var(--cor-card); border: 1px solid #333; padding: 15px 0; border-radius: 10px; text-align: center; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s; color: #fff;}
         .hora-btn.indisponivel { opacity: 0.3; pointer-events: none; text-decoration: line-through; }
@@ -55,7 +48,6 @@
         
         #loading-msg { font-size: 0.85rem; color: var(--cor-principal); margin-top: 10px; display: none; }
 
-        /* RODAPÉ STICKY (BOTÃO CONFIRMAR) */
         .footer-sticky { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--cor-fundo); padding: 15px 20px 25px 20px; border-top: 1px solid #222; box-shadow: 0 -10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 10px; z-index: 100;}
         .resumo { display: flex; justify-content: space-between; font-size: 0.9rem; color: #aaa; padding: 0 5px;}
         .resumo span { font-weight: 700; color: #fff; }
@@ -63,7 +55,6 @@
         .btn-confirmar:active { transform: scale(0.98); }
         .btn-confirmar:disabled { opacity: 0.5; pointer-events: none; }
 
-        /* TELA DE SUCESSO */
         #tela-sucesso { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--cor-fundo); z-index: 999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;}
         .check-icon { width: 80px; height: 80px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #fff; margin-bottom: 20px; box-shadow: 0 0 30px rgba(37, 211, 102, 0.4);}
         #tela-sucesso h2 { margin-bottom: 10px; color: #fff; }
@@ -78,7 +69,6 @@
     </header>
 
     <div class="container">
-        <!-- DADOS DO CLIENTE -->
         <h2 class="section-title">Seus Dados</h2>
         <div class="input-group">
             <input type="text" id="cli-nome" placeholder="O seu nome completo" required>
@@ -87,25 +77,21 @@
             <input type="tel" id="cli-telefone" placeholder="WhatsApp (Com DDD)" oninput="mascaraTelefone(this)" maxlength="17" required>
         </div>
 
-        <!-- SERVIÇOS -->
         <h2 class="section-title">O que vamos fazer?</h2>
         <div class="servicos-grid" id="box-servicos">
             <p style="color:#666; font-size: 0.9rem;">A carregar serviços...</p>
         </div>
 
-        <!-- PROFISSIONAL -->
         <h2 class="section-title">Profissional</h2>
         <div class="pílulas-grid" id="box-profissionais">
             <p style="color:#666; font-size: 0.9rem;">A carregar...</p>
         </div>
 
-        <!-- DATA -->
         <h2 class="section-title">Para quando?</h2>
         <div class="input-group">
             <input type="date" id="cli-data" onchange="verificarHorariosMobile()">
         </div>
 
-        <!-- HORÁRIOS -->
         <h2 class="section-title" style="display:flex; justify-content: space-between;">
             Horários Livres <span id="loading-msg">Consultando agenda...</span>
         </h2>
@@ -114,7 +100,6 @@
         </div>
     </div>
 
-    <!-- RODAPÉ STICKY -->
     <div class="footer-sticky">
         <div class="resumo">
             <div>Tempo estimado: <span id="lbl-tempo">0 min</span></div>
@@ -126,7 +111,6 @@
         </button>
     </div>
 
-    <!-- TELA DE SUCESSO -->
     <div id="tela-sucesso">
         <div class="check-icon">✓</div>
         <h2>Vaga Garantida!</h2>
@@ -135,19 +119,16 @@
     </div>
 
     <script>
-        // CONFIGURAÇÕES BASE
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         const urlParams = new URLSearchParams(window.location.search);
-        let idBarbearia = urlParams.get('id') || 'kiko_barb'; // Puxa do Link ou assume Master
+        let idBarbearia = urlParams.get('id') || 'kiko_barb';
         
-        // Puxar Telefone se vier no link (ex: zap.html?id=kiko_barb&tel=556799999999)
         let paramTel = urlParams.get('tel');
         if(paramTel) { document.getElementById('cli-telefone').value = '+' + paramTel; mascaraTelefone(document.getElementById('cli-telefone')); }
 
         let agendamentosDaNuvem = [];
         let configHorarios = {};
         
-        // ESTADO DA APLICAÇÃO
         let state = {
             servicos: [],
             profissional: "Equipe",
@@ -161,17 +142,13 @@
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('cli-data').setAttribute('min', hoje);
 
-            // CARREGAR DADOS DO BACKEND VIA JSONP (BLINDADO CONTRA CORS)
-            const callbackNameConfig = 'jsonp_config_' + Math.round(100000 * Math.random());
-            window[callbackNameConfig] = function(textos) {
-                delete window[callbackNameConfig]; 
-                document.getElementById(callbackNameConfig)?.remove();
-
-                // Branding Visual
+            // BUSCA DIRETA AO BACKEND (COM CORREÇÃO DE URL)
+            fetch(scriptURL + '?acao=obter_textos&id_barbearia=' + idBarbearia)
+            .then(res => res.json())
+            .then(textos => {
                 if (textos.cor_primaria) document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
                 if (textos.titulo) document.getElementById('header-nome').innerText = textos.titulo;
 
-                // Renderizar Serviços
                 if (textos.servicos && textos.servicos !== "[]") {
                     let servsArray = typeof textos.servicos === 'string' ? JSON.parse(textos.servicos) : textos.servicos;
                     let htmlS = "";
@@ -184,40 +161,34 @@
                                   </div>`;
                     });
                     document.getElementById('box-servicos').innerHTML = htmlS;
+                } else {
+                    document.getElementById('box-servicos').innerHTML = '<p style="color:#888;">Nenhum serviço cadastrado.</p>';
                 }
 
-                // Renderizar Profissionais
                 if (textos.profissionais && textos.profissionais !== "[]") {
                     let profsArray = typeof textos.profissionais === 'string' ? JSON.parse(textos.profissionais) : textos.profissionais;
                     let htmlP = "";
                     profsArray.forEach((p, idx) => {
                         let classAtivo = idx === 0 ? "ativo" : "";
-                        if(idx === 0) state.profissional = p.nome; // Seleciona o primeiro por padrão
+                        if(idx === 0) state.profissional = p.nome;
                         htmlP += `<div class="pílula ${classAtivo}" onclick="selecionarProfissional(this, '${p.nome}')">${p.nome}</div>`;
                     });
                     document.getElementById('box-profissionais').innerHTML = htmlP;
+                } else {
+                    document.getElementById('box-profissionais').innerHTML = '<div class="pílula ativo">Equipe</div>';
                 }
 
-                // Configurações de Horário
                 configHorarios = textos.horarios ? (typeof textos.horarios === 'string' ? JSON.parse(textos.horarios) : textos.horarios) : {};
                 configHorarios.almoco_inicio = "11:40"; configHorarios.almoco_fim = "13:00";
                 if(!configHorarios.abre) configHorarios.abre = "08:00";
                 if(!configHorarios.fecha) configHorarios.fecha = "19:40";
                 if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
-            };
-
-            const scriptConfig = document.createElement('script'); 
-            scriptConfig.id = callbackNameConfig; 
-            scriptConfig.src = scriptURL + '?acao=obter_textos&id_barbearia=' + idBarbearia + '&callback=' + callbackNameConfig;
-            
-            scriptConfig.onerror = function() {
-                document.getElementById('box-servicos').innerHTML = '<p style="color:#ff4444; font-size: 0.9rem;">Erro ao carregar serviços. Verifique a conexão.</p>';
-            };
-            
-            document.body.appendChild(scriptConfig);
+            })
+            .catch(err => {
+                document.getElementById('box-servicos').innerHTML = '<p style="color:#ff4444; font-size: 0.9rem;">Erro ao conectar com a barbearia. Tente novamente.</p>';
+            });
         };
 
-        // FUNÇÕES DE INTERAÇÃO NA TELA
         function toggleServico(card, nome, preco, tempo) {
             card.classList.toggle('ativo');
             if (card.classList.contains('ativo')) {
@@ -230,14 +201,14 @@
                 state.tempoTotal -= tempo;
             }
             atualizarRodape();
-            verificarHorariosMobile(); // Atualiza horários caso o tempo total mude
+            verificarHorariosMobile();
         }
 
         function selecionarProfissional(element, nome) {
             document.querySelectorAll('.pílula').forEach(el => el.classList.remove('ativo'));
             element.classList.add('ativo');
             state.profissional = nome;
-            verificarHorariosMobile(); // Refaz a busca na agenda para este profissional
+            verificarHorariosMobile();
         }
 
         function selecionarHora(element, hora) {
@@ -257,7 +228,6 @@
             let nomeInput = document.getElementById('cli-nome').value.trim();
             let telInput = document.getElementById('cli-telefone').value.replace(/\D/g, '');
             
-            // Só libera o botão se tiver Tudo: Nome, Telefone Válido, Serviço, Data e Hora
             if(state.servicos.length > 0 && state.hora !== "" && state.data !== "" && nomeInput !== "" && telInput.length >= 10) {
                 btn.disabled = false;
             } else {
@@ -265,7 +235,6 @@
             }
         }
 
-        // LÓGICA DO CALENDÁRIO COM O BACKEND
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
         
         function verificarHorariosMobile() {
@@ -284,18 +253,16 @@
             document.getElementById('loading-msg').style.display = "inline";
             boxHorarios.innerHTML = '';
 
-            const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
-            window[callbackName] = function(data) {
+            fetch(scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(state.profissional))
+            .then(res => res.json())
+            .then(data => {
                 agendamentosDaNuvem = data;
-                delete window[callbackName]; document.getElementById(callbackName)?.remove();
                 renderizarBotoesHora(dataEscolhida);
-            };
-            
-            const script = document.createElement('script'); 
-            script.id = callbackName; 
-            script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(state.profissional) + '&callback=' + callbackName;
-            script.onerror = function() { renderizarBotoesHora(dataEscolhida); };
-            document.body.appendChild(script);
+            })
+            .catch(() => {
+                agendamentosDaNuvem = [];
+                renderizarBotoesHora(dataEscolhida);
+            });
         }
 
         function renderizarBotoesHora(dataEscolhida) {
@@ -349,7 +316,6 @@
             }
         }
 
-        // ENVIO DO AGENDAMENTO PARA O BACKEND
         function enviarAgendamento() {
             document.getElementById('btn-finalizar').innerText = "A processar...";
             document.getElementById('btn-finalizar').disabled = true;
@@ -367,14 +333,12 @@
             fd.append('profissional', state.profissional);
 
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }).then(() => {
-                // Esconde a tela principal e mostra a tela de sucesso! Não sai do WhatsApp!
                 document.querySelector('.container').style.display = 'none';
                 document.querySelector('.footer-sticky').style.display = 'none';
                 document.getElementById('tela-sucesso').style.display = 'flex';
             });
         }
 
-        // MÁSCARA TELEFONE NO INPUT
         document.getElementById('cli-nome').addEventListener('input', atualizarRodape);
         function mascaraTelefone(input) {
             let val = input.value;
