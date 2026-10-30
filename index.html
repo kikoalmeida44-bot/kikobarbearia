@@ -380,14 +380,15 @@
                     selectProfissional.add(opt);
                 }
                 
+                // AJUSTE DINÂMICO DE HORÁRIOS E ALMOÇO (Puxado diretamente do Admin)
                 configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
-                configHorarios.almoco_inicio = "11:40";
-                configHorarios.almoco_fim = "13:00";
+                if(!configHorarios.almoco_inicio) configHorarios.almoco_inicio = "11:40";
+                if(!configHorarios.almoco_fim) configHorarios.almoco_fim = "13:00";
                 if(!configHorarios.abre) configHorarios.abre = "08:00";
                 if(!configHorarios.fecha) configHorarios.fecha = "19:40";
                 if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
 
-                document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às 11:40 e das 13:00 às ${configHorarios.fecha}</span>`;
+                document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às ${configHorarios.almoco_inicio} e das ${configHorarios.almoco_fim} às ${configHorarios.fecha}</span>`;
             }).catch(e => {
                 configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
             });
@@ -428,11 +429,17 @@
             setTimeout(() => {
                 mensagensDiv.removeChild(digitandoDiv);
                 const t = textoStr.toLowerCase(); let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
+                
+                let hAbre = configHorarios ? configHorarios.abre : "08:00";
+                let hFecha = configHorarios ? configHorarios.fecha : "19:40";
+                let hAlmIni = configHorarios ? configHorarios.almoco_inicio : "11:40";
+                let hAlmFim = configHorarios ? configHorarios.almoco_fim : "13:00";
+
                 if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) { respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } 
                 else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) { respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸"; setTimeout(() => { window.location.hash = '#servicos'; }, 1200); } 
                 else if (t.includes('profissional') || t.includes('barbeiro') || t.includes('quem')) { respostaBot = "Podes escolher o profissional diretamente no nosso formulário de agendamento! Basta selecionares na caixinha antes de escolher a data. 😉"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); }
                 else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳"; } 
-                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = "Funcionamos de Segunda a Sábado: Das 08h às 11:40, e à tarde das 13h às 19:40h. ⏰"; } 
+                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = `Funcionamos de Segunda a Sábado: Das ${hAbre}h às ${hAlmIni}, e à tarde das ${hAlmFim} às ${hFecha}h. ⏰`; } 
                 else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "O endereço exato está no final da página. Passa por cá! 📍"; } 
                 else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) { respostaBot = "Fala chefe! Tudo ótimo por aqui. Como posso ajudar o seu visual hoje? 👊"; }
                 mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; menuOpcoes.style.opacity = '1'; menuOpcoes.style.pointerEvents = 'auto';
