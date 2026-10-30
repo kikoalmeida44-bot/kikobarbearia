@@ -126,14 +126,12 @@
 </div>
 
 <script>
-    // Substitua pela SUA URL DO SCRIPT DO GOOGLE (Certifique-se de que é a versão atualizada)
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
     
-    // Captura os dados do link do bot
     const urlParams = new URLSearchParams(window.location.search);
     let idBarbearia = urlParams.get('id') || localStorage.getItem('id_barbearia_ativo') || 'kiko_barb';
     let telUrl = urlParams.get('tel');
-    let numeroWhatsappDono = "5567999673200"; // Fallback padrão
+    let numeroWhatsappDono = "5567999673200"; 
     let agendamentosDaNuvem = [];
     let configHorarios = null;
 
@@ -147,15 +145,13 @@
         document.getElementById('data').setAttribute('min', hoje);
         document.getElementById('data').value = hoje;
 
-        // Puxa os dados EXCLUSIVOS da empresa baseada na ID do link
         fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia)
             .then(res => res.json())
             .then(textos => {
                 
-                // ATUALIZAÇÃO SAAS: Mudar cor e fonte automaticamente
                 if (textos.cor_primaria) {
                     document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
-                    document.documentElement.style.setProperty('--cor-borda', textos.cor_primaria + '35'); // Adiciona leve transparência na borda
+                    document.documentElement.style.setProperty('--cor-borda', textos.cor_primaria + '35');
                 }
                 if (textos.fonte_texto && textos.fonte_texto !== "Roboto") {
                     document.documentElement.style.setProperty('--fonte-principal', `'${textos.fonte_texto}', sans-serif`);
@@ -224,12 +220,20 @@
         else input.value = v;
     }
 
+    // MÁSCARA COM AUTO-CORREÇÃO DO 9º DÍGITO
     function mascaraTelefone(input) {
         let v = input.value.replace(/\D/g, '');
-        if (v.startsWith('55') && input.value.indexOf('+55') > -1) {
+        
+        // Remove o prefixo 55 se vier do link da URL
+        if (v.startsWith('55') && v.length >= 12) {
             v = v.substring(2);
-        } else if (v.startsWith('55') && v.length > 11) {
+        } else if (v.startsWith('55') && input.value.indexOf('+55') > -1) {
             v = v.substring(2);
+        }
+        
+        // AUTO-INSERÇÃO DO 9º DÍGITO: Se vier com 10 dígitos (DDD + 8 dígitos), insere o 9 automático após o DDD
+        if (v.length === 10) {
+            v = v.substring(0, 2) + '9' + v.substring(2);
         }
         
         if (v.length > 11) v = v.substring(0, 11);
@@ -426,7 +430,7 @@
 
         const fd = new URLSearchParams();
         fd.append('acao', 'agendar');
-        fd.append('id_barbearia', idBarbearia); // ATENÇÃO: Envia a ID exata para o script
+        fd.append('id_barbearia', idBarbearia);
         fd.append('nome', document.getElementById('nome').value);
         fd.append('email', '');
         fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
