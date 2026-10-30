@@ -71,7 +71,7 @@
 </head>
 <body>
     
-    <!-- TELA DE LOGIN INTEGRADA NO ADMIN DESATIVADA (Escondida) -->
+    <!-- TELA DE LOGIN INTEGRADA NO ADMIN DESATIVADA -->
     <div id="login-screen" style="display: none !important;">
         <div class="login-box">
             <h1 class="logo" id="titulo-login-modal">PAINEL ADMINISTRATIVO</h1>
@@ -238,7 +238,7 @@
             <div class="input-group">
                 <input type="number" id="desp-valor" placeholder="Valor (R$)" step="0.01">
             </div>
-            <button class="action-btn" style="background-color: #ff4c4c; color: white;" onclick="salvarDespesa()">Confirmar Despesa</button>
+            <button class="action-btn" style="background-color: #ff4c4c; color: white;" onclick="salvarDespesa(event)">Confirmar Despesa</button>
             <button class="close-btn" onclick="fecharModal('modal-despesa'); abrirModal('modal-financeiro')">Cancelar</button>
         </div>
     </div>
@@ -325,7 +325,7 @@
         </div>
     </div>
     
-    <!-- MODAL HORÁRIOS (AGORA COM ALMOÇO) -->
+    <!-- MODAL HORÁRIOS -->
     <div id="modal-horarios" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">🕒 Horários de Funcionamento</h2>
@@ -343,7 +343,7 @@
                 <div class="input-group" style="flex: 1;"><label>Fim do Almoço:</label><input type="time" id="edit-almoco-fim" value="13:00"></div>
             </div>
 
-            <button class="action-btn" onclick="salvarHorarios()">Guardar</button>
+            <button class="action-btn" onclick="salvarHorarios(event)">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button>
         </div>
     </div>
@@ -393,7 +393,7 @@
                 <div class="input-group">
                     <input type="file" id="input-arquivo-galeria" accept="image/*,video/mp4" style="background:#222; padding:8px; border-radius:4px; color:#fff; width:100%; border:1px solid #444; font-size: 0.8rem;">
                 </div>
-                <button class="action-btn" style="background-color: #28a745; color: white; margin-bottom: 0;" onclick="enviarArquivoGaleria()">📤 Enviar Ficheiro</button>
+                <button class="action-btn" style="background-color: #28a745; color: white; margin-bottom: 0;" onclick="enviarArquivoGaleria(event)">📤 Enviar Ficheiro</button>
             </div>
 
             <div class="input-group">
@@ -427,9 +427,13 @@
             window.history.replaceState({}, '', `admin.html?id=${idBarbearia}`);
         }
 
-        // 1. CARREGAMENTO BLINDADO: SÓ ENTRA SE NÃO ESTIVER BLOQUEADO
-        window.addEventListener('DOMContentLoaded', async () => {
-            const linkPronto = `https://kikobarbearia.com.br/index.html?id=${idBarbearia}`;
+        window.todosClientes = []; 
+        window.produtosCarregados = [];
+        window.dadosDashboardCache = null;
+
+        // INICIALIZAÇÃO SEGURA: Executa imediatamente se a página já carregou
+        async function iniciarPainel() {
+            const linkPronto = `https://kikobarbearia.com.br/zap.html?id=${idBarbearia}`;
             const inputLink = document.getElementById('link-compartilhamento');
             if(inputLink) inputLink.value = linkPronto;
 
@@ -437,19 +441,27 @@
                 try {
                     const res = await fetch(SCRIPT_URL + '?acao=listar_barbearias');
                     const barbearias = await res.json();
-                    const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
-                    
-                    if (unidade && (unidade.status.toLowerCase() === "bloqueado" || unidade.status.toLowerCase() === "bloqueio")) {
-                        alert("❌ CONTA BLOQUEADA. O seu acesso foi suspenso. Por favor, contacte o administrador.");
-                        window.location.href = "login.html";
-                        return;
+                    if (Array.isArray(barbearias)) {
+                        const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
+                        
+                        if (unidade && (unidade.status.toLowerCase() === "bloqueado" || unidade.status.toLowerCase() === "bloqueio")) {
+                            alert("❌ CONTA BLOQUEADA. O seu acesso foi suspenso. Por favor, contacte o administrador.");
+                            window.location.href = "login.html";
+                            return;
+                        }
                     }
                 } catch(e) {
                     console.log("Erro ao verificar bloqueio.");
                 }
             }
             liberarEntradaPainel();
-        });
+        }
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            iniciarPainel();
+        } else {
+            window.addEventListener('DOMContentLoaded', iniciarPainel);
+        }
 
         function copiarLinkCliente() {
             const inputLink = document.getElementById('link-compartilhamento');
@@ -494,10 +506,6 @@
                     imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de rede. Tente de novo.</p>`;
                 });
         }
-
-        window.todosClientes = []; 
-        window.produtosCarregados = [];
-        window.dadosDashboardCache = null; // Cache para usar no relatório de comissões
 
         function liberarEntradaPainel() {
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
@@ -610,7 +618,7 @@
             try { 
                 const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + idBarbearia); 
                 const data = await res.json();
-                window.dadosDashboardCache = data; // Guarda no cache
+                window.dadosDashboardCache = data;
                 
                 let servicosCarregados = [];
                 try {
@@ -791,7 +799,7 @@
             } catch (e) {}
         }
 
-        // --- LÓGICA DO RELATÓRIO DE COMISSÕES ---
+        // RELATÓRIO DE COMISSÕES
         async function abrirModalComissoes() {
             abrirModal('modal-comissoes');
             const selectProf = document.getElementById('comissao-profissional');
@@ -865,13 +873,13 @@
             abrirModal('modal-despesa'); 
         }
         
-        async function salvarDespesa() { 
+        async function salvarDespesa(e) { 
             const desc = document.getElementById('desp-desc').value; 
             const valor = document.getElementById('desp-valor').value; 
             
             if(!desc || !valor) return alert("Preencha descrição e valor!"); 
             
-            const btn = event.target; 
+            const btn = e ? e.target : document.querySelector('#modal-despesa .action-btn'); 
             btn.innerText = "A registar..."; 
             btn.disabled = true; 
             
@@ -955,6 +963,7 @@
                             <button onclick="venderPacote('${cli.telefone}', '${cli.nome}')" style="background:var(--cor-principal); color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">🛒 Vender Pacote</button>
                             ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✂️ Usar 1</button>` : ''}
                         </div>
+                    </div>
                     `;
                 container.appendChild(div);
             });
@@ -1233,8 +1242,127 @@
             atualizarPainelAdmin(); 
         }
         
-        // --- FUNÇÃO NOVA: ABRIR MODAL HORÁRIOS (Puxando os dados já salvos) ---
         async function abrirModalHorarios() {
             abrirModal('modal-horarios');
             try {
-                const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia
+                const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
+                const data = await res.json();
+                if (data.horarios) {
+                    let h = JSON.parse(data.horarios);
+                    if(h.abre) document.getElementById('edit-abre').value = h.abre;
+                    if(h.fecha) document.getElementById('edit-fecha').value = h.fecha;
+                    if(h.almoco_inicio) document.getElementById('edit-almoco-inicio').value = h.almoco_inicio;
+                    if(h.almoco_fim) document.getElementById('edit-almoco-fim').value = h.almoco_fim;
+                }
+            } catch(e) {}
+        }
+
+        async function salvarHorarios(e) { 
+            const btn = e ? e.target : document.querySelector('#modal-horarios .action-btn');
+            btn.innerText = "A guardar...";
+            btn.disabled = true;
+
+            const fd = new URLSearchParams(); 
+            fd.append('acao', 'salvar_horarios'); 
+            fd.append('id_barbearia', idBarbearia);
+            fd.append('horarios_json', JSON.stringify({
+                abre: document.getElementById('edit-abre').value, 
+                fecha: document.getElementById('edit-fecha').value, 
+                almoco_inicio: document.getElementById('edit-almoco-inicio').value, 
+                almoco_fim: document.getElementById('edit-almoco-fim').value, 
+                dias_abertos: [1,2,3,4,5,6]
+            })); 
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            
+            alert('Horários e Pausa de Almoço guardados com sucesso!'); 
+            btn.innerText = "Guardar";
+            btn.disabled = false;
+            fecharModal('modal-horarios'); 
+        }
+
+        async function salvarFotoGaleria() { 
+            const url = document.getElementById('nova-foto-url').value; 
+            if (!url) return; 
+            
+            const fd = new URLSearchParams(); 
+            fd.append('acao', 'salvar_foto'); 
+            fd.append('id_barbearia', idBarbearia);
+            fd.append('url_foto', url); 
+            
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            document.getElementById('nova-foto-url').value = ''; 
+            alert('Adicionado!'); 
+            abrirModalGaleria(); 
+        }
+        
+        async function enviarArquivoGaleria(e) { 
+            const fi = document.getElementById('input-arquivo-galeria'); 
+            if (fi.files.length === 0) return; 
+            
+            const file = fi.files[0]; 
+            const btn = e ? e.target : document.querySelector('#modal-galeria .action-btn'); 
+            btn.innerText = "⏳ A enviar..."; 
+            btn.disabled = true; 
+            
+            const r = new FileReader(); 
+            r.onload = async function(evt) { 
+                const fd = new URLSearchParams(); 
+                fd.append('acao', 'upload_midia'); 
+                fd.append('id_barbearia', idBarbearia);
+                fd.append('base64', evt.target.result); 
+                fd.append('nome', file.name); 
+                fd.append('mime', file.type); 
+                
+                try { 
+                    await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+                    alert('Enviado!'); 
+                    fi.value = ''; 
+                    btn.innerText = "📤 Enviar Ficheiro"; 
+                    btn.disabled = false; 
+                    setTimeout(() => { abrirModalGaleria(); }, 1500); 
+                } catch(err) { 
+                    alert('Erro.'); 
+                    btn.innerText = "📤 Enviar Ficheiro"; 
+                    btn.disabled = false; 
+                } 
+            }; 
+            r.readAsDataURL(file); 
+        }
+        
+        async function abrirModalGaleria() { 
+            abrirModal('modal-galeria'); 
+            const c = document.getElementById('lista-galeria-container'); 
+            c.innerHTML = '<p style="color:#aaa;">A carregar...</p>'; 
+            
+            try { 
+                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos&id_barbearia=' + idBarbearia); 
+                const fotos = await res.json(); 
+                c.innerHTML = ''; 
+                if(fotos.length === 0) { 
+                    c.innerHTML = '<p style="color:#aaa;">Nenhuma mídia.</p>'; 
+                    return; 
+                } 
+                fotos.forEach(link => { 
+                    const div = document.createElement('div'); 
+                    div.className = 'linha-item'; 
+                    div.innerHTML = `<span style="flex:1; font-size:0.7rem; overflow:hidden; color:#aaa; text-overflow:ellipsis; white-space:nowrap;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; 
+                    c.appendChild(div); 
+                }); 
+            } catch(e) { 
+                c.innerHTML = '<p style="color:#ff4c4c;">Erro.</p>'; 
+            } 
+        }
+
+        async function apagarFotoGaleria(url) {
+            if(!confirm("Deseja apagar esta imagem/vídeo da galeria?")) return;
+            const fd = new URLSearchParams();
+            fd.append('acao', 'excluir_foto');
+            fd.append('id_barbearia', idBarbearia);
+            fd.append('url_foto', url);
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+            alert("Excluído com sucesso!");
+            abrirModalGaleria();
+        }
+    </script>
+</body>
+</html>
