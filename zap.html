@@ -126,6 +126,7 @@
 </div>
 
 <script>
+    // Substitua pela SUA URL DO SCRIPT DO GOOGLE (Certifique-se de que é a versão atualizada)
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
     
     // Captura os dados do link do bot
@@ -200,7 +201,6 @@
                     selectProfissional.add(opt);
                 }
                 
-                // CORREÇÃO: Lê os horários de almoço do Admin sem sobrescrever com valores fixos
                 configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
                 if(!configHorarios.almoco_inicio) configHorarios.almoco_inicio = "11:40";
                 if(!configHorarios.almoco_fim) configHorarios.almoco_fim = "13:00";
@@ -426,7 +426,7 @@
 
         const fd = new URLSearchParams();
         fd.append('acao', 'agendar');
-        fd.append('id_barbearia', idBarbearia); // Envia a ID exata para o script
+        fd.append('id_barbearia', idBarbearia); // ATENÇÃO: Envia a ID exata para o script
         fd.append('nome', document.getElementById('nome').value);
         fd.append('email', '');
         fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
