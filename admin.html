@@ -145,7 +145,7 @@
         <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂ GERENCIAR SERVIÇOS</button>
         <button class="menu-btn" onclick="abrirModalProfissionais()">💈 GERENCIAR PROFISSIONAIS</button>
-        <button class="menu-btn" onclick="abrirModal('modal-horarios')">🕒 HORÁRIO DE FUNCIONAMENTO</button>
+        <button class="menu-btn" onclick="abrirModalHorarios()">🕒 HORÁRIO DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS E VISUAL DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
         <button class="logout-btn" onclick="window.location.href='login.html'">🔒 Sair e Bloquear Painel</button>
@@ -303,6 +303,7 @@
         </div>
     </div>
     
+    <!-- MODAL DE SERVIÇOS -->
     <div id="modal-servicos" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">✂ Serviços e Preços</h2>
@@ -324,13 +325,24 @@
         </div>
     </div>
     
+    <!-- MODAL HORÁRIOS (AGORA COM ALMOÇO) -->
     <div id="modal-horarios" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">🕒 Horários</h2>
+            <h2 class="modal-title">🕒 Horários de Funcionamento</h2>
+            
             <div style="display: flex; gap: 10px;">
-                <div class="input-group"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div>
-                <div class="input-group"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div>
+                <div class="input-group" style="flex: 1;"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div>
+                <div class="input-group" style="flex: 1;"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div>
             </div>
+
+            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
+            <h3 style="font-size: 0.85rem; margin-bottom: 10px; color: #aaa;">Horário de Almoço / Pausa</h3>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;"><label>Início do Almoço:</label><input type="time" id="edit-almoco-inicio" value="11:40"></div>
+                <div class="input-group" style="flex: 1;"><label>Fim do Almoço:</label><input type="time" id="edit-almoco-fim" value="13:00"></div>
+            </div>
+
             <button class="action-btn" onclick="salvarHorarios()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button>
         </div>
@@ -1221,94 +1233,8 @@
             atualizarPainelAdmin(); 
         }
         
-        async function salvarHorarios() { 
-            const fd = new URLSearchParams(); 
-            fd.append('acao', 'salvar_horarios'); 
-            fd.append('id_barbearia', idBarbearia);
-            fd.append('horarios_json', JSON.stringify({
-                abre: document.getElementById('edit-abre').value, 
-                fecha: document.getElementById('edit-fecha').value, 
-                almoco_inicio: "11:00", 
-                almoco_fim: "13:00", 
-                dias_abertos: [1,2,3,4,5,6]
-            })); 
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Guardado!'); 
-            fecharModal('modal-horarios'); 
-        }
-
-        async function salvarFotoGaleria() { 
-            const url = document.getElementById('nova-foto-url').value; 
-            if (!url) return; 
-            
-            const fd = new URLSearchParams(); 
-            fd.append('acao', 'salvar_foto'); 
-            fd.append('id_barbearia', idBarbearia);
-            fd.append('url_foto', url); 
-            
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            document.getElementById('nova-foto-url').value = ''; 
-            alert('Adicionado!'); 
-            abrirModalGaleria(); 
-        }
-        
-        async function enviarArquivoGaleria() { 
-            const fi = document.getElementById('input-arquivo-galeria'); 
-            if (fi.files.length === 0) return; 
-            
-            const file = fi.files[0]; 
-            const btn = event.target; 
-            btn.innerText = "⏳ A enviar..."; 
-            btn.disabled = true; 
-            
-            const r = new FileReader(); 
-            r.onload = async function(e) { 
-                const fd = new URLSearchParams(); 
-                fd.append('acao', 'upload_midia'); 
-                fd.append('id_barbearia', idBarbearia);
-                fd.append('base64', e.target.result); 
-                fd.append('nome', file.name); 
-                fd.append('mime', file.type); 
-                
-                try { 
-                    await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-                    alert('Enviado!'); 
-                    fi.value = ''; 
-                    btn.innerText = "📤 Enviar Ficheiro"; 
-                    btn.disabled = false; 
-                    setTimeout(() => { abrirModalGaleria(); }, 1500); 
-                } catch(err) { 
-                    alert('Erro.'); 
-                    btn.innerText = "📤 Enviar Ficheiro"; 
-                    btn.disabled = false; 
-                } 
-            }; 
-            r.readAsDataURL(file); 
-        }
-        
-        async function abrirModalGaleria() { 
-            abrirModal('modal-galeria'); 
-            const c = document.getElementById('lista-galeria-container'); 
-            c.innerHTML = '<p style="color:#aaa;">A carregar...</p>'; 
-            
-            try { 
-                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos&id_barbearia=' + idBarbearia); 
-                const fotos = await res.json(); 
-                c.innerHTML = ''; 
-                if(fotos.length === 0) { 
-                    c.innerHTML = '<p style="color:#aaa;">Nenhuma mídia.</p>'; 
-                    return; 
-                } 
-                fotos.forEach(link => { 
-                    const div = document.createElement('div'); 
-                    div.className = 'linha-item'; 
-                    div.innerHTML = `<span style="flex:1; font-size:0.7rem; overflow:hidden; color:#aaa; text-overflow:ellipsis; white-space:nowrap;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; 
-                    c.appendChild(div); 
-                }); 
-            } catch(e) { 
-                c.innerHTML = '<p style="color:#ff4c4c;">Erro.</p>'; 
-            } 
-        }
-    </script>
-</body>
-</html>
+        // --- FUNÇÃO NOVA: ABRIR MODAL HORÁRIOS (Puxando os dados já salvos) ---
+        async function abrirModalHorarios() {
+            abrirModal('modal-horarios');
+            try {
+                const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia
