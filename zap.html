@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendamento Rápido | WhatsApp</title>
     
+    <!-- ACELERADORES DE CONEXÃO (Abre o link muito mais rápido) -->
+    <link rel="preconnect" href="https://script.google.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <!-- INÍCIO DAS META TAGS DO SISTEMA SAAS PARA WHATSAPP -->
     <meta property="og:title" content="Agendamento Online | Rápido e Fácil">
     <meta property="og:description" content="Garanta o seu horário com total comodidade. Escolha o melhor dia e profissional sem filas!">
     
-    <!-- Imagem do seu sistema -->
+    <!-- Imagem NOVA do seu sistema (KBS) -->
     <meta property="og:image" content="https://i.postimg.cc/nrfn8qxD/Calendar-20261031-150954-0000.png">
     <meta property="og:image:secure_url" content="https://i.postimg.cc/nrfn8qxD/Calendar-20261031-150954-0000.png">
     <meta property="og:image:type" content="image/png">
@@ -76,16 +81,38 @@
         .btn-gold { background: var(--cor-principal); color: #050505; width: 100%; padding: 16px; font-size: 1em; font-weight: 800; text-transform: uppercase; border-radius: 12px; border: none; cursor: pointer; font-family: var(--fonte-principal); margin-top: 15px; letter-spacing: 1px; box-shadow: 0 4px 20px var(--cor-borda); transition: all 0.3s ease; }
         .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--cor-borda); filter: brightness(1.1); }
         .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; transform: none; filter: grayscale(50%); }
-        .carregando-txt { text-align: center; color: var(--cor-principal); font-size: 14px; font-style: italic; }
         
         #campo_nascimento { display: none; }
+
+        /* ================================================== */
+        /* ANIMAÇÃO SKELETON LOADING (EFEITO SHIMMER / PULSO) */
+        /* ================================================== */
+        @keyframes shimmer {
+            0% { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        .skeleton {
+            background-color: rgba(255, 255, 255, 0.05);
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.0) 100%);
+            background-repeat: no-repeat;
+            background-size: 800px 100%;
+            animation: shimmer 1.5s infinite linear;
+            border-radius: 8px;
+        }
+        .skel-title { width: 70%; height: 28px; margin: 0 auto; border-radius: 4px; }
+        .skel-sub { width: 50%; height: 12px; margin: 6px auto 0 auto; border-radius: 4px; }
+        .skel-checkbox { display: flex; align-items: center; padding: 13px 15px; background: rgba(255, 255, 255, 0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .skel-box { width: 22px; height: 22px; border-radius: 4px; margin-right: 14px; }
+        .skel-line-main { width: 50%; height: 16px; border-radius: 4px; }
+        .skel-line-price { width: 20%; height: 16px; border-radius: 4px; margin-left: auto; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h3 id="titulo-empresa">A CARREGAR...</h3>
-    <div class="subtitulo">Agendamento Rápido via WhatsApp</div>
+    <!-- Estrutura inicial exibe o Skeleton Loading no título -->
+    <h3 id="titulo-empresa"><div class="skeleton skel-title"></div></h3>
+    <div class="subtitulo" id="subtitulo-empresa"><div class="skeleton skel-sub"></div></div>
 
     <form id="formAgendamento">
         <div class="form-group">
@@ -106,7 +133,10 @@
         <div class="form-group">
             <label>Quais serviços deseja hoje?</label>
             <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
-                 <p class="carregando-txt">A carregar serviços...</p>
+                 <!-- Estrutura inicial exibe 3 Skeletons de Serviços imitando as caixinhas -->
+                 <div class="skel-checkbox"><div class="skeleton skel-box"></div><div class="skeleton skel-line-main"></div><div class="skeleton skel-line-price"></div></div>
+                 <div class="skel-checkbox"><div class="skeleton skel-box"></div><div class="skeleton skel-line-main"></div><div class="skeleton skel-line-price"></div></div>
+                 <div class="skel-checkbox"><div class="skeleton skel-box"></div><div class="skeleton skel-line-main"></div><div class="skeleton skel-line-price"></div></div>
             </div>
             <div id="resumo-pedido" class="resumo-box">
                 <p>Total Estimado: <strong id="total-valor">R$ 0</strong></p>
@@ -119,7 +149,7 @@
         <div class="form-group">
             <label for="profissional">Profissional de Preferência:</label>
             <select id="profissional" required onchange="verificarHorarios()">
-                <option value="" disabled selected>A carregar profissionais...</option>
+                <option value="" disabled selected>A consultar agenda...</option>
             </select>
         </div>
 
@@ -154,76 +184,101 @@
         mascaraTelefone(document.getElementById('telefone'));
     }
 
+    // Função que constrói a interface substituindo os esqueletos pelos dados reais
+    function montarTela(textos) {
+        if (textos.cor_primaria) {
+            document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
+            document.documentElement.style.setProperty('--cor-borda', textos.cor_primaria + '35');
+        }
+        if (textos.fonte_texto && textos.fonte_texto !== "Roboto") {
+            document.documentElement.style.setProperty('--fonte-principal', `'${textos.fonte_texto}', sans-serif`);
+            const linkFont = document.createElement('link');
+            linkFont.href = `https://fonts.googleapis.com/css2?family=${textos.fonte_texto.replace(/ /g, '+')}:wght@400;600;700;800&display=swap`;
+            linkFont.rel = 'stylesheet';
+            document.head.appendChild(linkFont);
+        }
+
+        if (textos.titulo) {
+            document.getElementById('titulo-empresa').innerText = textos.titulo;
+            document.getElementById('subtitulo-empresa').innerText = "Agendamento Rápido via WhatsApp";
+            document.title = textos.titulo + " | Agendamento Rápido";
+        }
+        if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, '');
+
+        if (textos.servicos && textos.servicos !== "[]") {
+            let listaServicos = JSON.parse(textos.servicos);
+            let htmlCaixas = "";
+            listaServicos.forEach(servico => {
+                let precoServ = servico.preco !== undefined ? servico.preco : (servico.valor !== undefined ? servico.valor : 0);
+                let tempoServ = servico.tempo !== undefined ? servico.tempo : (servico.duracao !== undefined ? servico.duracao : 20);
+                htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${precoServ}" data-tempo="${tempoServ}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${tempoServ}m)</span><span class="checkbox-price">R$ ${precoServ}</span></div></label>`;
+            });
+            // Substitui os esqueletos pelas caixinhas reais
+            document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
+        } else {
+            document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p style='text-align:center; color:#888;'>Nenhum serviço registado.</p>";
+        }
+
+        const selectProfissional = document.getElementById('profissional');
+        selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
+        if (textos.profissionais && textos.profissionais !== "[]") {
+            let listaProfissionais = JSON.parse(textos.profissionais);
+            listaProfissionais.forEach(prof => {
+                let opt = document.createElement('option');
+                opt.value = prof.nome;
+                opt.text = "💈 " + prof.nome;
+                selectProfissional.add(opt);
+            });
+        } else {
+            let opt = document.createElement('option');
+            opt.value = "Equipe";
+            opt.text = "💈 Qualquer Barbeiro Disponível";
+            selectProfissional.add(opt);
+        }
+        
+        configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
+        if(!configHorarios.almoco_inicio) configHorarios.almoco_inicio = "11:40";
+        if(!configHorarios.almoco_fim) configHorarios.almoco_fim = "13:00";
+        if(!configHorarios.abre) configHorarios.abre = "08:00";
+        if(!configHorarios.fecha) configHorarios.fecha = "19:40";
+        if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
+
+        verificarHorarios();
+    }
+
+    // Inicialização Otimizada com Cache Local (Velocidade Extrema)
     window.onload = function() {
         let hoje = new Date().toISOString().split('T')[0];
         document.getElementById('data').setAttribute('min', hoje);
         document.getElementById('data').value = hoje;
 
+        const chaveCache = "kbs_cache_" + idBarbearia;
+        const cacheSalvo = localStorage.getItem(chaveCache);
+        
+        // 1. CACHE INSTANTÂNEO: Se o cliente já abriu antes, a tela monta na hora
+        if (cacheSalvo) {
+            try { montarTela(JSON.parse(cacheSalvo)); } catch(e) {}
+        }
+
+        // 2. FETCH BACKGROUND: Busca dados novos sem travar a tela (ou exibe os esqueletos na primeira vez)
         fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia)
             .then(res => res.json())
             .then(textos => {
+                localStorage.setItem(chaveCache, JSON.stringify(textos)); // Guarda para a próxima
                 
-                if (textos.cor_primaria) {
-                    document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
-                    document.documentElement.style.setProperty('--cor-borda', textos.cor_primaria + '35');
+                // Se foi a primeira vez abrindo (estava vendo os esqueletos), monta agora
+                if (!cacheSalvo) {
+                    montarTela(textos);
                 }
-                if (textos.fonte_texto && textos.fonte_texto !== "Roboto") {
-                    document.documentElement.style.setProperty('--fonte-principal', `'${textos.fonte_texto}', sans-serif`);
-                    const linkFont = document.createElement('link');
-                    linkFont.href = `https://fonts.googleapis.com/css2?family=${textos.fonte_texto.replace(/ /g, '+')}:wght@400;600;700;800&display=swap`;
-                    linkFont.rel = 'stylesheet';
-                    document.head.appendChild(linkFont);
-                }
-
-                if (textos.titulo) {
-                    document.getElementById('titulo-empresa').innerText = textos.titulo;
-                    document.title = textos.titulo + " | Agendamento Rápido";
-                }
-                if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, '');
-
-                if (textos.servicos && textos.servicos !== "[]") {
-                    let listaServicos = JSON.parse(textos.servicos);
-                    let htmlCaixas = "";
-                    listaServicos.forEach(servico => {
-                        let precoServ = servico.preco !== undefined ? servico.preco : (servico.valor !== undefined ? servico.valor : 0);
-                        let tempoServ = servico.tempo !== undefined ? servico.tempo : (servico.duracao !== undefined ? servico.duracao : 20);
-                        htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${precoServ}" data-tempo="${tempoServ}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${tempoServ}m)</span><span class="checkbox-price">R$ ${precoServ}</span></div></label>`;
-                    });
-                    document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
-                } else {
-                    document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p class='carregando-txt'>Nenhum serviço registado.</p>";
-                }
-
-                const selectProfissional = document.getElementById('profissional');
-                selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
-                if (textos.profissionais && textos.profissionais !== "[]") {
-                    let listaProfissionais = JSON.parse(textos.profissionais);
-                    listaProfissionais.forEach(prof => {
-                        let opt = document.createElement('option');
-                        opt.value = prof.nome;
-                        opt.text = "💈 " + prof.nome;
-                        selectProfissional.add(opt);
-                    });
-                } else {
-                    let opt = document.createElement('option');
-                    opt.value = "Equipe";
-                    opt.text = "💈 Qualquer Barbeiro Disponível";
-                    selectProfissional.add(opt);
-                }
-                
-                configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
-                if(!configHorarios.almoco_inicio) configHorarios.almoco_inicio = "11:40";
-                if(!configHorarios.almoco_fim) configHorarios.almoco_fim = "13:00";
-                if(!configHorarios.abre) configHorarios.abre = "08:00";
-                if(!configHorarios.fecha) configHorarios.fecha = "19:40";
-                if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
-
-                verificarHorarios();
             })
             .catch(e => {
-                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
-                document.getElementById('titulo-empresa').innerText = "AGENDAMENTO ONLINE";
-                verificarHorarios();
+                if (!cacheSalvo) {
+                    document.getElementById('titulo-empresa').innerText = "AGENDAMENTO ONLINE";
+                    document.getElementById('subtitulo-empresa').innerText = "Agendamento Rápido via WhatsApp";
+                    document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p style='text-align:center; color:#ff4444;'>Erro ao carregar. Atualize a página.</p>";
+                    configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+                    verificarHorarios();
+                }
             });
     };
 
