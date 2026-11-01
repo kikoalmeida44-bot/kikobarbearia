@@ -665,8 +665,9 @@
                 document.getElementById('total-despesas').innerText = "A carregar...";
                 document.getElementById('lucro-liquido').innerText = "A carregar...";
 
-                // Enviando parâmetros de mês e ano para o Google Apps Script
-                const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + idBarbearia + '&mes=' + mesSelecionado + '&ano=' + anoSelecionado); 
+                // GARANTINDO O ENVIO CORRETO DO ID E DA AÇÃO DO DASHBOARD
+                const unidadeAtual = idBarbearia || 'kiko_barb';
+                const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + unidadeAtual + '&mes=' + mesSelecionado + '&ano=' + anoSelecionado); 
                 const data = await res.json();
                 window.dadosDashboardCache = data;
                 
@@ -923,31 +924,35 @@
             abrirModal('modal-despesa'); 
         }
         
-        async function salvarDespesa(e) { 
-            const desc = document.getElementById('desp-desc').value; 
-            const valor = document.getElementById('desp-valor').value; 
+        async function salvarDespesa(e) {  
+            const desc = document.getElementById('desp-desc').value;  
+            const valor = document.getElementById('desp-valor').value;  
             
-            if(!desc || !valor) return alert("Preencha descrição e valor!"); 
+            if(!desc || !valor) return alert("Preencha descrição e valor!");  
             
-            const btn = e ? e.target : document.querySelector('#modal-despesa .action-btn'); 
-            btn.innerText = "A registar..."; 
-            btn.disabled = true; 
+            const btn = e ? e.target : document.querySelector('#modal-despesa .action-btn');  
+            btn.innerText = "A registar...";  
+            btn.disabled = true;  
             
-            const fd = new URLSearchParams(); 
-            fd.append('acao', 'registrar_despesa'); 
-            fd.append('id_barbearia', idBarbearia);
-            fd.append('descricao', desc); 
-            fd.append('valor', valor); 
+            const fd = new URLSearchParams();  
+            fd.append('acao', 'registrar_despesa');  
+            fd.append('id_barbearia', idBarbearia || 'kiko_barb');
+            fd.append('descricao', desc);  
+            fd.append('valor', valor);  
             
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
+            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });  
             
-            alert("Despesa registada!"); 
-            btn.innerText = "Confirmar Despesa"; 
-            btn.disabled = false; 
-            document.getElementById('desp-desc').value = ''; 
-            document.getElementById('desp-valor').value = ''; 
-            fecharModal('modal-despesa'); 
-            atualizarPainelAdmin(); 
+            alert("Despesa registada!");  
+            btn.innerText = "Confirmar Despesa";  
+            btn.disabled = false;  
+            document.getElementById('desp-desc').value = '';  
+            document.getElementById('desp-valor').value = '';  
+            fecharModal('modal-despesa');  
+            
+            // Aguarda 1 segundo para a planilha salvar e atualiza o painel
+            setTimeout(() => {
+                atualizarPainelAdmin();
+            }, 1000);
         }
 
         async function venderPacote(telefone, nome) { 
