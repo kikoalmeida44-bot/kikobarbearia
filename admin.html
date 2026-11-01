@@ -119,8 +119,36 @@
             </div>
         </div>
 
+        <!-- NOVO: FILTRO DE MÊS E ANO -->
+        <div class="section-card" style="border-color: var(--cor-principal); background: #111;">
+            <div class="section-title">📅 FILTRAR RELATÓRIOS (MÊS/ANO)</div>
+            <div style="display: flex; gap: 10px;">
+                <select id="filtro-mes" style="flex: 1; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 4px; font-size: 0.8rem;">
+                    <option value="todos">Anual (Ano Inteiro)</option>
+                    <option value="01">Janeiro</option>
+                    <option value="02">Fevereiro</option>
+                    <option value="03">Março</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Maio</option>
+                    <option value="06">Junho</option>
+                    <option value="07">Julho</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
+                <select id="filtro-ano" style="flex: 1; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 4px; font-size: 0.8rem;">
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+            </div>
+            <button class="action-btn" style="margin-top: 10px;" onclick="atualizarPainelAdmin()">🔄 Buscar Relatório</button>
+        </div>
+
         <div class="section-card">
-            <div class="section-title">📊 RESUMO FINANCEIRO (MÊS)</div>
+            <div class="section-title" id="titulo-resumo-financeiro">📊 RESUMO FINANCEIRO (MÊS)</div>
             <div class="dashboard-grid">
                 <div class="dash-box ganhos-box">
                     <div style="display:flex; justify-content: space-between; margin-top: 10px; font-size: 0.85rem;">
@@ -430,6 +458,7 @@
         window.todosClientes = []; 
         window.produtosCarregados = [];
         window.dadosDashboardCache = null;
+        window.filtroIniciado = false;
 
         // INICIALIZAÇÃO SEGURA: Executa imediatamente se a página já carregou
         async function iniciarPainel() {
@@ -616,7 +645,28 @@
 
         async function atualizarPainelAdmin() {
             try { 
-                const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + idBarbearia); 
+                // LÓGICA DO FILTRO DE MÊS E ANO
+                let elMes = document.getElementById('filtro-mes');
+                let elAno = document.getElementById('filtro-ano');
+                
+                if (!window.filtroIniciado) {
+                    const dataAtual = new Date();
+                    elMes.value = String(dataAtual.getMonth() + 1).padStart(2, '0');
+                    elAno.value = String(dataAtual.getFullYear());
+                    window.filtroIniciado = true;
+                }
+                
+                let mesSelecionado = elMes.value;
+                let anoSelecionado = elAno.value;
+                
+                document.getElementById('titulo-resumo-financeiro').innerText = mesSelecionado === 'todos' ? '📊 RESUMO FINANCEIRO (ANUAL - ' + anoSelecionado + ')' : '📊 RESUMO FINANCEIRO (MÊS ' + mesSelecionado + '/' + anoSelecionado + ')';
+                
+                document.getElementById('ganhos-estimados').innerText = "A carregar...";
+                document.getElementById('total-despesas').innerText = "A carregar...";
+                document.getElementById('lucro-liquido').innerText = "A carregar...";
+
+                // Enviando parâmetros de mês e ano para o Google Apps Script
+                const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + idBarbearia + '&mes=' + mesSelecionado + '&ano=' + anoSelecionado); 
                 const data = await res.json();
                 window.dadosDashboardCache = data;
                 
