@@ -1,13 +1,20 @@
 {
-  "name": "Kiko Barbearia",
-  "short_name": "Barbearia",
+  "name": "Kiko Barbearia Sistema",
+  "short_name": "KBS",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0d0d0d",
-  "theme_color": "#c8a355",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "description": "Aplicativo oficial de agendamento rápido.",
   "icons": [
     {
-      "src": "icone.png",
+      "src": "https://i.postimg.cc/bN2MkwZv/1000587000.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.postimg.cc/bN2MkwZv/1000587000.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
