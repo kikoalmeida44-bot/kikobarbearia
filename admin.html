@@ -27,7 +27,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&family=Oswald:wght@400;600&family=Poppins:wght@400;600;700&display=swap');
         
         :root {
-            /* Variáveis Dinâmicas para White-Label (Serão injetadas via JS) */
             --cor-principal: #c8a355; 
             --fonte-principal: 'Montserrat', sans-serif;
         }
@@ -460,7 +459,6 @@
         window.dadosDashboardCache = null;
         window.filtroIniciado = false;
 
-        // INICIALIZAÇÃO SEGURA: Executa imediatamente se a página já carregou
         async function iniciarPainel() {
             const linkPronto = `https://kikobarbearia.com.br/zap.html?id=${idBarbearia}`;
             const inputLink = document.getElementById('link-compartilhamento');
@@ -509,9 +507,9 @@
             const imgCont = document.getElementById('imgQrContainer');
 
             btn.disabled = true;
-            btn.innerText = "⚡ A acordar servidor... (Aguarde 10s)";
+            btn.innerText = "⚡ A preparar conexão (Criando/Acordando)...";
             area.style.display = 'block';
-            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">A preparar a conexão, aguarde...</p>`;
+            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">A comunicar com a UaZapi, aguarde...</p>`;
 
             fetch(`${SCRIPT_URL}?acao=conectar_whatsapp&id_barbearia=${idBarbearia}`)
                 .then(res => res.json())
@@ -525,6 +523,8 @@
                             src = "data:image/png;base64," + src;
                         }
                         imgCont.innerHTML = `<img src="${src}" style="width: 200px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">`;
+                    } else if (data.msg) {
+                        imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">${data.msg}</p>`;
                     } else {
                         imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">O servidor está a iniciar. <b>Clique no botão "Gerar" novamente agora!</b></p>`;
                     }
@@ -532,7 +532,7 @@
                 .catch(err => {
                     btn.innerText = "⚡ Gerar QR Code WhatsApp";
                     btn.disabled = false;
-                    imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de rede. Tente de novo.</p>`;
+                    imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de rede ao conectar com a API.</p>`;
                 });
         }
 
@@ -645,7 +645,6 @@
 
         async function atualizarPainelAdmin() {
             try { 
-                // LÓGICA DO FILTRO DE MÊS E ANO
                 let elMes = document.getElementById('filtro-mes');
                 let elAno = document.getElementById('filtro-ano');
                 
@@ -665,7 +664,6 @@
                 document.getElementById('total-despesas').innerText = "A carregar...";
                 document.getElementById('lucro-liquido').innerText = "A carregar...";
 
-                // GARANTINDO O ENVIO CORRETO DO ID E DA AÇÃO DO DASHBOARD
                 const unidadeAtual = idBarbearia || 'kiko_barb';
                 const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + unidadeAtual + '&mes=' + mesSelecionado + '&ano=' + anoSelecionado); 
                 const data = await res.json();
@@ -850,7 +848,6 @@
             } catch (e) {}
         }
 
-        // RELATÓRIO DE COMISSÕES
         async function abrirModalComissoes() {
             abrirModal('modal-comissoes');
             const selectProf = document.getElementById('comissao-profissional');
@@ -949,7 +946,6 @@
             document.getElementById('desp-valor').value = '';  
             fecharModal('modal-despesa');  
             
-            // Aguarda 1 segundo para a planilha salvar e atualiza o painel
             setTimeout(() => {
                 atualizarPainelAdmin();
             }, 1000);
