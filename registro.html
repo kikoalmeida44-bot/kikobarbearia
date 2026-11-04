@@ -19,112 +19,104 @@
         .links-uteis a { color: #d4af37; text-decoration: none; font-weight: 600; }
         .links-uteis a:hover { text-decoration: underline; }
         .mensagem-erro { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; padding: 10px; border-radius: 4px; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; font-weight: 600; }
-        
         .badge-trial { background: rgba(40,167,69,0.2); border: 1px solid #28a745; color: #28a745; padding: 10px; border-radius: 4px; font-size: 0.8em; text-align: center; margin-bottom: 20px; font-weight: 600; }
-        
-        .pix-box-info { background: #111; border: 1px solid #333; padding: 15px; border-radius: 6px; margin-top: 20px; text-align: center; }
-        .pix-copia-cola { background: #050505; border: 1px solid #444; color: #d4af37; padding: 8px; font-size: 0.65em; word-break: break-all; border-radius: 4px; margin: 10px 0; max-height: 60px; overflow-y: auto; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="registro-container">
         <h1>Criar Barbearia</h1>
-        <div class="badge-trial">🔥 3 Dias Grátis de Teste Completo!</div>
-        
-        <!-- MENSAGEM DE ERRO (Aparece se houver duplicados) -->
+        <div class="badge-trial">✨ Registo com Acesso Imediato ao Sistema</div>
         <div id="msgErro" class="mensagem-erro"></div>
         
-        <form id="formRegistro" onsubmit="registarComTrial(event)">
+        <form id="formRegistro" onsubmit="registarBarbearia(event)">
             <div class="form-group">
-                <label for="id_barbearia">ID Único da Barbearia (ex: barbearia_lider):</label>
-                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="Sem espaços ou acentos" required oninput="formatarID(this)">
+                <label for="nome">Nome da Barbearia:</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex: Kiko Barbearia" required>
             </div>
             <div class="form-group">
-                <label for="nome_barbearia">Nome Comercial:</label>
-                <input type="text" id="nome_barbearia" name="nome_barbearia" placeholder="Ex: Barbearia do João" required>
+                <label for="id_barbearia">ID Único (Link do Sistema):</label>
+                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: kikobarbearia" required>
             </div>
             <div class="form-group">
                 <label for="email">E-mail de Acesso:</label>
-                <input type="email" id="email" name="email" placeholder="teu@email.com" required>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="telefone">WhatsApp / Telefone:</label>
+                <input type="text" id="telefone" name="telefone" placeholder="ex: 67999673200" required>
             </div>
             <div class="form-group">
                 <label for="senha">Palavra-passe (Senha):</label>
-                <input type="password" id="senha" name="senha" placeholder="********" required minlength="6">
+                <input type="password" id="senha" name="senha" placeholder="********" required>
             </div>
-            
-            <button type="submit" id="btnRegistar" class="btn-gold">Ativar 3 Dias Grátis</button>
+            <button type="submit" id="btnRegistar" class="btn-gold">Concluir Registo</button>
         </form>
 
-        <div class="pix-box-info">
-            <p style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">💳 Chave Pix para ativação/renovação (R$ 60,00):</p>
-            <div class="pix-copia-cola" id="textoPixCopiaCola">00020126790014br.gov.bcb.pix013620af615e-f4aa-4bb0-bb39-3dd561a7a3370217sistema barbearia27600016BR.COM.PAGSEGURO01361D8B2860-CC46-470A-97FF-50D736F2FED5520472305303986540560.005802BR5925FRANCISCO ALMEIDA DE OLIV6005Coxim62290525PAGS0000060002610190410526304F874</div>
-            <p style="font-size: 0.7em; color: #777;">Após os 3 dias, efetue o pagamento por este Pix para manter a conta ativa.</p>
-        </div>
-
         <div class="links-uteis">
-            <p>Já tens uma conta? <a href="login.html">Fazer Login</a></p>
+            <p>Já tem uma conta? <a href="login.html">Fazer Login</a></p>
         </div>
     </div>
 
     <script>
-        // O TEU LINK DO GOOGLE SCRIPT MANTIDO
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        // URL do teu Web App do Google Apps Script já configurada
+        const URL_SCRIPT_BACKEND = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
 
-        function formatarID(input) {
-            input.value = input.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
-        }
-
-        async function registarComTrial(e) {
+        function registarBarbearia(e) {
             e.preventDefault();
-            
             const btn = document.getElementById('btnRegistar');
             const msgErro = document.getElementById('msgErro');
-            
-            btn.disabled = true;
-            btn.innerText = "A verificar dados e criar sistema... ⏳";
-            msgErro.style.display = "none";
 
-            const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase();
-            const nomeBarb = document.getElementById('nome_barbearia').value.trim();
+            const nome = document.getElementById('nome').value.trim();
+            const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
             const email = document.getElementById('email').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
             const senha = document.getElementById('senha').value.trim();
 
-            const fd = new URLSearchParams();
-            fd.append('acao', 'cadastrar_barbearia'); 
-            fd.append('id_barbearia', idBarb);
-            fd.append('nome', nomeBarb);
-            fd.append('email', email); // Envia o e-mail para verificar
-            fd.append('login', idBarb); // Usa o ID como login
-            fd.append('senha', senha);
+            if (!nome || !idBarb || !email || !telefone || !senha) {
+                msgErro.innerText = "Por favor, preencha todos os campos!";
+                msgErro.style.display = 'block';
+                return;
+            }
 
-            try {
-                // ATENÇÃO: Retiramos o 'no-cors' para podermos ler a resposta do Google Script
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: fd.toString()
-                });
+            btn.disabled = true;
+            btn.innerText = "A criar conta...";
+            msgErro.style.display = 'none';
 
-                const data = await response.json();
+            const dadosEnvio = {
+                acao: "registar_novo_cliente",
+                nome: nome,
+                id_barbearia: idBarb,
+                login: idBarb,
+                email: email,
+                telefone: telefone,
+                senha: senha
+            };
 
-                if (data.status === "erro") {
-                    // SE DER ERRO NO GOOGLE SCRIPT (E-mail repetido, ID repetido) MOSTRA AQUI:
-                    msgErro.innerText = "❌ " + data.msg;
-                    msgErro.style.display = "block";
-                    btn.disabled = false;
-                    btn.innerText = "Ativar 3 Dias Grátis";
-                } else {
-                    // SE DEU SUCESSO:
-                    alert("🎉 Parabéns! O seu teste gratuito de 3 dias foi ativado com sucesso. Pode entrar e testar todas as ferramentas!");
+            fetch(URL_SCRIPT_BACKEND, {
+                method: "POST",
+                body: JSON.stringify(dadosEnvio)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "sucesso") {
+                    alert("Barbearia criada com sucesso!");
                     localStorage.setItem('id_barbearia_ativo', idBarb);
                     window.location.href = `admin.html?id=${idBarb}`;
+                } else {
+                    msgErro.innerText = data.msg || "Erro ao registar barbearia.";
+                    msgErro.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerText = "Concluir Registo";
                 }
-            } catch (err) {
-                msgErro.innerText = "❌ Erro de conexão. Verifique a internet e tente novamente.";
-                msgErro.style.display = "block";
+            })
+            .catch(err => {
+                console.error("Erro:", err);
+                msgErro.innerText = "Erro de conexão com o servidor. Tente novamente.";
+                msgErro.style.display = 'block';
                 btn.disabled = false;
-                btn.innerText = "Ativar 3 Dias Grátis";
-            }
+                btn.innerText = "Concluir Registo";
+            });
         }
     </script>
 </body>
