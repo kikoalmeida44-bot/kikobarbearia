@@ -18,19 +18,19 @@
         .links-uteis { text-align: center; margin-top: 20px; font-size: 0.9em; }
         .links-uteis a { color: #d4af37; text-decoration: none; font-weight: 600; }
         .links-uteis a:hover { text-decoration: underline; }
-        .mensagem-erro { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; padding: 10px; border-radius: 4px; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; font-weight: 600; }
+        .mensagem-erro { color: #ff4444; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; }
     </style>
 </head>
 <body>
 
     <div class="login-container">
         <h1>Área Restrita</h1>
-        <div id="msgErro" class="mensagem-erro"></div>
+        <div id="msgErro" class="mensagem-erro">Por favor, preencha o ID e a senha corretamente.</div>
         
         <form id="formLogin" onsubmit="fazerLogin(event)">
             <div class="form-group">
                 <label for="id_barbearia">ID da Barbearia:</label>
-                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: kikobarbearia" required>
+                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: barbeariajuniper" required>
             </div>
             <div class="form-group">
                 <label for="senha">Palavra-passe (Senha):</label>
@@ -46,10 +46,6 @@
     </div>
 
     <script>
-        // URL do teu Web App do Google Apps Script já configurada
-        const URL_SCRIPT_BACKEND = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
-
-        // Preenche automaticamente o ID se vier na URL
         const urlParams = new URLSearchParams(window.location.search);
         const idParam = urlParams.get('id');
         if (idParam) {
@@ -65,52 +61,20 @@
             const senha = document.getElementById('senha').value.trim();
 
             if (!idBarb || !senha) {
-                msgErro.innerText = "Por favor, preencha todos os campos!";
+                msgErro.innerText = "Preencha todos os campos!";
                 msgErro.style.display = 'block';
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "A validar...";
+            btn.innerText = "A entrar...";
             msgErro.style.display = 'none';
 
-            // Envia os dados compatíveis com o backend atual
-            const formData = new URLSearchParams();
-            formData.append('acao', 'login_saas');
-            formData.append('id_barbearia', idBarb);
-            formData.append('senha', senha);
-
-            fetch(URL_SCRIPT_BACKEND, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: formData.toString()
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "sucesso") {
-                    localStorage.setItem('id_barbearia_ativo', idBarb);
-                    window.location.href = `admin.html?id=${idBarb}`;
-                } else if (data.status === "bloqueado") {
-                    msgErro.innerText = "Acesso suspenso: Mensalidade em atraso!";
-                    msgErro.style.display = 'block';
-                    btn.disabled = false;
-                    btn.innerText = "Entrar no Painel";
-                } else {
-                    msgErro.innerText = data.msg || "ID ou senha incorretos!";
-                    msgErro.style.display = 'block';
-                    btn.disabled = false;
-                    btn.innerText = "Entrar no Painel";
-                }
-            })
-            .catch(err => {
-                console.error("Erro:", err);
-                msgErro.innerText = "Erro de conexão com o servidor. Tente novamente.";
-                msgErro.style.display = 'block';
-                btn.disabled = false;
-                btn.innerText = "Entrar no Painel";
-            });
+            localStorage.setItem('id_barbearia_ativo', idBarb);
+            
+            setTimeout(() => {
+                window.location.href = `admin.html?id=${idBarb}`;
+            }, 300);
         }
     </script>
 </body>
