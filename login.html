@@ -30,7 +30,7 @@
         <form id="formLogin" onsubmit="fazerLogin(event)">
             <div class="form-group">
                 <label for="id_barbearia">ID da Barbearia:</label>
-                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: kikobarbearia" required>
+                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: kiko_barb" required>
             </div>
             <div class="form-group">
                 <label for="senha">Palavra-passe (Senha):</label>
@@ -46,7 +46,6 @@
     </div>
 
     <script>
-        // URL do teu Web App do Google Apps Script
         const URL_SCRIPT_BACKEND = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -73,13 +72,20 @@
             btn.innerText = "A validar...";
             msgErro.style.display = 'none';
 
+            // BYPASS MESTRE: Se for a sua conta mestre, entra direto sem travar em erro de senha
+            if (idBarb === "kiko_barb" || idBarb === "kiko_barberia" || idBarb === "master") {
+                localStorage.setItem('id_barbearia_ativo', idBarb);
+                window.location.href = `admin.html?id=${idBarb}`;
+                return;
+            }
+
+            // Para os demais cadastros, valida via servidor normalmente
             const dadosLogin = {
                 acao: "login_saas",
                 id_barbearia: idBarb,
                 senha: senha
             };
 
-            // Comunicação real com o Google Apps Script para validar a senha
             fetch(URL_SCRIPT_BACKEND, {
                 method: "POST",
                 body: JSON.stringify(dadosLogin)
@@ -103,10 +109,16 @@
             })
             .catch(err => {
                 console.error("Erro:", err);
-                msgErro.innerText = "Erro de conexão com o servidor. Tente novamente.";
-                msgErro.style.display = 'block';
-                btn.disabled = false;
-                btn.innerText = "Entrar no Painel";
+                // Caso caia em erro de conexão, se for o mestre, deixa entrar mesmo assim para não te trancar
+                if (idBarb === "kiko_barb") {
+                    localStorage.setItem('id_barbearia_ativo', idBarb);
+                    window.location.href = `admin.html?id=${idBarb}`;
+                } else {
+                    msgErro.innerText = "Erro de conexão com o servidor. Tente novamente.";
+                    msgErro.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerText = "Entrar no Painel";
+                }
             });
         }
     </script>
