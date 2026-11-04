@@ -74,16 +74,18 @@
             btn.innerText = "A validar...";
             msgErro.style.display = 'none';
 
-            const dadosLogin = {
-                acao: "login_saas",
-                id_barbearia: idBarb,
-                senha: senha
-            };
+            // Envia os dados compatíveis com o backend atual
+            const formData = new URLSearchParams();
+            formData.append('acao', 'login_saas');
+            formData.append('id_barbearia', idBarb);
+            formData.append('senha', senha);
 
-            // Faz a requisição POST para validar a senha diretamente na planilha
             fetch(URL_SCRIPT_BACKEND, {
                 method: "POST",
-                body: JSON.stringify(dadosLogin)
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
             })
             .then(response => response.json())
             .then(data => {
