@@ -501,46 +501,54 @@
             });
         }
 
-        function gerarQrCodeWhatsApp() {
+        async function gerarQrCodeWhatsApp() {
             const btn = document.getElementById('btnConnectWa');
             const area = document.getElementById('areaQrCode');
             const imgCont = document.getElementById('imgQrContainer');
 
             btn.disabled = true;
-            btn.innerText = "⚡ A preparar conexão...";
+            btn.innerText = "⏳ A gerar QR Code...";
             area.style.display = 'block';
-            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">A comunicar com a UaZapi e a gravar log de depuração...</p>`;
+            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">A comunicar com a UaZapi...</p>`;
 
             const fd = new URLSearchParams();
             fd.append('acao', 'conectar_whatsapp');
             fd.append('id_barbearia', idBarbearia);
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: fd.toString(),
-                mode: 'no-cors'
-            })
-            .then(() => {
-                setTimeout(() => {
-                    fetch(`${SCRIPT_URL}?acao=dashboard&id_barbearia=${idBarbearia}`)
-                        .then(res => res.json())
-                        .then(() => {
-                            btn.innerText = "⚡ Gerar Novo QR Code";
-                            btn.disabled = false;
-                            imgCont.innerHTML = `<p style="color:#28a745; margin-top:10px;">Comando disparado! Verifique a aba <b>DebugZapi</b> na sua planilha do Google Sheets para ver o resultado exato da UaZapi.</p>`;
-                        })
-                        .catch(() => {
-                            btn.innerText = "⚡ Gerar Novo QR Code";
-                            btn.disabled = false;
-                            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">Comando enviado! Verifique a aba <b>DebugZapi</b> na planilha.</p>`;
-                        });
-                }, 3000);
-            })
-            .catch(err => {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: fd.toString()
+                });
+                
+                const resultado = await response.json();
+
+                btn.innerText = "⚡ Gerar Novo QR Code";
+                btn.disabled = false;
+
+                if (resultado.status === "sucesso" && resultado.qrcode) {
+                    let srcQr = resultado.qrcode;
+                    if (!srcQr.startsWith("data:image") && !srcQr.startsWith("http")) {
+                        srcQr = "data:image/png;base64," + srcQr;
+                    }
+
+                    imgCont.innerHTML = `
+                        <div style="background: #fff; padding: 15px; display: inline-block; border-radius: 8px; margin-top: 10px;">
+                            <img src="${srcQr}" alt="QR Code WhatsApp" style="width: 220px; height: 220px; display: block; margin: 0 auto;">
+                        </div>
+                        <p style="color:#28a745; margin-top:8px; font-size:0.75rem;">Aponte a câmara do telemóvel para ler!</p>
+                    `;
+                } else if (resultado.status === "conectado") {
+                    imgCont.innerHTML = `<p style="color:#28a745; margin-top:10px; font-weight:bold;">✔ WhatsApp já está conectado com sucesso!</p>`;
+                } else {
+                    imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">${resultado.msg || "Erro ao obter o QR Code. Tente novamente."}</p>`;
+                }
+
+            } catch(err) {
                 btn.innerText = "⚡ Gerar QR Code WhatsApp";
                 btn.disabled = false;
-                imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de rede ao conectar com a API.</p>`;
-            });
+                imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de conexão ao requisitar o QR Code.</p>`;
+            }
         }
 
         function liberarEntradaPainel() {
