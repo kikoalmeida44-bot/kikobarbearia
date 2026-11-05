@@ -507,33 +507,40 @@
             const imgCont = document.getElementById('imgQrContainer');
 
             btn.disabled = true;
-            btn.innerText = "⚡ A preparar conexão (Criando/Acordando)...";
+            btn.innerText = "⚡ A preparar conexão...";
             area.style.display = 'block';
-            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">A comunicar com a UaZapi, aguarde...</p>`;
+            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">A comunicar com a UaZapi e a gravar log de depuração...</p>`;
 
-            fetch(`${SCRIPT_URL}?acao=conectar_whatsapp&id_barbearia=${idBarbearia}`)
-                .then(res => res.json())
-                .then(data => {
-                    btn.innerText = "⚡ Gerar Novo QR Code";
-                    btn.disabled = false;
+            const fd = new URLSearchParams();
+            fd.append('acao', 'conectar_whatsapp');
+            fd.append('id_barbearia', idBarbearia);
 
-                    if (data.qrcode && data.qrcode.length > 20) {
-                        let src = data.qrcode;
-                        if (!src.startsWith("data:image")) {
-                            src = "data:image/png;base64," + src;
-                        }
-                        imgCont.innerHTML = `<img src="${src}" style="width: 200px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">`;
-                    } else if (data.msg) {
-                        imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">${data.msg}</p>`;
-                    } else {
-                        imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">O servidor está a iniciar. <b>Clique no botão "Gerar" novamente agora!</b></p>`;
-                    }
-                })
-                .catch(err => {
-                    btn.innerText = "⚡ Gerar QR Code WhatsApp";
-                    btn.disabled = false;
-                    imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de rede ao conectar com a API.</p>`;
-                });
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: fd.toString(),
+                mode: 'no-cors'
+            })
+            .then(() => {
+                setTimeout(() => {
+                    fetch(`${SCRIPT_URL}?acao=dashboard&id_barbearia=${idBarbearia}`)
+                        .then(res => res.json())
+                        .then(() => {
+                            btn.innerText = "⚡ Gerar Novo QR Code";
+                            btn.disabled = false;
+                            imgCont.innerHTML = `<p style="color:#28a745; margin-top:10px;">Comando disparado! Verifique a aba <b>DebugZapi</b> na sua planilha do Google Sheets para ver o resultado exato da UaZapi.</p>`;
+                        })
+                        .catch(() => {
+                            btn.innerText = "⚡ Gerar Novo QR Code";
+                            btn.disabled = false;
+                            imgCont.innerHTML = `<p style="color:var(--cor-principal); margin-top:10px;">Comando enviado! Verifique a aba <b>DebugZapi</b> na planilha.</p>`;
+                        });
+                }, 3000);
+            })
+            .catch(err => {
+                btn.innerText = "⚡ Gerar QR Code WhatsApp";
+                btn.disabled = false;
+                imgCont.innerHTML = `<p style="color:#ff4c4c; margin-top:10px;">Erro de rede ao conectar com a API.</p>`;
+            });
         }
 
         function liberarEntradaPainel() {
