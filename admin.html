@@ -462,7 +462,8 @@
         window.filtroIniciado = false;
 
         async function iniciarPainel() {
-            const linkPronto = `https://kikobarbearia.com.br/zap.html?id=${idBarbearia}`;
+            // Link atualizado para apontar direto para o site principal com o ID da barbearia
+            const linkPronto = `https://kikobarbearia.com.br/?id=${idBarbearia}`;
             const inputLink = document.getElementById('link-compartilhamento');
             if(inputLink) inputLink.value = linkPronto;
 
