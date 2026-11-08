@@ -127,6 +127,11 @@
         .chat-opcao-btn { background: #1a1a1a; color: var(--cor-principal); border: 1px solid var(--cor-principal); padding: 8px; text-align: left; border-radius: 4px; cursor: pointer; font-size: 0.75em; font-weight: 600; transition: 0.2s; font-family: var(--fonte-principal); }
         .chat-opcao-btn:hover { background: var(--cor-principal); color: #050505; }
 
+        /* BOTÃO FLUTUANTE DO WHATSAPP */
+        .whatsapp-widget { position: fixed; bottom: 20px; left: 20px; z-index: 9999; font-family: var(--fonte-principal); }
+        .whatsapp-btn-float { background-color: #25d366; color: #ffffff; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9em; cursor: pointer; box-shadow: 0 4px 15px rgba(37,211,102,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; text-decoration: none; transition: 0.3s; }
+        .whatsapp-btn-float:hover { background-color: #20ba5a; transform: scale(1.05); }
+
         footer { background-color: rgba(3, 3, 3, 0.9); text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #777; position: relative; z-index: 1;}
         
         /* ---------------------------------------------------- */
@@ -184,6 +189,13 @@
             <a href="login.html" id="link-admin" style="color: var(--cor-principal);">Painel Admin</a>
         </nav>
     </header>
+
+    <!-- BOTÃO FLUTUANTE DO WHATSAPP -->
+    <div class="whatsapp-widget">
+        <a id="whatsappFloatBtn" href="https://wa.me/5567999673200?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20tirar%20uma%20dúvida." target="_blank" class="whatsapp-btn-float">
+            🟢 Fale no WhatsApp
+        </a>
+    </div>
 
     <div class="chat-widget">
         <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento Rápido</button>
@@ -384,7 +396,14 @@
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
                 
-                if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
+                if (textos.telefone) {
+                    numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
+                    // Atualiza o link do botão flutuante do WhatsApp dinamicamente com o número da unidade
+                    const btnWppFloat = document.getElementById('whatsappFloatBtn');
+                    if(btnWppFloat) {
+                        btnWppFloat.href = `https://wa.me/${numeroWhatsappDono}?text=` + encodeURIComponent("Olá! Vim pelo site e gostaria de tirar uma dúvida.");
+                    }
+                }
                 
                 if (textos.endereco) {
                     let linkMapa = document.getElementById('link-mapa');
