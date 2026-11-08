@@ -358,6 +358,7 @@
         
         let agendamentosDaNuvem = [];
         let configHorarios = null;
+        window.listaProfissionaisGlobal = [];
 
         function iniciarSlideshow(fotos) {
             const container = document.getElementById('slideshow-fundo');
@@ -398,7 +399,6 @@
                 
                 if (textos.telefone) {
                     numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
-                    // Atualiza o link do botão flutuante do WhatsApp dinamicamente com o número da unidade
                     const btnWppFloat = document.getElementById('whatsappFloatBtn');
                     if(btnWppFloat) {
                         btnWppFloat.href = `https://wa.me/${numeroWhatsappDono}?text=` + encodeURIComponent("Olá! Vim pelo site e gostaria de tirar uma dúvida.");
@@ -432,8 +432,8 @@
                 const selectProfissional = document.getElementById('profissional');
                 selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
                 if (textos.profissionais && textos.profissionais !== "[]") {
-                    let listaProfissionais = JSON.parse(textos.profissionais);
-                    listaProfissionais.forEach(prof => {
+                    window.listaProfissionaisGlobal = JSON.parse(textos.profissionais);
+                    window.listaProfissionaisGlobal.forEach(prof => {
                         let opt = document.createElement('option');
                         opt.value = prof.nome;
                         opt.text = "💈 " + prof.nome;
@@ -446,7 +446,6 @@
                     selectProfissional.add(opt);
                 }
                 
-                // AJUSTE DINÂMICO DE HORÁRIOS E ALMOÇO (Puxado diretamente do Admin)
                 configHorarios = textos.horarios ? JSON.parse(textos.horarios) : {};
                 if(!configHorarios.almoco_inicio) configHorarios.almoco_inicio = "11:40";
                 if(!configHorarios.almoco_fim) configHorarios.almoco_fim = "13:00";
@@ -571,10 +570,26 @@
             document.body.appendChild(script);
         }
 
+        // FUNÇÃO ATUALIZADA PARA RESPEITAR O HORÁRIO INDIVIDUAL DE CADA PROFISSIONAL
         function renderizarDropdown(dataEscolhida, selectHora) {
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
-            let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
-            let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
+            
+            let abreProf = configHorarios.abre || "08:00";
+            let fechaProf = configHorarios.fecha || "19:40";
+
+            const profEscolhido = (document.getElementById('profissional').value || "").trim();
+            if (profEscolhido && profEscolhido !== "Equipe" && window.listaProfissionaisGlobal) {
+                let pObj = window.listaProfissionaisGlobal.find(p => p.nome.trim().toLowerCase() === profEscolhido.toLowerCase());
+                if (pObj) {
+                    if (pObj.abre) abreProf = pObj.abre;
+                    if (pObj.fecha) fechaProf = pObj.fecha;
+                }
+            }
+
+            let cur = parseTempo(abreProf); 
+            let end = parseTempo(fechaProf);
+            let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); 
+            let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
 
             let agora = new Date();
             let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
@@ -583,12 +598,12 @@
             let duracaoMinutos = parseInt(document.getElementById('duracao_total').value) || 20;
             let blocosNecessarios = Math.ceil(duracaoMinutos / 20);
 
-            const profEscolhido = (document.getElementById('profissional').value || "").trim().toLowerCase();
+            const profEscolhidoLower = profEscolhido.toLowerCase();
             let agendamentosFiltrados = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.filter(ag => {
                 if (!ag.profissional) return true; 
                 let pAg = ag.profissional.trim().toLowerCase();
-                if (profEscolhido === "" || profEscolhido === "equipe" || pAg === "equipe" || pAg === "sistema") return true;
-                return pAg === profEscolhido;
+                if (profEscolhidoLower === "" || profEscolhidoLower === "equipe" || pAg === "equipe" || pAg === "sistema") return true;
+                return pAg === profEscolhidoLower;
             }) : [];
 
             let mapaSlots = {};
