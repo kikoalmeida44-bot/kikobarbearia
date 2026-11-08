@@ -182,6 +182,7 @@
     let numeroWhatsappDono = "5567999673200"; 
     let agendamentosDaNuvem = [];
     let configHorarios = null;
+    window.listaProfissionaisGlobal = [];
 
     if (telUrl) {
         document.getElementById('telefone').value = telUrl;
@@ -217,7 +218,6 @@
                 let tempoServ = servico.tempo !== undefined ? servico.tempo : (servico.duracao !== undefined ? servico.duracao : 20);
                 htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${precoServ}" data-tempo="${tempoServ}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${tempoServ}m)</span><span class="checkbox-price">R$ ${precoServ}</span></div></label>`;
             });
-            // Substitui os esqueletos pelas caixinhas reais
             document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
         } else {
             document.getElementById('caixinhas_servicos_dinamicos').innerHTML = "<p style='text-align:center; color:#888;'>Nenhum serviço registado.</p>";
@@ -226,8 +226,8 @@
         const selectProfissional = document.getElementById('profissional');
         selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
         if (textos.profissionais && textos.profissionais !== "[]") {
-            let listaProfissionais = JSON.parse(textos.profissionais);
-            listaProfissionais.forEach(prof => {
+            window.listaProfissionaisGlobal = JSON.parse(textos.profissionais);
+            window.listaProfissionaisGlobal.forEach(prof => {
                 let opt = document.createElement('option');
                 opt.value = prof.nome;
                 opt.text = "💈 " + prof.nome;
@@ -259,18 +259,14 @@
         const chaveCache = "kbs_cache_" + idBarbearia;
         const cacheSalvo = localStorage.getItem(chaveCache);
         
-        // 1. CACHE INSTANTÂNEO: Se o cliente já abriu antes, a tela monta na hora
         if (cacheSalvo) {
             try { montarTela(JSON.parse(cacheSalvo)); } catch(e) {}
         }
 
-        // 2. FETCH BACKGROUND: Busca dados novos sem travar a tela (ou exibe os esqueletos na primeira vez)
         fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia)
             .then(res => res.json())
             .then(textos => {
-                localStorage.setItem(chaveCache, JSON.stringify(textos)); // Guarda para a próxima
-                
-                // Se foi a primeira vez abrindo (estava vendo os esqueletos), monta agora
+                localStorage.setItem(chaveCache, JSON.stringify(textos));
                 if (!cacheSalvo) {
                     montarTela(textos);
                 }
@@ -409,10 +405,26 @@
         document.body.appendChild(script);
     }
 
+    // FUNÇÃO ATUALIZADA PARA RESPEITAR O HORÁRIO INDIVIDUAL DE CADA PROFISSIONAL
     function renderizarDropdown(dataEscolhida, selectHora) {
         selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
-        let cur = parseTempo(configHorarios.abre); let end = parseTempo(configHorarios.fecha);
-        let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
+        
+        let abreProf = configHorarios.abre || "08:00";
+        let fechaProf = configHorarios.fecha || "19:40";
+
+        const profEscolhido = (document.getElementById('profissional').value || "").trim();
+        if (profEscolhido && profEscolhido !== "Equipe" && window.listaProfissionaisGlobal) {
+            let pObj = window.listaProfissionaisGlobal.find(p => p.nome.trim().toLowerCase() === profEscolhido.toLowerCase());
+            if (pObj) {
+                if (pObj.abre) abreProf = pObj.abre;
+                if (pObj.fecha) fechaProf = pObj.fecha;
+            }
+        }
+
+        let cur = parseTempo(abreProf); 
+        let end = parseTempo(fechaProf);
+        let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); 
+        let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
 
         let agora = new Date();
         let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
@@ -421,12 +433,12 @@
         let duracaoMinutos = parseInt(document.getElementById('duracao_total').value) || 20;
         let blocosNecessarios = Math.ceil(duracaoMinutos / 20);
 
-        const profEscolhido = (document.getElementById('profissional').value || "").trim().toLowerCase();
+        const profEscolhidoLower = profEscolhido.toLowerCase();
         let agendamentosFiltrados = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.filter(ag => {
             if (!ag.profissional) return true; 
             let pAg = ag.profissional.trim().toLowerCase();
-            if (profEscolhido === "" || profEscolhido === "equipe" || pAg === "equipe" || pAg === "sistema") return true;
-            return pAg === profEscolhido;
+            if (profEscolhidoLower === "" || profEscolhidoLower === "equipe" || pAg === "equipe" || pAg === "sistema") return true;
+            return pAg === profEscolhidoLower;
         }) : [];
 
         let mapaSlots = {};
