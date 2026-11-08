@@ -169,7 +169,7 @@
         <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
         
-        <button class="menu-btn" onclick="abrirModal('modal-agendar')">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
+        <button class="menu-btn" onclick="abrirModalAgendar()">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂ GERENCIAR SERVIÇOS</button>
         <button class="menu-btn" onclick="abrirModalProfissionais()">💈 GERENCIAR PROFISSIONAIS</button>
         <button class="menu-btn" onclick="abrirModalHorarios()">🕒 HORÁRIO DE FUNCIONAMENTO</button>
@@ -223,11 +223,6 @@
                 <select id="comissao-profissional" onchange="calcularComissoes()">
                     <option value="todos">-- Todos os Profissionais --</option>
                 </select>
-            </div>
-
-            <div class="input-group">
-                <label>Porcentagem de Comissão Padrão (%):</label>
-                <input type="number" id="comissao-porcentagem" value="50" min="0" max="100" oninput="calcularComissoes()">
             </div>
 
             <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; text-align: center;">
@@ -307,9 +302,9 @@
             <h2 class="modal-title">📅 Agendar / Bloquear</h2>
             <div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div>
             <div class="input-group">
+                <label>Profissional:</label>
                 <select id="agend-profissional">
-                    <option value="Kiko">💈 Barbeiro Principal</option>
-                    <option value="Colaborador 2">💈 Colaborador 2</option>
+                    <option value="Equipe">💈 Equipe / Geral</option>
                 </select>
             </div>
             <div style="display: flex; gap: 10px;">
@@ -333,9 +328,10 @@
     <!-- MODAL DE SERVIÇOS -->
     <div id="modal-servicos" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">✂ Serviços e Preços</h2>
+            <h2 class="modal-title">✂ Serviços, Preços e Comissão (%)</h2>
+            <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">Defina o valor e a comissão (%) de cada serviço para o cálculo do fecho de caixa.</p>
             <div id="lista-servicos-container"></div>
-            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '')">+ Novo</button><br><br>
+            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '20', '50')">+ Novo</button><br><br>
             <button class="action-btn" onclick="salvarServicos()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button>
         </div>
@@ -1093,6 +1089,22 @@
             atualizarPainelAdmin(); 
         }
         
+        async function abrirModalAgendar() {
+            abrirModal('modal-agendar');
+            const selectProf = document.getElementById('agend-profissional');
+            selectProf.innerHTML = '<option value="Equipe">💈 Equipe / Geral</option>';
+            try {
+                const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
+                const data = await res.json();
+                if (data.profissionais) {
+                    let profs = JSON.parse(data.profissionais);
+                    profs.forEach(p => {
+                        selectProf.innerHTML += `<option value="${p.nome}">💈 ${p.nome}</option>`;
+                    });
+                }
+            } catch(e) {}
+        }
+
         async function salvarAgendamento() { 
             const nome = document.getElementById('agend-nome').value || "Bloqueio"; 
             const prof = document.getElementById('agend-profissional').value; 
@@ -1164,7 +1176,7 @@
             fd.append('valor_venda', preco); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Venda registada!'); 
+            alert('Venda registada e baixa no estoque efetuada!'); 
             fecharModal('modal-pdv'); 
             atualizarPainelAdmin(); 
         }
@@ -1196,16 +1208,17 @@
             const data = await res.json(); 
             let servicos = JSON.parse(data.servicos || "[]"); 
             document.getElementById('lista-servicos-container').innerHTML = ''; 
-            servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo)); 
+            servicos.forEach(s => adicionarLinhaServico(s.nome, s.preco, s.tempo || s.duracao, s.comissao_perc !== undefined ? s.comissao_perc : 50)); 
         }
         
-        function adicionarLinhaServico(n, p, t) { 
+        function adicionarLinhaServico(n, p, t, c) { 
             const div = document.createElement('div'); 
             div.className = 'linha-item'; 
             div.innerHTML = `
-                <input type="text" value="${n}" class="s-nome">
-                <input type="number" value="${p}" class="s-preco" style="width:60px;">
-                <input type="number" value="${t}" class="s-tempo" style="width:60px;">
+                <input type="text" value="${n}" class="s-nome" placeholder="Serviço" style="flex:2;">
+                <input type="number" value="${p}" class="s-preco" placeholder="R$" style="width:65px;" step="0.01">
+                <input type="number" value="${t}" class="s-tempo" placeholder="Min" style="width:55px;">
+                <input type="number" value="${c !== undefined ? c : 50}" class="s-comissao" placeholder="Comiss %" style="width:65px;" title="Comissão %">
                 <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
             `; 
             document.getElementById('lista-servicos-container').appendChild(div); 
@@ -1216,8 +1229,9 @@
             document.querySelectorAll('#lista-servicos-container .linha-item').forEach(l => { 
                 const n = l.querySelector('.s-nome').value; 
                 const p = parseFloat(l.querySelector('.s-preco').value||0); 
-                const t = parseInt(l.querySelector('.s-tempo').value||0); 
-                if(n) novos.push({nome: n, preco: p, tempo: t}); 
+                const t = parseInt(l.querySelector('.s-tempo').value||20); 
+                const c = parseFloat(l.querySelector('.s-comissao').value||50);
+                if(n) novos.push({nome: n, valor: p, preco: p, duracao: t, tempo: t, comissao_perc: c}); 
             }); 
             
             const fd = new URLSearchParams(); 
@@ -1226,7 +1240,7 @@
             fd.append('servicos_json', JSON.stringify(novos)); 
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Guardado!'); 
+            alert('Guardado com sucesso!'); 
             fecharModal('modal-servicos'); 
         }
 
@@ -1235,7 +1249,7 @@
             document.getElementById('lista-profissionais-container').innerHTML = '<p>A carregar...</p>';
             const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
             const data = await res.json();
-            let profissionais = JSON.parse(data.profissionais || '[{"nome":"Equipa"}]');
+            let profissionais = JSON.parse(data.profissionais || '[{"nome":"Equipe"}]');
             document.getElementById('lista-profissionais-container').innerHTML = '';
             profissionais.forEach(pr => adicionarLinhaProfissional(pr.nome));
         }
@@ -1256,7 +1270,7 @@
                 const n = l.querySelector('.pr-nome').value.trim();
                 if(n) novos.push({nome: n});
             });
-            if(novos.length === 0) novos.push({nome: "Equipa"});
+            if(novos.length === 0) novos.push({nome: "Equipe"});
 
             const fd = new URLSearchParams();
             fd.append('acao', 'salvar_profissionais');
