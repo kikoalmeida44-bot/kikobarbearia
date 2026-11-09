@@ -348,8 +348,18 @@
         <div class="modal-content">
             <h2 class="modal-title">✂ Serviços, Preços e Comissão (%)</h2>
             <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">Defina o valor e a comissão (%) de cada serviço para o cálculo do fecho de caixa.</p>
+            
+            <!-- CABEÇALHO EXPLICATIVO DAS COLUNAS -->
+            <div style="display: flex; gap: 5px; padding: 0 10px; margin-bottom: 5px; font-size: 0.65rem; color: var(--cor-principal); font-weight: bold; text-transform: uppercase;">
+                <span style="flex: 2;">Serviço</span>
+                <span style="width: 65px; text-align: center;">Preço (R$)</span>
+                <span style="width: 55px; text-align: center;">Tempo</span>
+                <span style="width: 65px; text-align: center;">Comiss.</span>
+                <span style="width: 30px;"></span>
+            </div>
+
             <div id="lista-servicos-container"></div>
-            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaServico('', '', '20', '50')">+ Novo</button><br><br>
+            <button class="action-btn" style="background-color: #444; color: white; padding: 8px; margin-top: 10px;" onclick="adicionarLinhaServico('', '', '20', '50')">+ Novo Serviço</button><br><br>
             <button class="action-btn" onclick="salvarServicos()">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-servicos')">Cancelar</button>
         </div>
@@ -1234,10 +1244,10 @@
             const div = document.createElement('div'); 
             div.className = 'linha-item'; 
             div.innerHTML = `
-                <input type="text" value="${n}" class="s-nome" placeholder="Serviço" style="flex:2;">
+                <input type="text" value="${n}" class="s-nome" placeholder="Ex: Corte Masculino" style="flex:2;">
                 <input type="number" value="${p}" class="s-preco" placeholder="R$" style="width:65px;" step="0.01">
                 <input type="number" value="${t}" class="s-tempo" placeholder="Min" style="width:55px;">
-                <input type="number" value="${c !== undefined ? c : 50}" class="s-comissao" placeholder="Comiss %" style="width:65px;" title="Comissão %">
+                <input type="number" value="${c !== undefined ? c : 50}" class="s-comissao" placeholder="%" style="width:65px;" title="Comissão %">
                 <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
             `; 
             document.getElementById('lista-servicos-container').appendChild(div); 
