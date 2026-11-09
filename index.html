@@ -164,7 +164,11 @@
             .hero-buttons { flex-direction: column; align-items: center; gap: 15px; }
             .hero-buttons a { width: 100%; max-width: 300px; box-sizing: border-box; }
             .form-agendamento { padding: 30px 20px; }
-            .chat-janela { width: calc(100vw - 40px); right: -10px; }
+            
+            /* Ajustes para os botões flutuantes no telemóvel para não sobrepor */
+            .whatsapp-widget { bottom: 20px; left: 20px; right: auto; z-index: 9998; }
+            .chat-widget { bottom: 80px; right: 20px; left: auto; z-index: 9999; }
+            .chat-janela { width: calc(100vw - 40px); right: 0; bottom: 50px; }
         }
     </style>
 </head>
