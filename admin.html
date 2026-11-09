@@ -33,7 +33,19 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--fonte-principal); }
         body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; min-height: 100vh; padding: 20px 10px; position: relative; }
+        
+        /* ADAPTAÇÃO RESPONSIVA: Minimalista no cel, expansivo no computador */
         .admin-container { width: 100%; max-width: 500px; background-color: #0d0d0d; border: 1px solid var(--cor-principal); border-radius: 8px; padding: 20px; display: none; }
+        
+        @media (min-width: 768px) {
+            .admin-container {
+                max-width: 1200px; /* Expande para ocupar o monitor no PC */
+            }
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr) !important; /* Organiza em grade no computador se necessário */
+            }
+        }
+
         h1.logo { text-align: center; color: var(--cor-principal); font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
         
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0d0d0d; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -1033,7 +1045,7 @@
                             ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✂️ Usar 1</button>` : ''}
                         </div>
                     </div>
-                    `;
+                `;
                 container.appendChild(div);
             });
         }
