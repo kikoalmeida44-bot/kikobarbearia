@@ -109,11 +109,30 @@
         .skel-box { width: 22px; height: 22px; border-radius: 4px; margin-right: 14px; }
         .skel-line-main { width: 50%; height: 16px; border-radius: 4px; }
         .skel-line-price { width: 20%; height: 16px; border-radius: 4px; margin-left: auto; }
+
+        /* ================================================== */
+        /* ANIMAÇÃO DE ABERTURA (NASCENDO DO WHATSAPP)        */
+        /* ================================================== */
+        @keyframes nascerDoZap {
+            0% {
+                transform: scale(0.6) translateY(40px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        .animacao-abertura-app {
+            animation: nascerDoZap 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+            transform-origin: center bottom;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- ADICIONADO A CLASSE animacao-abertura-app AQUI -->
+<div class="container animacao-abertura-app">
     <!-- Estrutura inicial exibe o Skeleton Loading no título -->
     <h3 id="titulo-empresa"><div class="skeleton skel-title"></div></h3>
     <div class="subtitulo" id="subtitulo-empresa"><div class="skeleton skel-sub"></div></div>
