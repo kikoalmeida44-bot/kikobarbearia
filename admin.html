@@ -1447,13 +1447,15 @@
             r.readAsDataURL(file); 
         }
         
+        // --- FUNÇÃO CORRIGIDA DO MODAL DE GALERIA COM CACHE-BUSTER ---
         async function abrirModalGaleria() { 
             abrirModal('modal-galeria'); 
             const c = document.getElementById('lista-galeria-container'); 
             c.innerHTML = '<p style="color:#aaa;">A carregar...</p>'; 
             
             try { 
-                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos&id_barbearia=' + idBarbearia); 
+                // ADICIONADO: '&_t=' + Date.now() para evitar que o Google recarregue os dados velhos no cache
+                const res = await fetch(SCRIPT_URL + '?acao=obter_fotos&id_barbearia=' + idBarbearia + '&_t=' + Date.now()); 
                 const fotos = await res.json(); 
                 c.innerHTML = ''; 
                 if(fotos.length === 0) { 
@@ -1461,25 +1463,58 @@
                     return; 
                 } 
                 fotos.forEach(link => { 
+                    // CRIADO O BOTÃO DE FORMA DINÂMICA (Para não dar erro se a URL tiver caracteres estranhos)
                     const div = document.createElement('div'); 
                     div.className = 'linha-item'; 
-                    div.innerHTML = `<span style="flex:1; font-size:0.7rem; overflow:hidden; color:#aaa; text-overflow:ellipsis; white-space:nowrap;">${link}</span><button class="remove-btn" onclick="apagarFotoGaleria('${link}')">X</button>`; 
+                    
+                    const span = document.createElement('span');
+                    span.style.cssText = "flex:1; font-size:0.7rem; overflow:hidden; color:#aaa; text-overflow:ellipsis; white-space:nowrap;";
+                    span.innerText = link;
+                    
+                    const btn = document.createElement('button');
+                    btn.className = 'remove-btn';
+                    btn.innerText = 'X';
+                    btn.onclick = function() { apagarFotoGaleria(link, this); };
+                    
+                    div.appendChild(span);
+                    div.appendChild(btn);
                     c.appendChild(div); 
                 }); 
             } catch(e) { 
-                c.innerHTML = '<p style="color:#ff4c4c;">Erro.</p>'; 
+                c.innerHTML = '<p style="color:#ff4c4c;">Erro de conexão ao ler imagens.</p>'; 
             } 
         }
 
-        async function apagarFotoGaleria(url) {
+        // --- FUNÇÃO CORRIGIDA DE APAGAR A FOTO COM TEMPO DE ESPERA ---
+        async function apagarFotoGaleria(url, btnElement) {
             if(!confirm("Deseja apagar esta imagem/vídeo da galeria?")) return;
+            
+            // Coloca o botão em espera para não ser clicado várias vezes
+            if(btnElement) {
+                btnElement.innerText = "⏳";
+                btnElement.disabled = true;
+            }
+
             const fd = new URLSearchParams();
             fd.append('acao', 'excluir_foto');
             fd.append('id_barbearia', idBarbearia);
             fd.append('url_foto', url);
-            await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert("Excluído com sucesso!");
-            abrirModalGaleria();
+            
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
+                
+                // ADICIONADO: Atraso de 1.5s antes de recarregar a lista (Dá o tempo do Apps Script excluir a linha de verdade)
+                setTimeout(() => {
+                    alert("Excluído com sucesso!");
+                    abrirModalGaleria();
+                }, 1500);
+            } catch (err) {
+                alert("Erro ao tentar excluir a foto.");
+                if(btnElement) {
+                    btnElement.innerText = "X";
+                    btnElement.disabled = false;
+                }
+            }
         }
     </script>
 </body>
