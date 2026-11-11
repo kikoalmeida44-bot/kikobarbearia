@@ -51,7 +51,7 @@
 
         body { font-family: var(--fonte-principal); margin: 0; padding: 0; color: #ffffff; line-height: 1.6; overflow-x: hidden; background-color: #050505; }
         
-        /* NOVO EFEITO: VÍDEO DE FUNDO EM TELA CHEIA (ESTILO BARBER CARTEL) */
+        /* VÍDEO DE FUNDO CORRIGIDO E ALINHADO EM TELA CHEIA */
         .video-background-container {
             position: fixed;
             top: 0;
@@ -70,10 +70,11 @@
             transform: translate(-50%, -50%);
             min-width: 100%;
             min-height: 100%;
-            width: auto;
-            height: auto;
+            width: 100vw;
+            height: 100vh;
             object-fit: cover;
-            opacity: 0.55; /* Deixa o vídeo elegante e não interfere na leitura */
+            opacity: 0.55; /* Deixa o vídeo elegante sem atrapalhar a leitura dos textos */
+            z-index: -3;
         }
         
         .overlay-global { 
@@ -205,9 +206,9 @@
 </head>
 <body>
 
-    <!-- VÍDEO DE FUNDO EM TELA CHEIA (SUBSTITUI O SLIDESHOW ANTIGO OU FUNCIONA COMO BASE) -->
+    <!-- VÍDEO DE FUNDO EM TELA CHEIA (ESTILO BARBER CARTEL) -->
     <div class="video-background-container">
-        <!-- Substitua o link abaixo pelo link direto do seu vídeo institucional (.mp4) -->
+        <!-- Substitua o link abaixo pelo link direto (.mp4) do seu vídeo institucional da barbearia se desejar -->
         <video autoplay muted loop playsinline id="bg-video">
             <source src="https://assets.mixkit.co/videos/preview/mixkit-barber-cutting-a-mans-hair-41132-large.mp4" type="video/mp4">
             Seu navegador não suporta vídeos em HTML5.
@@ -219,8 +220,7 @@
     <header>
         <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
             <img src="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" alt="Logo Sistema KBS" style="height: 45px; border-radius: 8px;">
-            <!-- Skeleton aplicado dentro do elemento alvo -->
-            <h1 id="header-title" style="margin: 0; font-size: 1.8em;"><span class="skeleton skel-title" style="margin:0; height:30px; width:150px;">&nbsp;</span></h1>
+            <h1 id="header-title" style="margin: 0; font-size: 1.8em;"><span class="skeleton skel-title" style="margin:0; height:30px; width:150px;"> </span></h1>
         </div>
         <nav>
             <a href="#sobre">Sobre Nós</a>
@@ -263,10 +263,8 @@
 
     <div class="hero">
         <div class="hero-content">
-            <!-- Skeleton Hero Titulo -->
-            <h2 id="txt_titulo"><span class="skeleton skel-title" style="width: 350px;">&nbsp;</span></h2>
-            <!-- Skeleton Hero Subtitulo -->
-            <p id="txt_subtitulo"><span class="skeleton skel-text" style="width: 250px;">&nbsp;</span></p>
+            <h2 id="txt_titulo"><span class="skeleton skel-title" style="width: 350px;"> </span></h2>
+            <p id="txt_subtitulo"><span class="skeleton skel-text" style="width: 250px;"> </span></p>
             
             <div class="hero-buttons">
                 <a href="#agendamento" class="btn-gold">Agendar Horário</a>
@@ -278,7 +276,6 @@
 
     <div id="sobre" class="section">
         <h2 class="section-title">Sobre Nós</h2>
-        <!-- Skeleton Bloco de Texto Sobre -->
         <p class="sobre-texto" id="txt_sobre">
             <span class="skeleton skel-text"></span>
             <span class="skeleton skel-text"></span>
@@ -289,7 +286,6 @@
     <div id="servicos" class="section">
         <h2 class="section-title">Nossos Serviços</h2>
         <div class="services" id="quadro_servicos_dinamicos">
-            <!-- Skeletons dos Cards de Serviço -->
             <div class="skeleton skel-card"></div>
             <div class="skeleton skel-card"></div>
             <div class="skeleton skel-card"></div>
@@ -299,7 +295,6 @@
     <div id="galeria" class="section">
         <h2 class="section-title">Nossa Galeria e Vídeos</h2>
         <div class="galeria-grid" id="galeriaDinamica">
-            <!-- Skeletons da Galeria -->
             <div class="skeleton skel-galeria"></div>
             <div class="skeleton skel-galeria"></div>
             <div class="skeleton skel-galeria"></div>
@@ -327,7 +322,6 @@
                 <div class="form-group">
                     <label>Quais serviços deseja hoje?</label>
                     <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
-                         <!-- Skeletons dos Inputs Checkbox -->
                          <div class="skeleton skel-input"></div>
                          <div class="skeleton skel-input"></div>
                     </div>
@@ -362,19 +356,17 @@
     <div class="section">
         <h2 class="section-title">Atendimento</h2>
         <div class="horarios-box">
-            <!-- Skeleton Texto Horarios -->
             <p id="txt-horarios-info" style="color:#fff;">
-                <span class="skeleton skel-text" style="width: 250px;">&nbsp;</span>
+                <span class="skeleton skel-text" style="width: 250px;"> </span>
             </p>
-            <!-- Skeleton Mapa -->
             <a id="link-mapa" href="#" target="_blank" class="mapa-link">
-                <span class="skeleton skel-text" style="width: 180px; margin:0;">&nbsp;</span>
+                <span class="skeleton skel-text" style="width: 180px; margin:0;"> </span>
             </a>
         </div>
     </div>
 
     <footer>
-        <p>© 2026 <span id="rodape-nome"><span class="skeleton skel-text" style="width: 120px; height:15px; margin:0; display:inline-block;">&nbsp;</span></span>. Todos os direitos reservados.</p>
+        <p>© 2026 <span id="rodape-nome"><span class="skeleton skel-text" style="width: 120px; height:15px; margin:0; display:inline-block;"> </span></span>. Todos os direitos reservados.</p>
         <p style="margin-top: 15px; font-size: 0.85em; color: #888;">👀 Visitantes online hoje: <span id="contadorVisitas" style="color: var(--cor-principal); font-weight: bold;">142</span></p>
     </footer>
 
