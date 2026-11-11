@@ -51,7 +51,7 @@
 
         body { font-family: var(--fonte-principal); margin: 0; padding: 0; color: #ffffff; line-height: 1.6; overflow-x: hidden; background-color: #050505; }
         
-        /* VÍDEO DE FUNDO CORRIGIDO E ALINHADO EM TELA CHEIA */
+        /* EFEITO IMERSIVO DE VÍDEO DE FUNDO EM TELA CHEIA (ESTILO BARBER CARTEL) */
         .video-background-container {
             position: fixed;
             top: 0;
@@ -68,12 +68,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            min-width: 100%;
-            min-height: 100%;
-            width: 100vw;
-            height: 100vh;
+            min-width: 100vw;
+            min-height: 100vh;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            opacity: 0.55; /* Deixa o vídeo elegante sem atrapalhar a leitura dos textos */
+            opacity: 0.5; /* Deixa o vídeo imersivo e sem atrapalhar a leitura */
             z-index: -3;
         }
         
@@ -83,7 +83,7 @@
             left: 0; 
             width: 100vw; 
             height: 100vh; 
-            background: linear-gradient(to bottom, rgba(5,5,5,0.6) 0%, rgba(5,5,5,0.92) 100%); 
+            background: linear-gradient(to bottom, rgba(5,5,5,0.65) 0%, rgba(5,5,5,0.94) 100%); 
             z-index: -2; 
             pointer-events: none;
         }
@@ -206,11 +206,9 @@
 </head>
 <body>
 
-    <!-- VÍDEO DE FUNDO EM TELA CHEIA (ESTILO BARBER CARTEL) -->
+    <!-- VÍDEO DE FUNDO IMERSIVO (PUXA AUTOMATICAMENTE O VÍDEO CADASTRADO NO PAINEL) -->
     <div class="video-background-container">
-        <!-- Substitua o link abaixo pelo link direto (.mp4) do seu vídeo institucional da barbearia se desejar -->
         <video autoplay muted loop playsinline id="bg-video">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-barber-cutting-a-mans-hair-41132-large.mp4" type="video/mp4">
             Seu navegador não suporta vídeos em HTML5.
         </video>
     </div>
@@ -479,16 +477,25 @@
                 configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
             });
 
-            // CARREGA FOTOS E MÍDIAS DA GALERIA
+            // CARREGA FOTOS E VÍDEOS DA GALERIA DO PAINEL E INSERE O VÍDEO DE FUNDO AUTOMATICAMENTE
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
                     let htmlMidia = "";
+                    let videoFundoDefinido = false;
+
                     midiasSemRepetir.forEach(link => { 
                         let lkLower = link.toLowerCase();
                         if(lkLower.includes('<blockquote') || link.includes(' ')) return;
                         
                         if(lkLower.includes('.mp4') || lkLower.includes('.webm') || lkLower.includes('video')) {
+                            // Se encontrar um vídeo na galeria/painel, aplica ele automaticamente como fundo em tela cheia estilo Barber Cartel
+                            if (!videoFundoDefinido) {
+                                const videoBg = document.getElementById('bg-video');
+                                videoBg.innerHTML = `<source src="${link}" type="video/mp4">`;
+                                videoBg.load();
+                                videoFundoDefinido = true;
+                            }
                             htmlMidia += `<video src="${link}" autoplay loop muted playsinline controls preload="auto"></video>`;
                         } else {
                             htmlMidia += `<img src="${link}" onerror="this.style.display='none'">`;
@@ -496,7 +503,7 @@
                     });
                     document.getElementById('galeriaDinamica').innerHTML = htmlMidia;
                 }
-            }).catch(e => { console.error("Erro ao carregar fotos:", e) });
+            }).catch(e => { console.error("Erro ao carregar mídia:", e) });
         };
 
         function alternarChat() { const janela = document.getElementById('chatJanela'); janela.style.display = (janela.style.display === 'block') ? 'none' : 'block'; }
