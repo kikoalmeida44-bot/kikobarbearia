@@ -408,6 +408,11 @@
             <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Configurações de Textos:</h3>
             <div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div>
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
+            <!-- CAMPO ADICIONADO PARA O "SOBRE NÓS" -->
+            <div class="input-group">
+                <label>Texto da Seção "Sobre Nós":</label>
+                <textarea id="edit-sobre" rows="3" placeholder="Escreva aqui a apresentação da barbearia (Sobre Nós)"></textarea>
+            </div>
             <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
             <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço da Barbearia"></div>
             <div class="input-group"><input type="text" id="edit-link-google" placeholder="Link do Google Meu Negócio"></div>
@@ -832,7 +837,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
                                 <div style="flex: 1; min-width: 150px;">
                                     <strong style="${isConcluido ? 'color: #28a745;' : 'color: #00bfff;'} font-size: 1.1rem;">${ag.hora}</strong> - <strong>${ag.nome}</strong><br>
-                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico} | 👤 ${ag.profissional || 'Equipa'}</span><br>
+                                    <span style="font-size: 0.75rem; color: #aaa;">Itens: ${ag.servico} | 👤 ${ag.profissional || 'Equipe'}</span><br>
                                     <span style="font-size: 0.85rem; color: #fff;">Total: <strong style="color: #28a745;">R$ ${parseFloat(ag.valor_total || 0).toFixed(2).replace('.', ',')}</strong></span>
                                 </div>
                                 ${acoesHTML}
@@ -940,7 +945,7 @@
                     div.innerHTML = `
                         <div>
                             <strong>${at.nome}</strong> (${at.servico})<br>
-                            <span style="font-size:0.7rem; color:#aaa;">${at.data.split('-').reverse().join('/')} às ${at.hora} | 💈 ${at.profissional || 'Equipa'}</span>
+                            <span style="font-size:0.7rem; color:#aaa;">${at.data.split('-').reverse().join('/')} às ${at.hora} | 💈 ${at.profissional || 'Equipe'}</span>
                         </div>
                         <div style="color:#28a745; font-weight:bold;">R$ ${valor.toFixed(2)}</div>
                     `;
@@ -1327,6 +1332,7 @@
                 const data = await res.json(); 
                 if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; 
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
+                if(data.sobre) document.getElementById('edit-sobre').value = data.sobre; // <--- CARREGA O TEXTO SOBRE NÓS
                 if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
                 if(data.endereco) document.getElementById('edit-endereco').value = data.endereco; 
                 if(data.link_google) document.getElementById('edit-link-google').value = data.link_google; 
@@ -1341,6 +1347,7 @@
             fd.append('id_barbearia', idBarbearia);
             fd.append('titulo', document.getElementById('edit-titulo').value); 
             fd.append('subtitulo', document.getElementById('edit-subtitulo').value); 
+            fd.append('sobre', document.getElementById('edit-sobre').value); // <--- ENVIA O TEXTO SOBRE NÓS
             fd.append('telefone', document.getElementById('edit-telefone').value); 
             fd.append('endereco', document.getElementById('edit-endereco').value); 
             fd.append('link_google', document.getElementById('edit-link-google').value); 
