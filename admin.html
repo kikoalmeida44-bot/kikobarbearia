@@ -78,6 +78,26 @@
         .linha-item input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
         .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;}
         .badge-notif { background-color: #ff4c4c; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; float: right; font-weight: bold; display: none; }
+
+        /* SISTEMA DE ESQUELETO (SKELETON LOADING) */
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: 200px 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #222 25%, #333 50%, #222 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            color: transparent !important;
+            user-select: none;
+            pointer-events: none;
+        }
+        .skeleton-box {
+            height: 50px;
+            width: 100%;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -215,12 +235,9 @@
     <div id="modal-financeiro" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: #ffd700;">💰 Financeiro e Despesas</h2>
-            
             <button class="action-btn" style="background-color: #ff4c4c; color: white; margin-bottom: 15px;" onclick="abrirModalDespesa()">➖ Registar Saída / Despesa</button>
-            
             <h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">💵 Últimas Transações:</h3>
             <div id="lista-financeiro-container" style="max-height: 40vh; overflow-y: auto;"></div>
-            
             <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-financeiro')">Voltar</button>
         </div>
     </div>
@@ -229,24 +246,19 @@
     <div id="modal-comissoes" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: #28a745;">💵 Relatório de Comissões</h2>
-            
             <div class="input-group">
                 <label>Selecione o Profissional:</label>
                 <select id="comissao-profissional" onchange="calcularComissoes()">
                     <option value="todos">-- Todos os Profissionais --</option>
                 </select>
             </div>
-
-            <!-- CAMPO DE PORCENTAGEM RESTAURADO PARA FUNCIONAR COM O INPUT ORIGINAL -->
             <div class="input-group">
                 <label>Porcentagem de Comissão (%):</label>
                 <input type="number" id="comissao-porcentagem" value="50" oninput="calcularComissoes()" min="0" max="100">
             </div>
-
             <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; text-align: center;">
                 <div style="font-size: 0.75rem; color: #aaa;">FATURAMENTO TOTAL DOS SERVIÇOS</div>
                 <div id="comissao-total-servicos" style="font-size: 1.2rem; color: #fff; font-weight: bold; margin-bottom: 10px;">R$ 0,00</div>
-                
                 <div style="display: flex; justify-content: space-around; border-top: 1px solid #222; padding-top: 10px;">
                     <div>
                         <div style="font-size: 0.7rem; color: #28a745;">COMISSÃO PROFISSIONAL</div>
@@ -258,12 +270,10 @@
                     </div>
                 </div>
             </div>
-
             <h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">📋 Detalhes dos Atendimentos Concluídos:</h3>
             <div id="lista-comissoes-container" style="max-height: 30vh; overflow-y: auto;">
                 <p style="color: #888; font-size: 0.8rem;">Carregando...</p>
             </div>
-
             <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-comissoes')">Fechar</button>
         </div>
     </div>
@@ -272,12 +282,8 @@
     <div id="modal-despesa" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: #ff4c4c;">➖ Nova Despesa</h2>
-            <div class="input-group">
-                <input type="text" id="desp-desc" placeholder="Ex: Conta de Luz, Compra de Produtos...">
-            </div>
-            <div class="input-group">
-                <input type="number" id="desp-valor" placeholder="Valor (R$)" step="0.01">
-            </div>
+            <div class="input-group"><input type="text" id="desp-desc" placeholder="Ex: Conta de Luz, Compra de Produtos..."></div>
+            <div class="input-group"><input type="number" id="desp-valor" placeholder="Valor (R$)" step="0.01"></div>
             <button class="action-btn" style="background-color: #ff4c4c; color: white;" onclick="salvarDespesa(event)">Confirmar Despesa</button>
             <button class="close-btn" onclick="fecharModal('modal-despesa'); abrirModal('modal-financeiro')">Cancelar</button>
         </div>
@@ -287,9 +293,7 @@
     <div id="modal-clientes" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: #28a745;">👥 Clientes e Pacotes</h2>
-            <div class="input-group">
-                <input type="text" id="busca-cliente" placeholder="🔍 Buscar por nome ou telemóvel..." onkeyup="filtrarClientes()">
-            </div>
+            <div class="input-group"><input type="text" id="busca-cliente" placeholder="🔍 Buscar por nome ou telemóvel..." onkeyup="filtrarClientes()"></div>
             <div id="lista-clientes-container" style="max-height: 50vh; overflow-y: auto;"></div>
             <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-clientes')">Voltar</button>
         </div>
@@ -348,8 +352,6 @@
         <div class="modal-content">
             <h2 class="modal-title">✂ Serviços, Preços e Comissão (%)</h2>
             <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">Defina o valor e a comissão (%) de cada serviço para o cálculo do fecho de caixa.</p>
-            
-            <!-- CABEÇALHO EXPLICATIVO DAS COLUNAS -->
             <div style="display: flex; gap: 5px; padding: 0 10px; margin-bottom: 5px; font-size: 0.65rem; color: var(--cor-principal); font-weight: bold; text-transform: uppercase;">
                 <span style="flex: 2;">Serviço</span>
                 <span style="width: 65px; text-align: center;">Preço (R$)</span>
@@ -357,7 +359,6 @@
                 <span style="width: 65px; text-align: center;">Comiss.</span>
                 <span style="width: 30px;"></span>
             </div>
-
             <div id="lista-servicos-container"></div>
             <button class="action-btn" style="background-color: #444; color: white; padding: 8px; margin-top: 10px;" onclick="adicionarLinhaServico('', '', '20', '50')">+ Novo Serviço</button><br><br>
             <button class="action-btn" onclick="salvarServicos()">Guardar</button>
@@ -365,7 +366,7 @@
         </div>
     </div>
 
-    <!-- MODAL PROFISSIONAIS (COM HORÁRIOS INDEPENDENTES) -->
+    <!-- MODAL PROFISSIONAIS -->
     <div id="modal-profissionais" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: var(--cor-principal);">💈 Gerenciar Profissionais</h2>
@@ -381,20 +382,16 @@
     <div id="modal-horarios" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">🕒 Horários de Funcionamento</h2>
-            
             <div style="display: flex; gap: 10px;">
                 <div class="input-group" style="flex: 1;"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div>
                 <div class="input-group" style="flex: 1;"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div>
             </div>
-
             <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
             <h3 style="font-size: 0.85rem; margin-bottom: 10px; color: #aaa;">Horário de Almoço / Pausa</h3>
-            
             <div style="display: flex; gap: 10px;">
                 <div class="input-group" style="flex: 1;"><label>Início do Almoço:</label><input type="time" id="edit-almoco-inicio" value="11:40"></div>
                 <div class="input-group" style="flex: 1;"><label>Fim do Almoço:</label><input type="time" id="edit-almoco-fim" value="13:00"></div>
             </div>
-
             <button class="action-btn" onclick="salvarHorarios(event)">Guardar</button>
             <button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button>
         </div>
@@ -404,11 +401,9 @@
     <div id="modal-textos" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">🎨 Textos e Visual do Site</h2>
-            
             <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Configurações de Textos:</h3>
             <div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div>
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
-            <!-- CAMPO ADICIONADO PARA O "SOBRE NÓS" -->
             <div class="input-group">
                 <label>Texto da Seção "Sobre Nós":</label>
                 <textarea id="edit-sobre" rows="3" placeholder="Escreva aqui a apresentação da barbearia (Sobre Nós)"></textarea>
@@ -416,15 +411,12 @@
             <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
             <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço da Barbearia"></div>
             <div class="input-group"><input type="text" id="edit-link-google" placeholder="Link do Google Meu Negócio"></div>
-            
             <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
             <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Estética e Branding (SaaS):</h3>
-            
             <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
                 <label style="margin: 0; min-width: 120px;">Cor Principal:</label>
                 <input type="color" id="edit-cor-primaria" style="width: 60px; height: 40px; padding: 0; border: none; background: transparent; cursor: pointer;">
             </div>
-            
             <div class="input-group">
                 <label>Fonte do Site/App:</label>
                 <select id="edit-fonte-texto">
@@ -434,7 +426,6 @@
                     <option value="Poppins">Poppins (Redonda/Elegante)</option>
                 </select>
             </div>
-
             <button class="action-btn" onclick="salvarTextos()">Guardar Alterações</button>
             <button class="close-btn" onclick="fecharModal('modal-textos')">Cancelar</button>
         </div>
@@ -444,7 +435,6 @@
     <div id="modal-galeria" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">📸 Gerenciar Galeria (Fotos e Vídeos)</h2>
-            
             <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;">
                 <h3 style="font-size: 0.85rem; margin-bottom: 8px; color: #fff;">Enviar Vídeo ou Foto do Telemóvel</h3>
                 <div class="input-group">
@@ -452,7 +442,6 @@
                 </div>
                 <button class="action-btn" style="background-color: #28a745; color: white; margin-bottom: 0;" onclick="enviarArquivoGaleria(event)">📤 Enviar Ficheiro</button>
             </div>
-
             <div class="input-group">
                 <label>Ou cole o link direto (URL):</label>
                 <div style="display: flex; gap: 5px;">
@@ -460,14 +449,13 @@
                     <button class="action-btn" style="width: 80px; margin-bottom: 0;" onclick="salvarFotoGaleria()">Add</button>
                 </div>
             </div>
-
             <h3 style="font-size: 0.85rem; margin: 15px 0 8px 0; color: #aaa;">Ficheiros Atuais:</h3>
             <div id="lista-galeria-container" style="max-height: 40vh; overflow-y: auto;"></div>
-            
             <button class="close-btn" style="margin-top: 15px;" onclick="fecharModal('modal-galeria')">Fechar</button>
         </div>
     </div>
 
+    <!-- SCRIPT COMPLETO DE PONTA A PONTA COM SKELETON LOADING -->
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
@@ -705,9 +693,20 @@
                 
                 document.getElementById('titulo-resumo-financeiro').innerText = mesSelecionado === 'todos' ? '📊 RESUMO FINANCEIRO (ANUAL - ' + anoSelecionado + ')' : '📊 RESUMO FINANCEIRO (MÊS ' + mesSelecionado + '/' + anoSelecionado + ')';
                 
-                document.getElementById('ganhos-estimados').innerText = "A carregar...";
-                document.getElementById('total-despesas').innerText = "A carregar...";
-                document.getElementById('lucro-liquido').innerText = "A carregar...";
+                // --- SKELETON LOADING ATIVADO ENQUANTO BUSCA DADOS ---
+                document.getElementById('ganhos-estimados').innerHTML = '<span class="skeleton" style="display:inline-block; width:70px; height:16px;"></span>';
+                document.getElementById('total-despesas').innerHTML = '<span class="skeleton" style="display:inline-block; width:70px; height:16px;"></span>';
+                document.getElementById('lucro-liquido').innerHTML = '<span class="skeleton" style="display:inline-block; width:90px; height:20px;"></span>';
+                
+                document.getElementById('lista-agenda-container').innerHTML = `
+                    <div class="linha-item skeleton skeleton-box" style="margin-bottom:10px;"></div>
+                    <div class="linha-item skeleton skeleton-box" style="margin-bottom:10px;"></div>
+                    <div class="linha-item skeleton skeleton-box" style="margin-bottom:10px;"></div>
+                `;
+                document.getElementById('lista-financeiro-container').innerHTML = `
+                    <div class="linha-item skeleton skeleton-box" style="margin-bottom:10px;"></div>
+                    <div class="linha-item skeleton skeleton-box" style="margin-bottom:10px;"></div>
+                `;
 
                 const unidadeAtual = idBarbearia || 'kiko_barb';
                 const res = await fetch(SCRIPT_URL + '?acao=dashboard&id_barbearia=' + unidadeAtual + '&mes=' + mesSelecionado + '&ano=' + anoSelecionado); 
@@ -1332,7 +1331,7 @@
                 const data = await res.json(); 
                 if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; 
                 if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
-                if(data.sobre) document.getElementById('edit-sobre').value = data.sobre; // <--- CARREGA O TEXTO SOBRE NÓS
+                if(data.sobre) document.getElementById('edit-sobre').value = data.sobre; 
                 if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
                 if(data.endereco) document.getElementById('edit-endereco').value = data.endereco; 
                 if(data.link_google) document.getElementById('edit-link-google').value = data.link_google; 
@@ -1347,7 +1346,7 @@
             fd.append('id_barbearia', idBarbearia);
             fd.append('titulo', document.getElementById('edit-titulo').value); 
             fd.append('subtitulo', document.getElementById('edit-subtitulo').value); 
-            fd.append('sobre', document.getElementById('edit-sobre').value); // <--- ENVIA O TEXTO SOBRE NÓS
+            fd.append('sobre', document.getElementById('edit-sobre').value); 
             fd.append('telefone', document.getElementById('edit-telefone').value); 
             fd.append('endereco', document.getElementById('edit-endereco').value); 
             fd.append('link_google', document.getElementById('edit-link-google').value); 
@@ -1454,7 +1453,6 @@
             r.readAsDataURL(file); 
         }
         
-        // --- FUNÇÃO DE GALERIA CORRIGIDA E ATUALIZADA ---
         async function abrirModalGaleria() { 
             abrirModal('modal-galeria'); 
             const c = document.getElementById('lista-galeria-container'); 
@@ -1477,7 +1475,7 @@
                     span.innerText = link;
                     
                     const btn = document.createElement('button');
-                    btn.className = 'remove-btn';
+                    btn.className, 'remove-btn';
                     btn.innerText = 'X';
                     btn.onclick = function() { apagarFotoGaleria(link, this); };
                     
@@ -1490,7 +1488,6 @@
             } 
         }
 
-        // --- FUNÇÃO DE EXCLUSÃO BLINDADA (Compatível com remover_foto e excluir_foto) ---
         async function apagarFotoGaleria(url, btnElement) {
             if(!confirm("Deseja apagar esta imagem/vídeo da galeria?")) return;
             
@@ -1500,14 +1497,13 @@
             }
 
             const fd = new URLSearchParams();
-            fd.append('acao', 'remover_foto'); // Dispara a ação tratada no Apps Script
+            fd.append('acao', 'remover_foto');
             fd.append('id_barbearia', idBarbearia);
             fd.append('url_foto', url);
             
             try {
                 await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
                 
-                // Aguarda 1.5 segundos para garantir que o Apps Script salvou a alteração antes de recarregar a lista
                 setTimeout(() => {
                     alert("Excluído com sucesso!");
                     abrirModalGaleria();
