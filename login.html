@@ -15,12 +15,13 @@
         .form-group input:focus { border-color: #d4af37; outline: none; }
         .btn-gold { background-color: #d4af37; color: #050505; width: 100%; padding: 15px; text-decoration: none; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-gold:hover { background-color: #b38f27; border-color: #b38f27; }
-        .btn-biometria { background-color: transparent; color: #d4af37; width: 100%; padding: 12px; font-size: 0.95em; font-weight: 600; text-transform: uppercase; border-radius: 4px; border: 1px dashed #d4af37; cursor: pointer; transition: 0.3s; margin-top: 15px; display: none; align-items: center; justify-content: center; gap: 8px; }
-        .btn-biometria:hover { background-color: rgba(212, 175, 55, 0.1); }
+        .btn-biometria { background-color: #d4af37; color: #050505; width: 100%; padding: 15px; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; margin-top: 15px; display: none; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        .btn-biometria:hover { background-color: #b38f27; }
         .links-uteis { text-align: center; margin-top: 20px; font-size: 0.9em; }
         .links-uteis a { color: #d4af37; text-decoration: none; font-weight: 600; }
         .links-uteis a:hover { text-decoration: underline; }
         .mensagem-erro { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; padding: 10px; border-radius: 4px; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; font-weight: 600; }
+        .aviso-auto { text-align: center; color: #d4af37; font-size: 0.8em; margin-top: 10px; display: none; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -41,10 +42,11 @@
             <button type="submit" id="btnLogin" class="btn-gold">Entrar no Painel</button>
         </form>
 
-        <!-- Botão de Impressão Digital / Biometria -->
+        <!-- Botão Principal de Impressão Digital / Face ID -->
         <button type="button" id="btnBiometria" class="btn-biometria" onclick="entrarComBiometria()">
-            🔒 Entrar com Impressão Digital
+            🔐 Entrar com Impressão Digital
         </button>
+        <div id="avisoAuto" class="aviso-auto">Toque em qualquer lugar para ativar a biometria 👆</div>
 
         <div class="links-uteis">
             <p>Ainda não tem barbearia registada? <a href="registro.html">Criar Conta</a></p>
@@ -58,7 +60,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const idParam = urlParams.get('id');
         
-        // Recupera ID salvo anteriormente se houver
         const idSalvoLocal = localStorage.getItem('id_barbearia_ativo');
         if (idParam) {
             document.getElementById('id_barbearia').value = idParam;
@@ -67,20 +68,29 @@
             document.getElementById('id_barbearia').value = idSalvoLocal;
         }
 
-        // Verifica suporte a biometria ao carregar a página e dispara automático se já foi usada antes
+        // Verifica suporte a biometria ao carregar a página
         document.addEventListener("DOMContentLoaded", async function() {
             if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
                 try {
                     let disponivel = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
                     if (disponivel) {
-                        document.getElementById('btnBiometria').style.display = 'flex';
-
-                        // Se o usuário já entrou com biometria neste aparelho antes, abre automaticamente!
                         const biometriaRegistrada = localStorage.getItem('biometria_autorizada');
+                        
+                        // Se já salvou a biometria antes, destaca o botão e avisa para tocar na tela
                         if (biometriaRegistrada === "true") {
-                            setTimeout(() => {
+                            const btnBio = document.getElementById('btnBiometria');
+                            btnBio.style.display = 'flex';
+                            btnBio.style.backgroundColor = '#d4af37';
+                            btnBio.innerText = "👆 Toque para Entrar com Digital";
+                            document.getElementById('avisoAuto').style.display = 'block';
+
+                            // Dispara com qualquer primeiro toque na tela inteira do celular
+                            document.body.addEventListener('click', function dispararAutomaticoOnce() {
                                 entrarComBiometria();
-                            }, 500); // Meio segundo de delay para carregar a interface suavemente
+                                document.body.removeEventListener('click', dispararAutomaticoOnce);
+                            }, { once: true });
+                        } else {
+                            document.getElementById('btnBiometria').style.display = 'flex';
                         }
                     }
                 } catch(e) {}
@@ -111,19 +121,15 @@
                     timeout: 60000
                 };
 
-                // Aciona o leitor biométrico nativo do smartphone
                 const credential = await navigator.credentials.create({ publicKey });
                 
                 if (credential) {
-                    // Salva a permissão para abrir automaticamente nas próximas vezes
                     localStorage.setItem('biometria_autorizada', 'true');
                     localStorage.setItem('id_barbearia_ativo', idBarb);
                     window.location.href = `admin.html?id=${idBarb}`;
                 }
             } catch (error) {
-                console.log("Biometria cancelada ou não configurada:", error);
-                // Se o usuário cancelar a automática, removemos a flag para não ficar loopando
-                localStorage.removeItem('biometria_autorizada');
+                console.log("Biometria cancelada:", error);
             }
         }
 
@@ -144,15 +150,13 @@
             btn.innerText = "A validar...";
             msgErro.style.display = 'none';
 
-            // BYPASS MESTRE: Se for a sua conta mestre, entra direto sem travar em erro de senha
             if (idBarb === "kiko_barb" || idBarb === "kiko_barberia" || idBarb === "master") {
                 localStorage.setItem('id_barbearia_ativo', idBarb);
-                localStorage.setItem('biometria_autorizada', 'true'); // Ativa biometria automática para as próximas vezes
+                localStorage.setItem('biometria_autorizada', 'true');
                 window.location.href = `admin.html?id=${idBarb}`;
                 return;
             }
 
-            // Para os demais cadastros, valida via servidor normalmente
             const dadosLogin = {
                 acao: "login_saas",
                 id_barbearia: idBarb,
@@ -167,7 +171,7 @@
             .then(data => {
                 if (data.status === "sucesso") {
                     localStorage.setItem('id_barbearia_ativo', idBarb);
-                    localStorage.setItem('biometria_autorizada', 'true'); // Ativa biometria automática para as próximas vezes
+                    localStorage.setItem('biometria_autorizada', 'true');
                     window.location.href = `admin.html?id=${idBarb}`;
                 } else if (data.status === "bloqueado") {
                     msgErro.innerText = "Acesso suspenso: Mensalidade em atraso!";
