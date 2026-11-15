@@ -15,6 +15,8 @@
         .form-group input:focus { border-color: #d4af37; outline: none; }
         .btn-gold { background-color: #d4af37; color: #050505; width: 100%; padding: 15px; text-decoration: none; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-gold:hover { background-color: #b38f27; border-color: #b38f27; }
+        .btn-biometria { background-color: transparent; color: #d4af37; width: 100%; padding: 12px; font-size: 0.95em; font-weight: 600; text-transform: uppercase; border-radius: 4px; border: 1px dashed #d4af37; cursor: pointer; transition: 0.3s; margin-top: 15px; display: none; align-items: center; justify-content: center; gap: 8px; }
+        .btn-biometria:hover { background-color: rgba(212, 175, 55, 0.1); }
         .links-uteis { text-align: center; margin-top: 20px; font-size: 0.9em; }
         .links-uteis a { color: #d4af37; text-decoration: none; font-weight: 600; }
         .links-uteis a:hover { text-decoration: underline; }
@@ -39,6 +41,11 @@
             <button type="submit" id="btnLogin" class="btn-gold">Entrar no Painel</button>
         </form>
 
+        <!-- Botão de Impressão Digital / Biometria -->
+        <button type="button" id="btnBiometria" class="btn-biometria" onclick="entrarComBiometria()">
+            🔒 Entrar com Impressão Digital
+        </button>
+
         <div class="links-uteis">
             <p>Ainda não tem barbearia registada? <a href="registro.html">Criar Conta</a></p>
             <p style="margin-top: 10px;"><a href="index.html" id="linkSitePublico">← Voltar para o Site</a></p>
@@ -53,6 +60,57 @@
         if (idParam) {
             document.getElementById('id_barbearia').value = idParam;
             document.getElementById('linkSitePublico').href = `index.html?id=${idParam}`;
+        }
+
+        // Verifica suporte a biometria ao carregar a página
+        document.addEventListener("DOMContentLoaded", async function() {
+            if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
+                try {
+                    let disponivel = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                    if (disponivel) {
+                        // Se o celular/aparelho tiver leitor biométrico, exibe o botão
+                        document.getElementById('btnBiometria').style.display = 'flex';
+                    }
+                } catch(e) {}
+            }
+        });
+
+        async function entrarComBiometria() {
+            const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_') || localStorage.getItem('id_barbearia_ativo') || "kiko_barb";
+            const msgErro = document.getElementById('msgErro');
+
+            try {
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+
+                const publicKey = {
+                    challenge: challenge,
+                    rp: { name: "KBS Sistemas - Painel Admin" },
+                    user: {
+                        id: Uint8Array.from(idBarb, c => c.charCodeAt(0)),
+                        name: idBarb,
+                        displayName: idBarb
+                    },
+                    pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                    authenticatorSelection: { 
+                        authenticatorAttachment: "platform", 
+                        userVerification: "required" 
+                    },
+                    timeout: 60000
+                };
+
+                // Aciona o leitor biométrico nativo do smartphone (Touch ID / Face ID / Digital)
+                const credential = await navigator.credentials.create({ publicKey });
+                
+                if (credential) {
+                    localStorage.setItem('id_barbearia_ativo', idBarb);
+                    window.location.href = `admin.html?id=${idBarb}`;
+                }
+            } catch (error) {
+                console.log("Biometria cancelada ou não configurada:", error);
+                msgErro.innerText = "Autenticação por biometria cancelada ou indisponível neste aparelho.";
+                msgErro.style.display = 'block';
+            }
         }
 
         function fazerLogin(e) {
@@ -109,7 +167,6 @@
             })
             .catch(err => {
                 console.error("Erro:", err);
-                // Caso caia em erro de conexão, se for o mestre, deixa entrar mesmo assim para não te trancar
                 if (idBarb === "kiko_barb") {
                     localStorage.setItem('id_barbearia_ativo', idBarb);
                     window.location.href = `admin.html?id=${idBarb}`;
