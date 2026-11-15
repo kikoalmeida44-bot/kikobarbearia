@@ -57,19 +57,31 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const idParam = urlParams.get('id');
+        
+        // Recupera ID salvo anteriormente se houver
+        const idSalvoLocal = localStorage.getItem('id_barbearia_ativo');
         if (idParam) {
             document.getElementById('id_barbearia').value = idParam;
             document.getElementById('linkSitePublico').href = `index.html?id=${idParam}`;
+        } else if (idSalvoLocal) {
+            document.getElementById('id_barbearia').value = idSalvoLocal;
         }
 
-        // Verifica suporte a biometria ao carregar a página
+        // Verifica suporte a biometria ao carregar a página e dispara automático se já foi usada antes
         document.addEventListener("DOMContentLoaded", async function() {
             if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
                 try {
                     let disponivel = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
                     if (disponivel) {
-                        // Se o celular/aparelho tiver leitor biométrico, exibe o botão
                         document.getElementById('btnBiometria').style.display = 'flex';
+
+                        // Se o usuário já entrou com biometria neste aparelho antes, abre automaticamente!
+                        const biometriaRegistrada = localStorage.getItem('biometria_autorizada');
+                        if (biometriaRegistrada === "true") {
+                            setTimeout(() => {
+                                entrarComBiometria();
+                            }, 500); // Meio segundo de delay para carregar a interface suavemente
+                        }
                     }
                 } catch(e) {}
             }
@@ -99,17 +111,19 @@
                     timeout: 60000
                 };
 
-                // Aciona o leitor biométrico nativo do smartphone (Touch ID / Face ID / Digital)
+                // Aciona o leitor biométrico nativo do smartphone
                 const credential = await navigator.credentials.create({ publicKey });
                 
                 if (credential) {
+                    // Salva a permissão para abrir automaticamente nas próximas vezes
+                    localStorage.setItem('biometria_autorizada', 'true');
                     localStorage.setItem('id_barbearia_ativo', idBarb);
                     window.location.href = `admin.html?id=${idBarb}`;
                 }
             } catch (error) {
                 console.log("Biometria cancelada ou não configurada:", error);
-                msgErro.innerText = "Autenticação por biometria cancelada ou indisponível neste aparelho.";
-                msgErro.style.display = 'block';
+                // Se o usuário cancelar a automática, removemos a flag para não ficar loopando
+                localStorage.removeItem('biometria_autorizada');
             }
         }
 
@@ -133,6 +147,7 @@
             // BYPASS MESTRE: Se for a sua conta mestre, entra direto sem travar em erro de senha
             if (idBarb === "kiko_barb" || idBarb === "kiko_barberia" || idBarb === "master") {
                 localStorage.setItem('id_barbearia_ativo', idBarb);
+                localStorage.setItem('biometria_autorizada', 'true'); // Ativa biometria automática para as próximas vezes
                 window.location.href = `admin.html?id=${idBarb}`;
                 return;
             }
@@ -152,6 +167,7 @@
             .then(data => {
                 if (data.status === "sucesso") {
                     localStorage.setItem('id_barbearia_ativo', idBarb);
+                    localStorage.setItem('biometria_autorizada', 'true'); // Ativa biometria automática para as próximas vezes
                     window.location.href = `admin.html?id=${idBarb}`;
                 } else if (data.status === "bloqueado") {
                     msgErro.innerText = "Acesso suspenso: Mensalidade em atraso!";
@@ -169,6 +185,7 @@
                 console.error("Erro:", err);
                 if (idBarb === "kiko_barb") {
                     localStorage.setItem('id_barbearia_ativo', idBarb);
+                    localStorage.setItem('biometria_autorizada', 'true');
                     window.location.href = `admin.html?id=${idBarb}`;
                 } else {
                     msgErro.innerText = "Erro de conexão com o servidor. Tente novamente.";
