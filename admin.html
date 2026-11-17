@@ -39,10 +39,10 @@
         
         @media (min-width: 768px) {
             .admin-container {
-                max-width: 1200px; /* Expande para ocupar o monitor no PC */
+                max-width: 1200px;
             }
             .dashboard-grid {
-                grid-template-columns: repeat(2, 1fr) !important; /* Organiza em grade no computador se necessário */
+                grid-template-columns: repeat(2, 1fr) !important;
             }
         }
 
@@ -55,7 +55,7 @@
 
         /* ESTILO DO PAINEL MESTRE SAAS */
         .master-barber-card { background: linear-gradient(135deg, #1a1a1a, #2a2211); border: 1px dashed #ffd700; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
-        .master-title { color: #ffd700; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .master-title { color: #ffd700; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 
         .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .section-title { color: var(--cor-principal); font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
@@ -117,13 +117,16 @@
     <div class="admin-container" id="main-dashboard" style="display: block !important;">
         <h1 class="logo" id="titulo-barbearia">A Carregar...</h1>
         
-        <!-- PAINEL MESTRE SAAS -->
+        <!-- PAINEL MESTRE SAAS (EXCLUSIVO DO DONO DO SISTEMA) -->
         <div class="master-barber-card" id="painel-master-saas" style="display: none;">
             <div class="master-title">
-                👑 PAINEL MESTRE (SAAS)
-                <button onclick="abrirModal('modal-nova-barbearia')" style="background: #ffd700; color: #000; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">+ Nova Barbearia</button>
+                <span>👑 PAINEL MESTRE (SAAS)</span>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button onclick="abrirDisparadorMestre()" style="background: #25D366; color: #000; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; cursor: pointer;">📢 Disparador WhatsApp</button>
+                    <button onclick="abrirModal('modal-nova-barbearia')" style="background: #ffd700; color: #000; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; cursor: pointer;">+ Nova Barbearia</button>
+                </div>
             </div>
-            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Gerencie as unidades clientes e controle os pagamentos:</p>
+            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Gerencie as unidades clientes, controle os pagamentos e acesse o disparador de campanhas:</p>
             <div id="lista-barbearias-saas" style="max-height: 150px; overflow-y: auto;">
                 <p style="font-size: 0.75rem; color: #888;">A carregar barbearias...</p>
             </div>
@@ -455,7 +458,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLETO DE PONTA A PONTA COM SKELETON LOADING -->
+    <!-- SCRIPT COMPLETO DE PONTA A PONTA COM SKELETON LOADING E INTEGRAÇÃO DISPARADOR -->
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
@@ -476,6 +479,14 @@
         window.produtosCarregados = [];
         window.dadosDashboardCache = null;
         window.filtroIniciado = false;
+
+        // FUNÇÃO QUE ABRE O DISPARADOR EXCLUSIVO DO PAINEL MESTRE
+        function abrirDisparadorMestre() {
+            localStorage.setItem('kbs_mestre_autorizado', 'true');
+            localStorage.setItem('kbs_script_url', SCRIPT_URL);
+            localStorage.setItem('kbs_id_origem', idBarbearia);
+            window.open('disparador.html', '_blank');
+        }
 
         async function iniciarPainel() {
             const linkPronto = `https://kikobarbearia.com.br/?id=${idBarbearia}`;
@@ -693,7 +704,6 @@
                 
                 document.getElementById('titulo-resumo-financeiro').innerText = mesSelecionado === 'todos' ? '📊 RESUMO FINANCEIRO (ANUAL - ' + anoSelecionado + ')' : '📊 RESUMO FINANCEIRO (MÊS ' + mesSelecionado + '/' + anoSelecionado + ')';
                 
-                // --- SKELETON LOADING ATIVADO ENQUANTO BUSCA DADOS ---
                 document.getElementById('ganhos-estimados').innerHTML = '<span class="skeleton" style="display:inline-block; width:70px; height:16px;"></span>';
                 document.getElementById('total-despesas').innerHTML = '<span class="skeleton" style="display:inline-block; width:70px; height:16px;"></span>';
                 document.getElementById('lucro-liquido').innerHTML = '<span class="skeleton" style="display:inline-block; width:90px; height:20px;"></span>';
@@ -1475,7 +1485,7 @@
                     span.innerText = link;
                     
                     const btn = document.createElement('button');
-                    btn.className, 'remove-btn';
+                    btn.className = 'remove-btn';
                     btn.innerText = 'X';
                     btn.onclick = function() { apagarFotoGaleria(link, this); };
                     
