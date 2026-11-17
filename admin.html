@@ -67,7 +67,7 @@
         .menu-btn:hover { background-color: #1a1a1a; border-color: var(--cor-principal); }
         .logout-btn { width: 100%; background-color: transparent; color: #ff4c4c; border: 1px solid #333; padding: 12px; font-size: 0.75rem; border-radius: 6px; margin-top: 20px; cursor: pointer; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
-        .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-principal); width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-principal); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
         .modal-title { color: var(--cor-principal); margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
@@ -255,12 +255,18 @@
                     <option value="todos">-- Todos os Profissionais --</option>
                 </select>
             </div>
-            <div class="input-group">
-                <label>Porcentagem de Comissão (%):</label>
-                <input type="number" id="comissao-porcentagem" value="50" oninput="calcularComissoes()" min="0" max="100">
+            <div class="row" style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex:1;">
+                    <label>Comissão Serviços (%):</label>
+                    <input type="number" id="comissao-porcentagem" value="50" oninput="calcularComissoes()" min="0" max="100">
+                </div>
+                <div class="input-group" style="flex:1;">
+                    <label>Comissão Produtos (%):</label>
+                    <input type="number" id="comissao-produtos-perc" value="10" oninput="calcularComissoes()" min="0" max="100">
+                </div>
             </div>
             <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; text-align: center;">
-                <div style="font-size: 0.75rem; color: #aaa;">FATURAMENTO TOTAL DOS SERVIÇOS</div>
+                <div style="font-size: 0.75rem; color: #aaa;">FATURAMENTO TOTAL (SERVIÇOS + PRODUTOS)</div>
                 <div id="comissao-total-servicos" style="font-size: 1.2rem; color: #fff; font-weight: bold; margin-bottom: 10px;">R$ 0,00</div>
                 <div style="display: flex; justify-content: space-around; border-top: 1px solid #222; padding-top: 10px;">
                     <div>
@@ -273,7 +279,7 @@
                     </div>
                 </div>
             </div>
-            <h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">📋 Detalhes dos Atendimentos Concluídos:</h3>
+            <h3 style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">📋 Detalhes dos Atendimentos e Vendas:</h3>
             <div id="lista-comissoes-container" style="max-height: 30vh; overflow-y: auto;">
                 <p style="color: #888; font-size: 0.8rem;">Carregando...</p>
             </div>
@@ -302,20 +308,33 @@
         </div>
     </div>
 
-    <!-- MODAL PDV E ESTOQUE -->
+    <!-- MODAL PDV E ESTOQUE ATUALIZADO -->
     <div id="modal-pdv" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #ff6b6b;">🛒 Venda de Balcão (PDV)</h2>
+            <h2 class="modal-title" style="color: #ff6b6b;">🛒 Venda de Balcão (PDV) e Estoque</h2>
             <div style="background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444;">
                 <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #fff;">Registar Venda Rápida</h3>
-                <div class="input-group"><select id="pdv-produto-select" onchange="atualizarPrecoPdv()"><option value="">-- Selecione o Produto --</option></select></div>
-                <div class="input-group"><input type="number" id="pdv-produto-preco" placeholder="Valor (R$)" step="0.01"></div>
+                <div class="input-group">
+                    <label>Selecionar Produto:</label>
+                    <select id="pdv-produto-select" onchange="atualizarPrecoPdv()"><option value="">-- Selecione o Produto --</option></select>
+                </div>
+                <div class="input-group">
+                    <label>Profissional responsável pela venda (para comissão):</label>
+                    <select id="pdv-profissional-select">
+                        <option value="Equipe">💈 Loja / Equipe Geral</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Valor de Venda (R$):</label>
+                    <input type="number" id="pdv-produto-preco" placeholder="Valor (R$)" step="0.01">
+                </div>
                 <button class="action-btn" style="background-color: #ff6b6b; color: white;" onclick="salvarVendaPdv()">💲 Registar Venda</button>
             </div>
             <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-            <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #aaa;">📦 Gerenciar Estoque</h3>
+            <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: #aaa;">📦 Gerenciar Estoque e Custos</h3>
+            <p style="font-size: 0.7rem; color: #888; margin-bottom: 10px;">Ordem das colunas: <strong>Nome | Custo (R$) | Venda (R$) | Qtd</strong></p>
             <div id="lista-produtos-container"></div>
-            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProduto('', '', '10')">+ Novo Produto</button><br><br>
+            <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProduto('', '', '', '10')">+ Novo Produto</button><br><br>
             <button class="action-btn" onclick="salvarEstoque()">Salvar Estoque</button>
             <button class="close-btn" onclick="fecharModal('modal-pdv')">Fechar</button>
         </div>
@@ -928,45 +947,82 @@
             }
 
             const profSelecionado = document.getElementById('comissao-profissional').value;
-            const percentual = parseFloat(document.getElementById('comissao-porcentagem').value) || 0;
+            const percServicos = parseFloat(document.getElementById('comissao-porcentagem').value) || 0;
+            const percProdutos = parseFloat(document.getElementById('comissao-produtos-perc').value) || 0;
             const agenda = window.dadosDashboardCache.agenda;
+            const financeiro = window.dadosDashboardCache.financeiro || [];
 
-            let totalServicos = 0;
+            let totalFaturamento = 0;
+            let totalComissaoProfissional = 0;
             const containerDetalhes = document.getElementById('lista-comissoes-container');
             containerDetalhes.innerHTML = '';
 
+            // 1. Processar Serviços da Agenda Concluídos
             let atendimentosConcluidos = agenda.filter(ag => {
                 let concl = ag.status === "Concluído";
                 let matchProf = (profSelecionado === "todos" || (ag.profissional && ag.profissional.trim().toLowerCase() === profSelecionado.trim().toLowerCase()));
                 return concl && matchProf;
             });
 
-            if (atendimentosConcluidos.length === 0) {
-                containerDetalhes.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum atendimento concluído encontrado.</p>';
-            } else {
-                atendimentosConcluidos.forEach(at => {
-                    let valor = parseFloat(at.valor_total || 0);
-                    totalServicos += valor;
+            atendimentosConcluidos.forEach(at => {
+                let valor = parseFloat(at.valor_total || 0);
+                totalFaturamento += valor;
+                let comissaoItem = (valor * percServicos) / 100;
+                totalComissaoProfissional += comissaoItem;
 
-                    const div = document.createElement('div');
-                    div.className = 'linha-item';
-                    div.style.borderLeft = '3px solid #28a745';
-                    div.innerHTML = `
-                        <div>
-                            <strong>${at.nome}</strong> (${at.servico})<br>
-                            <span style="font-size:0.7rem; color:#aaa;">${at.data.split('-').reverse().join('/')} às ${at.hora} | 💈 ${at.profissional || 'Equipe'}</span>
-                        </div>
-                        <div style="color:#28a745; font-weight:bold;">R$ ${valor.toFixed(2)}</div>
-                    `;
-                    containerDetalhes.appendChild(div);
-                });
+                const div = document.createElement('div');
+                div.className = 'linha-item';
+                div.style.borderLeft = '3px solid #28a745';
+                div.innerHTML = `
+                    <div>
+                        <strong>${at.nome}</strong> (Serviço: ${at.servico})<br>
+                        <span style="font-size:0.7rem; color:#aaa;">${at.data.split('-').reverse().join('/')} às ${at.hora} | 💈 ${at.profissional || 'Equipe'}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="color:#28a745; font-weight:bold;">R$ ${valor.toFixed(2)}</span><br>
+                        <span style="font-size:0.65rem; color:#ffd700;">Comissão: R$ ${comissaoItem.toFixed(2)}</span>
+                    </div>
+                `;
+                containerDetalhes.appendChild(div);
+            });
+
+            // 2. Processar Vendas de Produtos do Balcão (PDV)
+            let vendasProdutos = financeiro.filter(f => {
+                let isProd = f.tipo === 'produto';
+                let matchProf = (profSelecionado === "todos" || (f.profissional && f.profissional.trim().toLowerCase() === profSelecionado.trim().toLowerCase()));
+                return isProd && matchProf;
+            });
+
+            vendasProdutos.forEach(vp => {
+                let valor = parseFloat(vp.valor || 0);
+                totalFaturamento += valor;
+                let comissaoItem = (valor * percProdutos) / 100;
+                totalComissaoProfissional += comissaoItem;
+
+                const div = document.createElement('div');
+                div.className = 'linha-item';
+                div.style.borderLeft = '3px solid #ff6b6b';
+                div.innerHTML = `
+                    <div>
+                        <strong>${vp.nome}</strong> (Produto: ${vp.servico})<br>
+                        <span style="font-size:0.7rem; color:#aaa;">${vp.data.split('-').reverse().join('/')} | 🛒 PDV | 👤 ${vp.profissional || 'Equipe'}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="color:#ff6b6b; font-weight:bold;">R$ ${valor.toFixed(2)}</span><br>
+                        <span style="font-size:0.65rem; color:#ffd700;">Comissão: R$ ${comissaoItem.toFixed(2)}</span>
+                    </div>
+                `;
+                containerDetalhes.appendChild(div);
+            });
+
+            if (atendimentosConcluidos.length === 0 && vendasProdutos.length === 0) {
+                containerDetalhes.innerHTML = '<p style="color:#aaa; font-size:0.8rem;">Nenhum atendimento ou venda concluída encontrada.</p>';
             }
 
-            let valorComissao = (totalServicos * percentual) / 100;
-            let valorEmpresa = totalServicos - valorComissao;
+            let valorEmpresa = totalFaturamento - totalComissaoProfissional;
 
-            document.getElementById('comissao-total-servicos').innerText = totalServicos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('comissao-valor-profissional').innerText = valorComissao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('comissao-total-servicos').innerText = totalFaturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('comissao-valor-profissional').innerText = totalComissaoProfissional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('comissao-valor-empresa').innerText = valorEmpresa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
@@ -1174,26 +1230,40 @@
             atualizarPainelAdmin(); 
         }
 
-        function abrirModalPdv() { 
+        async function abrirModalPdv() { 
             abrirModal('modal-pdv'); 
             document.getElementById('lista-produtos-container').innerHTML = ''; 
             const selectPdv = document.getElementById('pdv-produto-select'); 
             selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>'; 
+
+            const selectProfPdv = document.getElementById('pdv-profissional-select');
+            selectProfPdv.innerHTML = '<option value="Equipe">💈 Loja / Equipe Geral</option>';
+            try {
+                const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
+                const data = await res.json();
+                if (data.profissionais) {
+                    let profs = JSON.parse(data.profissionais);
+                    profs.forEach(p => {
+                        selectProfPdv.innerHTML += `<option value="${p.nome}">💈 ${p.nome}</option>`;
+                    });
+                }
+            } catch(e) {}
             
             window.produtosCarregados.forEach(p => { 
-                adicionarLinhaProduto(p.nome, p.preco, p.estoque); 
-                selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (R$ ${p.preco} - Stock: ${p.estoque})</option>`; 
+                adicionarLinhaProduto(p.nome, p.custo || 0, p.preco, p.estoque); 
+                selectPdv.innerHTML += `<option value="${p.preco}" data-nome="${p.nome}">${p.nome} (Venda: R$ ${p.preco} - Custo: R$ ${p.custo || 0} - Stock: ${p.estoque})</option>`; 
             }); 
             document.getElementById('pdv-produto-preco').value = ""; 
         }
         
-        function adicionarLinhaProduto(n, p, e) { 
+        function adicionarLinhaProduto(n, c, p, e) { 
             const div = document.createElement('div'); 
             div.className = 'linha-item'; 
             div.innerHTML = `
-                <input type="text" value="${n}" class="p-nome" placeholder="Produto">
-                <input type="number" value="${p}" class="p-preco" placeholder="R$" style="width:70px;" step="0.01">
-                <input type="number" value="${e}" class="p-estoque" placeholder="Qtd" style="width:60px;">
+                <input type="text" value="${n}" class="p-nome" placeholder="Produto" style="flex: 2;">
+                <input type="number" value="${c}" class="p-custo" placeholder="Custo R$" style="width:75px;" step="0.01">
+                <input type="number" value="${p}" class="p-preco" placeholder="Venda R$" style="width:75px;" step="0.01">
+                <input type="number" value="${e}" class="p-estoque" placeholder="Qtd" style="width:55px;">
                 <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
             `; 
             document.getElementById('lista-produtos-container').appendChild(div); 
@@ -1206,6 +1276,7 @@
         async function salvarVendaPdv() { 
             const select = document.getElementById('pdv-produto-select'); 
             const preco = document.getElementById('pdv-produto-preco').value; 
+            const prof = document.getElementById('pdv-profissional-select').value;
             
             if (select.selectedIndex === 0 || !preco) return alert("Selecione um produto e informe o valor!"); 
             
@@ -1217,6 +1288,7 @@
             fd.append('id_barbearia', idBarbearia);
             fd.append('nome_produto', n); 
             fd.append('valor_venda', preco); 
+            fd.append('profissional', prof);
             
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
             alert('Venda registada e baixa no estoque efetuada!'); 
@@ -1228,9 +1300,10 @@
             let novos = []; 
             document.querySelectorAll('#lista-produtos-container .linha-item').forEach(l => { 
                 const n = l.querySelector('.p-nome').value; 
+                const c = parseFloat(l.querySelector('.p-custo').value||0);
                 const p = parseFloat(l.querySelector('.p-preco').value||0); 
                 const e = parseInt(l.querySelector('.p-estoque').value||0); 
-                if(n) novos.push({nome: n, preco: p, estoque: e}); 
+                if(n) novos.push({nome: n, custo: c, preco: p, estoque: e}); 
             }); 
             
             const fd = new URLSearchParams(); 
@@ -1450,7 +1523,7 @@
                 try { 
                     await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
                     alert('Enviado!'); 
-                    fi.value = ''; 
+                    fi.value = e = ''; 
                     btn.innerText = "📤 Enviar Ficheiro"; 
                     btn.disabled = false; 
                     setTimeout(() => { abrirModalGaleria(); }, 1500); 
