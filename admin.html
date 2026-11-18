@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Importando paleta de fontes profissionais */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&family=Oswald:wght@400;600&family=Poppins:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;500;700&family=Oswald:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
         
         :root {
             --cor-principal: #c8a355; 
@@ -78,6 +78,24 @@
         .linha-item input { width: 100%; padding: 8px; background: #111; border: 1px solid #444; color: white; font-size: 0.8rem;}
         .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;}
         .badge-notif { background-color: #ff4c4c; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; float: right; font-weight: bold; display: none; }
+
+        /* ESTILO DO CANVAS DE POSTS INSTAGRAM */
+        .preview-canvas-wrapper {
+            background: #0a0a0a;
+            border: 1px dashed #444;
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        #canvasPostInstagram {
+            max-width: 100%;
+            max-height: 360px;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
 
         /* SISTEMA DE ESQUELETO (SKELETON LOADING) */
         @keyframes shimmer {
@@ -202,6 +220,7 @@
         <button class="menu-btn" onclick="abrirModalComissoes()" style="border-color: #28a745;">💵 RELATÓRIO DE COMISSÕES</button>
         <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 CRM / PACOTES CLIENTES</button>
         <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
+        <button class="menu-btn" onclick="abrirCriadorPosts()" style="border-color: #e1306c; color: #ff6b9d;">📱 CRIAR POST INSTAGRAM / STORIES</button>
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
         
         <button class="menu-btn" onclick="abrirModalAgendar()">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
@@ -211,6 +230,66 @@
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS E VISUAL DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
         <button class="logout-btn" onclick="window.location.href='login.html'">🔒 Sair e Bloquear Painel</button>
+    </div>
+
+    <!-- MODAL CRIADOR DE POSTS INSTAGRAM / STORIES -->
+    <div id="modal-criador-posts" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title" style="color: #ff6b9d;">📱 Criador de Posts & Stories</h2>
+            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 12px;">Monte artes profissionais prontas para o Instagram ou WhatsApp em segundos:</p>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>Formato da Arte:</label>
+                    <select id="post-formato" onchange="renderizarPostInstagram()">
+                        <option value="feed">Feed Quadrado (1080x1080)</option>
+                        <option value="stories">Stories Vertical (1080x1920)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>Tema / Estilo:</label>
+                    <select id="post-tema" onchange="aplicarPresetPost()">
+                        <option value="agenda">📅 Agenda Aberta</option>
+                        <option value="promocao">🔥 Promoção Corte + Barba</option>
+                        <option value="kbs">🚀 Divulgar KBS Sistemas</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Foto de Fundo (Opcional - Corte ou Barbearia):</label>
+                <input type="file" id="post-foto-fundo" accept="image/*" onchange="carregarImagemFundoPost(event)" style="background:#222; padding:8px; font-size:0.8rem;">
+            </div>
+
+            <div class="input-group">
+                <label>Título Principal (Destaque):</label>
+                <input type="text" id="post-titulo" value="HORÁRIOS DISPONÍVEIS HOJE!" oninput="renderizarPostInstagram()">
+            </div>
+
+            <div class="input-group">
+                <label>Subtítulo / Descrição:</label>
+                <input type="text" id="post-subtitulo" value="Garanta seu visual na régua sem pegar fila." oninput="renderizarPostInstagram()">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>Destaque / Preço / Chamada:</label>
+                    <input type="text" id="post-chamada" value="AGENDE PELO LINK NA BIO" oninput="renderizarPostInstagram()">
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>Nome / Rodapé:</label>
+                    <input type="text" id="post-rodape" value="KIKO BARBEARIA" oninput="renderizarPostInstagram()">
+                </div>
+            </div>
+
+            <!-- PRÉ-VISUALIZAÇÃO DA ARTE GERADA -->
+            <div class="preview-canvas-wrapper">
+                <canvas id="canvasPostInstagram" width="1080" height="1080"></canvas>
+            </div>
+
+            <button class="action-btn" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white;" onclick="baixarPostInstagram()">⬇️ Baixar Imagem Pronta (PNG)</button>
+            <button class="close-btn" onclick="fecharModal('modal-criador-posts')">Voltar ao Painel</button>
+        </div>
     </div>
 
     <!-- MODAL NOVA BARBEARIA (SAAS) -->
@@ -477,7 +556,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLETO DE PONTA A PONTA COM SKELETON LOADING E INTEGRAÇÃO DISPARADOR -->
+    <!-- SCRIPT COMPLETO DE PONTA A PONTA -->
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
@@ -498,6 +577,198 @@
         window.produtosCarregados = [];
         window.dadosDashboardCache = null;
         window.filtroIniciado = false;
+        window.imagemFundoPost = null;
+
+        // ==========================================
+        // FUNÇÕES DO CRIADOR DE POSTS INSTAGRAM
+        // ==========================================
+        function abrirCriadorPosts() {
+            abrirModal('modal-criador-posts');
+            const nomeAtual = document.getElementById('titulo-barbearia').innerText;
+            if (nomeAtual && nomeAtual !== 'A Carregar...') {
+                document.getElementById('post-rodape').value = nomeAtual.toUpperCase();
+            }
+            renderizarPostInstagram();
+        }
+
+        function aplicarPresetPost() {
+            const tema = document.getElementById('post-tema').value;
+            const nomeAtual = document.getElementById('titulo-barbearia').innerText;
+            const barbeariaNome = (nomeAtual && nomeAtual !== 'A Carregar...') ? nomeAtual.toUpperCase() : 'KIKO BARBEARIA';
+
+            if (tema === 'agenda') {
+                document.getElementById('post-titulo').value = 'HORÁRIOS DISPONÍVEIS HOJE!';
+                document.getElementById('post-subtitulo').value = 'Garanta seu corte na régua sem pegar fila.';
+                document.getElementById('post-chamada').value = 'AGENDE PELO LINK NA BIO';
+                document.getElementById('post-rodape').value = barbeariaNome;
+            } else if (tema === 'promocao') {
+                document.getElementById('post-titulo').value = 'COMBO CORTE + BARBA';
+                document.getElementById('post-subtitulo').value = 'Visual renovado com toalha quente e acabamento perfeito.';
+                document.getElementById('post-chamada').value = 'APENAS R$ 55,00';
+                document.getElementById('post-rodape').value = barbeariaNome;
+            } else if (tema === 'kbs') {
+                document.getElementById('post-titulo').value = 'AUTOMATIZE SUA BARBEARIA';
+                document.getElementById('post-subtitulo').value = 'Agendamento Online + Chatbot WhatsApp + Controle de Caixa.';
+                document.getElementById('post-chamada').value = 'CONHEÇA O KBS SISTEMAS';
+                document.getElementById('post-rodape').value = 'KBS SISTEMAS SAAS';
+            }
+            renderizarPostInstagram();
+        }
+
+        function carregarImagemFundoPost(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    window.imagemFundoPost = img;
+                    renderizarPostInstagram();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function quebrarTextoCanvas(ctx, texto, maxWidth) {
+            const palavras = texto.split(' ');
+            const linhas = [];
+            let linhaAtual = palavras[0] || '';
+
+            for (let i = 1; i < palavras.length; i++) {
+                const teste = linhaAtual + ' ' + palavras[i];
+                if (ctx.measureText(teste).width < maxWidth) {
+                    linhaAtual = teste;
+                } else {
+                    linhas.push(linhaAtual);
+                    linhaAtual = palavras[i];
+                }
+            }
+            linhas.push(linhaAtual);
+            return linhas;
+        }
+
+        function renderizarPostInstagram() {
+            const canvas = document.getElementById('canvasPostInstagram');
+            const ctx = canvas.getContext('2d');
+            const formato = document.getElementById('post-formato').value;
+            const tema = document.getElementById('post-tema').value;
+
+            const titulo = document.getElementById('post-titulo').value.toUpperCase();
+            const subtitulo = document.getElementById('post-subtitulo').value;
+            const chamada = document.getElementById('post-chamada').value.toUpperCase();
+            const rodape = document.getElementById('post-rodape').value.toUpperCase();
+
+            // Ajusta resolução real de alta qualidade
+            if (formato === 'stories') {
+                canvas.width = 1080;
+                canvas.height = 1920;
+            } else {
+                canvas.width = 1080;
+                canvas.height = 1080;
+            }
+
+            const w = canvas.width;
+            const h = canvas.height;
+            const corDestaque = tema === 'kbs' ? '#00bfff' : (getComputedStyle(document.documentElement).getPropertyValue('--cor-principal').trim() || '#c8a355');
+
+            // 1. Fundo Base
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            if (tema === 'kbs') {
+                grad.addColorStop(0, '#071324');
+                grad.addColorStop(1, '#0d0d0d');
+            } else {
+                grad.addColorStop(0, '#1c1810');
+                grad.addColorStop(1, '#080808');
+            }
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // 2. Se houver foto enviada pelo usuário, desenha cobrindo o fundo com filtro escuro
+            if (window.imagemFundoPost) {
+                const img = window.imagemFundoPost;
+                const scale = Math.max(w / img.width, h / img.height);
+                const x = (w / 2) - (img.width / 2) * scale;
+                const y = (h / 2) - (img.height / 2) * scale;
+                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+                // Sobreposição escura para leitura nítida
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.72)';
+                ctx.fillRect(0, 0, w, h);
+            }
+
+            // 3. Moldura elegante interna
+            const margem = 55;
+            ctx.strokeStyle = corDestaque;
+            ctx.lineWidth = 6;
+            ctx.strokeRect(margem, margem, w - margem * 2, h - margem * 2);
+
+            // Detalhe superior (Tag)
+            ctx.fillStyle = corDestaque;
+            ctx.font = 'bold 30px Montserrat, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('✂  ' + rodape + '  ✂', w / 2, margem + 90);
+
+            // 4. Título Principal
+            const centroY = h * 0.44;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 76px Montserrat, sans-serif';
+            const linhasTitulo = quebrarTextoCanvas(ctx, titulo, w - 180);
+            let yAtual = centroY - ((linhasTitulo.length - 1) * 45);
+
+            linhasTitulo.forEach(linha => {
+                ctx.fillText(linha, w / 2, yAtual);
+                yAtual += 90;
+            });
+
+            // Linha divisória dourada/azul
+            ctx.beginPath();
+            ctx.moveTo(w / 2 - 120, yAtual - 20);
+            ctx.lineTo(w / 2 + 120, yAtual - 20);
+            ctx.strokeStyle = corDestaque;
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            // 5. Subtítulo
+            ctx.fillStyle = '#dddddd';
+            ctx.font = '500 40px Montserrat, sans-serif';
+            const linhasSub = quebrarTextoCanvas(ctx, subtitulo, w - 200);
+            let ySub = yAtual + 55;
+            linhasSub.forEach(linha => {
+                ctx.fillText(linha, w / 2, ySub);
+                ySub += 55;
+            });
+
+            // 6. Botão / Faixa de Chamada para Ação (CTA)
+            const btnW = 740;
+            const btnH = 110;
+            const btnX = (w - btnW) / 2;
+            const btnY = h - margem - 230;
+
+            ctx.fillStyle = corDestaque;
+            ctx.beginPath();
+            ctx.roundRect(btnX, btnY, btnW, btnH, 16);
+            ctx.fill();
+
+            ctx.fillStyle = '#000000';
+            ctx.font = '800 40px Montserrat, sans-serif';
+            ctx.fillText(chamada, w / 2, btnY + 68);
+
+            // Assinatura discreta no rodapé
+            ctx.fillStyle = '#888888';
+            ctx.font = '600 24px Montserrat, sans-serif';
+            ctx.fillText('Agendamento Online 24h', w / 2, h - margem - 50);
+        }
+
+        function baixarPostInstagram() {
+            const canvas = document.getElementById('canvasPostInstagram');
+            const link = document.createElement('a');
+            const formato = document.getElementById('post-formato').value;
+            link.download = `post-${formato}-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        // ==========================================
 
         // FUNÇÃO QUE ABRE O DISPARADOR EXCLUSIVO DO PAINEL MESTRE
         function abrirDisparadorMestre() {
@@ -1523,7 +1794,7 @@
                 try { 
                     await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
                     alert('Enviado!'); 
-                    fi.value = e = ''; 
+                    fi.value = ''; 
                     btn.innerText = "📤 Enviar Ficheiro"; 
                     btn.disabled = false; 
                     setTimeout(() => { abrirModalGaleria(); }, 1500); 
