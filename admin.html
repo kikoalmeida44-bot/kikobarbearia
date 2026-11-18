@@ -19,12 +19,12 @@
       }
     </script>
     
-    <title>Painel Admin - Kiko Barbearia Pro</title>
+    <title>Painel Admin - KBS Sistemas Pro</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Importando paleta de fontes profissionais */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;500;700&family=Oswald:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
+        /* Importando paleta completa de fontes profissionais para todos os segmentos */
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700;800&family=Oswald:wght@400;600;700&family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap');
         
         :root {
             --cor-principal: #c8a355; 
@@ -67,11 +67,11 @@
         .menu-btn:hover { background-color: #1a1a1a; border-color: var(--cor-principal); }
         .logout-btn { width: 100%; background-color: transparent; color: #ff4c4c; border: 1px solid #333; padding: 12px; font-size: 0.75rem; border-radius: 6px; margin-top: 20px; cursor: pointer; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
-        .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-principal); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-principal); width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; }
         .modal-title { color: var(--cor-principal); margin-bottom: 15px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px;}
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 10px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; font-family: inherit; }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 9px; background-color: #222; border: 1px solid #444; color: white; border-radius: 4px; font-family: inherit; font-size: 0.85rem; }
         .action-btn { background-color: var(--cor-principal); color: black; border: none; padding: 12px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;}
         .close-btn { background-color: #333; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
         .linha-item { display: flex; gap: 5px; margin-bottom: 10px; align-items: center; background: #222; padding: 10px; border-radius: 4px; transition: 0.3s; justify-content: space-between;}
@@ -79,22 +79,62 @@
         .remove-btn { background: #ff4c4c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;}
         .badge-notif { background-color: #ff4c4c; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; float: right; font-weight: bold; display: none; }
 
-        /* ESTILO DO CANVAS DE POSTS INSTAGRAM */
+        /* ESTILO DO ESTÚDIO DE DESIGN & REELS */
+        .studio-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .studio-tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: #222;
+            color: #aaa;
+            border: 1px solid #444;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .studio-tab-btn.active {
+            background: var(--cor-principal);
+            color: #000;
+            border-color: var(--cor-principal);
+        }
+        .design-toolbar {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .design-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .design-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
         .preview-canvas-wrapper {
-            background: #0a0a0a;
+            background: #070707;
             border: 1px dashed #444;
             border-radius: 6px;
             padding: 10px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin-bottom: 15px;
         }
-        #canvasPostInstagram {
+        #canvasPostInstagram, #canvasReelsVideo {
             max-width: 100%;
             max-height: 360px;
             border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.7);
         }
 
         /* SISTEMA DE ESQUELETO (SKELETON LOADING) */
@@ -124,7 +164,7 @@
     <div id="login-screen" style="display: none !important;">
         <div class="login-box">
             <h1 class="logo" id="titulo-login-modal">PAINEL ADMINISTRATIVO</h1>
-            <p style="font-size: 0.8rem; color: #777;" id="subtitulo-login-modal">Acesso à Barbearia</p>
+            <p style="font-size: 0.8rem; color: #777;" id="subtitulo-login-modal">Acesso à Unidade</p>
             <input type="password" id="senha-admin" placeholder="Digite a sua palavra-passe">
             <button onclick="verificarSenhaAdmin()">Entrar no Painel</button>
             <p id="erro-senha" style="color: #ff4c4c; font-size: 0.8rem; margin-top: 10px; display: none;">Senha incorreta!</p>
@@ -141,12 +181,12 @@
                 <span>👑 PAINEL MESTRE (SAAS)</span>
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                     <button onclick="abrirDisparadorMestre()" style="background: #25D366; color: #000; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; cursor: pointer;">📢 Disparador WhatsApp</button>
-                    <button onclick="abrirModal('modal-nova-barbearia')" style="background: #ffd700; color: #000; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; cursor: pointer;">+ Nova Barbearia</button>
+                    <button onclick="abrirModal('modal-nova-barbearia')" style="background: #ffd700; color: #000; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; cursor: pointer;">+ Nova Unidade</button>
                 </div>
             </div>
             <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Gerencie as unidades clientes, controle os pagamentos e acesse o disparador de campanhas:</p>
             <div id="lista-barbearias-saas" style="max-height: 150px; overflow-y: auto;">
-                <p style="font-size: 0.75rem; color: #888;">A carregar barbearias...</p>
+                <p style="font-size: 0.75rem; color: #888;">A carregar unidades...</p>
             </div>
         </div>
 
@@ -163,7 +203,7 @@
         <!-- CONEXÃO WHATSAPP SAAS (QR CODE) -->
         <div class="section-card" style="border-color: #ffd700; background: rgba(10,10,10,0.9); padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
             <div class="section-title" style="color: #ffd700; margin-bottom: 5px; justify-content: center;">📱 Conexão WhatsApp</div>
-            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 12px;">Conecte o WhatsApp desta barbearia para disparar confirmações e lembretes automáticos:</p>
+            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 12px;">Conecte o WhatsApp desta unidade para disparar confirmações e lembretes automáticos:</p>
             <button onclick="gerarQrCodeWhatsApp()" id="btnConnectWa" style="background: #ffd700; color: #000; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">⚡ Gerar QR Code WhatsApp</button>
             <div id="areaQrCode" style="display: none; margin-top: 15px;">
                 <p style="color: #888; font-size: 0.75rem; margin-bottom: 8px;">Abra o WhatsApp > Aparelhos Conectados > Conectar Aparelho:</p>
@@ -171,7 +211,7 @@
             </div>
         </div>
 
-        <!-- NOVO: FILTRO DE MÊS E ANO -->
+        <!-- FILTRO DE MÊS E ANO -->
         <div class="section-card" style="border-color: var(--cor-principal); background: #111;">
             <div class="section-title">📅 FILTRAR RELATÓRIOS (MÊS/ANO)</div>
             <div style="display: flex; gap: 10px;">
@@ -220,7 +260,7 @@
         <button class="menu-btn" onclick="abrirModalComissoes()" style="border-color: #28a745;">💵 RELATÓRIO DE COMISSÕES</button>
         <button class="menu-btn" onclick="abrirModal('modal-clientes')" style="border-color: #28a745;">👥 CRM / PACOTES CLIENTES</button>
         <button class="menu-btn" onclick="abrirModalPdv()" style="border-color: #ff6b6b;">🛒 CAIXA PDV / ESTOQUE</button>
-        <button class="menu-btn" onclick="abrirCriadorPosts()" style="border-color: #e1306c; color: #ff6b9d;">📱 CRIAR POST INSTAGRAM / STORIES</button>
+        <button class="menu-btn" onclick="abrirCriadorPosts()" style="border-color: #e1306c; color: #ff6b9d;">🎨 ESTÚDIO DE ARTES & REELS (INSTAGRAM)</button>
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
         
         <button class="menu-btn" onclick="abrirModalAgendar()">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
@@ -232,74 +272,196 @@
         <button class="logout-btn" onclick="window.location.href='login.html'">🔒 Sair e Bloquear Painel</button>
     </div>
 
-    <!-- MODAL CRIADOR DE POSTS INSTAGRAM / STORIES -->
+    <!-- MODAL ESTÚDIO DE ARTES & REELS (COMPLETO) -->
     <div id="modal-criador-posts" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #ff6b9d;">📱 Criador de Posts & Stories</h2>
-            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 12px;">Monte artes profissionais prontas para o Instagram ou WhatsApp em segundos:</p>
+            <h2 class="modal-title" style="color: #ff6b9d;">🎨 Estúdio de Artes & Reels</h2>
             
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>Formato da Arte:</label>
-                    <select id="post-formato" onchange="renderizarPostInstagram()">
-                        <option value="feed">Feed Quadrado (1080x1080)</option>
-                        <option value="stories">Stories Vertical (1080x1920)</option>
-                    </select>
+            <!-- ABAS: ARTE ESTÁTICA VS GERADOR DE REELS -->
+            <div class="studio-tabs">
+                <button type="button" id="tab-btn-arte" class="studio-tab-btn active" onclick="alternarAbaEstudio('arte')">🖼️ Post / Stories (Imagem)</button>
+                <button type="button" id="tab-btn-reels" class="studio-tab-btn" onclick="alternarAbaEstudio('reels')">🎬 Gerador de Reels (Vídeo)</button>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ABA 1: CRIADOR DE POSTS & STORIES          -->
+            <!-- ========================================== -->
+            <div id="studio-painel-arte">
+                <div class="design-toolbar">
+                    <div class="design-grid-2">
+                        <div class="input-group">
+                            <label>Segmento / Modelo Pronto:</label>
+                            <select id="post-segmento" onchange="aplicarPresetSegmento()">
+                                <option value="barbearia">💈 Barbearia</option>
+                                <option value="salao">💇‍♀️ Salão de Beleza</option>
+                                <option value="estetica">✨ Clínica de Estética</option>
+                                <option value="tattoo">🖋️ Estúdio de Tatuagem</option>
+                                <option value="clinica">🩺 Clínica Médica / Saúde</option>
+                                <option value="kbs">🚀 Divulgar KBS Sistemas</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Formato da Rede Social:</label>
+                            <select id="post-formato" onchange="renderizarPostInstagram()">
+                                <option value="feed">Feed Quadrado (1080x1080)</option>
+                                <option value="stories">Stories / Status (1080x1920)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="design-grid-2">
+                        <div class="input-group">
+                            <label>Estilo de Layout (Design):</label>
+                            <select id="post-layout" onchange="renderizarPostInstagram()">
+                                <option value="classico">🖼️ Clássico (Moldura Central)</option>
+                                <option value="degrade_base">📸 Degradê Inferior (Foco na Foto)</option>
+                                <option value="cartao">🃏 Cartão Moderno (Card Flutuante)</option>
+                                <option value="urgencia">🔥 Oferta / Vagas Limitadas</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Estilo da Letra (Tipografia):</label>
+                            <select id="post-fonte" onchange="renderizarPostInstagram()">
+                                <option value="Montserrat">Montserrat (Moderna)</option>
+                                <option value="Bebas Neue">Bebas Neue (Impacto / Pôster)</option>
+                                <option value="Playfair Display">Playfair Display (Luxo / Estética)</option>
+                                <option value="Oswald">Oswald (Forte / Geométrica)</option>
+                                <option value="Dancing Script">Dancing Script (Cursiva / Beleza)</option>
+                                <option value="Poppins">Poppins (Limpa / Clínica)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="design-grid-3">
+                        <div class="input-group">
+                            <label>Cor Destaque:</label>
+                            <input type="color" id="post-cor-destaque" value="#c8a355" oninput="renderizarPostInstagram()" style="height: 36px; padding: 2px; cursor: pointer;">
+                        </div>
+                        <div class="input-group">
+                            <label>Ícone / Selo:</label>
+                            <select id="post-icone" onchange="renderizarPostInstagram()">
+                                <option value="✂">✂ Tesoura</option>
+                                <option value="✨">✨ Brilho / Estética</option>
+                                <option value="💉">🖋️ Tattoo / Arte</option>
+                                <option value="🩺">🩺 Saúde / Clínica</option>
+                                <option value="🔥">🔥 Oferta</option>
+                                <option value="🚀">🚀 Sistema / Tech</option>
+                                <option value="">Sem Ícone</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Tamanho Título:</label>
+                            <input type="range" id="post-tam-titulo" min="48" max="110" value="76" oninput="renderizarPostInstagram()" style="padding: 8px 0;">
+                        </div>
+                    </div>
+
+                    <!-- UPLOAD DA LOGO E FOTO DE FUNDO -->
+                    <div class="design-grid-2">
+                        <div class="input-group">
+                            <label>Logo da Empresa (PNG/JPG):</label>
+                            <input type="file" id="post-logo-empresa" accept="image/*" onchange="carregarLogoEmpresaPost(event)" style="background:#222; padding:6px; font-size:0.75rem;">
+                        </div>
+                        <div class="input-group">
+                            <label>Foto de Fundo (Opcional):</label>
+                            <input type="file" id="post-foto-fundo" accept="image/*" onchange="carregarImagemFundoPost(event)" style="background:#222; padding:6px; font-size:0.75rem;">
+                        </div>
+                    </div>
+
+                    <div class="design-grid-2">
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label>Tamanho da Logo (<span id="lbl-tam-logo">130</span>px):</label>
+                            <input type="range" id="post-tam-logo" min="70" max="240" value="130" oninput="document.getElementById('lbl-tam-logo').innerText=this.value; renderizarPostInstagram()" style="padding: 8px 0;">
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label>Escurecer Fundo (<span id="lbl-escuro">70</span>%):</label>
+                            <input type="range" id="post-escurecer" min="15" max="90" value="70" oninput="document.getElementById('lbl-escuro').innerText=this.value; renderizarPostInstagram()" style="padding: 8px 0;">
+                        </div>
+                    </div>
                 </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Tema / Estilo:</label>
-                    <select id="post-tema" onchange="aplicarPresetPost()">
-                        <option value="agenda">📅 Agenda Aberta</option>
-                        <option value="promocao">🔥 Promoção Corte + Barba</option>
-                        <option value="kbs">🚀 Divulgar KBS Sistemas</option>
-                    </select>
+
+                <!-- CAMPOS DE TEXTO DA ARTE -->
+                <div class="input-group">
+                    <label>Título Principal:</label>
+                    <input type="text" id="post-titulo" value="HORÁRIOS DISPONÍVEIS HOJE!" oninput="renderizarPostInstagram()">
+                </div>
+
+                <div class="input-group">
+                    <label>Subtítulo / Descrição do Serviço:</label>
+                    <input type="text" id="post-subtitulo" value="Garanta seu atendimento com hora marcada e sem fila." oninput="renderizarPostInstagram()">
+                </div>
+
+                <div class="design-grid-2">
+                    <div class="input-group">
+                        <label>Botão / Preço / Chamada:</label>
+                        <input type="text" id="post-chamada" value="AGENDE PELO LINK NA BIO" oninput="renderizarPostInstagram()">
+                    </div>
+                    <div class="input-group">
+                        <label>Nome da Empresa / Rodapé:</label>
+                        <input type="text" id="post-rodape" value="MINHA UNIDADE" oninput="renderizarPostInstagram()">
+                    </div>
+                </div>
+
+                <!-- PRÉ-VISUALIZAÇÃO AO VIVO -->
+                <div class="preview-canvas-wrapper">
+                    <canvas id="canvasPostInstagram" width="1080" height="1080"></canvas>
+                </div>
+
+                <!-- BOTÕES DE AÇÃO: COMPARTILHAR DIRETO E BAIXAR -->
+                <div class="design-grid-2">
+                    <button type="button" class="action-btn" style="background: #25D366; color: #000;" onclick="compartilharPostDireto()">📲 Postar / Enviar Direto</button>
+                    <button type="button" class="action-btn" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white;" onclick="baixarPostInstagram()">⬇️ Baixar PNG</button>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>Foto de Fundo (Opcional - Corte ou Barbearia):</label>
-                <input type="file" id="post-foto-fundo" accept="image/*" onchange="carregarImagemFundoPost(event)" style="background:#222; padding:8px; font-size:0.8rem;">
-            </div>
-
-            <div class="input-group">
-                <label>Título Principal (Destaque):</label>
-                <input type="text" id="post-titulo" value="HORÁRIOS DISPONÍVEIS HOJE!" oninput="renderizarPostInstagram()">
-            </div>
-
-            <div class="input-group">
-                <label>Subtítulo / Descrição:</label>
-                <input type="text" id="post-subtitulo" value="Garanta seu visual na régua sem pegar fila." oninput="renderizarPostInstagram()">
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>Destaque / Preço / Chamada:</label>
-                    <input type="text" id="post-chamada" value="AGENDE PELO LINK NA BIO" oninput="renderizarPostInstagram()">
+            <!-- ========================================== -->
+            <!-- ABA 2: GERADOR AUTOMÁTICO DE REELS (VÍDEO) -->
+            <!-- ========================================== -->
+            <div id="studio-painel-reels" style="display: none;">
+                <div class="design-toolbar">
+                    <p style="font-size: 0.78rem; color: #ddd; margin-bottom: 10px;">
+                        Selecione de <strong>2 a 6 fotos</strong> (ex: antes/depois, cortes, estética ou procedimentos). O sistema cria um vídeo vertical pronto para o Reels com transições suaves e sua marca!
+                    </p>
+                    <div class="input-group">
+                        <label>Selecionar Fotos da Galeria do Celular:</label>
+                        <input type="file" id="reels-fotos-input" accept="image/*" multiple onchange="carregarFotosReels(event)" style="background:#222; padding:8px; font-size:0.8rem;">
+                    </div>
+                    <div class="design-grid-2">
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label>Duração por Foto:</label>
+                            <select id="reels-tempo-foto">
+                                <option value="1.5">1.5 seg (Dinâmico / Rápido)</option>
+                                <option value="2.5" selected>2.5 seg (Padrão Reels)</option>
+                                <option value="3.5">3.5 seg (Mais Calmo)</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label>Texto Fixo no Vídeo:</label>
+                            <input type="text" id="reels-texto-capa" value="RESULTADO DE HOJE ✨">
+                        </div>
+                    </div>
                 </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Nome / Rodapé:</label>
-                    <input type="text" id="post-rodape" value="KIKO BARBEARIA" oninput="renderizarPostInstagram()">
+
+                <div class="preview-canvas-wrapper">
+                    <canvas id="canvasReelsVideo" width="720" height="1280"></canvas>
+                    <p id="status-geracao-reels" style="font-size: 0.75rem; color: var(--cor-principal); margin-top: 8px; text-align: center;">Selecione as fotos acima para montar seu Reels.</p>
                 </div>
+
+                <button type="button" id="btn-gerar-reels" class="action-btn" style="background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); color: white;" onclick="gerarVideoReels()">🎬 Gerar Vídeo Reels Agora</button>
+                <a id="link-download-reels" style="display: none; text-align: center; background: #28a745; color: white; padding: 12px; border-radius: 4px; font-weight: bold; text-decoration: none; margin-bottom: 10px; font-size: 0.85rem;">⬇️ Baixar Vídeo Pronto para Instagram</a>
             </div>
 
-            <!-- PRÉ-VISUALIZAÇÃO DA ARTE GERADA -->
-            <div class="preview-canvas-wrapper">
-                <canvas id="canvasPostInstagram" width="1080" height="1080"></canvas>
-            </div>
-
-            <button class="action-btn" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white;" onclick="baixarPostInstagram()">⬇️ Baixar Imagem Pronta (PNG)</button>
             <button class="close-btn" onclick="fecharModal('modal-criador-posts')">Voltar ao Painel</button>
         </div>
     </div>
 
-    <!-- MODAL NOVA BARBEARIA (SAAS) -->
+    <!-- MODAL NOVA UNIDADE (SAAS) -->
     <div id="modal-nova-barbearia" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #ffd700;">👑 Registar Nova Barbearia</h2>
-            <div class="input-group"><input type="text" id="nova-id-barbearia" placeholder="ID (ex: barbearia_central)"></div>
-            <div class="input-group"><input type="text" id="novo-nome-barbearia" placeholder="Nome da Barbearia"></div>
+            <h2 class="modal-title" style="color: #ffd700;">👑 Registar Nova Unidade</h2>
+            <div class="input-group"><input type="text" id="nova-id-barbearia" placeholder="ID (ex: clinica_prime)"></div>
+            <div class="input-group"><input type="text" id="novo-nome-barbearia" placeholder="Nome da Empresa / Clínica"></div>
             <div class="input-group"><input type="text" id="nova-senha-barbearia" placeholder="Senha de Acesso"></div>
-            <button class="action-btn" style="background-color: #ffd700; color: #000;" onclick="salvarNovaBarbearia()">Criar Barbearia</button>
+            <button class="action-btn" style="background-color: #ffd700; color: #000;" onclick="salvarNovaBarbearia()">Criar Unidade</button>
             <button class="close-btn" onclick="fecharModal('modal-nova-barbearia')">Cancelar</button>
         </div>
     </div>
@@ -370,7 +532,7 @@
     <div id="modal-despesa" class="modal">
         <div class="modal-content">
             <h2 class="modal-title" style="color: #ff4c4c;">➖ Nova Despesa</h2>
-            <div class="input-group"><input type="text" id="desp-desc" placeholder="Ex: Conta de Luz, Compra de Produtos..."></div>
+            <div class="input-group"><input type="text" id="desp-desc" placeholder="Ex: Conta de Luz, Compra de Insumos..."></div>
             <div class="input-group"><input type="number" id="desp-valor" placeholder="Valor (R$)" step="0.01"></div>
             <button class="action-btn" style="background-color: #ff4c4c; color: white;" onclick="salvarDespesa(event)">Confirmar Despesa</button>
             <button class="close-btn" onclick="fecharModal('modal-despesa'); abrirModal('modal-financeiro')">Cancelar</button>
@@ -400,7 +562,7 @@
                 <div class="input-group">
                     <label>Profissional responsável pela venda (para comissão):</label>
                     <select id="pdv-profissional-select">
-                        <option value="Equipe">💈 Loja / Equipe Geral</option>
+                        <option value="Equipe">🏪 Loja / Equipe Geral</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -423,11 +585,11 @@
     <div id="modal-agendar" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">📅 Agendar / Bloquear</h2>
-            <div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / João"></div>
+            <div class="input-group"><input type="text" id="agend-nome" placeholder="Ex: Bloqueio Almoço / Cliente"></div>
             <div class="input-group">
                 <label>Profissional:</label>
                 <select id="agend-profissional">
-                    <option value="Equipe">💈 Equipe / Geral</option>
+                    <option value="Equipe">👥 Equipe / Geral</option>
                 </select>
             </div>
             <div style="display: flex; gap: 10px;">
@@ -452,7 +614,7 @@
     <div id="modal-servicos" class="modal">
         <div class="modal-content">
             <h2 class="modal-title">✂ Serviços, Preços e Comissão (%)</h2>
-            <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">Defina o valor e a comissão (%) de cada serviço para o cálculo do fecho de caixa.</p>
+            <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">Defina o valor e a comissão (%) de cada serviço/procedimento.</p>
             <div style="display: flex; gap: 5px; padding: 0 10px; margin-bottom: 5px; font-size: 0.65rem; color: var(--cor-principal); font-weight: bold; text-transform: uppercase;">
                 <span style="flex: 2;">Serviço</span>
                 <span style="width: 65px; text-align: center;">Preço (R$)</span>
@@ -470,7 +632,7 @@
     <!-- MODAL PROFISSIONAIS -->
     <div id="modal-profissionais" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: var(--cor-principal);">💈 Gerenciar Profissionais</h2>
+            <h2 class="modal-title" style="color: var(--cor-principal);">👥 Gerenciar Profissionais</h2>
             <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Defina o nome e o horário de atendimento específico de cada profissional:</p>
             <div id="lista-profissionais-container"></div>
             <button class="action-btn" style="background-color: #444; color: white; padding: 8px;" onclick="adicionarLinhaProfissional('', '08:00', '19:40')">+ Novo Profissional</button><br><br>
@@ -507,10 +669,10 @@
             <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
             <div class="input-group">
                 <label>Texto da Seção "Sobre Nós":</label>
-                <textarea id="edit-sobre" rows="3" placeholder="Escreva aqui a apresentação da barbearia (Sobre Nós)"></textarea>
+                <textarea id="edit-sobre" rows="3" placeholder="Escreva aqui a apresentação da empresa (Sobre Nós)"></textarea>
             </div>
             <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
-            <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço da Barbearia"></div>
+            <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço"></div>
             <div class="input-group"><input type="text" id="edit-link-google" placeholder="Link do Google Meu Negócio"></div>
             <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
             <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Estética e Branding (SaaS):</h3>
@@ -578,41 +740,116 @@
         window.dadosDashboardCache = null;
         window.filtroIniciado = false;
         window.imagemFundoPost = null;
+        window.imagemLogoPost = null;
+        window.imagensReels = [];
 
         // ==========================================
-        // FUNÇÕES DO CRIADOR DE POSTS INSTAGRAM
+        // ESTÚDIO DE ARTES, LOGO, SHARE & REELS
         // ==========================================
+        function alternarAbaEstudio(aba) {
+            const pArte = document.getElementById('studio-painel-arte');
+            const pReels = document.getElementById('studio-painel-reels');
+            const bArte = document.getElementById('tab-btn-arte');
+            const bReels = document.getElementById('tab-btn-reels');
+
+            if (aba === 'reels') {
+                pArte.style.display = 'none';
+                pReels.style.display = 'block';
+                bArte.classList.remove('active');
+                bReels.classList.add('active');
+                desenharPreviewInicialReels();
+            } else {
+                pReels.style.display = 'none';
+                pArte.style.display = 'block';
+                bReels.classList.remove('active');
+                bArte.classList.add('active');
+                renderizarPostInstagram();
+            }
+        }
+
         function abrirCriadorPosts() {
             abrirModal('modal-criador-posts');
             const nomeAtual = document.getElementById('titulo-barbearia').innerText;
             if (nomeAtual && nomeAtual !== 'A Carregar...') {
                 document.getElementById('post-rodape').value = nomeAtual.toUpperCase();
             }
+            const corAtual = getComputedStyle(document.documentElement).getPropertyValue('--cor-principal').trim();
+            if (corAtual && corAtual.startsWith('#')) {
+                document.getElementById('post-cor-destaque').value = corAtual;
+            }
             renderizarPostInstagram();
         }
 
-        function aplicarPresetPost() {
-            const tema = document.getElementById('post-tema').value;
+        function aplicarPresetSegmento() {
+            const seg = document.getElementById('post-segmento').value;
             const nomeAtual = document.getElementById('titulo-barbearia').innerText;
-            const barbeariaNome = (nomeAtual && nomeAtual !== 'A Carregar...') ? nomeAtual.toUpperCase() : 'KIKO BARBEARIA';
+            const empresaNome = (nomeAtual && nomeAtual !== 'A Carregar...') ? nomeAtual.toUpperCase() : 'NOSSA UNIDADE';
 
-            if (tema === 'agenda') {
+            if (seg === 'barbearia') {
                 document.getElementById('post-titulo').value = 'HORÁRIOS DISPONÍVEIS HOJE!';
-                document.getElementById('post-subtitulo').value = 'Garanta seu corte na régua sem pegar fila.';
+                document.getElementById('post-subtitulo').value = 'Garanta seu corte na régua e barba alinhada sem pegar fila.';
                 document.getElementById('post-chamada').value = 'AGENDE PELO LINK NA BIO';
-                document.getElementById('post-rodape').value = barbeariaNome;
-            } else if (tema === 'promocao') {
-                document.getElementById('post-titulo').value = 'COMBO CORTE + BARBA';
-                document.getElementById('post-subtitulo').value = 'Visual renovado com toalha quente e acabamento perfeito.';
-                document.getElementById('post-chamada').value = 'APENAS R$ 55,00';
-                document.getElementById('post-rodape').value = barbeariaNome;
-            } else if (tema === 'kbs') {
-                document.getElementById('post-titulo').value = 'AUTOMATIZE SUA BARBEARIA';
-                document.getElementById('post-subtitulo').value = 'Agendamento Online + Chatbot WhatsApp + Controle de Caixa.';
+                document.getElementById('post-rodape').value = empresaNome;
+                document.getElementById('post-cor-destaque').value = '#c8a355';
+                document.getElementById('post-fonte').value = 'Bebas Neue';
+                document.getElementById('post-icone').value = '✂';
+            } else if (seg === 'salao') {
+                document.getElementById('post-titulo').value = 'REALCE SUA BELEZA NATURAL';
+                document.getElementById('post-subtitulo').value = 'Mechas, escova, hidratação e cuidados especiais para você.';
+                document.getElementById('post-chamada').value = 'RESERVE SEU HORÁRIO ONLINE';
+                document.getElementById('post-rodape').value = empresaNome;
+                document.getElementById('post-cor-destaque').value = '#e899b8';
+                document.getElementById('post-fonte').value = 'Playfair Display';
+                document.getElementById('post-icone').value = '✨';
+            } else if (seg === 'estetica') {
+                document.getElementById('post-titulo').value = 'PROTOCOLO DE PELE RENOVADA';
+                document.getElementById('post-subtitulo').value = 'Limpeza de pele profunda e harmonização com resultados reais.';
+                document.getElementById('post-chamada').value = 'AGENDE SUA AVALIAÇÃO';
+                document.getElementById('post-rodape').value = empresaNome;
+                document.getElementById('post-cor-destaque').value = '#d4af37';
+                document.getElementById('post-fonte').value = 'Playfair Display';
+                document.getElementById('post-icone').value = '✨';
+            } else if (seg === 'tattoo') {
+                document.getElementById('post-titulo').value = 'AGENDA ABERTA PARA TATUAGENS';
+                document.getElementById('post-subtitulo').value = 'Projetos exclusivos, traço fino e realismo com segurança total.';
+                document.getElementById('post-chamada').value = 'ORÇAMENTO E HORÁRIO NO LINK';
+                document.getElementById('post-rodape').value = empresaNome;
+                document.getElementById('post-cor-destaque').value = '#ff4c4c';
+                document.getElementById('post-fonte').value = 'Oswald';
+                document.getElementById('post-icone').value = '💉';
+            } else if (seg === 'clinica') {
+                document.getElementById('post-titulo').value = 'ATENDIMENTO HUMANIZADO E ÁGIL';
+                document.getElementById('post-subtitulo').value = 'Marque sua consulta ou retorno de forma rápida pelo celular.';
+                document.getElementById('post-chamada').value = 'AGENDAR CONSULTA ONLINE';
+                document.getElementById('post-rodape').value = empresaNome;
+                document.getElementById('post-cor-destaque').value = '#00d2d3';
+                document.getElementById('post-fonte').value = 'Poppins';
+                document.getElementById('post-icone').value = '🩺';
+            } else if (seg === 'kbs') {
+                document.getElementById('post-titulo').value = 'AUTOMATIZE SEU NEGÓCIO';
+                document.getElementById('post-subtitulo').value = 'Agendamento Online + Chatbot WhatsApp + Controle Financeiro.';
                 document.getElementById('post-chamada').value = 'CONHEÇA O KBS SISTEMAS';
                 document.getElementById('post-rodape').value = 'KBS SISTEMAS SAAS';
+                document.getElementById('post-cor-destaque').value = '#00bfff';
+                document.getElementById('post-fonte').value = 'Montserrat';
+                document.getElementById('post-icone').value = '🚀';
             }
             renderizarPostInstagram();
+        }
+
+        function carregarLogoEmpresaPost(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    window.imagemLogoPost = img;
+                    renderizarPostInstagram();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         function carregarImagemFundoPost(event) {
@@ -651,40 +888,35 @@
         function renderizarPostInstagram() {
             const canvas = document.getElementById('canvasPostInstagram');
             const ctx = canvas.getContext('2d');
+            
             const formato = document.getElementById('post-formato').value;
-            const tema = document.getElementById('post-tema').value;
+            const layout = document.getElementById('post-layout').value;
+            const fonteEscolhida = document.getElementById('post-fonte').value;
+            const corDestaque = document.getElementById('post-cor-destaque').value;
+            const icone = document.getElementById('post-icone').value;
+            const tamTitulo = parseInt(document.getElementById('post-tam-titulo').value) || 76;
+            const tamLogo = parseInt(document.getElementById('post-tam-logo').value) || 130;
+            const opacidadeEscuro = (parseInt(document.getElementById('post-escurecer').value) || 70) / 100;
 
-            const titulo = document.getElementById('post-titulo').value.toUpperCase();
+            const titulo = fonteEscolhida === 'Dancing Script' ? document.getElementById('post-titulo').value : document.getElementById('post-titulo').value.toUpperCase();
             const subtitulo = document.getElementById('post-subtitulo').value;
             const chamada = document.getElementById('post-chamada').value.toUpperCase();
             const rodape = document.getElementById('post-rodape').value.toUpperCase();
 
-            // Ajusta resolução real de alta qualidade
-            if (formato === 'stories') {
-                canvas.width = 1080;
-                canvas.height = 1920;
-            } else {
-                canvas.width = 1080;
-                canvas.height = 1080;
-            }
+            canvas.width = 1080;
+            canvas.height = (formato === 'stories') ? 1920 : 1080;
 
             const w = canvas.width;
             const h = canvas.height;
-            const corDestaque = tema === 'kbs' ? '#00bfff' : (getComputedStyle(document.documentElement).getPropertyValue('--cor-principal').trim() || '#c8a355');
 
             // 1. Fundo Base
             const grad = ctx.createLinearGradient(0, 0, w, h);
-            if (tema === 'kbs') {
-                grad.addColorStop(0, '#071324');
-                grad.addColorStop(1, '#0d0d0d');
-            } else {
-                grad.addColorStop(0, '#1c1810');
-                grad.addColorStop(1, '#080808');
-            }
+            grad.addColorStop(0, '#181818');
+            grad.addColorStop(1, '#070707');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, w, h);
 
-            // 2. Se houver foto enviada pelo usuário, desenha cobrindo o fundo com filtro escuro
+            // 2. Foto de Fundo (se carregada)
             if (window.imagemFundoPost) {
                 const img = window.imagemFundoPost;
                 const scale = Math.max(w / img.width, h / img.height);
@@ -692,58 +924,101 @@
                 const y = (h / 2) - (img.height / 2) * scale;
                 ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
 
-                // Sobreposição escura para leitura nítida
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.72)';
-                ctx.fillRect(0, 0, w, h);
+                if (layout === 'degrade_base') {
+                    const gradFoto = ctx.createLinearGradient(0, h * 0.25, 0, h);
+                    gradFoto.addColorStop(0, 'rgba(0,0,0,0.05)');
+                    gradFoto.addColorStop(0.55, 'rgba(0,0,0,0.82)');
+                    gradFoto.addColorStop(1, 'rgba(0,0,0,0.97)');
+                    ctx.fillStyle = gradFoto;
+                    ctx.fillRect(0, 0, w, h);
+                } else {
+                    ctx.fillStyle = `rgba(0, 0, 0, ${opacidadeEscuro})`;
+                    ctx.fillRect(0, 0, w, h);
+                }
             }
 
-            // 3. Moldura elegante interna
             const margem = 55;
-            ctx.strokeStyle = corDestaque;
-            ctx.lineWidth = 6;
-            ctx.strokeRect(margem, margem, w - margem * 2, h - margem * 2);
-
-            // Detalhe superior (Tag)
-            ctx.fillStyle = corDestaque;
-            ctx.font = 'bold 30px Montserrat, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('✂  ' + rodape + '  ✂', w / 2, margem + 90);
 
-            // 4. Título Principal
-            const centroY = h * 0.44;
+            // 3. Aplicando Estilos de Layout
+            if (layout === 'classico') {
+                ctx.strokeStyle = corDestaque;
+                ctx.lineWidth = 6;
+                ctx.strokeRect(margem, margem, w - margem * 2, h - margem * 2);
+            } else if (layout === 'cartao') {
+                const cardW = w - 130;
+                const cardH = h * 0.66;
+                const cardX = 65;
+                const cardY = (h - cardH) / 2;
+                ctx.fillStyle = 'rgba(15, 15, 15, 0.88)';
+                ctx.beginPath();
+                ctx.roundRect(cardX, cardY, cardW, cardH, 30);
+                ctx.fill();
+                ctx.strokeStyle = corDestaque;
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            } else if (layout === 'urgencia') {
+                ctx.fillStyle = corDestaque;
+                ctx.fillRect(0, 0, w, 95);
+                ctx.fillStyle = '#000000';
+                ctx.font = '800 36px Montserrat, sans-serif';
+                ctx.fillText('⚡ VAGAS LIMITADAS • GARANTA A SUA ⚡', w / 2, 60);
+            }
+
+            // 4. Desenha a Logo da Empresa (se o usuário subiu uma)
+            let offsetLogo = 0;
+            if (window.imagemLogoPost) {
+                const logo = window.imagemLogoPost;
+                const ratio = logo.width / logo.height;
+                const drawH = tamLogo;
+                const drawW = tamLogo * ratio;
+                const logoY = (layout === 'cartao') ? (h * 0.20) : (layout === 'degrade_base' ? margem + 25 : margem + 65);
+                ctx.drawImage(logo, (w - drawW) / 2, logoY, drawW, drawH);
+                offsetLogo = drawH * 0.55;
+            }
+
+            // 5. Tag Superior (Nome da Unidade + Ícone)
+            const topY = (layout === 'cartao') ? (h * 0.26 + offsetLogo) : (layout === 'degrade_base' ? h * 0.54 : margem + 115 + offsetLogo);
+            ctx.fillStyle = corDestaque;
+            ctx.font = 'bold 32px Montserrat, sans-serif';
+            const textoTopo = icone ? `${icone}  ${rodape}  ${icone}` : rodape;
+            ctx.fillText(textoTopo, w / 2, topY);
+
+            // 6. Título Principal
+            const centroY = (layout === 'degrade_base') ? (h * 0.64) : (h * 0.46 + (offsetLogo * 0.35));
             ctx.fillStyle = '#ffffff';
-            ctx.font = '800 76px Montserrat, sans-serif';
+            ctx.font = `800 ${tamTitulo}px "${fonteEscolhida}", sans-serif`;
             const linhasTitulo = quebrarTextoCanvas(ctx, titulo, w - 180);
-            let yAtual = centroY - ((linhasTitulo.length - 1) * 45);
+            let yAtual = centroY - ((linhasTitulo.length - 1) * (tamTitulo * 0.55));
 
             linhasTitulo.forEach(linha => {
                 ctx.fillText(linha, w / 2, yAtual);
-                yAtual += 90;
+                yAtual += tamTitulo * 1.12;
             });
 
-            // Linha divisória dourada/azul
+            // Linha divisória
             ctx.beginPath();
-            ctx.moveTo(w / 2 - 120, yAtual - 20);
-            ctx.lineTo(w / 2 + 120, yAtual - 20);
+            ctx.moveTo(w / 2 - 110, yAtual - 15);
+            ctx.lineTo(w / 2 + 110, yAtual - 15);
             ctx.strokeStyle = corDestaque;
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 5;
             ctx.stroke();
 
-            // 5. Subtítulo
-            ctx.fillStyle = '#dddddd';
-            ctx.font = '500 40px Montserrat, sans-serif';
-            const linhasSub = quebrarTextoCanvas(ctx, subtitulo, w - 200);
-            let ySub = yAtual + 55;
+            // 7. Subtítulo
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '500 38px Montserrat, sans-serif';
+            const linhasSub = quebrarTextoCanvas(ctx, subtitulo, w - 210);
+            let ySub = yAtual + 50;
             linhasSub.forEach(linha => {
                 ctx.fillText(linha, w / 2, ySub);
-                ySub += 55;
+                ySub += 52;
             });
 
-            // 6. Botão / Faixa de Chamada para Ação (CTA)
-            const btnW = 740;
-            const btnH = 110;
+            // 8. Botão de Chamada para Ação (CTA)
+            const btnW = 760;
+            const btnH = 105;
             const btnX = (w - btnW) / 2;
-            const btnY = h - margem - 230;
+            const btnY = (layout === 'cartao') ? (h * 0.74) : (h - margem - 195);
 
             ctx.fillStyle = corDestaque;
             ctx.beginPath();
@@ -751,22 +1026,229 @@
             ctx.fill();
 
             ctx.fillStyle = '#000000';
-            ctx.font = '800 40px Montserrat, sans-serif';
-            ctx.fillText(chamada, w / 2, btnY + 68);
+            ctx.font = '800 38px Montserrat, sans-serif';
+            ctx.fillText(chamada, w / 2, btnY + 65);
 
-            // Assinatura discreta no rodapé
-            ctx.fillStyle = '#888888';
-            ctx.font = '600 24px Montserrat, sans-serif';
-            ctx.fillText('Agendamento Online 24h', w / 2, h - margem - 50);
+            // Rodapé discreto
+            if (layout !== 'cartao') {
+                ctx.fillStyle = '#999999';
+                ctx.font = '600 24px Montserrat, sans-serif';
+                ctx.fillText('Agendamento Online Rápido', w / 2, h - margem - 38);
+            }
         }
 
         function baixarPostInstagram() {
             const canvas = document.getElementById('canvasPostInstagram');
             const link = document.createElement('a');
             const formato = document.getElementById('post-formato').value;
-            link.download = `post-${formato}-${Date.now()}.png`;
+            link.download = `arte-${formato}-${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
+        }
+
+        // COMPARTILHAMENTO DIRETO NATIVO NO CELULAR (WEB SHARE API)
+        async function compartilharPostDireto() {
+            const canvas = document.getElementById('canvasPostInstagram');
+            const formato = document.getElementById('post-formato').value;
+            const titulo = document.getElementById('post-titulo').value;
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) return alert("Erro ao processar a imagem.");
+                const file = new File([blob], `post-${formato}.png`, { type: 'image/png' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: titulo,
+                            text: titulo
+                        });
+                    } catch (err) {
+                        console.log('Compartilhamento cancelado ou indisponível:', err);
+                    }
+                } else {
+                    alert("O seu navegador no computador não suporta envio direto para apps. A imagem será baixada automaticamente!");
+                    baixarPostInstagram();
+                }
+            }, 'image/png');
+        }
+
+        // ==========================================
+        // GERADOR AUTOMÁTICO DE REELS (VÍDEO CURTO)
+        // ==========================================
+        function desenharPreviewInicialReels() {
+            const canvas = document.getElementById('canvasReelsVideo');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#c8a355';
+            ctx.font = 'bold 34px Montserrat, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🎬 PRÉVIA DO REELS (9:16)', canvas.width / 2, canvas.height / 2 - 20);
+            ctx.fillStyle = '#888';
+            ctx.font = '24px Montserrat, sans-serif';
+            ctx.fillText('Selecione de 2 a 6 fotos acima', canvas.width / 2, canvas.height / 2 + 25);
+        }
+
+        function carregarFotosReels(event) {
+            const files = Array.from(event.target.files).slice(0, 6);
+            if (files.length < 2) {
+                alert("Selecione pelo menos 2 fotos para criar a transição de vídeo do Reels!");
+                return;
+            }
+            window.imagensReels = [];
+            let carregadas = 0;
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        window.imagensReels.push(img);
+                        carregadas++;
+                        if (carregadas === files.length) {
+                            document.getElementById('status-geracao-reels').innerText = `✅ ${carregadas} fotos prontas! Clique em "Gerar Vídeo Reels Agora".`;
+                            desenharFrameReels(window.imagensReels[0], null, 0);
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function desenharFrameReels(imgAtual, imgProxima, progressoTransicao) {
+            const canvas = document.getElementById('canvasReelsVideo');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const corDestaque = document.getElementById('post-cor-destaque').value || '#c8a355';
+            const textoCapa = document.getElementById('reels-texto-capa').value.toUpperCase();
+            const nomeEmpresa = (document.getElementById('titulo-barbearia').innerText || 'KBS SISTEMAS').toUpperCase();
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, w, h);
+
+            // Desenha foto atual com leve zoom (efeito Ken Burns)
+            if (imgAtual) {
+                ctx.save();
+                ctx.globalAlpha = 1;
+                const zoom = 1 + (progressoTransicao * 0.06);
+                const scale = Math.max(w / imgAtual.width, h / imgAtual.height) * zoom;
+                const x = (w / 2) - (imgAtual.width / 2) * scale;
+                const y = (h / 2) - (imgAtual.height / 2) * scale;
+                ctx.drawImage(imgAtual, x, y, imgAtual.width * scale, imgAtual.height * scale);
+                ctx.restore();
+            }
+
+            // Se estiver no momento da transição, faz fade suave para a próxima foto
+            if (imgProxima && progressoTransicao > 0) {
+                ctx.save();
+                ctx.globalAlpha = progressoTransicao;
+                const scale = Math.max(w / imgProxima.width, h / imgProxima.height);
+                const x = (w / 2) - (imgProxima.width / 2) * scale;
+                const y = (h / 2) - (imgProxima.height / 2) * scale;
+                ctx.drawImage(imgProxima, x, y, imgProxima.width * scale, imgProxima.height * scale);
+                ctx.restore();
+            }
+
+            // Degradê inferior e superior para leitura
+            const gradTop = ctx.createLinearGradient(0, 0, 0, 220);
+            gradTop.addColorStop(0, 'rgba(0,0,0,0.75)');
+            gradTop.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = gradTop;
+            ctx.fillRect(0, 0, w, 220);
+
+            const gradBot = ctx.createLinearGradient(0, h - 280, 0, h);
+            gradBot.addColorStop(0, 'rgba(0,0,0,0)');
+            gradBot.addColorStop(1, 'rgba(0,0,0,0.88)');
+            ctx.fillStyle = gradBot;
+            ctx.fillRect(0, h - 280, w, 280);
+
+            // Moldura e textos
+            ctx.strokeStyle = corDestaque;
+            ctx.lineWidth = 6;
+            ctx.strokeRect(25, 25, w - 50, h - 50);
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = corDestaque;
+            ctx.font = 'bold 28px Montserrat, sans-serif';
+            ctx.fillText(nomeEmpresa, w / 2, 95);
+
+            if (textoCapa) {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 42px Montserrat, sans-serif';
+                ctx.fillText(textoCapa, w / 2, h - 120);
+            }
+
+            ctx.fillStyle = corDestaque;
+            ctx.font = '600 24px Montserrat, sans-serif';
+            ctx.fillText('Agende seu horário pelo link na Bio', w / 2, h - 70);
+        }
+
+        function gerarVideoReels() {
+            if (!window.imagensReels || window.imagensReels.length < 2) {
+                return alert("Por favor, selecione de 2 a 6 fotos primeiro!");
+            }
+
+            const canvas = document.getElementById('canvasReelsVideo');
+            const btn = document.getElementById('btn-gerar-reels');
+            const statusTxt = document.getElementById('status-geracao-reels');
+            const linkDown = document.getElementById('link-download-reels');
+
+            const tempoPorFoto = parseFloat(document.getElementById('reels-tempo-foto').value) || 2.5;
+            const fps = 30;
+            const framesPorFoto = Math.round(tempoPorFoto * fps);
+            const framesTransicao = 15; // 0.5 segundo de fade suave
+
+            btn.disabled = true;
+            btn.innerText = "⏳ Gravando vídeo Reels...";
+            linkDown.style.display = 'none';
+
+            const stream = canvas.captureStream(fps);
+            const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+            const chunks = [];
+
+            recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                linkDown.href = url;
+                linkDown.download = `reels-instagram-${Date.now()}.webm`;
+                linkDown.style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = "🎬 Gerar Novo Vídeo Reels";
+                statusTxt.innerText = "🎉 Vídeo pronto! Clique no botão verde abaixo para baixar e postar no Reels.";
+            };
+
+            recorder.start();
+
+            let fotoIdx = 0;
+            let frameAtual = 0;
+            const totalFotos = window.imagensReels.length;
+
+            const intervalo = setInterval(() => {
+                const imgAtual = window.imagensReels[fotoIdx];
+                const imgProxima = (fotoIdx + 1 < totalFotos) ? window.imagensReels[fotoIdx + 1] : null;
+
+                let progTransicao = 0;
+                if (imgProxima && frameAtual > (framesPorFoto - framesTransicao)) {
+                    progTransicao = (frameAtual - (framesPorFoto - framesTransicao)) / framesTransicao;
+                }
+
+                desenharFrameReels(imgAtual, imgProxima, progTransicao);
+                statusTxt.innerText = `⏳ Renderizando cena ${fotoIdx + 1} de ${totalFotos}...`;
+
+                frameAtual++;
+                if (frameAtual >= framesPorFoto) {
+                    frameAtual = 0;
+                    fotoIdx++;
+                    if (fotoIdx >= totalFotos) {
+                        clearInterval(intervalo);
+                        recorder.stop();
+                    }
+                }
+            }, 1000 / fps);
         }
         // ==========================================
 
@@ -908,7 +1390,7 @@
                         container.appendChild(div);
                     });
                 } else {
-                    container.innerHTML = '<p style="font-size:0.75rem; color:#888;">Nenhuma barbearia registada.</p>';
+                    container.innerHTML = '<p style="font-size:0.75rem; color:#888;">Nenhuma unidade registada.</p>';
                 }
             } catch(e) {
                 document.getElementById('lista-barbearias-saas').innerHTML = '<p style="font-size:0.75rem; color:#ff4c4c;">Erro ao carregar lista.</p>';
@@ -916,7 +1398,7 @@
         }
 
         async function alternarBloqueio(idB, novoStatus) {
-            if(!confirm(`Deseja alterar o status da barbearia ${idB} para ${novoStatus}?`)) return;
+            if(!confirm(`Deseja alterar o status da unidade ${idB} para ${novoStatus}?`)) return;
             const fd = new URLSearchParams();
             fd.append('acao', 'mudar_status_barbearia');
             fd.append('id_barbearia', idB);
@@ -927,12 +1409,12 @@
         }
 
         async function excluirBarbearia(idDaBarbearia) {
-            if (confirm("Tem certeza que quer DELETAR esta barbearia? Todos os dados vão desaparecer e não tem como voltar atrás!")) {
+            if (confirm("Tem certeza que quer DELETAR esta unidade? Todos os dados vão desaparecer e não tem como voltar atrás!")) {
                 const fd = new URLSearchParams();
                 fd.append('acao', 'excluir_barbearia');
                 fd.append('id_barbearia', idDaBarbearia);
                 await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-                alert('Barbearia excluída com sucesso!');
+                alert('Unidade excluída com sucesso!');
                 carregarListaBarbeariasMaster();
             }
         }
@@ -948,7 +1430,7 @@
             fd.append('nome', nomeB);
             fd.append('senha', senhaB);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Barbearia criada!');
+            alert('Unidade criada!');
             fecharModal('modal-nova-barbearia');
             carregarListaBarbeariasMaster();
         }
@@ -1113,7 +1595,7 @@
                         let btnWpp = '';
                         if (ag.telefone) {
                             const numZap = ag.telefone.replace(/\D/g, '');
-                            const msgLink = `Fala *${ag.nome}*! Tudo beleza? ✂\nPassando para confirmar o seu horário hoje às *${ag.hora}* na barbearia. Te esperamos!`;
+                            const msgLink = `Fala *${ag.nome}*! Tudo beleza? 😊\nPassando para confirmar o seu horário hoje às *${ag.hora}*. Te esperamos!`;
                             btnWpp = `<a href="https://wa.me/55${numZap}?text=${encodeURIComponent(msgLink)}" target="_blank" style="background: #25D366; color: white; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-decoration: none;">💬 WhatsApp</a>`;
                         } else {
                             btnWpp = `<button onclick="alert('Sem telefone.')" style="background: #555; color: white; border: none; padding: 6px; border-radius: 4px; font-size: 0.7rem;">💬 Sem Wpp</button>`;
@@ -1228,7 +1710,6 @@
             const containerDetalhes = document.getElementById('lista-comissoes-container');
             containerDetalhes.innerHTML = '';
 
-            // 1. Processar Serviços da Agenda Concluídos
             let atendimentosConcluidos = agenda.filter(ag => {
                 let concl = ag.status === "Concluído";
                 let matchProf = (profSelecionado === "todos" || (ag.profissional && ag.profissional.trim().toLowerCase() === profSelecionado.trim().toLowerCase()));
@@ -1247,7 +1728,7 @@
                 div.innerHTML = `
                     <div>
                         <strong>${at.nome}</strong> (Serviço: ${at.servico})<br>
-                        <span style="font-size:0.7rem; color:#aaa;">${at.data.split('-').reverse().join('/')} às ${at.hora} | 💈 ${at.profissional || 'Equipe'}</span>
+                        <span style="font-size:0.7rem; color:#aaa;">${at.data.split('-').reverse().join('/')} às ${at.hora} | 👤 ${at.profissional || 'Equipe'}</span>
                     </div>
                     <div style="text-align:right;">
                         <span style="color:#28a745; font-weight:bold;">R$ ${valor.toFixed(2)}</span><br>
@@ -1257,7 +1738,6 @@
                 containerDetalhes.appendChild(div);
             });
 
-            // 2. Processar Vendas de Produtos do Balcão (PDV)
             let vendasProdutos = financeiro.filter(f => {
                 let isProd = f.tipo === 'produto';
                 let matchProf = (profSelecionado === "todos" || (f.profissional && f.profissional.trim().toLowerCase() === profSelecionado.trim().toLowerCase()));
@@ -1335,10 +1815,10 @@
         async function venderPacote(telefone, nome) { 
             if(!telefone) return alert("Cliente sem telefone registado!"); 
             
-            const qtd = prompt(`Quantos cortes/serviços quer adicionar ao pacote de ${nome}?`); 
+            const qtd = prompt(`Quantos atendimentos quer adicionar ao pacote de ${nome}?`); 
             if(!qtd || isNaN(qtd) || qtd <= 0) return; 
             
-            const valor = prompt(`Qual o valor total pago pelos ${qtd} serviços? (Ex: 150.00)`); 
+            const valor = prompt(`Qual o valor total pago pelos ${qtd} atendimentos? (Ex: 150.00)`); 
             if(!valor || isNaN(valor.replace(',','.'))) return; 
             
             const fd = new URLSearchParams(); 
@@ -1357,7 +1837,7 @@
         async function usarPacote(telefone, nome, saldoAtual) { 
             if(!telefone) return alert("Cliente sem telefone!"); 
             if(saldoAtual <= 0) return alert("Este cliente não tem saldo no pacote!"); 
-            if(!confirm(`Descontar 1 serviço do pacote de ${nome}? (Ele passará a ter ${saldoAtual - 1})`)) return; 
+            if(!confirm(`Descontar 1 sessão do pacote de ${nome}? (Ele passará a ter ${saldoAtual - 1})`)) return; 
             
             const novoSaldo = saldoAtual - 1; 
             const fd = new URLSearchParams(); 
@@ -1386,14 +1866,14 @@
                 div.innerHTML = `
                     <div style="flex:1; min-width:180px;">
                         <strong>${cli.nome}</strong><br>
-                        <span style="font-size: 0.75rem; color: #aaa;">Último: ${cli.ultimaVisita ? cli.ultimaVisita.split('-').reverse().join('/') : '-'} | ✂ ${cli.visitas}x</span><br>
+                        <span style="font-size: 0.75rem; color: #aaa;">Último: ${cli.ultimaVisita ? cli.ultimaVisita.split('-').reverse().join('/') : '-'} | 📅 ${cli.visitas}x</span><br>
                         <span style="color:#00bfff; font-size:0.75rem; font-weight:bold;">📦 Pacote: ${saldo} disponíveis</span>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
                         <div style="color: #28a745; font-weight: bold; font-size: 0.85rem;">Gasto: R$ ${parseFloat(cli.gastoTotal || 0).toFixed(2)}</div>
                         <div style="display: flex; gap:5px;">
                             <button onclick="venderPacote('${cli.telefone}', '${cli.nome}')" style="background:var(--cor-principal); color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">🛒 Vender Pacote</button>
-                            ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✂️ Usar 1</button>` : ''}
+                            ${saldo > 0 ? `<button onclick="usarPacote('${cli.telefone}', '${cli.nome}',${saldo})" style="background:#00bfff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">✅ Usar 1</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -1462,14 +1942,14 @@
         async function abrirModalAgendar() {
             abrirModal('modal-agendar');
             const selectProf = document.getElementById('agend-profissional');
-            selectProf.innerHTML = '<option value="Equipe">💈 Equipe / Geral</option>';
+            selectProf.innerHTML = '<option value="Equipe">👥 Equipe / Geral</option>';
             try {
                 const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
                 const data = await res.json();
                 if (data.profissionais) {
                     let profs = JSON.parse(data.profissionais);
                     profs.forEach(p => {
-                        selectProf.innerHTML += `<option value="${p.nome}">💈 ${p.nome}</option>`;
+                        selectProf.innerHTML += `<option value="${p.nome}">👤 ${p.nome}</option>`;
                     });
                 }
             } catch(e) {}
@@ -1508,14 +1988,14 @@
             selectPdv.innerHTML = '<option value="">-- Selecione o Produto --</option>'; 
 
             const selectProfPdv = document.getElementById('pdv-profissional-select');
-            selectProfPdv.innerHTML = '<option value="Equipe">💈 Loja / Equipe Geral</option>';
+            selectProfPdv.innerHTML = '<option value="Equipe">🏪 Loja / Equipe Geral</option>';
             try {
                 const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia);
                 const data = await res.json();
                 if (data.profissionais) {
                     let profs = JSON.parse(data.profissionais);
                     profs.forEach(p => {
-                        selectProfPdv.innerHTML += `<option value="${p.nome}">💈 ${p.nome}</option>`;
+                        selectProfPdv.innerHTML += `<option value="${p.nome}">👤 ${p.nome}</option>`;
                     });
                 }
             } catch(e) {}
@@ -1602,7 +2082,7 @@
             const div = document.createElement('div'); 
             div.className = 'linha-item'; 
             div.innerHTML = `
-                <input type="text" value="${n}" class="s-nome" placeholder="Ex: Corte Masculino" style="flex:2;">
+                <input type="text" value="${n}" class="s-nome" placeholder="Ex: Atendimento / Serviço" style="flex:2;">
                 <input type="number" value="${p}" class="s-preco" placeholder="R$" style="width:65px;" step="0.01">
                 <input type="number" value="${t}" class="s-tempo" placeholder="Min" style="width:55px;">
                 <input type="number" value="${c !== undefined ? c : 50}" class="s-comissao" placeholder="%" style="width:65px;" title="Comissão %">
@@ -1646,7 +2126,7 @@
             div.className = 'linha-item';
             div.style.flexWrap = 'wrap';
             div.innerHTML = `
-                <input type="text" value="${nome}" class="pr-nome" placeholder="Nome do Barbeiro" style="flex: 2; min-width: 120px;">
+                <input type="text" value="${nome}" class="pr-nome" placeholder="Nome do Profissional" style="flex: 2; min-width: 120px;">
                 <div style="display: flex; gap: 4px; align-items: center; font-size: 0.7rem; color: #aaa;">
                     <span>Abre:</span> <input type="time" value="${abre || '08:00'}" class="pr-abre" style="width: 85px; padding: 6px;">
                 </div>
