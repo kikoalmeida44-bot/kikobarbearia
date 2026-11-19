@@ -155,12 +155,27 @@
 
     .preview-media {
       margin-top: 8px;
-      max-height: 180px;
+      max-height: 220px;
       border-radius: 6px;
       display: none;
       width: 100%;
       object-fit: contain;
       background: #000;
+      border: 1px solid #333;
+    }
+
+    .badge-estudio {
+      background: rgba(0, 191, 255, 0.15);
+      border: 1px solid #00bfff;
+      color: #00bfff;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     .tags-info {
@@ -234,7 +249,7 @@
     <div>
       <h1>👑 KBS Sistemas — Disparador Exclusivo</h1>
       <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
-        Módulo Mestre de Campanhas em Massa (Texto, Imagem, Vídeo e Link) via UaZapi
+        Módulo Mestre de Campanhas em Massa (Foto Aberta + Legenda, Vídeo e Link) via UaZapi
       </p>
     </div>
     <button class="btn btn-dark" onclick="window.close()">⬅️ Voltar ao Painel</button>
@@ -263,7 +278,7 @@
     </div>
   </div>
 
-  <!-- BLOCO 2 E 3: CONTATOS + MENSAGEM/VÍDEO -->
+  <!-- BLOCO 2 E 3: CONTATOS + MENSAGEM/MÍDIA -->
   <div class="grid">
     <!-- CONTATOS -->
     <div class="card">
@@ -275,7 +290,9 @@
 
       <div>
         <label>Números para envio (1 por linha — opcional: Número, Nome):</label>
-        <textarea id="listaContatos" placeholder="67999673200, Francisco&#10;67998831369, João&#10;67991234567"></textarea>
+        <textarea id="listaContatos" placeholder="67999673200, Francisco
+67998831369, João
+67991234567"></textarea>
         <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">
           Contatos válidos prontos para envio: <strong id="totalDetectado" style="color: var(--cor-principal);">0</strong>
         </p>
@@ -296,37 +313,42 @@
       </p>
     </div>
 
-    <!-- MENSAGEM E VÍDEO -->
+    <!-- MENSAGEM E MÍDIA -->
     <div class="card">
-      <h2>🎬 3. Mensagem e Mídia (Vídeo, Foto ou Link)</h2>
+      <h2>🎬 3. Mensagem e Mídia (Foto, Vídeo ou Link)</h2>
+
+      <div id="avisoArteEstudio" class="badge-estudio">
+        <span>🎨 Arte importada direto do Estúdio Ultra Pro!</span>
+        <button type="button" onclick="limparArquivo()" style="background:none; border:none; color:#ff4c4c; font-weight:bold; cursor:pointer; text-decoration:underline; font-size:0.74rem;">Remover</button>
+      </div>
 
       <div>
         <label>Formato da Campanha:</label>
         <select id="tipoMidia" onchange="alternarMidia()">
+          <option value="imagem" selected>Imagem (.jpg / .png) + Legenda Aberta</option>
+          <option value="video">Vídeo (.mp4) + Legenda</option>
           <option value="texto">Apenas Texto / Link</option>
-          <option value="video" selected>Vídeo (.mp4) + Legenda</option>
-          <option value="imagem">Imagem (.jpg / .png) + Legenda</option>
         </select>
       </div>
 
       <div id="boxMidia">
-        <label>Link direto do Vídeo/Imagem (URL) OU escolha do aparelho:</label>
-        <input type="text" id="mediaUrl" placeholder="https://kikobarbearia.com.br/video-kbs.mp4" style="margin-bottom: 8px;">
+        <label>Link direto da Imagem/Vídeo (URL) OU escolha do aparelho:</label>
+        <input type="text" id="mediaUrl" placeholder="https://kikobarbearia.com.br/arte.png" style="margin-bottom: 8px;" oninput="atualizarPreviewUrl()">
 
         <label class="file-box" for="arquivoMidia">
-          📁 Selecionar Vídeo (.mp4) ou Foto do Celular / PC
-          <input type="file" id="arquivoMidia" accept="video/mp4,image/*" onchange="carregarArquivo(event)">
+          📁 Selecionar Foto (.jpg/.png) ou Vídeo (.mp4) do Celular / PC
+          <input type="file" id="arquivoMidia" accept="image/*,video/mp4" onchange="carregarArquivo(event)">
         </label>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
           <span id="nomeArquivo" style="font-size: 0.75rem; color: var(--cor-principal);"></span>
           <button type="button" id="btnLimparArquivo" onclick="limparArquivo()" style="display:none; background:none; border:none; color:var(--red); font-size:0.75rem; cursor:pointer; text-decoration:underline;">Remover arquivo</button>
         </div>
         <video id="previewVideo" class="preview-media" controls></video>
-        <img id="previewImg" class="preview-media" alt="Prévia">
+        <img id="previewImg" class="preview-media" alt="Prévia da Arte">
       </div>
 
       <div>
-        <label>Texto / Legenda da Mensagem:</label>
+        <label>Texto / Legenda da Mensagem (aparece embaixo da foto):</label>
         <textarea id="mensagemTexto">{saudacao}, {nome}! 🚀
 
 Conheça o *KBS Sistemas* — a plataforma completa de agendamento automático pelo WhatsApp para Barbearias, Salões e Clínicas!
@@ -389,6 +411,37 @@ Saiba mais: https://kikobarbearia.com.br</textarea>
 
   document.getElementById('listaContatos').addEventListener('input', atualizarContador);
 
+  // VERIFICA SE VEIO ALGUMA ARTE PRONTA DO ESTÚDIO ULTRA PRO
+  window.addEventListener('DOMContentLoaded', () => {
+    const arteEstudio = localStorage.getItem('kbs_arte_disparo_base64');
+    const legendaEstudio = localStorage.getItem('kbs_arte_disparo_legenda');
+
+    if (arteEstudio) {
+      arquivoBase64 = arteEstudio;
+      document.getElementById('tipoMidia').value = 'imagem';
+      alternarMidia();
+
+      const prevImg = document.getElementById('previewImg');
+      prevImg.src = arteEstudio;
+      prevImg.style.display = 'block';
+      document.getElementById('previewVideo').style.display = 'none';
+
+      document.getElementById('avisoArteEstudio').style.display = 'flex';
+      document.getElementById('nomeArquivo').innerText = 'Arte pronta do Estúdio Ultra Pro (JPEG)';
+      document.getElementById('btnLimparArquivo').style.display = 'inline-block';
+
+      if (legendaEstudio) {
+        document.getElementById('mensagemTexto').value = `{saudacao}, {nome}!\n\n${legendaEstudio}`;
+      }
+
+      adicionarLog('🎨 Arte e legenda carregadas automaticamente do Estúdio Ultra Pro!', 'log-ok');
+
+      // Limpa o cache temporário para não reabrir por engano no futuro
+      localStorage.removeItem('kbs_arte_disparo_base64');
+      localStorage.removeItem('kbs_arte_disparo_legenda');
+    }
+  });
+
   function atualizarContador() {
     const lista = parseContatos();
     document.getElementById('totalDetectado').innerText = lista.length;
@@ -408,10 +461,30 @@ Saiba mais: https://kikobarbearia.com.br</textarea>
   function limparArquivo() {
     arquivoBase64 = "";
     document.getElementById('arquivoMidia').value = "";
+    document.getElementById('mediaUrl').value = "";
     document.getElementById('nomeArquivo').innerText = "";
     document.getElementById('btnLimparArquivo').style.display = "none";
+    document.getElementById('avisoArteEstudio').style.display = "none";
     document.getElementById('previewVideo').style.display = "none";
     document.getElementById('previewImg').style.display = "none";
+  }
+
+  function atualizarPreviewUrl() {
+    const url = document.getElementById('mediaUrl').value.trim();
+    if (!url || arquivoBase64) return;
+    const tipo = document.getElementById('tipoMidia').value;
+    const prevImg = document.getElementById('previewImg');
+    const prevVideo = document.getElementById('previewVideo');
+
+    if (tipo === 'imagem') {
+      prevVideo.style.display = 'none';
+      prevImg.src = url;
+      prevImg.style.display = 'block';
+    } else if (tipo === 'video') {
+      prevImg.style.display = 'none';
+      prevVideo.src = url;
+      prevVideo.style.display = 'block';
+    }
   }
 
   function carregarArquivo(event) {
@@ -424,6 +497,7 @@ Saiba mais: https://kikobarbearia.com.br</textarea>
       return;
     }
 
+    document.getElementById('avisoArteEstudio').style.display = "none";
     document.getElementById('nomeArquivo').innerText = `Arquivo carregado: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
     document.getElementById('btnLimparArquivo').style.display = "inline-block";
 
@@ -580,12 +654,17 @@ Saiba mais: https://kikobarbearia.com.br</textarea>
   function limparLog() { document.getElementById('logBox').innerHTML = ''; }
   function aguardar(segundos) { return new Promise(resolve => setTimeout(resolve, segundos * 1000)); }
 
-  // ENVIA CADA MENSAGEM / VÍDEO / LINK VIA GOOGLE APPS SCRIPT (UAZAPI)
+  // ENVIA CADA MENSAGEM / FOTO / VÍDEO VIA GOOGLE APPS SCRIPT (UAZAPI)
   async function enviarMensagemViaScript(contato, mensagem) {
     const instanciaId = document.getElementById('instanciaDisparo').value.trim() || 'kbs_disparador';
     const tipo = document.getElementById('tipoMidia').value;
     const mediaLink = document.getElementById('mediaUrl').value.trim();
     const midiaFinal = arquivoBase64 || mediaLink;
+
+    // Normaliza o tipo para 'image' ou 'video' para compatibilidade total com UaZapi send/media
+    let tipoApi = 'text';
+    if (tipo === 'imagem') tipoApi = 'image';
+    else if (tipo === 'video') tipoApi = 'video';
 
     const payload = {
       acao: 'disparar_massa',
@@ -593,8 +672,10 @@ Saiba mais: https://kikobarbearia.com.br</textarea>
       telefone: contato.numero,
       nome: contato.nome,
       mensagem: mensagem,
-      tipo_midia: tipo,
-      midia: (tipo !== 'texto' && midiaFinal) ? midiaFinal : ''
+      caption: mensagem,
+      tipo_midia: tipoApi,
+      midia: (tipo !== 'texto' && midiaFinal) ? midiaFinal : '',
+      file: (tipo !== 'texto' && midiaFinal) ? midiaFinal : ''
     };
 
     const response = await fetch(SCRIPT_URL, {
@@ -637,7 +718,7 @@ Saiba mais: https://kikobarbearia.com.br</textarea>
     let erros = 0;
     const total = contatos.length;
 
-    adicionarLog(`🚀 Iniciando campanha para ${total} contato(s)...`, 'log-wait');
+    adicionarLog(`🚀 Iniciando campanha (${tipo.toUpperCase()}) para ${total} contato(s)...`, 'log-wait');
 
     for (let i = 0; i < total; i++) {
       if (!rodando) {
