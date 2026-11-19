@@ -316,8 +316,8 @@
             <a href="#servicos">Serviços</a>
             <a href="#galeria">Galeria</a>
             <a href="#agendamento">Agendar</a>
-            <a href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
-            <a href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
+            <a id="nav-facebook" href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
+            <a id="nav-instagram" href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
             <!-- LOGIN DA EMPRESA DISCRETO (WHITE-LABEL) -->
             <a href="login.html" id="link-admin" class="login-empresa-link">🔐 Login da Empresa</a>
         </nav>
@@ -463,23 +463,35 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        const urlParams = new URLSearchParams(window.location.search);
-        let idBruto = urlParams.get('id');
-        let idBarbearia = '';
+        // DETECÇÃO AUTOMÁTICA DE SUBDOMÍNIO SAAS (EX: legalcabeleireiro.kikobarbearia.com.br)
+        function detectarIdBarbeariaSaaS() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let idParam = urlParams.get('id') || urlParams.get('id_barbearia');
+            if (idParam) {
+                if (idParam.includes('http')) idParam = idParam.split('http')[0];
+                if (idParam.includes(']')) idParam = idParam.split(']')[0];
+                return idParam.replace(/[^a-zA-Z0-9_-]/g, '');
+            }
 
-        if (idBruto) {
-            if (idBruto.includes('http')) idBruto = idBruto.split('http')[0];
-            if (idBruto.includes(']')) idBruto = idBruto.split(']')[0];
-            
-            idBarbearia = idBruto.replace(/[^a-zA-Z0-9_-]/g, '');
+            const host = window.location.hostname.toLowerCase();
+            const partes = host.split('.');
+            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'kikobarbearia' && !host.endsWith('github.io') && !host.endsWith('workers.dev')) {
+                return partes[0].replace(/[^a-zA-Z0-9_-]/g, '');
+            }
+
+            return '';
+        }
+
+        let idBarbearia = detectarIdBarbeariaSaaS();
+        if (idBarbearia) {
             localStorage.setItem('id_barbearia_ativo', idBarbearia);
         } else {
-            idBarbearia = localStorage.getItem('id_barbearia_ativo') || '';
+            localStorage.removeItem('id_barbearia_ativo');
         }
 
         let numeroWhatsappDono = "5567999673200"; 
 
-        document.getElementById('link-admin').href = `login.html?id=${idBarbearia}`;
+        document.getElementById('link-admin').href = idBarbearia ? `login.html?id=${idBarbearia}` : `login.html`;
         
         let agendamentosDaNuvem = [];
         let configHorarios = null;
@@ -507,6 +519,13 @@
                 }
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
+
+                if (textos.link_instagram && textos.link_instagram.trim() !== "") {
+                    document.getElementById('nav-instagram').href = textos.link_instagram.trim();
+                }
+                if (textos.link_facebook && textos.link_facebook.trim() !== "") {
+                    document.getElementById('nav-facebook').href = textos.link_facebook.trim();
+                }
                 
                 if (textos.telefone) {
                     numeroWhatsappDono = textos.telefone.replace(/\D/g, ''); 
@@ -520,7 +539,9 @@
                     let linkMapa = document.getElementById('link-mapa');
                     if(linkMapa) {
                         linkMapa.innerHTML = "📍 " + textos.endereco;
-                        linkMapa.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(textos.endereco);
+                        linkMapa.href = (textos.link_google && textos.link_google.trim() !== "")
+                            ? textos.link_google.trim()
+                            : "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(textos.endereco);
                     }
                 }
                 
@@ -593,6 +614,8 @@
                         }
                     });
                     document.getElementById('galeriaDinamica').innerHTML = htmlMidia;
+                } else {
+                    document.getElementById('galeriaDinamica').innerHTML = "<p style='color:#888;'>Nenhuma foto ou vídeo publicado ainda.</p>";
                 }
                 
                 // TELA DE PULSAÇÃO SOME SUAVEMENTE
