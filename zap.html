@@ -14,7 +14,6 @@
     <meta property="og:title" content="Agendamento Online | Rápido e Fácil">
     <meta property="og:description" content="Garanta o seu horário com total comodidade. Escolha o melhor dia e profissional sem filas!">
     <meta property="og:image" content="https://i.postimg.cc/284FR3yL/Modelo-3D-para-agendamento-2-Nov-2026-6-16-pm-20261102-181712-0000.png">
-    <meta property="og:url" content="https://www.kikobarbearia.com.br/zap.html">
     <meta property="og:type" content="website">
 
     <!-- Configuração do Favicon -->
@@ -105,13 +104,13 @@
             text-transform: uppercase;
         }
 
-        /* JANELA 100% CRISTALINA (SEM BORRÃO, TOTALMENTE TRANSPARENTE) */
+        /* JANELA 100% CRISTALINA */
         .container { 
             width: 100%; max-width: 480px; margin: 10px auto; 
-            background: rgba(5, 5, 5, 0.08); /* Fundo extremamente transparente */
+            background: rgba(5, 5, 5, 0.08);
             padding: 38px 24px 28px 24px; 
             border-radius: 20px; 
-            border: 1px solid rgba(212, 175, 55, 0.25); /* Borda fina e elegante em dourado */
+            border: 1px solid rgba(212, 175, 55, 0.25);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             position: relative;
         }
@@ -124,7 +123,7 @@
         
         .form-group input, .form-group select { 
             width: 100%; padding: 14px 16px; 
-            background: rgba(0, 0, 0, 0.25); /* Campos super transparentes */
+            background: rgba(0, 0, 0, 0.25);
             color: #ffffff; 
             border: 1px solid rgba(255, 255, 255, 0.2); 
             border-radius: 12px; font-family: var(--fonte-principal); font-size: 15px; transition: all 0.3s ease;
@@ -263,8 +262,21 @@
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
     
+    function detectarIdBarbeariaSaaS() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const idParam = urlParams.get('id') || urlParams.get('id_barbearia');
+        if (idParam) return idParam.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+
+        const host = window.location.hostname.toLowerCase();
+        const partes = host.split('.');
+        if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'kikobarbearia' && !host.endsWith('github.io') && !host.endsWith('workers.dev')) {
+            return partes[0].replace(/[^a-z0-9_-]/g, '');
+        }
+        return 'kiko_barb';
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
-    let idBarbearia = urlParams.get('id') || localStorage.getItem('id_barbearia_ativo') || 'kiko_barb';
+    let idBarbearia = detectarIdBarbeariaSaaS();
     let telUrl = urlParams.get('tel');
     let numeroWhatsappDono = "5567999673200"; 
     let agendamentosDaNuvem = [];
@@ -352,9 +364,7 @@
             .then(res => res.json())
             .then(textos => {
                 localStorage.setItem(chaveCache, JSON.stringify(textos));
-                if (!cacheSalvo) {
-                    montarTela(textos);
-                }
+                montarTela(textos);
             })
             .catch(e => {
                 if (!cacheSalvo) {
