@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registar Barbearia | Kiko Barbearia SaaS</title>
+    <title>Registar Unidade | KBS Sistemas SaaS</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; color: #ffffff; background-color: #050505; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .registro-container { background-color: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px); padding: 40px; border: 1px solid rgba(212, 175, 55, 0.4); width: 100%; max-width: 450px; border-radius: 8px; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        h1 { color: #d4af37; text-align: center; font-size: 1.8em; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #dddddd; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px 10px; color: #ffffff; background-color: #050505; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .registro-container { background-color: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px); padding: 40px 30px; border: 1px solid rgba(212, 175, 55, 0.4); width: 100%; max-width: 450px; border-radius: 8px; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        h1 { color: #d4af37; text-align: center; font-size: 1.6em; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #dddddd; font-size: 0.8em; text-transform: uppercase; font-weight: 600; }
         .form-group input { width: 100%; padding: 14px; background-color: rgba(0,0,0,0.5); color: #ffffff; border: 1px solid #444; box-sizing: border-box; border-radius: 4px; font-family: 'Montserrat', sans-serif; transition: 0.3s; }
         .form-group input:focus { border-color: #d4af37; outline: none; background-color: rgba(20, 20, 20, 0.8); }
+        .preview-subdominio { margin-top: 8px; padding: 8px 10px; background: rgba(0, 191, 255, 0.08); border: 1px dashed rgba(0, 191, 255, 0.4); border-radius: 4px; font-size: 0.75rem; color: #aaa; word-break: break-all; }
+        .preview-subdominio strong { color: #00bfff; }
         .btn-gold { background-color: #d4af37; color: #050505; width: 100%; padding: 15px; text-decoration: none; font-size: 1em; font-weight: 700; text-transform: uppercase; border-radius: 4px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-gold:hover { background-color: #b38f27; border-color: #b38f27; }
         .links-uteis { text-align: center; margin-top: 20px; font-size: 0.9em; }
@@ -25,18 +27,21 @@
 <body>
 
     <div class="registro-container">
-        <h1>Criar Barbearia</h1>
+        <h1>Criar Unidade</h1>
         <div class="badge-trial">✨ Registo com Acesso Imediato ao Sistema</div>
         <div id="msgErro" class="mensagem-erro"></div>
         
         <form id="formRegistro" onsubmit="registarBarbearia(event)">
             <div class="form-group">
-                <label for="nome">Nome da Barbearia:</label>
-                <input type="text" id="nome" name="nome" placeholder="Ex: Kiko Barbearia" required>
+                <label for="nome">Nome da Empresa / Barbearia:</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex: Barbearia Imperial" required>
             </div>
             <div class="form-group">
-                <label for="id_barbearia">ID Único (Link do Sistema):</label>
-                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: kikobarbearia" required>
+                <label for="id_barbearia">ID Único (Seu Subdomínio):</label>
+                <input type="text" id="id_barbearia" name="id_barbearia" placeholder="ex: barbeariaimperial" oninput="atualizarPreviewSubdominio()" required>
+                <div class="preview-subdominio">
+                    🌐 Seu link exclusivo: <strong id="texto-preview-url">https://suaunidade.kikobarbearia.com.br</strong>
+                </div>
             </div>
             <div class="form-group">
                 <label for="email">E-mail de Acesso:</label>
@@ -61,19 +66,42 @@
     <script>
         const URL_SCRIPT_BACKEND = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
 
+        function limparIdSubdominio(valor) {
+            return valor
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9-]/g, "");
+        }
+
+        function atualizarPreviewSubdominio() {
+            const input = document.getElementById('id_barbearia');
+            const idLimpo = limparIdSubdominio(input.value);
+            input.value = idLimpo;
+            const preview = document.getElementById('texto-preview-url');
+            preview.innerText = `https://${idLimpo || 'suaunidade'}.kikobarbearia.com.br`;
+        }
+
         function registarBarbearia(e) {
             e.preventDefault();
             const btn = document.getElementById('btnRegistar');
             const msgErro = document.getElementById('msgErro');
 
             const nome = document.getElementById('nome').value.trim();
-            const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '_');
+            const idBarb = limparIdSubdominio(document.getElementById('id_barbearia').value);
             const email = document.getElementById('email').value.trim();
             const telefone = document.getElementById('telefone').value.trim();
             const senha = document.getElementById('senha').value.trim();
 
             if (!nome || !idBarb || !email || !telefone || !senha) {
                 msgErro.innerText = "Por favor, preencha todos os campos!";
+                msgErro.style.display = 'block';
+                return;
+            }
+
+            if (idBarb === 'www' || idBarb === 'admin' || idBarb === 'login' || idBarb === 'api') {
+                msgErro.innerText = "Este ID é reservado pelo sistema. Escolha outro nome.";
                 msgErro.style.display = 'block';
                 return;
             }
@@ -99,11 +127,11 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === "sucesso") {
-                    alert("Barbearia criada com sucesso!");
+                    alert(`Unidade criada com sucesso!\nSeu link exclusivo é: https://${idBarb}.kikobarbearia.com.br`);
                     localStorage.setItem('id_barbearia_ativo', idBarb);
-                    window.location.href = `admin.html?id=${idBarb}`;
+                    window.location.href = `https://${idBarb}.kikobarbearia.com.br/admin.html`;
                 } else {
-                    msgErro.innerText = data.msg || "Erro ao registar barbearia.";
+                    msgErro.innerText = data.msg || "Erro ao registar unidade.";
                     msgErro.style.display = 'block';
                     btn.disabled = false;
                     btn.innerText = "Concluir Registo";
