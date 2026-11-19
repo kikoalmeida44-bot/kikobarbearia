@@ -921,18 +921,29 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
+        function detectarIdBarbeariaSaaS() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idParam = urlParams.get('id') || urlParams.get('id_barbearia');
+            if (idParam) return idParam.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+
+            const host = window.location.hostname.toLowerCase();
+            const partes = host.split('.');
+            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'kikobarbearia' && !host.endsWith('github.io') && !host.endsWith('workers.dev')) {
+                return partes[0].replace(/[^a-z0-9_-]/g, '');
+            }
+            return localStorage.getItem('id_barbearia_ativo') || 'kiko_barb';
+        }
+
+        function gerarLinkPublicoUnidade(idUnidade) {
+            if (!idUnidade || idUnidade === 'kiko_barb' || idUnidade === 'kiko_barberia' || idUnidade === 'master') {
+                return 'https://www.kikobarbearia.com.br';
+            }
+            return `https://${idUnidade}.kikobarbearia.com.br`;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
-        let idBarbearia = urlParams.get('id');
-
-        if (idBarbearia) {
-            localStorage.setItem('id_barbearia_ativo', idBarbearia);
-        } else {
-            idBarbearia = localStorage.getItem('id_barbearia_ativo') || 'kiko_barb';
-        }
-
-        if (!urlParams.get('id') && idBarbearia) {
-            window.history.replaceState({}, '', `admin.html?id=${idBarbearia}`);
-        }
+        let idBarbearia = detectarIdBarbeariaSaaS();
+        localStorage.setItem('id_barbearia_ativo', idBarbearia);
 
         window.todosClientes = []; 
         window.produtosCarregados = [];
@@ -1239,7 +1250,7 @@
         }
 
         function desenharQrCodeNoCanvas(ctx, x, y, tamanho, corDestaque) {
-            const linkAgendamento = document.getElementById('link-compartilhamento').value || `https://kikobarbearia.com.br/?id=${idBarbearia}`;
+            const linkAgendamento = document.getElementById('link-compartilhamento').value || gerarLinkPublicoUnidade(idBarbearia);
             if (typeof qrcode === 'undefined') return;
 
             const qr = qrcode(0, 'M');
@@ -1367,7 +1378,6 @@
                 ctx.fillText('DEPOIS', w - 140, 84);
 
             } else if (layout === 'mosaico_3') {
-                // Grade Mosaico 3 Fotos
                 const gap = 14;
                 if (window.imagemFundoPost) desenharImagemComFiltroEnquadramento(ctx, window.imagemFundoPost, 0, 0, w * 0.58 - gap / 2, h, filtroCompleto, zoomFoto, posY);
                 if (window.imagemDepoisPost) desenharImagemComFiltroEnquadramento(ctx, window.imagemDepoisPost, w * 0.58 + gap / 2, 0, w * 0.42, h / 2 - gap / 2, filtroCompleto, zoomFoto, posY);
@@ -1377,7 +1387,6 @@
                 ctx.fillRect(0, 0, w, h);
 
             } else if (layout === 'polaroid') {
-                // Fundo desfocado + Foto estilo Polaroid inclinada
                 if (window.imagemFundoPost) {
                     desenharImagemComFiltroEnquadramento(ctx, window.imagemFundoPost, 0, 0, w, h, 'blur(12px) brightness(45%)', 110, 0);
                 }
@@ -1396,7 +1405,6 @@
                     ctx.fillStyle = '#222';
                     ctx.fillRect(-polW / 2 + 28, -polH / 2 + 28, polW - 56, polH - 125);
                 }
-                // Fita adesiva no topo da Polaroid
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
                 ctx.fillRect(-85, -polH / 2 - 18, 170, 38);
                 ctx.restore();
@@ -1405,7 +1413,6 @@
                 if (window.imagemFundoPost) {
                     desenharImagemComFiltroEnquadramento(ctx, window.imagemFundoPost, 0, 0, w, h, 'blur(14px) brightness(40%)', 110, 0);
                 }
-                // Moldura Smartphone
                 const celW = 440;
                 const celH = 740;
                 const celX = centroX - celW / 2;
@@ -1421,14 +1428,12 @@
                     desenharImagemComFiltroEnquadramento(ctx, window.imagemFundoPost, celX + 16, celY + 16, celW - 32, celH - 32, filtroCompleto, zoomFoto, posY);
                     ctx.restore();
                 }
-                // Ilha Dinâmica (Notch)
                 ctx.fillStyle = '#000';
                 ctx.beginPath(); ctx.roundRect(centroX - 65, celY + 26, 130, 26, 13); ctx.fill();
                 ctx.restore();
 
             } else if (window.imagemFundoPost) {
                 if (recorteFoto !== 'retangulo') {
-                    // Fundo escuro texturizado + Foto recortada em Círculo, Arco ou Hexágono
                     desenharImagemComFiltroEnquadramento(ctx, window.imagemFundoPost, 0, 0, w, h, 'blur(16px) brightness(35%)', 115, 0);
                     ctx.save();
                     aplicarRecorteGeometrico(ctx, recorteFoto, centroX, h * 0.42, Math.min(w, h));
@@ -1455,7 +1460,6 @@
                 }
             }
 
-            // Vinheta Cinematográfica nas bordas
             if (usarVinheta) {
                 const radGrad = ctx.createRadialGradient(w / 2, h / 2, w * 0.28, w / 2, h / 2, w * 0.78);
                 radGrad.addColorStop(0, 'rgba(0,0,0,0)');
@@ -1476,7 +1480,6 @@
             const margem = 55;
             ctx.textAlign = 'center';
 
-            // 3. Molduras Específicas de Layout
             if (layout === 'classico') {
                 ctx.strokeStyle = corDestaque; ctx.lineWidth = 6;
                 ctx.strokeRect(margem, margem, w - margem * 2, h - margem * 2);
@@ -1505,7 +1508,6 @@
                 ctx.restore();
             }
 
-            // 4. Logo da Empresa
             let offsetLogo = 0;
             if (window.imagemLogoPost && layout !== 'antes_depois' && layout !== 'polaroid' && layout !== 'mockup_celular') {
                 const logo = window.imagemLogoPost;
@@ -1517,7 +1519,6 @@
                 offsetLogo = drawH * 0.55;
             }
 
-            // 5. Tag Superior
             if (layout !== 'antes_depois' && layout !== 'polaroid' && layout !== 'mockup_celular') {
                 const topY = (layout === 'cartao') ? (h * 0.25 + offsetLogo) : (layout === 'degrade_base' ? h * 0.52 : margem + 105 + offsetLogo);
                 ctx.fillStyle = corDestaque;
@@ -1526,7 +1527,6 @@
                 ctx.fillText(textoTopo, centroX, topY);
             }
 
-            // 6. Posicionamento Vertical dos Textos
             let baseCentroY = h * 0.44 + (offsetLogo * 0.3);
             if (alinhamentoV === 'topo') baseCentroY = h * 0.26;
             else if (alinhamentoV === 'base' || layout === 'degrade_base' || layout === 'antes_depois' || layout === 'polaroid' || layout === 'mockup_celular') {
@@ -1560,7 +1560,6 @@
                 }
                 ctx.textAlign = 'center';
             } else if (layout === 'cupom') {
-                // Desenha Ticket Picotado com Código Promocional
                 const cupomY = yAtual + 15;
                 ctx.save();
                 ctx.fillStyle = 'rgba(0,0,0,0.85)';
@@ -1599,7 +1598,6 @@
                 ctx.fillText('E garanta seu horário hoje mesmo!', 1620, h * 0.52);
             }
 
-            // 7. Botão CTA
             ctx.save();
             ctx.shadowColor = 'transparent';
             const btnCentroX = (formato === 'carrossel') ? 1620 : centroX;
@@ -1613,14 +1611,12 @@
             ctx.fillStyle = '#000000'; ctx.font = '800 34px Montserrat, sans-serif'; ctx.textAlign = 'center';
             ctx.fillText(chamada, btnX + btnW / 2, btnY + 59);
 
-            // 8. QR Code Automático
             if (usarQrCode) {
                 const qrX = (formato === 'carrossel') ? (1620 - 85) : (w - margem - 205);
                 const qrY = (formato === 'carrossel') ? (h * 0.58) : (h - margem - 210);
                 desenharQrCodeNoCanvas(ctx, qrX, qrY, 170, corDestaque);
             }
 
-            // 9. Sticker Flutuante
             if (sticker) {
                 const stX = (layout === 'antes_depois') ? (w / 2) : (w - 220);
                 const stY = (layout === 'antes_depois') ? 165 : (layout === 'urgencia' ? 160 : 130);
@@ -1678,7 +1674,6 @@
             }, 'image/png');
         }
 
-        // Ponte direta: Salva a arte gerada e abre o Disparador WhatsApp com ela pronta
         function enviarArteParaDisparador() {
             const canvas = document.getElementById('canvasPostInstagram');
             const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
@@ -1788,11 +1783,9 @@
             if (tipo === 'none') return;
             ctx.save();
             if (tipo === 'rec') {
-                // Moldura Câmera Gravando (REC)
                 ctx.strokeStyle = 'rgba(255,255,255,0.6)';
                 ctx.lineWidth = 4;
                 const m = 35; const len = 45;
-                // Cantos de câmera
                 ctx.beginPath(); ctx.moveTo(m, m + len); ctx.lineTo(m, m); ctx.lineTo(m + len, m); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(w - m - len, m); ctx.lineTo(w - m, m); ctx.lineTo(w - m, m + len); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(m, h - m - len); ctx.lineTo(m, h - m); ctx.lineTo(m + len, h - m); ctx.stroke();
@@ -1843,7 +1836,6 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, w, h);
 
-            // 1. Renderiza Foto Atual + 10 Transições
             if (imgAtual) {
                 let zoomBase = 1 + progCena * 0.05;
                 if (tipoTransicao === 'zoom_beat') zoomBase = 1 + Math.sin(progCena * Math.PI) * 0.14;
@@ -1901,10 +1893,8 @@
                 }
             }
 
-            // 2. Partículas / Overlays Animados
             desenharParticulasVideo(ctx, w, h, tipoParticulas, progTotal, corDestaque);
 
-            // 3. Barras Estilo Cinema
             if (estiloCinema) {
                 const barH = h * 0.11;
                 ctx.fillStyle = '#000000';
@@ -1920,7 +1910,6 @@
                 ctx.fillStyle = gradBot; ctx.fillRect(0, h - 270, w, 270);
             }
 
-            // 4. Selos ANTES / DEPOIS
             if (modoAD) {
                 const isUltima = (fotoIdx === totalFotos - 1);
                 ctx.fillStyle = isUltima ? corDestaque : '#ff4c4c';
@@ -1930,7 +1919,6 @@
                 ctx.fillText(isUltima ? '✨ DEPOIS' : '👀 ANTES', w / 2, 160);
             }
 
-            // 5. Textos e Animação da Legenda
             ctx.textAlign = 'center';
             ctx.fillStyle = corDestaque;
             ctx.font = 'bold 26px Montserrat, sans-serif';
@@ -2139,7 +2127,7 @@
         }
 
         async function iniciarPainel() {
-            const linkPronto = `https://kikobarbearia.com.br/?id=${idBarbearia}`;
+            const linkPronto = gerarLinkPublicoUnidade(idBarbearia);
             const inputLink = document.getElementById('link-compartilhamento');
             if(inputLink) inputLink.value = linkPronto;
 
@@ -2220,8 +2208,9 @@
                 if(barbearias && barbearias.length > 0) {
                     barbearias.forEach(b => {
                         const ativo = b.status !== "bloqueado";
+                        const urlPainelUnidade = (b.id === 'kiko_barb' || b.id === 'kiko_barberia') ? `admin.html?id=${b.id}` : `https://${b.id}.kikobarbearia.com.br/admin.html`;
                         const div = document.createElement('div'); div.className = 'linha-item';
-                        div.innerHTML = `<div><strong>${b.nome}</strong><br><span style="font-size:0.65rem; color:#aaa;">ID: ${b.id} | Status: <span style="color:${ativo ? '#28a745' : '#ff4c4c'}">${b.status || 'Ativo'}</span></span></div><div style="display:flex; gap:5px;"><a href="?id=${b.id}" style="background:#00bfff; color:#000; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; text-decoration:none;">Aceder</a><button onclick="alternarBloqueio('${b.id}', '${ativo ? 'bloqueado' : 'ativo'}')" style="background:${ativo ? '#ff4c4c' : '#28a745'}; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">${ativo ? 'Bloquear' : 'Ativar'}</button><button onclick="excluirBarbearia('${b.id}')" style="background:#dc3545; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">🗑️ Excluir</button></div>`;
+                        div.innerHTML = `<div><strong>${b.nome}</strong><br><span style="font-size:0.65rem; color:#aaa;">ID: ${b.id} | Status: <span style="color:${ativo ? '#28a745' : '#ff4c4c'}">${b.status || 'Ativo'}</span></span></div><div style="display:flex; gap:5px;"><a href="${urlPainelUnidade}" style="background:#00bfff; color:#000; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; text-decoration:none;">Aceder</a><button onclick="alternarBloqueio('${b.id}', '${ativo ? 'bloqueado' : 'ativo'}')" style="background:${ativo ? '#ff4c4c' : '#28a745'}; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">${ativo ? 'Bloquear' : 'Ativar'}</button><button onclick="excluirBarbearia('${b.id}')" style="background:#dc3545; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">🗑️ Excluir</button></div>`;
                         container.appendChild(div);
                     });
                 } else container.innerHTML = '<p style="font-size:0.75rem; color:#888;">Nenhuma unidade registada.</p>';
@@ -2244,13 +2233,13 @@
         }
 
         async function salvarNovaBarbearia() {
-            const idB = document.getElementById('nova-id-barbearia').value;
+            const idB = document.getElementById('nova-id-barbearia').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
             const nomeB = document.getElementById('novo-nome-barbearia').value;
             const senhaB = document.getElementById('nova-senha-barbearia').value;
             if(!idB || !nomeB || !senhaB) return alert("Preencha todos os campos!");
             const fd = new URLSearchParams(); fd.append('acao', 'criar_barbearia'); fd.append('id_barbearia', idB); fd.append('nome', nomeB); fd.append('senha', senhaB);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert('Unidade criada!'); fecharModal('modal-nova-barbearia'); carregarListaBarbeariasMaster();
+            alert(`Unidade criada!\nLink do cliente: https://${idB}.kikobarbearia.com.br`); fecharModal('modal-nova-barbearia'); carregarListaBarbeariasMaster();
         }
 
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
