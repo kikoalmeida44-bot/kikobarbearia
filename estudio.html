@@ -84,7 +84,7 @@
     canvas {
       display: block;
       max-width: 100%;
-      max-height: 52vh;
+      max-height: 50vh;
       width: auto;
       height: auto;
       cursor: grab;
@@ -140,12 +140,12 @@
     .nav-tabs::-webkit-scrollbar { display: none; }
     .tab-btn {
       flex: 1;
-      min-width: 78px;
-      padding: 11px 8px;
+      min-width: 76px;
+      padding: 11px 6px;
       background: transparent;
       border: none;
       color: var(--text-muted);
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 600;
       display: flex;
       flex-direction: column;
@@ -211,7 +211,7 @@
     .control-row { margin-bottom: 12px; }
     .control-header { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 4px; color: #d1d5db; }
     input[type="range"] { width: 100%; accent-color: var(--accent); }
-    input[type="text"], select {
+    input[type="text"], select, textarea {
       width: 100%;
       background: var(--card-bg);
       border: 1px solid #32323c;
@@ -221,7 +221,8 @@
       font-size: 0.85rem;
       outline: none;
     }
-    input[type="text"]:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 85px; line-height: 1.4; }
+    input[type="text"]:focus, select:focus, textarea:focus { border-color: var(--accent); }
 
     .btn-action {
       width: 100%;
@@ -236,6 +237,9 @@
       margin-top: 6px;
     }
     .btn-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-mic { background: #1e293b; color: #38bdf8; border: 1px solid #0284c7; }
+    .btn-mic.recording { background: #dc2626; color: #fff; border-color: #ef4444; animation: pulseMic 1s infinite; }
+    @keyframes pulseMic { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
     /* STICKERS */
     .sticker-item {
@@ -254,7 +258,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.88);
+      background: rgba(0,0,0,0.92);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -287,7 +291,7 @@
   </div>
 
   <div class="workspace">
-    <!-- ÁREA DE VISUALIZAÇÃO (CANVAS OTIMIZADO HD LEVE PARA NÃO TRAVAR NO CELULAR) -->
+    <!-- ÁREA DE VISUALIZAÇÃO -->
     <div class="stage-wrapper">
       <div class="canvas-container">
         <canvas id="studioCanvas" width="720" height="1280"></canvas>
@@ -311,6 +315,7 @@
       <button class="tab-btn active" onclick="openTab('tabMidia', this)"><span class="icon">🖼️</span>Mídia & Layout</button>
       <button class="tab-btn" onclick="openTab('tabTemplates', this)"><span class="icon">✨</span>Templates</button>
       <button class="tab-btn" onclick="openTab('tabTexto', this)"><span class="icon">🔤</span>Textos</button>
+      <button class="tab-btn" onclick="openTab('tabLegendas', this)"><span class="icon">💬</span>Legendas</button>
       <button class="tab-btn" onclick="openTab('tabStickers', this)"><span class="icon">🔥</span>Selos</button>
       <button class="tab-btn" onclick="openTab('tabFiltros', this)"><span class="icon">🎨</span>Filtros</button>
       <button class="tab-btn" onclick="openTab('tabEfeitos', this)"><span class="icon">⚡</span>Efeitos & Veloc.</button>
@@ -324,9 +329,9 @@
       <div id="tabMidia" class="tool-panel active">
         <div class="section-title">1. Formato da Arte / Vídeo</div>
         <div class="grid-3">
-          <button class="card-btn selected" onclick="setAspectRatio(720, 1280, this)">📱 Stories / Reels<br><small>9:16</small></button>
-          <button class="card-btn" onclick="setAspectRatio(720, 900, this)">🖼️ Feed Retrato<br><small>4:5</small></button>
-          <button class="card-btn" onclick="setAspectRatio(720, 720, this)">🟦 Quadrado<br><small>1:1</small></button>
+          <button class="card-btn selected" onclick="setAspectRatio(720, 1280, 1080, 1920, this)">📱 Stories / Reels<br><small>9:16 Full HD</small></button>
+          <button class="card-btn" onclick="setAspectRatio(720, 900, 1080, 1350, this)">🖼️ Feed Retrato<br><small>4:5 Full HD</small></button>
+          <button class="card-btn" onclick="setAspectRatio(720, 720, 1080, 1080, this)">🟦 Quadrado<br><small>1:1 Full HD</small></button>
         </div>
 
         <div class="section-title">2. Modo de Tela</div>
@@ -406,7 +411,38 @@
         </div>
       </div>
 
-      <!-- 4. STICKERS E SELOS DE NICHO -->
+      <!-- 4. LEGENDAS SINCRONIZADAS (LOCUÇÃO / MÚSICA / CAPCUT) -->
+      <div id="tabLegendas" class="tool-panel">
+        <div class="section-title">Legendas Dinâmicas (Locução & Música)</div>
+        <div class="control-row">
+          <div class="control-header"><span>Digite ou dite cada frase em uma linha:</span></div>
+          <textarea id="txtLegendasRoteiro" placeholder="Ex:&#10;Olha o resultado desse degradê!&#10;Agenda aberta para essa semana&#10;Garanta já o seu horário no link"></textarea>
+        </div>
+
+        <div class="grid-2">
+          <button class="btn-action btn-mic" id="btnDitarVoz" onclick="alternarDitadoVoz()">🎙️ Ditar Locução (Voz)</button>
+          <button class="btn-action" onclick="gerarLegendasSincronizadas()">✨ Sincronizar no Vídeo</button>
+        </div>
+
+        <div class="grid-2" style="margin-top:10px;">
+          <div class="control-row">
+            <div class="control-header"><span>Estilo da Legenda</span></div>
+            <select id="selectEstiloLegenda" onchange="state.subtitleStyle = this.value">
+              <option value="capcut_yellow">Estilo Reels (Destaque Amarelo)</option>
+              <option value="box_black">Caixa Preta Clássica</option>
+              <option value="karaoke_gold">Karaokê Dourado + Sombra</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <div class="control-header"><span>Posição Vertical</span><span id="lblPosLegenda">82%</span></div>
+            <input type="range" id="rngPosLegenda" min="15" max="92" value="82" oninput="state.subtitleYPercent = parseInt(this.value,10); document.getElementById('lblPosLegenda').innerText=this.value+'%';">
+          </div>
+        </div>
+
+        <button class="btn-action btn-danger" onclick="limparLegendas()">🗑️ Remover Todas as Legendas</button>
+      </div>
+
+      <!-- 5. STICKERS E SELOS DE NICHO -->
       <div id="tabStickers" class="tool-panel">
         <div class="section-title">Toque para Colar na Arte</div>
         <div class="grid-4">
@@ -425,7 +461,7 @@
         </div>
       </div>
 
-      <!-- 5. FILTROS CINEMATOGRÁFICOS (LUTS) & AJUSTES -->
+      <!-- 6. FILTROS CINEMATOGRÁFICOS (LUTS) & AJUSTES -->
       <div id="tabFiltros" class="tool-panel">
         <div class="section-title">Filtros Rápidos</div>
         <div class="grid-3">
@@ -451,12 +487,12 @@
           <input type="range" id="rngSaturacao" min="0" max="200" value="100" oninput="atualizarAjustes()">
         </div>
         <div class="control-row">
-          <div class="control-header"><span>Vinheta Escura nas Bordas</span><span id="valVinheta">20%</span></div>
-          <input type="range" id="rngVinheta" min="0" max="90" value="20" oninput="atualizarAjustes()">
+          <div class="control-header"><span>Vinheta Escura nas Bordas</span><span id="valVinheta">0%</span></div>
+          <input type="range" id="rngVinheta" min="0" max="90" value="0" oninput="atualizarAjustes()">
         </div>
       </div>
 
-      <!-- 6. EFEITOS CAPCUT & SPEED RAMP -->
+      <!-- 7. EFEITOS CAPCUT & SPEED RAMP -->
       <div id="tabEfeitos" class="tool-panel">
         <div class="section-title">Velocidade do Vídeo (Speed Ramp)</div>
         <div class="grid-4">
@@ -477,9 +513,9 @@
         </div>
       </div>
 
-      <!-- 7. TRILHA SONORA & ÁUDIO -->
+      <!-- 8. TRILHA SONORA & CONTROLE DE VOLUMES -->
       <div id="tabAudio" class="tool-panel">
-        <div class="section-title">Trilha Sonora de Fundo</div>
+        <div class="section-title">1. Escolher Música de Fundo</div>
         <div class="grid-2">
           <label class="file-label">
             🎵 Subir Música MP3 do Celular
@@ -487,12 +523,20 @@
           </label>
           <button class="card-btn" onclick="ativarBatidaSintetica()">🎧 Usar Batida Trap/Lo-Fi Embutida</button>
         </div>
+        <div id="statusMusicaNome" style="font-size:0.75rem; color:var(--accent); margin-bottom:12px;">Nenhuma música carregada</div>
+
+        <div class="section-title">2. Mixer de Áudio (Prévia e Exportação)</div>
+        <div class="control-row">
+          <div class="control-header"><span>Volume do Som Original do Vídeo</span><span id="lblVolVideo">100%</span></div>
+          <input type="range" id="rngVolVideo" min="0" max="100" value="100" oninput="ajustarVolumeVideo(this.value)">
+        </div>
 
         <div class="control-row">
-          <div class="control-header"><span>Volume da Música de Fundo</span><span id="lblVolMusica">80%</span></div>
+          <div class="control-header"><span>Volume da Música de Fundo (MP3)</span><span id="lblVolMusica">80%</span></div>
           <input type="range" id="rngVolMusica" min="0" max="100" value="80" oninput="ajustarVolumes(this.value)">
         </div>
-        <button class="btn-action btn-danger" onclick="removerAudio()">🔇 Remover Música</button>
+
+        <button class="btn-action btn-danger" onclick="removerAudio()">🔇 Remover Música de Fundo</button>
       </div>
 
     </div>
@@ -501,21 +545,24 @@
   <!-- MODAL DE EXPORTAÇÃO -->
   <div class="modal-overlay" id="exportModal">
     <div class="spinner"></div>
-    <h3 style="color:var(--accent); margin-bottom:6px;">Renderizando em Alta Qualidade...</h3>
-    <p style="font-size:0.85rem; color:#ccc;" id="exportStatusText">Aplicando filtros, camadas e efeitos. Aguarde alguns segundos.</p>
+    <h3 style="color:var(--accent); margin-bottom:6px;">Renderizando em Full HD 1080p...</h3>
+    <p style="font-size:0.85rem; color:#ccc;" id="exportStatusText">Gravando vídeo com música, legendas e nitidez máxima. Aguarde...</p>
   </div>
 
 <script>
   const canvas = document.getElementById('studioCanvas');
-  // alpha: false desativa transparência desnecessária no fundo e acelera a GPU no Android
   const ctx = canvas.getContext('2d', { alpha: false });
 
-  // ESTADO DO ESTÚDIO (OTIMIZADO PARA 720x1280 HD LEVE)
+  // ESTADO DO ESTÚDIO
   let state = {
+    previewWidth: 720,
+    previewHeight: 1280,
+    exportWidth: 1080,
+    exportHeight: 1920,
     width: 720,
     height: 1280,
     splitMode: false,
-    media1: null, // { type: 'image'|'video', el: HTMLImageElement|HTMLVideoElement }
+    media1: null,
     media2: null,
     isPlaying: true,
     speed: 1.0,
@@ -524,29 +571,62 @@
     brightness: 100,
     contrast: 100,
     saturate: 100,
-    vignette: 20,
-    layers: [], // { id, type: 'text'|'sticker'|'logo', text, font, style, color, size, x, y, img }
+    vignette: 0,
+    layers: [],
     selectedLayerId: null,
     dragging: false,
     dragOffsetX: 0,
     dragOffsetY: 0,
     startTime: performance.now(),
-    particles: Array.from({length: 30}, () => ({
+    particles: Array.from({length: 35}, () => ({
       x: Math.random(), y: Math.random(), r: Math.random() * 3 + 1.5, s: Math.random() * 0.003 + 0.001
     })),
+    // ÁUDIO & MIXER PERSISTENTE (GARANTE QUE A MÚSICA SAIA NO VÍDEO BAIXADO)
+    audioCtx: null,
+    audioDest: null,
+    videoGainNode: null,
+    musicGainNode: null,
     bgAudio: null,
+    bgAudioSourceNode: null,
     synthInterval: null,
+    videoVolume: 1.0,
+    musicVolume: 0.8,
+    // LEGENDAS SINCRONIZADAS
+    subtitles: [], // { start: seg, end: seg, text: string }
+    subtitleStyle: 'capcut_yellow',
+    subtitleYPercent: 82,
+    recognition: null,
+    isRecordingVoice: false,
     lastUiUpdate: 0
   };
 
-  // INICIALIZA COM EXEMPLO VISUAL
+  function initAudioEngine() {
+    if (!state.audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      state.audioCtx = new AudioContextClass();
+      state.audioDest = state.audioCtx.createMediaStreamDestination();
+
+      state.videoGainNode = state.audioCtx.createGain();
+      state.videoGainNode.gain.value = state.videoVolume;
+      state.videoGainNode.connect(state.audioCtx.destination);
+      state.videoGainNode.connect(state.audioDest);
+
+      state.musicGainNode = state.audioCtx.createGain();
+      state.musicGainNode.gain.value = state.musicVolume;
+      state.musicGainNode.connect(state.audioCtx.destination);
+      state.musicGainNode.connect(state.audioDest);
+    }
+    if (state.audioCtx.state === 'suspended') {
+      state.audioCtx.resume();
+    }
+  }
+
   function initStudio() {
     adicionarTextoInicial("SEU VISUAL EM OUTRO NÍVEL", 360, 210, 50, "box_gold", "#000000");
-    adicionarTextoInicial("AGENDE SEU HORÁRIO PELO LINK", 360, 1080, 36, "box_dark", "#ffffff");
+    adicionarTextoInicial("AGENDE SEU HORÁRIO PELO LINK", 360, 1140, 34, "box_dark", "#ffffff");
     requestAnimationFrame(renderLoop);
   }
 
-  // NAVEGAÇÃO ENTRE ABAS
   function openTab(tabId, btn) {
     document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -554,17 +634,19 @@
     btn.classList.add('active');
   }
 
-  // PROPORÇÃO DE TELA
-  function setAspectRatio(w, h, btn) {
-    state.width = w;
-    state.height = h;
-    canvas.width = w;
-    canvas.height = h;
+  function setAspectRatio(pw, ph, ew, eh, btn) {
+    state.previewWidth = pw;
+    state.previewHeight = ph;
+    state.exportWidth = ew;
+    state.exportHeight = eh;
+    state.width = pw;
+    state.height = ph;
+    canvas.width = pw;
+    canvas.height = ph;
     btn.parentElement.querySelectorAll('.card-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
   }
 
-  // MODO TELA DIVIDIDA (ANTES E DEPOIS)
   function setSplitMode(ativo) {
     state.splitMode = ativo;
     document.getElementById('btnModeSingle').classList.toggle('selected', !ativo);
@@ -572,15 +654,15 @@
     document.getElementById('labelMidia2').style.opacity = ativo ? '1' : '0.5';
   }
 
-  // CARREGAMENTO DE FOTO OU VÍDEO OTIMIZADO PARA ANDROID
   function carregarMidia(event, slot) {
     const file = event.target.files[0];
     if (!file) return;
+    initAudioEngine();
+
     const url = URL.createObjectURL(file);
     const isVideo = file.type.startsWith('video/');
 
     if (isVideo) {
-      // Libera vídeo anterior da memória para não estourar RAM
       const oldMedia = slot === 1 ? state.media1 : state.media2;
       if (oldMedia && oldMedia.type === 'video') {
         oldMedia.el.pause();
@@ -598,16 +680,33 @@
       video.setAttribute('webkit-playsinline', '');
       video.playbackRate = state.speed;
 
+      // Conecta o áudio do vídeo ao mixer para permitir controlar o volume e gravar na exportação
+      if (slot === 1) {
+        try {
+          const vSource = state.audioCtx.createMediaElementSource(video);
+          vSource.connect(state.videoGainNode);
+        } catch (e) {
+          video.volume = state.videoVolume;
+        }
+      } else {
+        video.volume = 0; // Vídeo secundário no Antes & Depois fica mudo para não embolar
+      }
+
       video.onloadedmetadata = () => {
         video.play().then(() => {
           state.isPlaying = true;
           document.getElementById('btnPlayPause').innerText = '⏸';
+          if (state.bgAudio && state.bgAudio.paused) state.bgAudio.play().catch(()=>{});
         }).catch(() => {
           state.isPlaying = false;
           document.getElementById('btnPlayPause').innerText = '▶';
         });
-        if (slot === 1) state.media1 = { type: 'video', el: video };
-        else state.media2 = { type: 'video', el: video };
+        if (slot === 1) {
+          state.media1 = { type: 'video', el: video };
+          if (state.subtitles.length > 0) gerarLegendasSincronizadas();
+        } else {
+          state.media2 = { type: 'video', el: video };
+        }
       };
     } else {
       const img = new Image();
@@ -633,8 +732,8 @@
     img.src = URL.createObjectURL(file);
   }
 
-  // CONTROLE DE PLAYER DE VÍDEO
   function togglePlay() {
+    initAudioEngine();
     state.isPlaying = !state.isPlaying;
     document.getElementById('btnPlayPause').innerText = state.isPlaying ? '⏸' : '▶';
     [state.media1, state.media2].forEach(m => {
@@ -662,7 +761,6 @@
     });
   }
 
-  // TEMPLATES PRONTOS
   function aplicarTemplate(tipo) {
     state.layers = [];
     if (tipo === 'agenda') {
@@ -683,7 +781,6 @@
     }
   }
 
-  // GERENCIAMENTO DE CAMADAS (TEXTOS E STICKERS)
   function adicionarTextoInicial(texto, x, y, size, style, color) {
     const id = Date.now() + Math.random();
     state.layers.push({
@@ -758,7 +855,82 @@
     state.selectedLayerId = null;
   }
 
-  // FILTROS E AJUSTES
+  // =========================================================================
+  // LEGENDAS DINÂMICAS & CAPTAÇÃO DE LOCUÇÃO POR VOZ
+  // =========================================================================
+  function gerarLegendasSincronizadas() {
+    const raw = document.getElementById('txtLegendasRoteiro').value.trim();
+    if (!raw) {
+      state.subtitles = [];
+      return alert('Digite ou dite as frases da sua locução/música primeiro.');
+    }
+
+    const linhas = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const duracaoTotal = (state.media1 && state.media1.type === 'video' && state.media1.el.duration)
+      ? state.media1.el.duration
+      : Math.max(6, linhas.length * 2.5);
+
+    const tempoPorLinha = duracaoTotal / linhas.length;
+    state.subtitles = linhas.map((texto, index) => ({
+      start: index * tempoPorLinha,
+      end: (index + 1) * tempoPorLinha,
+      text: texto.toUpperCase()
+    }));
+
+    alert(`✅ ${linhas.length} legendas sincronizadas ao longo de ${Math.round(duracaoTotal)} segundos!`);
+  }
+
+  function alternarDitadoVoz() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      return alert('Seu navegador não suporta ditado por voz direto. Cole o texto no campo acima.');
+    }
+
+    const btn = document.getElementById('btnDitarVoz');
+    if (state.isRecordingVoice && state.recognition) {
+      state.recognition.stop();
+      return;
+    }
+
+    state.recognition = new SpeechRecognition();
+    state.recognition.lang = 'pt-BR';
+    state.recognition.continuous = true;
+    state.recognition.interimResults = false;
+
+    state.recognition.onstart = () => {
+      state.isRecordingVoice = true;
+      btn.classList.add('recording');
+      btn.innerText = '⏹ Parar Ditado';
+    };
+
+    state.recognition.onresult = (event) => {
+      const area = document.getElementById('txtLegendasRoteiro');
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          const frase = event.results[i][0].transcript.trim();
+          area.value += (area.value ? '\n' : '') + frase;
+        }
+      }
+      gerarLegendasSincronizadas();
+    };
+
+    state.recognition.onend = () => {
+      state.isRecordingVoice = false;
+      btn.classList.remove('recording');
+      btn.innerText = '🎙️ Ditar Locução (Voz)';
+    };
+
+    state.recognition.start();
+  }
+
+  function limparLegendas() {
+    state.subtitles = [];
+    document.getElementById('txtLegendasRoteiro').value = '';
+  }
+
+  // =========================================================================
+  // FILTROS E EFEITOS
+  // =========================================================================
   function setFiltroPreset(preset, btn) {
     state.filterPreset = preset;
     btn.parentElement.querySelectorAll('.card-btn').forEach(b => b.classList.remove('selected'));
@@ -782,56 +954,99 @@
     btn.classList.add('selected');
   }
 
-  // ÁUDIO E BATIDA EMBUTIDA
+  // =========================================================================
+  // ÁUDIO, MIXER DE VOLUME (VÍDEO VS MÚSICA) E EXPORTAÇÃO GARANTIDA
+  // =========================================================================
   function carregarAudio(event) {
     const file = event.target.files[0];
     if (!file) return;
+    initAudioEngine();
     removerAudio();
-    state.bgAudio = new Audio(URL.createObjectURL(file));
-    state.bgAudio.loop = true;
-    state.bgAudio.volume = document.getElementById('rngVolMusica').value / 100;
-    state.bgAudio.play();
+
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.crossOrigin = "anonymous";
+    audio.loop = true;
+
+    try {
+      const srcNode = state.audioCtx.createMediaElementSource(audio);
+      srcNode.connect(state.musicGainNode);
+      state.bgAudioSourceNode = srcNode;
+    } catch (e) {
+      audio.volume = state.musicVolume;
+    }
+
+    state.bgAudio = audio;
+    document.getElementById('statusMusicaNome').innerText = `🎵 Música ativa: ${file.name}`;
+    if (state.isPlaying) {
+      state.bgAudio.play().catch(()=>{});
+    }
   }
 
   function ativarBatidaSintetica() {
+    initAudioEngine();
     removerAudio();
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    document.getElementById('statusMusicaNome').innerText = `🎧 Batida Trap/Lo-Fi Embutida Ativa`;
     let step = 0;
     state.synthInterval = setInterval(() => {
       if (!state.isPlaying) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+      const osc = state.audioCtx.createOscillator();
+      const gain = state.audioCtx.createGain();
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      const vol = (document.getElementById('rngVolMusica').value / 100) * 0.25;
+      gain.connect(state.musicGainNode); // Conectado direto ao mixer de gravação!
+      const vol = 0.28;
       if (step % 4 === 0) {
-        osc.frequency.setValueAtTime(110, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(35, audioCtx.currentTime + 0.18);
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+        osc.frequency.setValueAtTime(110, state.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(35, state.audioCtx.currentTime + 0.18);
+        gain.gain.setValueAtTime(vol, state.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 0.2);
       } else if (step % 2 === 1) {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-        gain.gain.setValueAtTime(vol * 0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+        osc.frequency.setValueAtTime(800, state.audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol * 0.35, state.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 0.06);
       }
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.22);
+      osc.stop(state.audioCtx.currentTime + 0.22);
       step++;
     }, 280);
   }
 
+  function ajustarVolumeVideo(val) {
+    document.getElementById('lblVolVideo').innerText = val + '%';
+    state.videoVolume = val / 100;
+    if (state.videoGainNode) {
+      state.videoGainNode.gain.value = state.videoVolume;
+    } else if (state.media1 && state.media1.type === 'video') {
+      state.media1.el.volume = state.videoVolume;
+    }
+  }
+
   function ajustarVolumes(val) {
     document.getElementById('lblVolMusica').innerText = val + '%';
-    if (state.bgAudio) state.bgAudio.volume = val / 100;
+    state.musicVolume = val / 100;
+    if (state.musicGainNode) {
+      state.musicGainNode.gain.value = state.musicVolume;
+    } else if (state.bgAudio) {
+      state.bgAudio.volume = state.musicVolume;
+    }
   }
 
   function removerAudio() {
-    if (state.bgAudio) { state.bgAudio.pause(); state.bgAudio = null; }
-    if (state.synthInterval) { clearInterval(state.synthInterval); state.synthInterval = null; }
+    if (state.bgAudio) {
+      state.bgAudio.pause();
+      state.bgAudio.removeAttribute('src');
+      state.bgAudio = null;
+    }
+    if (state.synthInterval) {
+      clearInterval(state.synthInterval);
+      state.synthInterval = null;
+    }
+    document.getElementById('statusMusicaNome').innerText = 'Nenhuma música carregada';
   }
 
-  // INTERAÇÃO DE ARRASTAR COM O DEDO / MOUSE NO CANVAS
+  // =========================================================================
+  // ARRASTAR ELEMENTOS NO CANVAS
+  // =========================================================================
   function getCanvasCoords(e) {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -869,15 +1084,19 @@
 
   window.addEventListener('pointerup', () => { state.dragging = false; });
 
-  // LOOP DE RENDERIZAÇÃO OTIMIZADO (EVITA CONGELAMENTO DA GPU NO CELULAR)
-  function renderLoop(now) {
+  // =========================================================================
+  // DESENHO EM TEMPO REAL & FULL HD
+  // =========================================================================
+  function desenharCenaCompleta(targetCtx, targetW, targetH, now) {
     const elapsed = (now - state.startTime) / 1000;
+    const ratio = targetW / state.previewWidth;
 
-    // FUNDO SÓLIDO LEVE
-    ctx.fillStyle = '#111116';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    targetCtx.imageSmoothingEnabled = true;
+    targetCtx.imageSmoothingQuality = 'high';
 
-    // SÓ APLICA ctx.filter SE ALGUM FILTRO ESTIVER REALMENTE MODIFICADO (ECONOMIZA 70% DE GPU)
+    targetCtx.fillStyle = '#111116';
+    targetCtx.fillRect(0, 0, targetW, targetH);
+
     const temFiltroAtivo = (
       state.filterPreset !== 'none' ||
       state.brightness != 100 ||
@@ -885,7 +1104,7 @@
       state.saturate != 100
     );
 
-    ctx.save();
+    targetCtx.save();
     if (temFiltroAtivo) {
       let filterStr = `brightness(${state.brightness}%) contrast(${state.contrast}%) saturate(${state.saturate}%)`;
       if (state.filterPreset === 'cinema') filterStr += ' sepia(25%) contrast(115%) saturate(125%)';
@@ -893,116 +1112,187 @@
       if (state.filterPreset === 'contrast') filterStr += ' contrast(145%) saturate(110%)';
       if (state.filterPreset === 'vintage') filterStr += ' sepia(55%) brightness(95%) contrast(90%)';
       if (state.filterPreset === 'cyber') filterStr += ' hue-rotate(15deg) contrast(120%) saturate(140%)';
-      ctx.filter = filterStr;
+      targetCtx.filter = filterStr;
     }
 
-    // EFEITO DE ZOOM / PULSE
     if (state.effect === 'zoom' || state.effect === 'pulse') {
       let scale = state.effect === 'zoom'
         ? 1 + Math.sin(elapsed * 0.8) * 0.06 + 0.06
         : 1 + Math.abs(Math.sin(elapsed * 4.5)) * 0.05;
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.scale(scale, scale);
-      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+      targetCtx.translate(targetW / 2, targetH / 2);
+      targetCtx.scale(scale, scale);
+      targetCtx.translate(-targetW / 2, -targetH / 2);
     }
 
     if (!state.splitMode) {
-      if (state.media1) drawMediaCover(state.media1, 0, 0, canvas.width, canvas.height);
+      if (state.media1) drawMediaCover(targetCtx, state.media1, 0, 0, targetW, targetH);
     } else {
-      const halfW = canvas.width / 2;
-      if (state.media1) drawMediaCover(state.media1, 0, 0, halfW, canvas.height);
-      if (state.media2) drawMediaCover(state.media2, halfW, 0, halfW, canvas.height);
-      ctx.fillStyle = '#d4af37';
-      ctx.fillRect(halfW - 3, 0, 6, canvas.height);
+      const halfW = targetW / 2;
+      if (state.media1) drawMediaCover(targetCtx, state.media1, 0, 0, halfW, targetH);
+      if (state.media2) drawMediaCover(targetCtx, state.media2, halfW, 0, halfW, targetH);
+      targetCtx.fillStyle = '#d4af37';
+      targetCtx.fillRect(halfW - (3 * ratio), 0, 6 * ratio, targetH);
     }
-    ctx.restore();
+    targetCtx.restore();
 
-    // VINHETA NAS BORDAS
     if (state.vignette > 0) {
-      const vGrad = ctx.createRadialGradient(
-        canvas.width/2, canvas.height/2, canvas.width * 0.25,
-        canvas.width/2, canvas.height/2, canvas.height * 0.75
+      const vGrad = targetCtx.createRadialGradient(
+        targetW/2, targetH/2, targetW * 0.28,
+        targetW/2, targetH/2, targetH * 0.78
       );
       vGrad.addColorStop(0, 'rgba(0,0,0,0)');
       vGrad.addColorStop(1, `rgba(0,0,0,${state.vignette / 100})`);
-      ctx.fillStyle = vGrad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      targetCtx.fillStyle = vGrad;
+      targetCtx.fillRect(0, 0, targetW, targetH);
     }
 
-    // EFEITOS SOBREPOSTOS (FLASH / PARTÍCULAS / MOLDURA)
     if (state.effect === 'flash') {
       const flashAlpha = Math.max(0, Math.sin(elapsed * 5) - 0.85) * 4;
       if (flashAlpha > 0) {
-        ctx.fillStyle = `rgba(255,255,255,${flashAlpha})`;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        targetCtx.fillStyle = `rgba(255,255,255,${flashAlpha})`;
+        targetCtx.fillRect(0, 0, targetW, targetH);
       }
     }
 
     if (state.effect === 'gold_particles') {
-      ctx.fillStyle = 'rgba(212, 175, 55, 0.85)';
+      targetCtx.fillStyle = 'rgba(212, 175, 55, 0.85)';
       state.particles.forEach(p => {
         p.y -= p.s;
         if (p.y < 0) p.y = 1;
-        ctx.beginPath();
-        ctx.arc(p.x * canvas.width, p.y * canvas.height, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        targetCtx.beginPath();
+        targetCtx.arc(p.x * targetW, p.y * targetH, p.r * ratio, 0, Math.PI * 2);
+        targetCtx.fill();
       });
     }
 
     if (state.effect === 'moldura_neon') {
-      ctx.strokeStyle = '#d4af37';
-      ctx.lineWidth = 12;
-      ctx.strokeRect(24, 24, canvas.width - 48, canvas.height - 48);
+      targetCtx.strokeStyle = '#d4af37';
+      targetCtx.lineWidth = 12 * ratio;
+      targetCtx.strokeRect(24 * ratio, 24 * ratio, targetW - (48 * ratio), targetH - (48 * ratio));
     }
 
-    // DESENHAR CAMADAS (TEXTOS, STICKERS, LOGO)
+    // DESENHA CAMADAS FIXAS (TEXTOS, STICKERS, LOGO)
     state.layers.forEach(layer => {
-      ctx.save();
+      targetCtx.save();
+      const lx = layer.x * ratio;
+      const ly = layer.y * ratio;
+      const lSize = layer.size * ratio;
+
       if (layer.type === 'logo' && layer.img) {
         const aspect = layer.img.height / layer.img.width;
-        const w = layer.size;
+        const w = lSize;
         const h = w * aspect;
-        ctx.drawImage(layer.img, layer.x - w/2, layer.y - h/2, w, h);
+        targetCtx.drawImage(layer.img, lx - w/2, ly - h/2, w, h);
       } else if (layer.type === 'sticker') {
-        ctx.font = `${layer.size}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(layer.text, layer.x, layer.y);
+        targetCtx.font = `${lSize}px Arial`;
+        targetCtx.textAlign = 'center';
+        targetCtx.textBaseline = 'middle';
+        targetCtx.fillText(layer.text, lx, ly);
       } else if (layer.type === 'text') {
-        ctx.font = `900 ${layer.size}px "${layer.font}", sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        const metrics = ctx.measureText(layer.text);
-        const padX = 24;
-        const padY = 14;
+        targetCtx.font = `900 ${lSize}px "${layer.font}", sans-serif`;
+        targetCtx.textAlign = 'center';
+        targetCtx.textBaseline = 'middle';
+        const metrics = targetCtx.measureText(layer.text);
+        const padX = 24 * ratio;
+        const padY = 14 * ratio;
         const boxW = metrics.width + padX * 2;
-        const boxH = layer.size + padY * 1.4;
+        const boxH = lSize + padY * 1.4;
 
         if (layer.style === 'box_dark') {
-          ctx.fillStyle = 'rgba(15, 15, 20, 0.88)';
-          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 14);
-          ctx.fill();
+          targetCtx.fillStyle = 'rgba(15, 15, 20, 0.88)';
+          roundRect(targetCtx, lx - boxW/2, ly - boxH/2, boxW, boxH, 14 * ratio);
+          targetCtx.fill();
         } else if (layer.style === 'box_gold') {
-          ctx.fillStyle = '#d4af37';
-          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 14);
-          ctx.fill();
+          targetCtx.fillStyle = '#d4af37';
+          roundRect(targetCtx, lx - boxW/2, ly - boxH/2, boxW, boxH, 14 * ratio);
+          targetCtx.fill();
         } else if (layer.style === 'neon') {
-          ctx.shadowColor = layer.color;
-          ctx.shadowBlur = 20;
+          targetCtx.shadowColor = layer.color;
+          targetCtx.shadowBlur = 20 * ratio;
         } else if (layer.style === 'shadow') {
-          ctx.shadowColor = 'rgba(0,0,0,0.95)';
-          ctx.shadowOffsetX = 4;
-          ctx.shadowOffsetY = 4;
-          ctx.shadowBlur = 10;
+          targetCtx.shadowColor = 'rgba(0,0,0,0.95)';
+          targetCtx.shadowOffsetX = 4 * ratio;
+          targetCtx.shadowOffsetY = 4 * ratio;
+          targetCtx.shadowBlur = 10 * ratio;
         }
 
-        ctx.fillStyle = layer.color;
-        ctx.fillText(layer.text, layer.x, layer.y);
+        targetCtx.fillStyle = layer.color;
+        targetCtx.fillText(layer.text, lx, ly);
       }
-      ctx.restore();
+      targetCtx.restore();
     });
 
-    // ATUALIZA TIMELINE A CADA 250ms (EVITA TRAVAR O DOM DO CELULAR)
+    // DESENHA LEGENDA SINCRONIZADA ATUAL (ESTILO REELS / TIKTOK)
+    if (state.subtitles.length > 0) {
+      const tempoAtual = (state.media1 && state.media1.type === 'video')
+        ? state.media1.el.currentTime
+        : (elapsed % (state.subtitles[state.subtitles.length - 1].end || 1));
+
+      const legAtiva = state.subtitles.find(s => tempoAtual >= s.start && tempoAtual < s.end);
+      if (legAtiva) {
+        desenharLegendaEstiloReels(targetCtx, legAtiva.text, targetW, targetH, ratio);
+      }
+    }
+  }
+
+  function desenharLegendaEstiloReels(targetCtx, texto, targetW, targetH, ratio) {
+    targetCtx.save();
+    const fontSize = 36 * ratio;
+    targetCtx.font = `900 ${fontSize}px "Montserrat", sans-serif`;
+    targetCtx.textAlign = 'center';
+    targetCtx.textBaseline = 'middle';
+
+    // Quebra automática em até 2 linhas se a frase for longa
+    const maxW = targetW * 0.84;
+    const palavras = texto.split(' ');
+    const linhas = [];
+    let linhaAtual = '';
+
+    palavras.forEach(pal => {
+      const teste = linhaAtual ? `${linhaAtual} ${pal}` : pal;
+      if (targetCtx.measureText(teste).width > maxW && linhaAtual) {
+        linhas.push(linhaAtual);
+        linhaAtual = pal;
+      } else {
+        linhaAtual = teste;
+      }
+    });
+    if (linhaAtual) linhas.push(linhaAtual);
+
+    const baseY = targetH * (state.subtitleYPercent / 100);
+    const lineHeight = fontSize * 1.35;
+
+    linhas.forEach((linha, idx) => {
+      const ly = baseY + (idx - (linhas.length - 1) / 2) * lineHeight;
+      const w = targetCtx.measureText(linha).width + (30 * ratio);
+      const h = fontSize * 1.25;
+
+      if (state.subtitleStyle === 'capcut_yellow') {
+        targetCtx.fillStyle = 'rgba(0, 0, 0, 0.82)';
+        roundRect(targetCtx, (targetW - w)/2, ly - h/2, w, h, 10 * ratio);
+        targetCtx.fill();
+        targetCtx.fillStyle = '#facc15'; // Amarelo vibrante estilo CapCut/Reels
+        targetCtx.fillText(linha, targetW / 2, ly);
+      } else if (state.subtitleStyle === 'box_black') {
+        targetCtx.fillStyle = '#000000';
+        roundRect(targetCtx, (targetW - w)/2, ly - h/2, w, h, 8 * ratio);
+        targetCtx.fill();
+        targetCtx.fillStyle = '#ffffff';
+        targetCtx.fillText(linha, targetW / 2, ly);
+      } else {
+        targetCtx.lineWidth = 6 * ratio;
+        targetCtx.strokeStyle = '#000000';
+        targetCtx.strokeText(linha, targetW / 2, ly);
+        targetCtx.fillStyle = '#ffd700';
+        targetCtx.fillText(linha, targetW / 2, ly);
+      }
+    });
+    targetCtx.restore();
+  }
+
+  function renderLoop(now) {
+    desenharCenaCompleta(ctx, canvas.width, canvas.height, now);
+
     if (now - state.lastUiUpdate > 250 && state.media1 && state.media1.type === 'video' && state.media1.el.duration) {
       state.lastUiUpdate = now;
       const cur = state.media1.el.currentTime;
@@ -1016,9 +1306,8 @@
     requestAnimationFrame(renderLoop);
   }
 
-  function drawMediaCover(mediaObj, x, y, w, h) {
+  function drawMediaCover(targetCtx, mediaObj, x, y, w, h) {
     const el = mediaObj.el;
-    // Garante que o vídeo tem quadro decodificado pronto antes de desenhar
     if (mediaObj.type === 'video' && el.readyState < 2) return;
 
     const mw = el.videoWidth || el.width;
@@ -1027,72 +1316,109 @@
     const scale = Math.max(w / mw, h / mh);
     const nw = mw * scale;
     const nh = mh * scale;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(x, y, w, h);
-    ctx.clip();
-    ctx.drawImage(el, x + (w - nw)/2, y + (h - nh)/2, nw, nh);
-    ctx.restore();
+    targetCtx.save();
+    targetCtx.beginPath();
+    targetCtx.rect(x, y, w, h);
+    targetCtx.clip();
+    targetCtx.drawImage(el, x + (w - nw)/2, y + (h - nh)/2, nw, nh);
+    targetCtx.restore();
   }
 
-  function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
+  function roundRect(targetCtx, x, y, w, h, r) {
+    targetCtx.beginPath();
+    targetCtx.moveTo(x + r, y);
+    targetCtx.arcTo(x + w, y, x + w, y + h, r);
+    targetCtx.arcTo(x + w, y + h, x, y + h, r);
+    targetCtx.arcTo(x, y + h, x, y, r);
+    targetCtx.arcTo(x, y, x + w, y, r);
+    targetCtx.closePath();
   }
 
-  // EXPORTAÇÃO DE FOTO (PNG)
+  // =========================================================================
+  // EXPORTAÇÃO DE FOTO EM FULL HD REAL (1080x1920)
+  // =========================================================================
   function exportarFoto() {
+    const hdCanvas = document.createElement('canvas');
+    hdCanvas.width = state.exportWidth;
+    hdCanvas.height = state.exportHeight;
+    const hdCtx = hdCanvas.getContext('2d', { alpha: false });
+
+    desenharCenaCompleta(hdCtx, state.exportWidth, state.exportHeight, performance.now());
+
     const link = document.createElement('a');
-    link.download = `KBS-Arte-${Date.now()}.png`;
-    link.href = canvas.toDataURL('image/png', 1.0);
+    link.download = `KBS-Arte-FullHD-${Date.now()}.png`;
+    link.href = hdCanvas.toDataURL('image/png', 1.0);
     link.click();
   }
 
-  // EXPORTAÇÃO DE VÍDEO RENDERIZADO COMPATÍVEL COM ANDROID
+  // =========================================================================
+  // EXPORTAÇÃO DE VÍDEO FULL HD COM MÚSICA MP3 E ÁUDIO DO VÍDEO MIXADOS
+  // =========================================================================
   function exportarVideo() {
+    initAudioEngine();
     const modal = document.getElementById('exportModal');
     const statusTxt = document.getElementById('exportStatusText');
     modal.style.display = 'flex';
 
+    canvas.width = state.exportWidth;
+    canvas.height = state.exportHeight;
+
     const stream = canvas.captureStream(30);
-    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8')
-      ? 'video/webm;codecs=vp8'
+
+    // Anexa a trilha de áudio mixada (Som do Vídeo + Música MP3 / Batida) ao arquivo final
+    if (state.audioDest && state.audioDest.stream) {
+      state.audioDest.stream.getAudioTracks().forEach(track => {
+        stream.addTrack(track);
+      });
+    }
+
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')
+      ? 'video/webm;codecs=vp8,opus'
       : 'video/webm';
 
-    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2500000 });
+    const recorder = new MediaRecorder(stream, {
+      mimeType,
+      videoBitsPerSecond: 6000000,
+      audioBitsPerSecond: 128000
+    });
     const chunks = [];
 
     recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
     recorder.onstop = () => {
+      canvas.width = state.previewWidth;
+      canvas.height = state.previewHeight;
+
       const blob = new Blob(chunks, { type: 'video/webm' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `KBS-Reels-${Date.now()}.webm`;
+      a.download = `KBS-Reels-FullHD-${Date.now()}.webm`;
       a.click();
       modal.style.display = 'none';
     };
 
     const duracaoGravacao = (state.media1 && state.media1.type === 'video' && state.media1.el.duration)
-      ? Math.min(state.media1.el.duration * 1000, 30000)
-      : 6000;
+      ? Math.min(state.media1.el.duration * 1000, 35000)
+      : 8000;
 
     if (state.media1 && state.media1.type === 'video') {
       state.media1.el.currentTime = 0;
       state.media1.el.play();
     }
+    if (state.bgAudio) {
+      state.bgAudio.currentTime = 0;
+      state.bgAudio.play().catch(()=>{});
+    }
+    state.isPlaying = true;
+    document.getElementById('btnPlayPause').innerText = '⏸';
+
     recorder.start();
 
     let decorrido = 0;
     const progInt = setInterval(() => {
       decorrido += 500;
       const pct = Math.min(100, Math.round((decorrido / duracaoGravacao) * 100));
-      statusTxt.innerText = `Gravando vídeo: ${pct}% concluído... Não feche a tela.`;
+      statusTxt.innerText = `Renderizando Full HD 1080p + Áudio: ${pct}% concluído...`;
       if (decorrido >= duracaoGravacao) {
         clearInterval(progInt);
         if (recorder.state === 'recording') recorder.stop();
