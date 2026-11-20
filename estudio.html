@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KBS Studio Pro - Editor Estilo Canva & CapCut</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0d0d0f;
+      --panel-bg: #16161a;
+      --card-bg: #202026;
+      --accent: #d4af37;
+      --accent-hover: #f3ce56;
+      --text-main: #f4f4f6;
+      --text-muted: #9ca3af;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-dark); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+    /* TOPBAR */
+    .topbar {
+      background: var(--panel-bg);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a2a32;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .brand { font-weight: 800; font-size: 1rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+    .brand span { background: var(--accent); color: #000; padding: 2px 7px; border-radius: 5px; font-size: 0.75rem; font-weight: 900; }
+    .top-actions { display: flex; gap: 8px; }
+    .btn-export {
+      background: linear-gradient(135deg, var(--accent), #b58918);
+      color: #000;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+    .btn-export:active { transform: scale(0.96); }
+
+    /* WORKSPACE LAYOUT */
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* CANVAS VIEWPORT */
+    .stage-wrapper {
+      background: #070709;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #24242c;
+    }
+    .canvas-container {
+      position: relative;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.8);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a1a1f;
+      touch-action: none;
+    }
+    canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 52vh;
+      width: auto;
+      height: auto;
+      cursor: grab;
+    }
+    canvas:active { cursor: grabbing; }
+
+    .stage-hint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* VIDEO TRANSPORT BAR */
+    .video-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 420px;
+      margin-top: 10px;
+      background: var(--card-bg);
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+    .btn-play {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .timeline-slider { flex: 1; accent-color: var(--accent); cursor: pointer; }
+    .time-label { font-size: 0.72rem; font-family: monospace; color: var(--text-muted); }
+
+    /* NAVIGATION TABS (CAPCUT STYLE) */
+    .nav-tabs {
+      display: flex;
+      overflow-x: auto;
+      background: var(--panel-bg);
+      border-bottom: 1px solid #26262e;
+      scrollbar-width: none;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex: 1;
+      min-width: 78px;
+      padding: 11px 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: 0.2s;
+    }
+    .tab-btn .icon { font-size: 1.15rem; }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(212, 175, 55, 0.06); }
+
+    /* TOOL PANELS */
+    .panels-area {
+      padding: 16px;
+      background: var(--panel-bg);
+      flex: 1;
+    }
+    .tool-panel { display: none; animation: fadeIn 0.2s ease; }
+    .tool-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin-bottom: 10px; font-weight: 700; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+
+    .card-btn {
+      background: var(--card-bg);
+      border: 1px solid #2f2f38;
+      color: var(--text-main);
+      padding: 10px 8px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      text-align: center;
+      transition: 0.15s;
+    }
+    .card-btn:hover, .card-btn.selected { border-color: var(--accent); background: rgba(212, 175, 55, 0.12); color: #fff; }
+
+    .file-label {
+      background: var(--card-bg);
+      border: 1px dashed var(--accent);
+      color: var(--text-main);
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: block;
+    }
+    input[type="file"] { display: none; }
+
+    /* FORM CONTROLS */
+    .control-row { margin-bottom: 12px; }
+    .control-header { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 4px; color: #d1d5db; }
+    input[type="range"] { width: 100%; accent-color: var(--accent); }
+    input[type="text"], select {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid #32323c;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    input[type="text"]:focus, select:focus { border-color: var(--accent); }
+
+    .btn-action {
+      width: 100%;
+      padding: 11px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      background: var(--accent);
+      color: #000;
+      margin-top: 6px;
+    }
+    .btn-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    /* STICKERS */
+    .sticker-item {
+      background: var(--card-bg);
+      border: 1px solid #2e2e36;
+      border-radius: 10px;
+      padding: 10px 4px;
+      text-align: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .sticker-item span { display: block; font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
+    .sticker-item:active { transform: scale(0.92); border-color: var(--accent); }
+
+    /* RECORDING MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+      text-align: center;
+    }
+    .spinner {
+      width: 46px;
+      height: 46px;
+      border: 4px solid #333;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR -->
+  <div class="topbar">
+    <div class="brand">🎬 KBS STUDIO <span>PRO</span></div>
+    <div class="top-actions">
+      <button class="btn-export" onclick="exportarFoto()">📸 Baixar Foto</button>
+      <button class="btn-export" onclick="exportarVideo()">🎥 Exportar Vídeo</button>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <!-- ÁREA DE VISUALIZAÇÃO (CANVAS) -->
+    <div class="stage-wrapper">
+      <div class="canvas-container">
+        <canvas id="studioCanvas" width="1080" height="1920"></canvas>
+      </div>
+
+      <div class="video-controls" id="videoControls">
+        <button class="btn-play" id="btnPlayPause" onclick="togglePlay()">▶</button>
+        <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="100" value="0" step="0.1" oninput="seekVideo(this.value)">
+        <span class="time-label" id="timeDisplay">00:00</span>
+      </div>
+
+      <div class="stage-hint">
+        <span>👆 Arraste textos e selos na tela</span>
+        <span>•</span>
+        <span id="layerStatus">Nenhuma camada selecionada</span>
+      </div>
+    </div>
+
+    <!-- ABAS DE FERRAMENTAS -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="openTab('tabMidia', this)"><span class="icon">🖼️</span>Mídia & Layout</button>
+      <button class="tab-btn" onclick="openTab('tabTemplates', this)"><span class="icon">✨</span>Templates</button>
+      <button class="tab-btn" onclick="openTab('tabTexto', this)"><span class="icon">🔤</span>Textos</button>
+      <button class="tab-btn" onclick="openTab('tabStickers', this)"><span class="icon">🔥</span>Selos</button>
+      <button class="tab-btn" onclick="openTab('tabFiltros', this)"><span class="icon">🎨</span>Filtros</button>
+      <button class="tab-btn" onclick="openTab('tabEfeitos', this)"><span class="icon">⚡</span>Efeitos & Veloc.</button>
+      <button class="tab-btn" onclick="openTab('tabAudio', this)"><span class="icon">🎵</span>Áudio</button>
+    </div>
+
+    <!-- PAINÉIS DE EDIÇÃO -->
+    <div class="panels-area">
+
+      <!-- 1. MÍDIA & LAYOUT -->
+      <div id="tabMidia" class="tool-panel active">
+        <div class="section-title">1. Formato da Arte / Vídeo</div>
+        <div class="grid-3">
+          <button class="card-btn selected" onclick="setAspectRatio(1080, 1920, this)">📱 Stories / Reels<br><small>9:16</small></button>
+          <button class="card-btn" onclick="setAspectRatio(1080, 1350, this)">🖼️ Feed Retrato<br><small>4:5</small></button>
+          <button class="card-btn" onclick="setAspectRatio(1080, 1080, this)">🟦 Quadrado<br><small>1:1</small></button>
+        </div>
+
+        <div class="section-title">2. Modo de Tela</div>
+        <div class="grid-2">
+          <button class="card-btn selected" id="btnModeSingle" onclick="setSplitMode(false)">🖼️ Tela Única<br><small>1 Foto ou Vídeo</small></button>
+          <button class="card-btn" id="btnModeSplit" onclick="setSplitMode(true)">🌗 Antes & Depois<br><small>Tela Dividida</small></button>
+        </div>
+
+        <div class="section-title">3. Carregar Arquivos</div>
+        <div class="grid-2">
+          <label class="file-label">
+            📥 Mídia Principal (ou "Antes")
+            <input type="file" accept="image/*,video/*" onchange="carregarMidia(event, 1)">
+          </label>
+          <label class="file-label" id="labelMidia2" style="opacity:0.5;">
+            📥 Mídia 2 ("Depois")
+            <input type="file" accept="image/*,video/*" onchange="carregarMidia(event, 2)">
+          </label>
+        </div>
+        <label class="file-label" style="margin-top:8px;">
+          🏷️ Adicionar Logo da Empresa (PNG Transparente)
+          <input type="file" accept="image/*" onchange="carregarLogo(event)">
+        </label>
+      </div>
+
+      <!-- 2. TEMPLATES PRONTOS (ESTILO CANVA) -->
+      <div id="tabTemplates" class="tool-panel">
+        <div class="section-title">Templates Rápidos (1 Clique)</div>
+        <div class="grid-2">
+          <button class="card-btn" onclick="aplicarTemplate('agenda')">📅 Agenda Aberta Hoje<br><small>Chamada para horários</small></button>
+          <button class="card-btn" onclick="aplicarTemplate('antes_depois')">✂️ Transformação Top<br><small>Selo Antes & Depois</small></button>
+          <button class="card-btn" onclick="aplicarTemplate('promo')">🔥 Promoção Relâmpago<br><small>Destaque de desconto</small></button>
+          <button class="card-btn" onclick="aplicarTemplate('vip')">👑 Atendimento VIP<br><small>Moldura dourada luxo</small></button>
+        </div>
+        <button class="btn-action btn-danger" onclick="limparCamadas()">🗑️ Limpar Todos os Textos e Selos</button>
+      </div>
+
+      <!-- 3. TEXTOS ARRASTÁVEIS -->
+      <div id="tabTexto" class="tool-panel">
+        <div class="section-title">Adicionar ou Editar Texto</div>
+        <div class="control-row">
+          <input type="text" id="inputTexto" placeholder="Ex: AGENDA ABERTA HOJE!" oninput="atualizarTextoSelecionado()">
+        </div>
+        <div class="grid-2">
+          <div class="control-row">
+            <div class="control-header"><span>Fonte</span></div>
+            <select id="selectFonte" onchange="atualizarTextoSelecionado()">
+              <option value="Bebas Neue">Impacto (Bebas Neue)</option>
+              <option value="Montserrat">Moderna (Montserrat)</option>
+              <option value="Poppins">Limpa (Poppins)</option>
+              <option value="Playfair Display">Clássica Luxo (Playfair)</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <div class="control-header"><span>Estilo de Fundo</span></div>
+            <select id="selectEstiloTexto" onchange="atualizarTextoSelecionado()">
+              <option value="box_dark">Caixa Preta (Reels/TikTok)</option>
+              <option value="box_gold">Caixa Dourada VIP</option>
+              <option value="neon">Brilho Neon</option>
+              <option value="shadow">Sombra Forte 3D</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="control-row">
+            <div class="control-header"><span>Cor do Texto</span></div>
+            <input type="color" id="inputCorTexto" value="#ffffff" style="width:100%; height:38px; border:none; border-radius:8px;" onchange="atualizarTextoSelecionado()">
+          </div>
+          <div class="control-row">
+            <div class="control-header"><span>Tamanho</span><span id="lblTamTexto">68px</span></div>
+            <input type="range" id="inputTamTexto" min="28" max="150" value="68" oninput="document.getElementById('lblTamTexto').innerText=this.value+'px'; atualizarTextoSelecionado()">
+          </div>
+        </div>
+        <div class="grid-2">
+          <button class="btn-action" onclick="adicionarTexto()">➕ Novo Texto na Tela</button>
+          <button class="btn-action btn-danger" onclick="removerCamadaSelecionada()">❌ Apagar Selecionado</button>
+        </div>
+      </div>
+
+      <!-- 4. STICKERS E SELOS DE NICHO -->
+      <div id="tabStickers" class="tool-panel">
+        <div class="section-title">Toque para Colar na Arte</div>
+        <div class="grid-4">
+          <div class="sticker-item" onclick="adicionarSticker('✂️')">✂️<span>Corte</span></div>
+          <div class="sticker-item" onclick="adicionarSticker('💈')">💈<span>Barbearia</span></div>
+          <div class="sticker-item" onclick="adicionarSticker('💅')">💅<span>Beleza</span></div>
+          <div class="sticker-item" onclick="adicionarSticker('💉')">💉<span>Estética</span></div>
+          <div class="sticker-item" onclick="adicionarSticker('🐉')">🐉<span>Tattoo</span></div>
+          <div class="sticker-item" onclick="adicionarSticker('🔥')">🔥<span>Destaque</span></div>
+          <div class="sticker-item" onclick="adicionarSticker('⭐')">⭐<span>5 Estrelas</span></div>
+          <div class="sticker-item" onclick="adicionarSticker('📲')">📲<span>Agende Já</span></div>
+        </div>
+        <div class="control-row">
+          <div class="control-header"><span>Tamanho do Selo Selecionado</span></div>
+          <input type="range" id="inputTamSticker" min="40" max="260" value="110" oninput="redimensionarCamada(this.value)">
+        </div>
+      </div>
+
+      <!-- 5. FILTROS CINEMATOGRÁFICOS (LUTS) & AJUSTES -->
+      <div id="tabFiltros" class="tool-panel">
+        <div class="section-title">Filtros Rápidos</div>
+        <div class="grid-3">
+          <button class="card-btn selected" onclick="setFiltroPreset('none', this)">Original</button>
+          <button class="card-btn" onclick="setFiltroPreset('cinema', this)">🎬 Cinema Quente</button>
+          <button class="card-btn" onclick="setFiltroPreset('bw', this)">🖤 P&B Dramático</button>
+          <button class="card-btn" onclick="setFiltroPreset('contrast', this)">⚡ Alto Contraste</button>
+          <button class="card-btn" onclick="setFiltroPreset('vintage', this)">🎞️ Vintage Retrô</button>
+          <button class="card-btn" onclick="setFiltroPreset('cyber', this)">💎 Frio Nítido</button>
+        </div>
+
+        <div class="section-title">Ajustes Finos</div>
+        <div class="control-row">
+          <div class="control-header"><span>Brilho</span><span id="valBrilho">100%</span></div>
+          <input type="range" id="rngBrilho" min="50" max="160" value="100" oninput="atualizarAjustes()">
+        </div>
+        <div class="control-row">
+          <div class="control-header"><span>Contraste</span><span id="valContraste">100%</span></div>
+          <input type="range" id="rngContraste" min="50" max="180" value="100" oninput="atualizarAjustes()">
+        </div>
+        <div class="control-row">
+          <div class="control-header"><span>Saturação</span><span id="valSaturacao">100%</span></div>
+          <input type="range" id="rngSaturacao" min="0" max="200" value="100" oninput="atualizarAjustes()">
+        </div>
+        <div class="control-row">
+          <div class="control-header"><span>Vinheta Escura nas Bordas</span><span id="valVinheta">20%</span></div>
+          <input type="range" id="rngVinheta" min="0" max="90" value="20" oninput="atualizarAjustes()">
+        </div>
+      </div>
+
+      <!-- 6. EFEITOS CAPCUT & SPEED RAMP -->
+      <div id="tabEfeitos" class="tool-panel">
+        <div class="section-title">Velocidade do Vídeo (Speed Ramp)</div>
+        <div class="grid-4">
+          <button class="card-btn" onclick="setVelocidade(0.5, this)">🐢 0.5x<br><small>Câmera Lenta</small></button>
+          <button class="card-btn selected" onclick="setVelocidade(1.0, this)">▶️ 1.0x<br><small>Normal</small></button>
+          <button class="card-btn" onclick="setVelocidade(1.5, this)">⚡ 1.5x<br><small>Rápido</small></button>
+          <button class="card-btn" onclick="setVelocidade(2.0, this)">🚀 2.0x<br><small>Turbo</small></button>
+        </div>
+
+        <div class="section-title">Efeitos Visuais Animados</div>
+        <div class="grid-2">
+          <button class="card-btn selected" onclick="setEfeitoAnimado('none', this)">🚫 Sem Efeito</button>
+          <button class="card-btn" onclick="setEfeitoAnimado('zoom', this)">🔍 Zoom Dinâmico (Ken Burns)</button>
+          <button class="card-btn" onclick="setEfeitoAnimado('pulse', this)">💓 Batida / Pulse</button>
+          <button class="card-btn" onclick="setEfeitoAnimado('flash', this)">📸 Flash Branco Rápido</button>
+          <button class="card-btn" onclick="setEfeitoAnimado('gold_particles', this)">✨ Partículas Douradas</button>
+          <button class="card-btn" onclick="setEfeitoAnimado('moldura_neon', this)">🌟 Borda Dourada Animada</button>
+        </div>
+      </div>
+
+      <!-- 7. TRILHA SONORA & ÁUDIO -->
+      <div id="tabAudio" class="tool-panel">
+        <div class="section-title">Trilha Sonora de Fundo</div>
+        <div class="grid-2">
+          <label class="file-label">
+            🎵 Subir Música MP3 do Celular
+            <input type="file" accept="audio/*" onchange="carregarAudio(event)">
+          </label>
+          <button class="card-btn" onclick="ativarBatidaSintetica()">🎧 Usar Batida Trap/Lo-Fi Embutida</button>
+        </div>
+
+        <div class="control-row">
+          <div class="control-header"><span>Volume da Música de Fundo</span><span id="lblVolMusica">80%</span></div>
+          <input type="range" id="rngVolMusica" min="0" max="100" value="80" oninput="ajustarVolumes(this.value)">
+        </div>
+        <button class="btn-action btn-danger" onclick="removerAudio()">🔇 Remover Música</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE EXPORTAÇÃO -->
+  <div class="modal-overlay" id="exportModal">
+    <div class="spinner"></div>
+    <h3 style="color:var(--accent); margin-bottom:6px;">Renderizando em Alta Qualidade...</h3>
+    <p style="font-size:0.85rem; color:#ccc;" id="exportStatusText">Aplicando filtros, camadas e efeitos. Aguarde alguns segundos.</p>
+  </div>
+
+<script>
+  const canvas = document.getElementById('studioCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // ESTADO DO ESTÚDIO
+  let state = {
+    width: 1080,
+    height: 1920,
+    splitMode: false,
+    media1: null, // { type: 'image'|'video', el: HTMLImageElement|HTMLVideoElement }
+    media2: null,
+    isPlaying: true,
+    speed: 1.0,
+    effect: 'none',
+    filterPreset: 'none',
+    brightness: 100,
+    contrast: 100,
+    saturate: 100,
+    vignette: 20,
+    layers: [], // { id, type: 'text'|'sticker'|'logo', text, font, style, color, size, x, y, img }
+    selectedLayerId: null,
+    dragging: false,
+    dragOffsetX: 0,
+    dragOffsetY: 0,
+    startTime: performance.now(),
+    particles: Array.from({length: 35}, () => ({
+      x: Math.random(), y: Math.random(), r: Math.random() * 4 + 2, s: Math.random() * 0.003 + 0.001
+    })),
+    bgAudio: null,
+    synthInterval: null
+  };
+
+  // INICIALIZA COM EXEMPLO VISUAL
+  function initStudio() {
+    adicionarTextoInicial("SEU VISUAL EM OUTRO NÍVEL", 540, 320, 74, "box_gold", "#000000");
+    adicionarTextoInicial("AGENDE SEU HORÁRIO PELO LINK", 540, 1620, 52, "box_dark", "#ffffff");
+    requestAnimationFrame(renderLoop);
+  }
+
+  // NAVEGAÇÃO ENTRE ABAS
+  function openTab(tabId, btn) {
+    document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // PROPORÇÃO DE TELA
+  function setAspectRatio(w, h, btn) {
+    state.width = w;
+    state.height = h;
+    canvas.width = w;
+    canvas.height = h;
+    btn.parentElement.querySelectorAll('.card-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  // MODO TELA DIVIDIDA (ANTES E DEPOIS)
+  function setSplitMode(ativo) {
+    state.splitMode = ativo;
+    document.getElementById('btnModeSingle').classList.toggle('selected', !ativo);
+    document.getElementById('btnModeSplit').classList.toggle('selected', ativo);
+    document.getElementById('labelMidia2').style.opacity = ativo ? '1' : '0.5';
+  }
+
+  // CARREGAMENTO DE FOTO OU VÍDEO
+  function carregarMidia(event, slot) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const isVideo = file.type.startsWith('video/');
+
+    if (isVideo) {
+      const video = document.createElement('video');
+      video.src = url;
+      video.crossOrigin = "anonymous";
+      video.loop = true;
+      video.muted = false;
+      video.playsInline = true;
+      video.playbackRate = state.speed;
+      video.onloadeddata = () => {
+        video.play();
+        if (slot === 1) state.media1 = { type: 'video', el: video };
+        else state.media2 = { type: 'video', el: video };
+      };
+    } else {
+      const img = new Image();
+      img.onload = () => {
+        if (slot === 1) state.media1 = { type: 'image', el: img };
+        else state.media2 = { type: 'image', el: img };
+      };
+      img.src = url;
+    }
+  }
+
+  function carregarLogo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      const id = Date.now();
+      state.layers.push({
+        id, type: 'logo', img, size: 220, x: state.width / 2, y: 200
+      });
+      selecionarCamada(id);
+    };
+    img.src = URL.createObjectURL(file);
+  }
+
+  // CONTROLE DE PLAYER DE VÍDEO
+  function togglePlay() {
+    state.isPlaying = !state.isPlaying;
+    document.getElementById('btnPlayPause').innerText = state.isPlaying ? '⏸' : '▶';
+    [state.media1, state.media2].forEach(m => {
+      if (m && m.type === 'video') {
+        state.isPlaying ? m.el.play() : m.el.pause();
+      }
+    });
+    if (state.bgAudio) {
+      state.isPlaying ? state.bgAudio.play() : state.bgAudio.pause();
+    }
+  }
+
+  function seekVideo(val) {
+    if (state.media1 && state.media1.type === 'video' && state.media1.el.duration) {
+      state.media1.el.currentTime = (val / 100) * state.media1.el.duration;
+    }
+  }
+
+  function setVelocidade(spd, btn) {
+    state.speed = spd;
+    btn.parentElement.querySelectorAll('.card-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    [state.media1, state.media2].forEach(m => {
+      if (m && m.type === 'video') m.el.playbackRate = spd;
+    });
+  }
+
+  // TEMPLATES PRONTOS
+  function aplicarTemplate(tipo) {
+    state.layers = [];
+    if (tipo === 'agenda') {
+      adicionarTextoInicial("AGENDA ABERTA HOJE", state.width/2, 260, 82, "box_gold", "#000000");
+      adicionarTextoInicial("RESTAM POUCOS HORÁRIOS", state.width/2, 370, 46, "box_dark", "#ffffff");
+      adicionarTextoInicial("CHAMA NO WHATSAPP 👇", state.width/2, state.height - 220, 56, "box_dark", "#d4af37");
+    } else if (tipo === 'antes_depois') {
+      setSplitMode(true);
+      adicionarTextoInicial("ANTES", state.width * 0.25, state.height - 180, 60, "box_dark", "#ffffff");
+      adicionarTextoInicial("DEPOIS", state.width * 0.75, state.height - 180, 60, "box_gold", "#000000");
+    } else if (tipo === 'promo') {
+      adicionarTextoInicial("🔥 COMBO ESPECIAL 🔥", state.width/2, 260, 76, "box_dark", "#facc15");
+      adicionarTextoInicial("VÁLIDO SOMENTE ESTA SEMANA", state.width/2, state.height - 220, 48, "box_gold", "#000000");
+    } else if (tipo === 'vip') {
+      state.effect = 'moldura_neon';
+      adicionarTextoInicial("ATENDIMENTO VIP", state.width/2, 260, 78, "shadow", "#d4af37");
+      adicionarTextoInicial("QUALIDADE & ESTILO", state.width/2, state.height - 220, 50, "box_dark", "#ffffff");
+    }
+  }
+
+  // GERENCIAMENTO DE CAMADAS (TEXTOS E STICKERS)
+  function adicionarTextoInicial(texto, x, y, size, style, color) {
+    const id = Date.now() + Math.random();
+    state.layers.push({
+      id, type: 'text', text: texto, font: 'Bebas Neue', style, color, size, x, y
+    });
+    selecionarCamada(id);
+  }
+
+  function adicionarTexto() {
+    const txt = document.getElementById('inputTexto').value.trim() || "NOVO TEXTO";
+    const font = document.getElementById('selectFonte').value;
+    const style = document.getElementById('selectEstiloTexto').value;
+    const color = document.getElementById('inputCorTexto').value;
+    const size = parseInt(document.getElementById('inputTamTexto').value, 10);
+    const id = Date.now();
+    state.layers.push({
+      id, type: 'text', text: txt, font, style, color, size, x: state.width / 2, y: state.height / 2
+    });
+    selecionarCamada(id);
+  }
+
+  function adicionarSticker(emoji) {
+    const id = Date.now();
+    state.layers.push({
+      id, type: 'sticker', text: emoji, size: 130, x: state.width / 2, y: state.height / 2
+    });
+    selecionarCamada(id);
+  }
+
+  function selecionarCamada(id) {
+    state.selectedLayerId = id;
+    const layer = state.layers.find(l => l.id === id);
+    const status = document.getElementById('layerStatus');
+    if (layer) {
+      status.innerText = layer.type === 'text' ? `Editando: "${layer.text.substring(0,15)}"` : `Camada selecionada`;
+      if (layer.type === 'text') {
+        document.getElementById('inputTexto').value = layer.text;
+        document.getElementById('selectFonte').value = layer.font;
+        document.getElementById('selectEstiloTexto').value = layer.style;
+        document.getElementById('inputCorTexto').value = layer.color;
+        document.getElementById('inputTamTexto').value = layer.size;
+      }
+    } else {
+      status.innerText = "Nenhuma camada selecionada";
+    }
+  }
+
+  function atualizarTextoSelecionado() {
+    const layer = state.layers.find(l => l.id === state.selectedLayerId);
+    if (layer && layer.type === 'text') {
+      layer.text = document.getElementById('inputTexto').value || " ";
+      layer.font = document.getElementById('selectFonte').value;
+      layer.style = document.getElementById('selectEstiloTexto').value;
+      layer.color = document.getElementById('inputCorTexto').value;
+      layer.size = parseInt(document.getElementById('inputTamTexto').value, 10);
+    }
+  }
+
+  function redimensionarCamada(val) {
+    const layer = state.layers.find(l => l.id === state.selectedLayerId);
+    if (layer) layer.size = parseInt(val, 10);
+  }
+
+  function removerCamadaSelecionada() {
+    state.layers = state.layers.filter(l => l.id !== state.selectedLayerId);
+    state.selectedLayerId = null;
+    document.getElementById('layerStatus').innerText = "Camada removida";
+  }
+
+  function limparCamadas() {
+    state.layers = [];
+    state.selectedLayerId = null;
+  }
+
+  // FILTROS E AJUSTES
+  function setFiltroPreset(preset, btn) {
+    state.filterPreset = preset;
+    btn.parentElement.querySelectorAll('.card-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function atualizarAjustes() {
+    state.brightness = document.getElementById('rngBrilho').value;
+    state.contrast = document.getElementById('rngContraste').value;
+    state.saturate = document.getElementById('rngSaturacao').value;
+    state.vignette = document.getElementById('rngVinheta').value;
+    document.getElementById('valBrilho').innerText = state.brightness + '%';
+    document.getElementById('valContraste').innerText = state.contrast + '%';
+    document.getElementById('valSaturacao').innerText = state.saturate + '%';
+    document.getElementById('valVinheta').innerText = state.vignette + '%';
+  }
+
+  function setEfeitoAnimado(ef, btn) {
+    state.effect = ef;
+    btn.parentElement.querySelectorAll('.card-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  // ÁUDIO E BATIDA EMBUTIDA
+  function carregarAudio(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    removerAudio();
+    state.bgAudio = new Audio(URL.createObjectURL(file));
+    state.bgAudio.loop = true;
+    state.bgAudio.volume = document.getElementById('rngVolMusica').value / 100;
+    state.bgAudio.play();
+  }
+
+  function ativarBatidaSintetica() {
+    removerAudio();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let step = 0;
+    state.synthInterval = setInterval(() => {
+      if (!state.isPlaying) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const vol = (document.getElementById('rngVolMusica').value / 100) * 0.25;
+      if (step % 4 === 0) {
+        osc.frequency.setValueAtTime(110, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(35, audioCtx.currentTime + 0.18);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+      } else if (step % 2 === 1) {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol * 0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+      }
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.22);
+      step++;
+    }, 280);
+  }
+
+  function ajustarVolumes(val) {
+    document.getElementById('lblVolMusica').innerText = val + '%';
+    if (state.bgAudio) state.bgAudio.volume = val / 100;
+  }
+
+  function removerAudio() {
+    if (state.bgAudio) { state.bgAudio.pause(); state.bgAudio = null; }
+    if (state.synthInterval) { clearInterval(state.synthInterval); state.synthInterval = null; }
+  }
+
+  // INTERAÇÃO DE ARRASTAR COM O DEDO / MOUSE NO CANVAS
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    const pos = getCanvasCoords(e);
+    for (let i = state.layers.length - 1; i >= 0; i--) {
+      const l = state.layers[i];
+      const hitRadius = l.type === 'text' ? Math.max(180, l.text.length * (l.size * 0.28)) : l.size * 0.7;
+      if (Math.abs(pos.x - l.x) < hitRadius && Math.abs(pos.y - l.y) < l.size) {
+        selecionarCamada(l.id);
+        state.dragging = true;
+        state.dragOffsetX = pos.x - l.x;
+        state.dragOffsetY = pos.y - l.y;
+        return;
+      }
+    }
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!state.dragging || !state.selectedLayerId) return;
+    const pos = getCanvasCoords(e);
+    const layer = state.layers.find(l => l.id === state.selectedLayerId);
+    if (layer) {
+      layer.x = pos.x - state.dragOffsetX;
+      layer.y = pos.y - state.dragOffsetY;
+    }
+  });
+
+  window.addEventListener('pointerup', () => { state.dragging = false; });
+
+  // LOOP DE RENDERIZAÇÃO EM TEMPO REAL
+  function renderLoop(now) {
+    const elapsed = (now - state.startTime) / 1000;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // FUNDO PADRÃO SE NÃO HOUVER MÍDIA
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    grad.addColorStop(0, '#18181f');
+    grad.addColorStop(1, '#09090c');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // MONTA STRING DE FILTROS
+    let filterStr = `brightness(${state.brightness}%) contrast(${state.contrast}%) saturate(${state.saturate}%)`;
+    if (state.filterPreset === 'cinema') filterStr += ' sepia(25%) contrast(115%) saturate(125%)';
+    if (state.filterPreset === 'bw') filterStr += ' grayscale(100%) contrast(135%)';
+    if (state.filterPreset === 'contrast') filterStr += ' contrast(145%) saturate(110%)';
+    if (state.filterPreset === 'vintage') filterStr += ' sepia(55%) brightness(95%) contrast(90%)';
+    if (state.filterPreset === 'cyber') filterStr += ' hue-rotate(15deg) contrast(120%) saturate(140%)';
+
+    ctx.save();
+    ctx.filter = filterStr;
+
+    // EFEITO DE ZOOM / PULSE
+    let scale = 1;
+    if (state.effect === 'zoom') scale = 1 + Math.sin(elapsed * 0.8) * 0.06 + 0.06;
+    if (state.effect === 'pulse') scale = 1 + Math.abs(Math.sin(elapsed * 4.5)) * 0.05;
+
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.scale(scale, scale);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+    if (!state.splitMode) {
+      if (state.media1) drawMediaCover(state.media1.el, 0, 0, canvas.width, canvas.height);
+    } else {
+      const halfW = canvas.width / 2;
+      if (state.media1) drawMediaCover(state.media1.el, 0, 0, halfW, canvas.height);
+      if (state.media2) drawMediaCover(state.media2.el, halfW, 0, halfW, canvas.height);
+      // Linha divisória dourada
+      ctx.fillStyle = '#d4af37';
+      ctx.fillRect(halfW - 4, 0, 8, canvas.height);
+    }
+    ctx.restore();
+
+    // VINHETA NAS BORDAS
+    if (state.vignette > 0) {
+      const vGrad = ctx.createRadialGradient(
+        canvas.width/2, canvas.height/2, canvas.width * 0.25,
+        canvas.width/2, canvas.height/2, canvas.height * 0.75
+      );
+      vGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      vGrad.addColorStop(1, `rgba(0,0,0,${state.vignette / 100})`);
+      ctx.fillStyle = vGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // EFEITOS SOBREPOSTOS (FLASH / PARTÍCULAS / MOLDURA)
+    if (state.effect === 'flash') {
+      const flashAlpha = Math.max(0, Math.sin(elapsed * 5) - 0.85) * 4;
+      if (flashAlpha > 0) {
+        ctx.fillStyle = `rgba(255,255,255,${flashAlpha})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    if (state.effect === 'gold_particles') {
+      ctx.fillStyle = 'rgba(212, 175, 55, 0.85)';
+      state.particles.forEach(p => {
+        p.y -= p.s;
+        if (p.y < 0) p.y = 1;
+        ctx.beginPath();
+        ctx.arc(p.x * canvas.width, p.y * canvas.height, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    if (state.effect === 'moldura_neon') {
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 18;
+      ctx.strokeRect(36, 36, canvas.width - 72, canvas.height - 72);
+    }
+
+    // DESENHAR CAMADAS (TEXTOS, STICKERS, LOGO)
+    state.layers.forEach(layer => {
+      ctx.save();
+      if (layer.type === 'logo' && layer.img) {
+        const aspect = layer.img.height / layer.img.width;
+        const w = layer.size;
+        const h = w * aspect;
+        ctx.drawImage(layer.img, layer.x - w/2, layer.y - h/2, w, h);
+      } else if (layer.type === 'sticker') {
+        ctx.font = `${layer.size}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(layer.text, layer.x, layer.y);
+      } else if (layer.type === 'text') {
+        ctx.font = `900 ${layer.size}px "${layer.font}", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const metrics = ctx.measureText(layer.text);
+        const padX = 34;
+        const padY = 20;
+        const boxW = metrics.width + padX * 2;
+        const boxH = layer.size + padY * 1.4;
+
+        if (layer.style === 'box_dark') {
+          ctx.fillStyle = 'rgba(15, 15, 20, 0.88)';
+          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 18);
+          ctx.fill();
+        } else if (layer.style === 'box_gold') {
+          ctx.fillStyle = '#d4af37';
+          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 18);
+          ctx.fill();
+        } else if (layer.style === 'neon') {
+          ctx.shadowColor = layer.color;
+          ctx.shadowBlur = 28;
+        } else if (layer.style === 'shadow') {
+          ctx.shadowColor = 'rgba(0,0,0,0.95)';
+          ctx.shadowOffsetX = 6;
+          ctx.shadowOffsetY = 6;
+          ctx.shadowBlur = 12;
+        }
+
+        ctx.fillStyle = layer.color;
+        ctx.fillText(layer.text, layer.x, layer.y);
+      }
+      ctx.restore();
+    });
+
+    // ATUALIZA TIMELINE SE HOUVER VÍDEO
+    if (state.media1 && state.media1.type === 'video' && state.media1.el.duration) {
+      const cur = state.media1.el.currentTime;
+      const dur = state.media1.el.duration;
+      document.getElementById('timelineSlider').value = (cur / dur) * 100;
+      const mins = Math.floor(cur / 60).toString().padStart(2, '0');
+      const secs = Math.floor(cur % 60).toString().padStart(2, '0');
+      document.getElementById('timeDisplay').innerText = `${mins}:${secs}`;
+    }
+
+    requestAnimationFrame(renderLoop);
+  }
+
+  function drawMediaCover(el, x, y, w, h) {
+    const mw = el.videoWidth || el.width;
+    const mh = el.videoHeight || el.height;
+    if (!mw || !mh) return;
+    const scale = Math.max(w / mw, h / mh);
+    const nw = mw * scale;
+    const nh = mh * scale;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.clip();
+    ctx.drawImage(el, x + (w - nw)/2, y + (h - nh)/2, nw, nh);
+    ctx.restore();
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  // EXPORTAÇÃO DE FOTO (PNG)
+  function exportarFoto() {
+    const link = document.createElement('a');
+    link.download = `KBS-Arte-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png', 1.0);
+    link.click();
+  }
+
+  // EXPORTAÇÃO DE VÍDEO RENDERIZADO (WEBM / MP4 COMPATÍVEL)
+  function exportarVideo() {
+    const modal = document.getElementById('exportModal');
+    modal.style.display = 'flex';
+
+    const stream = canvas.captureStream(30);
+    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    const chunks = [];
+
+    recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `KBS-Reels-${Date.now()}.webm`;
+      a.click();
+      modal.style.display = 'none';
+    };
+
+    const duracaoGravacao = (state.media1 && state.media1.type === 'video' && state.media1.el.duration)
+      ? Math.min(state.media1.el.duration * 1000, 15000)
+      : 6000;
+
+    if (state.media1 && state.media1.type === 'video') state.media1.el.currentTime = 0;
+    recorder.start();
+    setTimeout(() => recorder.stop(), duracaoGravacao);
+  }
+
+  initStudio();
+</script>
+</body>
+</html>
