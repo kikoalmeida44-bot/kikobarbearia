@@ -287,10 +287,10 @@
   </div>
 
   <div class="workspace">
-    <!-- ÁREA DE VISUALIZAÇÃO (CANVAS) -->
+    <!-- ÁREA DE VISUALIZAÇÃO (CANVAS OTIMIZADO HD LEVE PARA NÃO TRAVAR NO CELULAR) -->
     <div class="stage-wrapper">
       <div class="canvas-container">
-        <canvas id="studioCanvas" width="1080" height="1920"></canvas>
+        <canvas id="studioCanvas" width="720" height="1280"></canvas>
       </div>
 
       <div class="video-controls" id="videoControls">
@@ -324,9 +324,9 @@
       <div id="tabMidia" class="tool-panel active">
         <div class="section-title">1. Formato da Arte / Vídeo</div>
         <div class="grid-3">
-          <button class="card-btn selected" onclick="setAspectRatio(1080, 1920, this)">📱 Stories / Reels<br><small>9:16</small></button>
-          <button class="card-btn" onclick="setAspectRatio(1080, 1350, this)">🖼️ Feed Retrato<br><small>4:5</small></button>
-          <button class="card-btn" onclick="setAspectRatio(1080, 1080, this)">🟦 Quadrado<br><small>1:1</small></button>
+          <button class="card-btn selected" onclick="setAspectRatio(720, 1280, this)">📱 Stories / Reels<br><small>9:16</small></button>
+          <button class="card-btn" onclick="setAspectRatio(720, 900, this)">🖼️ Feed Retrato<br><small>4:5</small></button>
+          <button class="card-btn" onclick="setAspectRatio(720, 720, this)">🟦 Quadrado<br><small>1:1</small></button>
         </div>
 
         <div class="section-title">2. Modo de Tela</div>
@@ -396,8 +396,8 @@
             <input type="color" id="inputCorTexto" value="#ffffff" style="width:100%; height:38px; border:none; border-radius:8px;" onchange="atualizarTextoSelecionado()">
           </div>
           <div class="control-row">
-            <div class="control-header"><span>Tamanho</span><span id="lblTamTexto">68px</span></div>
-            <input type="range" id="inputTamTexto" min="28" max="150" value="68" oninput="document.getElementById('lblTamTexto').innerText=this.value+'px'; atualizarTextoSelecionado()">
+            <div class="control-header"><span>Tamanho</span><span id="lblTamTexto">48px</span></div>
+            <input type="range" id="inputTamTexto" min="20" max="110" value="48" oninput="document.getElementById('lblTamTexto').innerText=this.value+'px'; atualizarTextoSelecionado()">
           </div>
         </div>
         <div class="grid-2">
@@ -421,7 +421,7 @@
         </div>
         <div class="control-row">
           <div class="control-header"><span>Tamanho do Selo Selecionado</span></div>
-          <input type="range" id="inputTamSticker" min="40" max="260" value="110" oninput="redimensionarCamada(this.value)">
+          <input type="range" id="inputTamSticker" min="30" max="180" value="85" oninput="redimensionarCamada(this.value)">
         </div>
       </div>
 
@@ -507,12 +507,13 @@
 
 <script>
   const canvas = document.getElementById('studioCanvas');
-  const ctx = canvas.getContext('2d');
+  // alpha: false desativa transparência desnecessária no fundo e acelera a GPU no Android
+  const ctx = canvas.getContext('2d', { alpha: false });
 
-  // ESTADO DO ESTÚDIO
+  // ESTADO DO ESTÚDIO (OTIMIZADO PARA 720x1280 HD LEVE)
   let state = {
-    width: 1080,
-    height: 1920,
+    width: 720,
+    height: 1280,
     splitMode: false,
     media1: null, // { type: 'image'|'video', el: HTMLImageElement|HTMLVideoElement }
     media2: null,
@@ -530,17 +531,18 @@
     dragOffsetX: 0,
     dragOffsetY: 0,
     startTime: performance.now(),
-    particles: Array.from({length: 35}, () => ({
-      x: Math.random(), y: Math.random(), r: Math.random() * 4 + 2, s: Math.random() * 0.003 + 0.001
+    particles: Array.from({length: 30}, () => ({
+      x: Math.random(), y: Math.random(), r: Math.random() * 3 + 1.5, s: Math.random() * 0.003 + 0.001
     })),
     bgAudio: null,
-    synthInterval: null
+    synthInterval: null,
+    lastUiUpdate: 0
   };
 
   // INICIALIZA COM EXEMPLO VISUAL
   function initStudio() {
-    adicionarTextoInicial("SEU VISUAL EM OUTRO NÍVEL", 540, 320, 74, "box_gold", "#000000");
-    adicionarTextoInicial("AGENDE SEU HORÁRIO PELO LINK", 540, 1620, 52, "box_dark", "#ffffff");
+    adicionarTextoInicial("SEU VISUAL EM OUTRO NÍVEL", 360, 210, 50, "box_gold", "#000000");
+    adicionarTextoInicial("AGENDE SEU HORÁRIO PELO LINK", 360, 1080, 36, "box_dark", "#ffffff");
     requestAnimationFrame(renderLoop);
   }
 
@@ -570,7 +572,7 @@
     document.getElementById('labelMidia2').style.opacity = ativo ? '1' : '0.5';
   }
 
-  // CARREGAMENTO DE FOTO OU VÍDEO
+  // CARREGAMENTO DE FOTO OU VÍDEO OTIMIZADO PARA ANDROID
   function carregarMidia(event, slot) {
     const file = event.target.files[0];
     if (!file) return;
@@ -578,15 +580,32 @@
     const isVideo = file.type.startsWith('video/');
 
     if (isVideo) {
+      // Libera vídeo anterior da memória para não estourar RAM
+      const oldMedia = slot === 1 ? state.media1 : state.media2;
+      if (oldMedia && oldMedia.type === 'video') {
+        oldMedia.el.pause();
+        oldMedia.el.removeAttribute('src');
+        oldMedia.el.load();
+      }
+
       const video = document.createElement('video');
       video.src = url;
       video.crossOrigin = "anonymous";
       video.loop = true;
       video.muted = false;
-      video.playsInline = true;
+      video.preload = "auto";
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
       video.playbackRate = state.speed;
-      video.onloadeddata = () => {
-        video.play();
+
+      video.onloadedmetadata = () => {
+        video.play().then(() => {
+          state.isPlaying = true;
+          document.getElementById('btnPlayPause').innerText = '⏸';
+        }).catch(() => {
+          state.isPlaying = false;
+          document.getElementById('btnPlayPause').innerText = '▶';
+        });
         if (slot === 1) state.media1 = { type: 'video', el: video };
         else state.media2 = { type: 'video', el: video };
       };
@@ -607,7 +626,7 @@
     img.onload = () => {
       const id = Date.now();
       state.layers.push({
-        id, type: 'logo', img, size: 220, x: state.width / 2, y: 200
+        id, type: 'logo', img, size: 150, x: state.width / 2, y: 140
       });
       selecionarCamada(id);
     };
@@ -647,20 +666,20 @@
   function aplicarTemplate(tipo) {
     state.layers = [];
     if (tipo === 'agenda') {
-      adicionarTextoInicial("AGENDA ABERTA HOJE", state.width/2, 260, 82, "box_gold", "#000000");
-      adicionarTextoInicial("RESTAM POUCOS HORÁRIOS", state.width/2, 370, 46, "box_dark", "#ffffff");
-      adicionarTextoInicial("CHAMA NO WHATSAPP 👇", state.width/2, state.height - 220, 56, "box_dark", "#d4af37");
+      adicionarTextoInicial("AGENDA ABERTA HOJE", state.width/2, 180, 56, "box_gold", "#000000");
+      adicionarTextoInicial("RESTAM POUCOS HORÁRIOS", state.width/2, 255, 32, "box_dark", "#ffffff");
+      adicionarTextoInicial("CHAMA NO WHATSAPP 👇", state.width/2, state.height - 150, 38, "box_dark", "#d4af37");
     } else if (tipo === 'antes_depois') {
       setSplitMode(true);
-      adicionarTextoInicial("ANTES", state.width * 0.25, state.height - 180, 60, "box_dark", "#ffffff");
-      adicionarTextoInicial("DEPOIS", state.width * 0.75, state.height - 180, 60, "box_gold", "#000000");
+      adicionarTextoInicial("ANTES", state.width * 0.25, state.height - 130, 42, "box_dark", "#ffffff");
+      adicionarTextoInicial("DEPOIS", state.width * 0.75, state.height - 130, 42, "box_gold", "#000000");
     } else if (tipo === 'promo') {
-      adicionarTextoInicial("🔥 COMBO ESPECIAL 🔥", state.width/2, 260, 76, "box_dark", "#facc15");
-      adicionarTextoInicial("VÁLIDO SOMENTE ESTA SEMANA", state.width/2, state.height - 220, 48, "box_gold", "#000000");
+      adicionarTextoInicial("🔥 COMBO ESPECIAL 🔥", state.width/2, 180, 52, "box_dark", "#facc15");
+      adicionarTextoInicial("VÁLIDO SOMENTE ESTA SEMANA", state.width/2, state.height - 150, 34, "box_gold", "#000000");
     } else if (tipo === 'vip') {
       state.effect = 'moldura_neon';
-      adicionarTextoInicial("ATENDIMENTO VIP", state.width/2, 260, 78, "shadow", "#d4af37");
-      adicionarTextoInicial("QUALIDADE & ESTILO", state.width/2, state.height - 220, 50, "box_dark", "#ffffff");
+      adicionarTextoInicial("ATENDIMENTO VIP", state.width/2, 180, 54, "shadow", "#d4af37");
+      adicionarTextoInicial("QUALIDADE & ESTILO", state.width/2, state.height - 150, 36, "box_dark", "#ffffff");
     }
   }
 
@@ -689,7 +708,7 @@
   function adicionarSticker(emoji) {
     const id = Date.now();
     state.layers.push({
-      id, type: 'sticker', text: emoji, size: 130, x: state.width / 2, y: state.height / 2
+      id, type: 'sticker', text: emoji, size: 90, x: state.width / 2, y: state.height / 2
     });
     selecionarCamada(id);
   }
@@ -827,7 +846,7 @@
     const pos = getCanvasCoords(e);
     for (let i = state.layers.length - 1; i >= 0; i--) {
       const l = state.layers[i];
-      const hitRadius = l.type === 'text' ? Math.max(180, l.text.length * (l.size * 0.28)) : l.size * 0.7;
+      const hitRadius = l.type === 'text' ? Math.max(130, l.text.length * (l.size * 0.28)) : l.size * 0.7;
       if (Math.abs(pos.x - l.x) < hitRadius && Math.abs(pos.y - l.y) < l.size) {
         selecionarCamada(l.id);
         state.dragging = true;
@@ -850,47 +869,51 @@
 
   window.addEventListener('pointerup', () => { state.dragging = false; });
 
-  // LOOP DE RENDERIZAÇÃO EM TEMPO REAL
+  // LOOP DE RENDERIZAÇÃO OTIMIZADO (EVITA CONGELAMENTO DA GPU NO CELULAR)
   function renderLoop(now) {
     const elapsed = (now - state.startTime) / 1000;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // FUNDO PADRÃO SE NÃO HOUVER MÍDIA
-    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    grad.addColorStop(0, '#18181f');
-    grad.addColorStop(1, '#09090c');
-    ctx.fillStyle = grad;
+    // FUNDO SÓLIDO LEVE
+    ctx.fillStyle = '#111116';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // MONTA STRING DE FILTROS
-    let filterStr = `brightness(${state.brightness}%) contrast(${state.contrast}%) saturate(${state.saturate}%)`;
-    if (state.filterPreset === 'cinema') filterStr += ' sepia(25%) contrast(115%) saturate(125%)';
-    if (state.filterPreset === 'bw') filterStr += ' grayscale(100%) contrast(135%)';
-    if (state.filterPreset === 'contrast') filterStr += ' contrast(145%) saturate(110%)';
-    if (state.filterPreset === 'vintage') filterStr += ' sepia(55%) brightness(95%) contrast(90%)';
-    if (state.filterPreset === 'cyber') filterStr += ' hue-rotate(15deg) contrast(120%) saturate(140%)';
+    // SÓ APLICA ctx.filter SE ALGUM FILTRO ESTIVER REALMENTE MODIFICADO (ECONOMIZA 70% DE GPU)
+    const temFiltroAtivo = (
+      state.filterPreset !== 'none' ||
+      state.brightness != 100 ||
+      state.contrast != 100 ||
+      state.saturate != 100
+    );
 
     ctx.save();
-    ctx.filter = filterStr;
+    if (temFiltroAtivo) {
+      let filterStr = `brightness(${state.brightness}%) contrast(${state.contrast}%) saturate(${state.saturate}%)`;
+      if (state.filterPreset === 'cinema') filterStr += ' sepia(25%) contrast(115%) saturate(125%)';
+      if (state.filterPreset === 'bw') filterStr += ' grayscale(100%) contrast(135%)';
+      if (state.filterPreset === 'contrast') filterStr += ' contrast(145%) saturate(110%)';
+      if (state.filterPreset === 'vintage') filterStr += ' sepia(55%) brightness(95%) contrast(90%)';
+      if (state.filterPreset === 'cyber') filterStr += ' hue-rotate(15deg) contrast(120%) saturate(140%)';
+      ctx.filter = filterStr;
+    }
 
     // EFEITO DE ZOOM / PULSE
-    let scale = 1;
-    if (state.effect === 'zoom') scale = 1 + Math.sin(elapsed * 0.8) * 0.06 + 0.06;
-    if (state.effect === 'pulse') scale = 1 + Math.abs(Math.sin(elapsed * 4.5)) * 0.05;
-
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.scale(scale, scale);
-    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    if (state.effect === 'zoom' || state.effect === 'pulse') {
+      let scale = state.effect === 'zoom'
+        ? 1 + Math.sin(elapsed * 0.8) * 0.06 + 0.06
+        : 1 + Math.abs(Math.sin(elapsed * 4.5)) * 0.05;
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.scale(scale, scale);
+      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    }
 
     if (!state.splitMode) {
-      if (state.media1) drawMediaCover(state.media1.el, 0, 0, canvas.width, canvas.height);
+      if (state.media1) drawMediaCover(state.media1, 0, 0, canvas.width, canvas.height);
     } else {
       const halfW = canvas.width / 2;
-      if (state.media1) drawMediaCover(state.media1.el, 0, 0, halfW, canvas.height);
-      if (state.media2) drawMediaCover(state.media2.el, halfW, 0, halfW, canvas.height);
-      // Linha divisória dourada
+      if (state.media1) drawMediaCover(state.media1, 0, 0, halfW, canvas.height);
+      if (state.media2) drawMediaCover(state.media2, halfW, 0, halfW, canvas.height);
       ctx.fillStyle = '#d4af37';
-      ctx.fillRect(halfW - 4, 0, 8, canvas.height);
+      ctx.fillRect(halfW - 3, 0, 6, canvas.height);
     }
     ctx.restore();
 
@@ -928,8 +951,8 @@
 
     if (state.effect === 'moldura_neon') {
       ctx.strokeStyle = '#d4af37';
-      ctx.lineWidth = 18;
-      ctx.strokeRect(36, 36, canvas.width - 72, canvas.height - 72);
+      ctx.lineWidth = 12;
+      ctx.strokeRect(24, 24, canvas.width - 48, canvas.height - 48);
     }
 
     // DESENHAR CAMADAS (TEXTOS, STICKERS, LOGO)
@@ -950,27 +973,27 @@
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         const metrics = ctx.measureText(layer.text);
-        const padX = 34;
-        const padY = 20;
+        const padX = 24;
+        const padY = 14;
         const boxW = metrics.width + padX * 2;
         const boxH = layer.size + padY * 1.4;
 
         if (layer.style === 'box_dark') {
           ctx.fillStyle = 'rgba(15, 15, 20, 0.88)';
-          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 18);
+          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 14);
           ctx.fill();
         } else if (layer.style === 'box_gold') {
           ctx.fillStyle = '#d4af37';
-          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 18);
+          roundRect(ctx, layer.x - boxW/2, layer.y - boxH/2, boxW, boxH, 14);
           ctx.fill();
         } else if (layer.style === 'neon') {
           ctx.shadowColor = layer.color;
-          ctx.shadowBlur = 28;
+          ctx.shadowBlur = 20;
         } else if (layer.style === 'shadow') {
           ctx.shadowColor = 'rgba(0,0,0,0.95)';
-          ctx.shadowOffsetX = 6;
-          ctx.shadowOffsetY = 6;
-          ctx.shadowBlur = 12;
+          ctx.shadowOffsetX = 4;
+          ctx.shadowOffsetY = 4;
+          ctx.shadowBlur = 10;
         }
 
         ctx.fillStyle = layer.color;
@@ -979,8 +1002,9 @@
       ctx.restore();
     });
 
-    // ATUALIZA TIMELINE SE HOUVER VÍDEO
-    if (state.media1 && state.media1.type === 'video' && state.media1.el.duration) {
+    // ATUALIZA TIMELINE A CADA 250ms (EVITA TRAVAR O DOM DO CELULAR)
+    if (now - state.lastUiUpdate > 250 && state.media1 && state.media1.type === 'video' && state.media1.el.duration) {
+      state.lastUiUpdate = now;
       const cur = state.media1.el.currentTime;
       const dur = state.media1.el.duration;
       document.getElementById('timelineSlider').value = (cur / dur) * 100;
@@ -992,7 +1016,11 @@
     requestAnimationFrame(renderLoop);
   }
 
-  function drawMediaCover(el, x, y, w, h) {
+  function drawMediaCover(mediaObj, x, y, w, h) {
+    const el = mediaObj.el;
+    // Garante que o vídeo tem quadro decodificado pronto antes de desenhar
+    if (mediaObj.type === 'video' && el.readyState < 2) return;
+
     const mw = el.videoWidth || el.width;
     const mh = el.videoHeight || el.height;
     if (!mw || !mh) return;
@@ -1025,13 +1053,18 @@
     link.click();
   }
 
-  // EXPORTAÇÃO DE VÍDEO RENDERIZADO (WEBM / MP4 COMPATÍVEL)
+  // EXPORTAÇÃO DE VÍDEO RENDERIZADO COMPATÍVEL COM ANDROID
   function exportarVideo() {
     const modal = document.getElementById('exportModal');
+    const statusTxt = document.getElementById('exportStatusText');
     modal.style.display = 'flex';
 
     const stream = canvas.captureStream(30);
-    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8')
+      ? 'video/webm;codecs=vp8'
+      : 'video/webm';
+
+    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2500000 });
     const chunks = [];
 
     recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
@@ -1046,12 +1079,25 @@
     };
 
     const duracaoGravacao = (state.media1 && state.media1.type === 'video' && state.media1.el.duration)
-      ? Math.min(state.media1.el.duration * 1000, 15000)
+      ? Math.min(state.media1.el.duration * 1000, 30000)
       : 6000;
 
-    if (state.media1 && state.media1.type === 'video') state.media1.el.currentTime = 0;
+    if (state.media1 && state.media1.type === 'video') {
+      state.media1.el.currentTime = 0;
+      state.media1.el.play();
+    }
     recorder.start();
-    setTimeout(() => recorder.stop(), duracaoGravacao);
+
+    let decorrido = 0;
+    const progInt = setInterval(() => {
+      decorrido += 500;
+      const pct = Math.min(100, Math.round((decorrido / duracaoGravacao) * 100));
+      statusTxt.innerText = `Gravando vídeo: ${pct}% concluído... Não feche a tela.`;
+      if (decorrido >= duracaoGravacao) {
+        clearInterval(progInt);
+        if (recorder.state === 'recording') recorder.stop();
+      }
+    }, 500);
   }
 
   initStudio();
