@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KBS Sistemas — Demonstração Interativa (WhatsApp + App + Estúdio)</title>
+  <title>KBS Sistema — Plataforma Completa de Agendamento, WhatsApp & Estúdio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #080a0f;
-      --bg-card: #11151f;
-      --bg-card-2: #171d2b;
-      --text: #f3f5f8;
-      --muted: #9aa4b5;
-      --accent: #22c55e;
-      --accent-dark: #16a34a;
+      --bg: #07090e;
+      --surface: #0e131d;
+      --surface-2: #151c2b;
+      --surface-3: #1c2538;
+      --text: #f8fafc;
+      --muted: #94a3b8;
       --gold: #f59e0b;
-      --blue: #3b82f6;
-      --purple: #a855f7;
+      --gold-bright: #fbbf24;
+      --wa: #22c55e;
+      --wa-dark: #16a34a;
+      --blue: #38bdf8;
+      --purple: #c084fc;
       --border: rgba(255, 255, 255, 0.09);
       --radius: 18px;
     }
@@ -48,7 +50,7 @@
 
     .container {
       width: 100%;
-      max-width: 1180px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
     }
@@ -57,21 +59,21 @@
     header {
       position: sticky;
       top: 0;
-      z-index: 60;
+      z-index: 80;
       backdrop-filter: blur(14px);
-      background: rgba(8, 10, 15, 0.86);
+      background: rgba(7, 9, 14, 0.88);
       border-bottom: 1px solid var(--border);
     }
 
-    .nav {
+    .nav-wrap {
+      height: 70px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 70px;
       gap: 14px;
     }
 
-    .brand {
+    .logo {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -80,25 +82,25 @@
       letter-spacing: -0.02em;
     }
 
-    .brand-badge {
+    .logo-tag {
       background: linear-gradient(135deg, var(--gold), #ea580c);
-      color: #080a0f;
+      color: #07090e;
       font-size: 0.7rem;
-      font-weight: 800;
+      font-weight: 900;
       padding: 4px 9px;
       border-radius: 999px;
       text-transform: uppercase;
     }
 
-    .nav-links {
+    .nav-menu {
       display: flex;
       align-items: center;
-      gap: 22px;
-      font-size: 0.9rem;
+      gap: 20px;
+      font-size: 0.88rem;
       color: var(--muted);
     }
 
-    .nav-links a:hover {
+    .nav-menu a:hover {
       color: var(--text);
     }
 
@@ -109,8 +111,8 @@
       gap: 8px;
       padding: 12px 20px;
       border-radius: 12px;
-      font-weight: 700;
-      font-size: 0.94rem;
+      font-weight: 800;
+      font-size: 0.92rem;
       cursor: pointer;
       border: none;
       transition: transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
@@ -120,62 +122,71 @@
       transform: translateY(-1px);
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: #051409;
+    .btn-wa {
+      background: var(--wa);
+      color: #041509;
     }
 
-    .btn-primary:hover {
-      background: var(--accent-dark);
+    .btn-wa:hover {
+      background: var(--wa-dark);
       color: #fff;
     }
 
-    .btn-secondary {
-      background: var(--bg-card-2);
+    .btn-gold {
+      background: var(--gold);
+      color: #090702;
+    }
+
+    .btn-gold:hover {
+      background: var(--gold-bright);
+    }
+
+    .btn-ghost {
+      background: var(--surface-2);
       color: var(--text);
       border: 1px solid var(--border);
     }
 
     .btn-sm {
       padding: 9px 14px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       border-radius: 10px;
     }
 
     /* Hero */
     .hero {
-      padding: 64px 0 56px;
+      padding: 54px 0 64px;
       background:
-        radial-gradient(circle at 82% 18%, rgba(34, 197, 94, 0.14), transparent 42%),
-        radial-gradient(circle at 14% 22%, rgba(245, 158, 11, 0.14), transparent 44%);
+        radial-gradient(circle at 80% 15%, rgba(34, 197, 94, 0.14), transparent 42%),
+        radial-gradient(circle at 15% 25%, rgba(245, 158, 11, 0.14), transparent 45%);
     }
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1.08fr 0.92fr;
-      gap: 36px;
-      align-items: center;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 34px;
+      align-items: start;
     }
 
-    .pill {
+    .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      color: #86efac;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fcd34d;
       padding: 6px 12px;
       border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
+      font-size: 0.78rem;
+      font-weight: 800;
       margin-bottom: 16px;
     }
 
     h1 {
-      font-size: clamp(2rem, 4.2vw, 3.2rem);
+      font-size: clamp(2rem, 4vw, 3.1rem);
       line-height: 1.12;
-      letter-spacing: -0.03em;
       font-weight: 900;
+      letter-spacing: -0.03em;
       margin-bottom: 16px;
     }
 
@@ -183,73 +194,84 @@
       color: var(--gold);
     }
 
-    .hero p.lead {
-      font-size: 1.04rem;
+    .lead {
       color: var(--muted);
-      margin-bottom: 24px;
+      font-size: 1.02rem;
+      margin-bottom: 22px;
       max-width: 560px;
     }
 
-    .hero-actions {
+    .hero-cta-row {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
-    .steps-bar {
+    .step-tracker {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      background: var(--bg-card);
+      background: var(--surface);
       border: 1px solid var(--border);
       padding: 10px;
       border-radius: 14px;
+      margin-bottom: 18px;
     }
 
-    .step-pill {
-      text-align: center;
+    .step-node {
       padding: 8px 6px;
       border-radius: 10px;
-      font-size: 0.76rem;
-      font-weight: 700;
+      text-align: center;
+      font-size: 0.74rem;
+      font-weight: 800;
       color: var(--muted);
       background: transparent;
       border: 1px solid transparent;
-      cursor: pointer;
     }
 
-    .step-pill.active {
+    .step-node.active {
       background: rgba(34, 197, 94, 0.14);
       border-color: rgba(34, 197, 94, 0.35);
       color: #86efac;
     }
 
-    /* Phone Mockup (WhatsApp + zap.html) */
-    .phone-frame {
+    .info-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .info-box strong {
+      color: var(--text);
+    }
+
+    /* Smartphone WhatsApp + zap.html */
+    .phone-shell {
       width: 100%;
-      max-width: 390px;
+      max-width: 405px;
       margin: 0 auto;
       background: #0b141a;
-      border: 6px solid #1f2937;
+      border: 6px solid #1e293b;
       border-radius: 34px;
       overflow: hidden;
-      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.7);
     }
 
-    .phone-notch {
-      background: #070d11;
-      height: 24px;
+    .phone-status {
+      background: #060b0f;
+      padding: 5px 18px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
       font-size: 0.7rem;
       color: #94a3b8;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    .wa-header {
+    .wa-top {
       background: #1f2c34;
       padding: 10px 14px;
       display: flex;
@@ -259,37 +281,36 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .wa-profile {
+    .wa-user {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .wa-avatar {
+    .wa-circle {
       width: 36px;
       height: 36px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--gold), #ea580c);
-      color: #080a0f;
+      color: #07090e;
       font-weight: 900;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .wa-name {
-      font-size: 0.9rem;
-      font-weight: 700;
-      line-height: 1.2;
+    .wa-title {
+      font-size: 0.88rem;
+      font-weight: 800;
     }
 
-    .wa-sub {
-      font-size: 0.72rem;
+    .wa-status {
+      font-size: 0.7rem;
       color: #86efac;
     }
 
-    .wa-reset {
+    .wa-btn-reset {
       background: rgba(255, 255, 255, 0.08);
       border: none;
       color: #e2e8f0;
@@ -300,12 +321,8 @@
       cursor: pointer;
     }
 
-    .wa-reset:hover {
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    .wa-body {
-      height: 440px;
+    .wa-chat {
+      height: 465px;
       overflow-y: auto;
       padding: 14px;
       display: flex;
@@ -316,140 +333,156 @@
       background-size: 16px 16px;
     }
 
-    .bubble-user {
+    .msg-client {
       align-self: flex-end;
       background: #005c4b;
       color: #e9edef;
       padding: 8px 12px;
       border-radius: 12px 12px 2px 12px;
       max-width: 82%;
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
 
-    .bubble-bot {
+    .msg-bot {
       align-self: flex-start;
       background: #202c33;
       color: #e9edef;
       padding: 10px 12px;
       border-radius: 12px 12px 12px 2px;
-      max-width: 90%;
-      font-size: 0.83rem;
+      max-width: 92%;
+      font-size: 0.82rem;
       white-space: pre-line;
       box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
 
-    .poll-card {
+    .msg-meta {
+      display: block;
+      text-align: right;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.58);
+      margin-top: 4px;
+    }
+
+    .poll-stack {
       margin-top: 8px;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .poll-btn {
+    .poll-choice {
       width: 100%;
       text-align: left;
-      background: #182229;
+      background: #162027;
       border: 1px solid rgba(34, 197, 94, 0.35);
       color: #86efac;
       padding: 8px 10px;
       border-radius: 9px;
-      font-size: 0.8rem;
+      font-size: 0.79rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s ease;
     }
 
-    .poll-btn:hover {
+    .poll-choice:hover {
       background: rgba(34, 197, 94, 0.18);
     }
 
-    .link-cta-btn {
+    .action-wa-btn {
       display: block;
       width: 100%;
       margin-top: 10px;
       text-align: center;
-      background: var(--accent);
-      color: #051409;
+      background: var(--wa);
+      color: #041509;
       font-weight: 800;
       padding: 10px;
       border-radius: 10px;
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       cursor: pointer;
       border: none;
     }
 
-    .link-cta-btn:hover {
-      background: var(--accent-dark);
+    .action-wa-btn:hover {
+      background: var(--wa-dark);
       color: #fff;
     }
 
-    .zap-app-screen {
-      background: #10141d;
-      border: 1px solid rgba(245, 158, 11, 0.35);
+    /* Tela interna do zap.html */
+    .zap-panel {
+      background: #0f1420;
+      border: 1px solid rgba(245, 158, 11, 0.45);
       border-radius: 14px;
       padding: 12px;
       color: var(--text);
     }
 
-    .zap-app-top {
+    .zap-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
+      gap: 8px;
       padding-bottom: 8px;
       margin-bottom: 10px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .zap-app-title {
-      font-size: 0.82rem;
-      font-weight: 800;
+    .zap-head-title {
+      font-size: 0.8rem;
+      font-weight: 900;
       color: var(--gold);
     }
 
-    .zap-url-badge {
-      font-size: 0.68rem;
-      background: rgba(255, 255, 255, 0.08);
+    .zap-file-tag {
+      font-size: 0.66rem;
+      background: rgba(255,255,255,0.08);
       padding: 3px 7px;
       border-radius: 6px;
-      color: var(--muted);
+      color: #cbd5e1;
+      font-family: monospace;
     }
 
-    .zap-label {
-      font-size: 0.72rem;
-      color: var(--muted);
-      font-weight: 700;
-      margin: 8px 0 5px;
+    .zap-step-lbl {
       display: block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--muted);
+      margin: 8px 0 5px;
     }
 
-    .zap-grid-opts {
+    .zap-opts-2 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 6px;
     }
 
-    .zap-opt {
-      background: #181f2e;
+    .zap-opts-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .zap-pill-btn {
+      background: #171f30;
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 7px 8px;
+      padding: 7px 6px;
       border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.73rem;
+      font-weight: 700;
       cursor: pointer;
       text-align: center;
     }
 
-    .zap-opt.selected {
-      border-color: var(--gold);
+    .zap-pill-btn.selected {
       background: rgba(245, 158, 11, 0.16);
+      border-color: var(--gold);
       color: #fde68a;
     }
 
-    .zap-input {
+    .zap-field {
       width: 100%;
-      background: #181f2e;
+      background: #171f30;
       border: 1px solid var(--border);
       color: var(--text);
       padding: 8px 10px;
@@ -458,7 +491,7 @@
       margin-top: 4px;
     }
 
-    .wa-footer-bar {
+    .wa-bottom-bar {
       background: #1f2c34;
       padding: 10px 12px;
       display: flex;
@@ -466,7 +499,7 @@
       border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .wa-quick-send {
+    .wa-send-oi {
       flex: 1;
       background: #2a3942;
       color: #e9edef;
@@ -479,38 +512,32 @@
       text-align: left;
     }
 
-    .wa-quick-send:hover {
+    .wa-send-oi:hover {
       background: #354752;
     }
 
     /* Sections */
-    section {
+    section.band {
       padding: 68px 0;
       border-top: 1px solid var(--border);
     }
 
-    .section-head {
+    .band-head {
       text-align: center;
-      max-width: 720px;
-      margin: 0 auto 44px;
+      max-width: 740px;
+      margin: 0 auto 42px;
     }
 
-    .section-head h2 {
-      font-size: clamp(1.65rem, 3.3vw, 2.4rem);
+    .band-head h2 {
+      font-size: clamp(1.6rem, 3.2vw, 2.35rem);
       font-weight: 900;
       letter-spacing: -0.025em;
       margin-bottom: 10px;
     }
 
-    .section-head p {
+    .band-head p {
       color: var(--muted);
-      font-size: 1rem;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      font-size: 0.98rem;
     }
 
     .grid-2 {
@@ -519,16 +546,22 @@
       gap: 22px;
     }
 
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
     .card {
-      background: var(--bg-card);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 24px;
     }
 
-    .card-tag {
+    .badge {
       display: inline-block;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -537,131 +570,119 @@
       margin-bottom: 12px;
     }
 
-    .tag-purple {
-      background: rgba(168, 85, 247, 0.16);
-      color: #d8b4fe;
-    }
-
-    .tag-blue {
-      background: rgba(59, 130, 246, 0.16);
-      color: #93c5fd;
-    }
-
-    .tag-gold {
-      background: rgba(245, 158, 11, 0.16);
-      color: #fcd34d;
-    }
-
-    .tag-green {
-      background: rgba(34, 197, 94, 0.16);
-      color: #86efac;
-    }
+    .b-purple { background: rgba(192, 132, 252, 0.16); color: #e9d5ff; }
+    .b-blue { background: rgba(56, 189, 248, 0.16); color: #bae6fd; }
+    .b-gold { background: rgba(245, 158, 11, 0.16); color: #fde68a; }
+    .b-green { background: rgba(34, 197, 94, 0.16); color: #86efac; }
 
     .card h3 {
-      font-size: 1.14rem;
+      font-size: 1.12rem;
       font-weight: 800;
       margin-bottom: 8px;
     }
 
     .card p {
       color: var(--muted);
-      font-size: 0.93rem;
+      font-size: 0.92rem;
     }
 
-    .list-clean {
+    .check-list {
       list-style: none;
       margin-top: 14px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      font-size: 0.89rem;
+      font-size: 0.88rem;
       color: var(--muted);
     }
 
-    .list-clean li::before {
+    .check-list li::before {
       content: "✓ ";
-      color: var(--accent);
-      font-weight: 800;
+      color: var(--wa);
+      font-weight: 900;
     }
 
-    .studio-preview {
+    /* Estúdio interativo mini-preview */
+    .studio-box {
       margin-top: 16px;
-      background: #0b0e16;
+      background: #080b12;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 12px;
     }
 
-    .timeline-track {
+    .tracks {
       display: flex;
       gap: 6px;
       margin-top: 8px;
     }
 
-    .track-clip {
+    .track {
       flex: 1;
-      padding: 8px;
+      padding: 8px 6px;
       border-radius: 8px;
-      font-size: 0.74rem;
-      font-weight: 700;
+      font-size: 0.72rem;
+      font-weight: 800;
       text-align: center;
     }
 
-    .clip-1 { background: rgba(168, 85, 247, 0.22); color: #e9d5ff; border: 1px solid rgba(168, 85, 247, 0.4); }
-    .clip-2 { background: rgba(59, 130, 246, 0.22); color: #bfdbfe; border: 1px solid rgba(59, 130, 246, 0.4); }
-    .clip-3 { background: rgba(34, 197, 94, 0.22); color: #bbf7d0; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .t1 { background: rgba(192, 132, 252, 0.18); color: #f3e8ff; border: 1px solid rgba(192, 132, 252, 0.35); }
+    .t2 { background: rgba(56, 189, 248, 0.18); color: #e0f2fe; border: 1px solid rgba(56, 189, 248, 0.35); }
+    .t3 { background: rgba(34, 197, 94, 0.18); color: #dcfce7; border: 1px solid rgba(34, 197, 94, 0.35); }
 
-    .cmd-chips {
+    /* Modo Patrão */
+    .cmd-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 14px;
     }
 
-    .chip {
-      background: var(--bg-card-2);
+    .cmd-btn {
+      background: var(--surface-2);
       border: 1px solid var(--border);
       color: var(--text);
       padding: 7px 11px;
       border-radius: 9px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
     }
 
-    .chip:hover, .chip.active {
+    .cmd-btn.active, .cmd-btn:hover {
       border-color: var(--gold);
       color: var(--gold);
     }
 
-    .patrao-screen {
-      background: #090c12;
+    .patrao-box {
+      background: #080b12;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      min-height: 200px;
+      min-height: 190px;
     }
 
-    .pricing-card {
+    /* Plano */
+    .plan-card {
       max-width: 560px;
       margin: 0 auto;
-      background: linear-gradient(180deg, var(--bg-card-2), var(--bg-card));
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      background: linear-gradient(180deg, var(--surface-2), var(--surface));
+      border: 1px solid rgba(245, 158, 11, 0.45);
       border-radius: 22px;
-      padding: 34px;
+      padding: 32px;
       text-align: center;
     }
 
-    .price {
-      font-size: 2.9rem;
+    .price-big {
+      font-size: 2.85rem;
       font-weight: 900;
       margin: 10px 0 4px;
     }
 
-    .price span {
+    .price-big span {
       font-size: 1rem;
       color: var(--muted);
       font-weight: 500;
@@ -669,31 +690,31 @@
 
     footer {
       border-top: 1px solid var(--border);
-      padding: 36px 0;
+      padding: 34px 0;
       color: var(--muted);
       font-size: 0.88rem;
     }
 
-    .footer-inner {
+    .footer-flex {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      align-items: center;
+      gap: 14px;
     }
 
     @media (max-width: 920px) {
       .hero-grid,
-      .grid-3,
-      .grid-2 {
+      .grid-2,
+      .grid-3 {
         grid-template-columns: 1fr;
       }
 
-      .nav-links {
+      .nav-menu {
         display: none;
       }
 
-      .steps-bar {
+      .step-tracker {
         grid-template-columns: repeat(2, 1fr);
       }
     }
@@ -702,78 +723,82 @@
 <body>
 
   <header>
-    <div class="container nav">
-      <a href="#" class="brand">
-        <span>KBS SISTEMAS</span>
-        <span class="brand-badge">KBS</span>
+    <div class="container nav-wrap">
+      <a href="#" class="logo">
+        <span>KBS SISTEMA</span>
+        <span class="logo-tag">Oficial</span>
       </a>
-      <nav class="nav-links">
-        <a href="#jornada">Simulador WhatsApp</a>
-        <a href="#estudio">Editor Vídeo & Foto</a>
-        <a href="#ecossistema">Todas as Funções</a>
-        <a href="#modo-patrao">Modo Patrão</a>
-        <a href="#plano">Investimento</a>
+      <nav class="nav-menu">
+        <a href="#simulador">WhatsApp → zap.html</a>
+        <a href="#estudio">Vídeo & Foto</a>
+        <a href="#funcoes">Todas as Funções</a>
+        <a href="#patrao">Modo Patrão</a>
+        <a href="#contratar">Planos</a>
       </nav>
       <a
-        href="https://wa.me/5567999673200?text=Ol%C3%A1%2C%20quero%20conhecer%20e%20ativar%20o%20KBS%20Sistemas!"
+        href="https://wa.me/5567999673200?text=Ol%C3%A1!%20Vi%20a%20apresenta%C3%A7%C3%A3o%20do%20KBS%20Sistema%20e%20quero%20ativar!"
         target="_blank"
         rel="noopener"
-        class="btn btn-primary btn-sm"
+        class="btn btn-wa btn-sm"
       >
-        Testar Agora
+        Chamar no WhatsApp
       </a>
     </div>
   </header>
 
   <main>
-    <!-- HERO COM SIMULADOR PASSO A PASSO DO WHATSAPP ATÉ O ZAP.HTML -->
-    <section class="hero" id="jornada" style="border-top: none;">
+    <!-- SIMULADOR PASSO A PASSO: OI -> ENQUETE -> ZAP.HTML -> CONFIRMAÇÃO -->
+    <section class="hero" id="simulador">
       <div class="container hero-grid">
         <div>
-          <div class="pill">📱 KBS Sistemas • Teste ao vivo no celular ao lado</div>
-          <h1>Veja na prática como o cliente agenda no <span>WhatsApp</span> até abrir o <span>zap.html</span>.</h1>
+          <div class="eyebrow">🚀 DEMONSTRAÇÃO INTERATIVA • WHATSAPP + ZAP.HTML</div>
+          <h1>O cliente manda <span>"Oi"</span>, clica nos botões e agenda no <span>zap.html</span>.</h1>
           <p class="lead">
-            Clique nos botões dentro da tela do WhatsApp ao lado para simular a jornada real: o cliente manda <strong>"Oi"</strong>, escolhe na enquete, abre o painel <strong>zap.html</strong>, seleciona serviço, horário e recebe a confirmação automática.
+            Teste na tela ao lado como funciona a conversa completa: o cliente fala <strong>"Oi"</strong>, escolhe na enquete, abre a tela do <strong>zap.html</strong>, seleciona serviço, profissional, horário e recebe a confirmação automática no WhatsApp.
           </p>
 
-          <div class="hero-actions">
-            <button type="button" class="btn btn-primary" onclick="iniciarFluxoOi()">
-              ▶ Simular Cliente Mandando "Oi"
+          <div class="hero-cta-row">
+            <button type="button" class="btn btn-wa" onclick="reiniciarSimulacao()">
+              ▶ Começar do "Oi"
             </button>
-            <button type="button" class="btn btn-secondary" onclick="abrirTelaZapHtml()">
-              📅 Ir Direto para o zap.html
+            <button type="button" class="btn btn-gold" onclick="abrirZapHtmlNaConversa()">
+              ⚡ Abrir zap.html Agora
             </button>
           </div>
 
-          <div class="steps-bar" id="stepsIndicator">
-            <div class="step-pill active" id="step-1">1. Cliente diz "Oi"</div>
-            <div class="step-pill" id="step-2">2. Enquete no Zap</div>
-            <div class="step-pill" id="step-3">3. Tela zap.html</div>
-            <div class="step-pill" id="step-4">4. Confirmado!</div>
+          <div class="step-tracker">
+            <div class="step-node active" id="st-1">1. Manda "Oi"</div>
+            <div class="step-node" id="st-2">2. Enquete</div>
+            <div class="step-node" id="st-3">3. zap.html</div>
+            <div class="step-node" id="st-4">4. Confirmado</div>
+          </div>
+
+          <div class="info-box">
+            <strong>Como funciona na prática:</strong> Quando o cliente toca no botão do <strong>zap.html</strong> dentro do WhatsApp, ele já cai pronto para escolher serviço, profissional, data e horário livre — sem ocupar horário duplicado e já disparando lembretes automáticos (24h, 1h e 30min antes).
           </div>
         </div>
 
         <!-- CELULAR INTERATIVO -->
-        <div class="phone-frame">
-          <div class="phone-notch">
-            <span>KBS Atendimento</span>
-            <span>5G • 100%</span>
+        <div class="phone-shell">
+          <div class="phone-status">
+            <span>KBS Sistema</span>
+            <span>WhatsApp • Online</span>
           </div>
-          <div class="wa-header">
-            <div class="wa-profile">
-              <div class="wa-avatar">KBS</div>
+          <div class="wa-top">
+            <div class="wa-user">
+              <div class="wa-circle">KBS</div>
               <div>
-                <div class="wa-name">KBS Sistemas (Bot Oficial)</div>
-                <div class="wa-sub">online • resposta instantânea</div>
+                <div class="wa-title">Atendimento KBS Sistema</div>
+                <div class="wa-status">bot automático • responde na hora</div>
               </div>
             </div>
-            <button type="button" class="wa-reset" onclick="resetarChat()">Reiniciar</button>
+            <button type="button" class="wa-btn-reset" onclick="reiniciarSimulacao()">Reiniciar</button>
           </div>
 
-          <div class="wa-body" id="waBody"></div>
+          <div class="wa-chat" id="waChat"></div>
 
-          <div class="wa-footer-bar">
-            <button type="button" class="wa-quick-send" onclick="iniciarFluxoOi()">
+          <div class="wa-bottom-bar">
+            <button type="button" class="wa-send-oi" onclick="enviarOiUsuario()">
               💬 Toque aqui para enviar "Oi" como cliente...
             </button>
           </div>
@@ -781,41 +806,422 @@
       </div>
     </section>
 
-    <!-- ESTÚDIO DE MARKETING INTEGRADO (VÍDEO ESTILO CAPCUT + FOTO ESTILO CANVA) -->
-    <section id="estudio">
+    <!-- ESTÚDIO DE VÍDEO (ESTILO CAPCUT) E FOTOS/ARTES (ESTILO CANVA) -->
+    <section class="band" id="estudio">
       <div class="container">
-        <div class="section-head">
-          <h2>Mais que agenda: Estúdio de Marketing pronto no KBS Sistemas</h2>
-          <p>Crie vídeos curtos e artes promocionais sem depender de aplicativos externos ou designer para cada postagem.</p>
+        <div class="band-head">
+          <h2>Estúdio de Vídeo e Fotos pronto dentro do KBS Sistema</h2>
+          <p>Faça divulgação profissional sem depender de designer ou gastar tempo montando postagens em vários apps.</p>
         </div>
 
         <div class="grid-2">
           <div class="card">
-            <span class="card-tag tag-purple">🎬 Editor de Vídeo (Estilo CapCut)</span>
-            <h3>Edite Reels, TikTok e Status direto no navegador</h3>
+            <span class="badge b-purple">🎬 Editor de Vídeo • Estilo CapCut</span>
+            <h3>Crie Reels, TikTok e Status que enchem a agenda</h3>
             <p>
-              Corte clipes, junte cenas do antes e depois, adicione legendas chamativas, trilha sonora e exporte vídeos prontos para divulgar e lotar a agenda.
+              Corte trechos, junte cenas do antes e depois, adicione legendas, trilha sonora e exporte vídeos no formato vertical (9:16) direto do sistema.
             </p>
-            <div class="studio-preview">
-              <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--muted);">
-                <span>Linha do Tempo • 00:15s</span>
-                <span style="color:#d8b4fe; font-weight:700;">1080x1920 (Reels/Status)</span>
+            <div class="studio-box">
+              <div style="display:flex; justify-content:space-between; font-size:0.74rem; color:var(--muted);">
+                <span>Timeline • 00:15s</span>
+                <span style="color:#e9d5ff; font-weight:800;">Vertical 9:16 • HD</span>
               </div>
-              <div class="timeline-track">
-                <div class="track-clip clip-1">✂️ Corte & Transição</div>
-                <div class="track-clip clip-2">🔤 Legenda Dinâmica</div>
-                <div class="track-clip clip-3">🎵 Áudio + Logo</div>
+              <div class="tracks">
+                <div class="track t1">✂️ Corte & Transição</div>
+                <div class="track t2">🔤 Legenda & CTA</div>
+                <div class="track t3">🎵 Música + Marca</div>
               </div>
             </div>
-            <ul class="list-clean">
-              <li>Cortes rápidos, junção de vídeos e ajuste de formato vertical (9:16).</li>
-              <li>Textos, chamadas para ação ("Agende pelo link na bio") e identidade da empresa.</li>
-              <li>Ideal para mostrar resultados de cortes, barba, estética e clínicas.</li>
+            <ul class="check-list">
+              <li>Ideal para mostrar cortes, barba, procedimentos e resultados reais.</li>
+              <li>Chamada direta para agendar no link do WhatsApp / zap.html.</li>
             </ul>
           </div>
 
           <div class="card">
-            <span class="card-tag tag-blue">🎨 Editor de Artes e Fotos (Estilo Canva)</span>
-            <h3>Crie banners, tabelas de preços e artes promocionais</h3>
+            <span class="badge b-blue">🎨 Editor de Fotos e Artes • Estilo Canva</span>
+            <h3>Monte artes, tabelas de preços e promoções em segundos</h3>
             <p>
-              Monte artes profissionais em segundos com modelos prontos, textos 
+              Use modelos prontos, edite textos, insira preços, selos promocionais, foto do espaço e identidade visual da empresa para postar ou disparar.
+            </p>
+            <div class="studio-box">
+              <div style="display:flex; justify-content:space-between; font-size:0.74rem; color:var(--muted);">
+                <span>Estúdio Visual • Templates & Camadas</span>
+                <span style="color:#bae6fd; font-weight:800;">Pronto p/ WhatsApp & Insta</span>
+              </div>
+              <div class="tracks">
+                <div class="track t2">🖼️ Templates Prontos</div>
+                <div class="track t3">🏷️ Tabela de Preços</div>
+                <div class="track t1">✨ Arte de Promoção</div>
+              </div>
+            </div>
+            <ul class="check-list">
+              <li>Artes prontas para avisar horários livres do dia, combos e datas especiais.</li>
+              <li>Cores, fontes e logotipo personalizados com a cara do negócio.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TODAS AS FUNÇÕES DO SISTEMA -->
+    <section class="band" id="funcoes">
+      <div class="container">
+        <div class="band-head">
+          <h2>Todas as funcionalidades do KBS Sistema</h2>
+          <p>Automação no WhatsApp, agendamento online no zap.html, controle financeiro, retenção de clientes e gestão multi-empresa.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <span class="badge b-green">Atendimento WhatsApp</span>
+            <h3>Bot 24h com Enquetes Inteligentes</h3>
+            <p>Responde preços, duração de cada serviço, endereço com mapa, redes sociais, lista de profissionais e pausa o bot quando o atendente assume.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge b-gold">Agendamento zap.html</span>
+            <h3>Link Direto Sem Senha</h3>
+            <p>O cliente clica no botão no WhatsApp, abre o zap.html, escolhe serviço, profissional e horário disponível na hora, sem conflito de agenda.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge b-blue">Anti-Faltas Automático</span>
+            <h3>Lembretes 24h, 1h e 30min</h3>
+            <p>Envia lembretes automáticos, pede confirmação (CONFIRMAR / CANCELAR), manda localização 30 minutos antes e solicita avaliação após o atendimento.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge b-purple">Fidelização & Vendas</span>
+            <h3>Recuperação de Sumidos + Disparador</h3>
+            <p>Chama de volta clientes há 25+ dias sem agendar, envia mensagem de aniversário com desconto e permite campanhas segmentadas pelo WhatsApp.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge b-gold">Gestão & Financeiro</span>
+            <h3>Caixa, Comandas, Comissões e Estoque</h3>
+            <p>Acompanhe entradas, despesas, lucro líquido, comissões por profissional, pacotes/assinaturas e controle de estoque com baixa automática.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge b-green">Multi-Empresas SaaS</span>
+            <h3>Cada Empresa com Seu Link</h3>
+            <p>Cadastre barbearias, clínicas, estúdios ou salões — cada um com seu acesso, painel, QR Code, serviços, cores e cobrança recorrente.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODO PATRÃO INTERATIVO -->
+    <section class="band" id="patrao">
+      <div class="container">
+        <div class="band-head">
+          <h2>Modo Patrão: gerencie tudo direto pelo WhatsApp</h2>
+          <p>Clique nos comandos abaixo para ver as respostas automáticas do sistema na gestão do dia a dia.</p>
+        </div>
+
+        <div class="card" style="max-width: 840px; margin: 0 auto;">
+          <div class="cmd-bar" id="cmdBar">
+            <button type="button" class="cmd-btn active" data-cmd="agenda">agenda</button>
+            <button type="button" class="cmd-btn" data-cmd="marcar">marcar Lucas 16:00 Corte</button>
+            <button type="button" class="cmd-btn" data-cmd="bloquear">bloquear 12:00 as 14:00 almoço</button>
+            <button type="button" class="cmd-btn" data-cmd="caixa">caixa</button>
+            <button type="button" class="cmd-btn" data-cmd="estoque">entrada estoque Pomada 10</button>
+            <button type="button" class="cmd-btn" data-cmd="sumidos">sumidos</button>
+            <button type="button" class="cmd-btn" data-cmd="assinantes">assinantes</button>
+          </div>
+          <div class="patrao-box" id="patraoBox"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANO / CONTATO -->
+    <section class="band" id="contratar">
+      <div class="container">
+        <div class="band-head">
+          <h2>Leve o KBS Sistema para o seu negócio</h2>
+          <p>Ativação guiada, configuração inicial e suporte direto pelo WhatsApp.</p>
+        </div>
+
+        <div class="plan-card">
+          <div class="badge b-gold">Plano Completo KBS Sistema</div>
+          <div class="price-big">R$ 60<span>,00 / mês</span></div>
+          <p style="color: var(--muted); font-size: 0.92rem; margin-bottom: 18px;">
+            WhatsApp Bot + zap.html + Painel Administrativo + Modo Patrão + Estúdio Vídeo & Foto
+          </p>
+          <ul class="check-list" style="text-align: left; margin-bottom: 24px;">
+            <li>Atendimento automático no WhatsApp com enquetes e botão direto do zap.html</li>
+            <li>Agendamento online com bloqueio de horários e lembretes automáticos</li>
+            <li>Editor de vídeos (estilo CapCut) e editor de fotos/artes (estilo Canva)</li>
+            <li>Caixa, comandas, comissões, estoque, clientes sumidos e aniversariantes</li>
+            <li>Modo Patrão completo direto no WhatsApp do gestor</li>
+          </ul>
+          <a
+            href="https://wa.me/5567999673200?text=Ol%C3%A1!%20Quero%20ativar%20o%20KBS%20Sistema%20e%20ver%20uma%20demonstra%C3%A7%C3%A3o!"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-wa"
+            style="width: 100%;"
+          >
+            Falar Agora no WhatsApp (67) 99967-3200
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-flex">
+      <div><strong>KBS Sistema</strong> — Automação WhatsApp, Agendamento zap.html & Estúdio de Marketing.</div>
+      <div>WhatsApp: (67) 99967-3200</div>
+    </div>
+  </footer>
+
+  <script>
+    const waChat = document.getElementById("waChat");
+
+    let dadosAgendamento = {
+      servico: "Corte de Cabelo (R$ 50)",
+      profissional: "Kiko",
+      horario: "15:00",
+      cliente: "Rafael"
+    };
+
+    function horaAtualCurta() {
+      const now = new Date();
+      return now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
+    }
+
+    function setEtapa(num) {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById("st-" + i);
+        if (el) el.classList.toggle("active", i === num);
+      }
+    }
+
+    function rolarChat() {
+      waChat.scrollTop = waChat.scrollHeight;
+    }
+
+    function addCliente(texto) {
+      const div = document.createElement("div");
+      div.className = "msg-client";
+      div.innerHTML = `${texto}<span class="msg-meta">${horaAtualCurta()} ✓✓</span>`;
+      waChat.appendChild(div);
+      rolarChat();
+    }
+
+    function addBot(texto, extraHtml = "") {
+      const div = document.createElement("div");
+      div.className = "msg-bot";
+      div.textContent = texto;
+      if (extraHtml) {
+        const box = document.createElement("div");
+        box.innerHTML = extraHtml;
+        div.appendChild(box);
+      }
+      const meta = document.createElement("span");
+      meta.className = "msg-meta";
+      meta.textContent = horaAtualCurta();
+      div.appendChild(meta);
+      waChat.appendChild(div);
+      rolarChat();
+    }
+
+    function reiniciarSimulacao() {
+      waChat.innerHTML = "";
+      setEtapa(1);
+      addBot(
+        "👋 Simulador pronto!\n\nToque em \"Enviar Oi\" na barra de baixo ou clique no botão abaixo para ver a conversa do cliente começando."
+      );
+      const wrap = document.createElement("div");
+      wrap.innerHTML = `<button type="button" class="action-wa-btn" onclick="enviarOiUsuario()">💬 Enviar "Oi"</button>`;
+      waChat.appendChild(wrap);
+      rolarChat();
+    }
+
+    function enviarOiUsuario() {
+      waChat.innerHTML = "";
+      setEtapa(1);
+      addCliente("Oi");
+
+      setTimeout(() => {
+        setEtapa(2);
+        const enquete = `
+          <div class="poll-stack">
+            <button type="button" class="poll-choice" onclick="escolherEnquete('agendar')">📅 Agendar Horário (zap.html)</button>
+            <button type="button" class="poll-choice" onclick="escolherEnquete('precos')">💰 Preços e Serviços</button>
+            <button type="button" class="poll-choice" onclick="escolherEnquete('local')">📍 Localização e Horários</button>
+            <button type="button" class="poll-choice" onclick="escolherEnquete('humano')">🙋 Falar com Atendente</button>
+          </div>
+        `;
+        addBot(
+          "Fala, chefe! 💈 Tudo bem?\nComo posso te ajudar hoje? Escolha uma opção:",
+          enquete
+        );
+      }, 320);
+    }
+
+    function escolherEnquete(escolha) {
+      if (escolha === "precos") {
+        addCliente("💰 Preços e Serviços");
+        setTimeout(() => {
+          addBot(
+            "📋 Tabela de Serviços:\n\n✂️ Corte de Cabelo — R$ 50 (30 min)\n🧔 Barba — R$ 45 (30 min)\n🔥 Combo Corte + Barba — R$ 85 (60 min)\n\nQuer garantir seu horário agora?",
+            `<button type="button" class="action-wa-btn" onclick="escolherEnquete('agendar')">📅 Abrir zap.html para Agendar</button>`
+          );
+        }, 280);
+        return;
+      }
+
+      if (escolha === "local") {
+        addCliente("📍 Localização e Horários");
+        setTimeout(() => {
+          addBot(
+            "📍 Av. Mato Grosso do Sul, 207\n🕒 Seg a Sáb • Horários disponíveis em tempo real no painel.\n\nToque abaixo para marcar seu horário:",
+            `<button type="button" class="action-wa-btn" onclick="escolherEnquete('agendar')">📅 Ir para zap.html</button>`
+          );
+        }, 280);
+        return;
+      }
+
+      if (escolha === "humano") {
+        addCliente("🙋 Falar com Atendente");
+        setTimeout(() => {
+          addBot(
+            "Fechado! Pausamos o bot automaticamente por alguns minutos e avisamos a equipe para responder você aqui mesmo. 👍",
+            `<button type="button" class="action-wa-btn" onclick="escolherEnquete('agendar')">📅 Ou Agendar direto no zap.html</button>`
+          );
+        }, 280);
+        return;
+      }
+
+      addCliente("📅 Agendar Horário");
+      setTimeout(() => {
+        setEtapa(3);
+        addBot(
+          "Perfeito! Clique no botão abaixo para abrir o zap.html e escolher serviço, profissional e horário disponível:",
+          `<button type="button" class="action-wa-btn" onclick="abrirZapHtmlNaConversa()">🔗 Entrar no zap.html</button>`
+        );
+      }, 280);
+    }
+
+    function abrirZapHtmlNaConversa() {
+      setEtapa(3);
+      const painel = document.createElement("div");
+      painel.className = "zap-panel";
+      painel.innerHTML = `
+        <div class="zap-head">
+          <span class="zap-head-title">⚡ AGENDAMENTO ONLINE</span>
+          <span class="zap-file-tag">zap.html</span>
+        </div>
+
+        <span class="zap-step-lbl">1. Escolha o serviço:</span>
+        <div class="zap-opts-2">
+          <button type="button" class="zap-pill-btn selected" onclick="marcarCampo(this, 'servico', 'Corte de Cabelo (R$ 50)')">Corte • R$ 50</button>
+          <button type="button" class="zap-pill-btn" onclick="marcarCampo(this, 'servico', 'Combo Corte + Barba (R$ 85)')">Combo • R$ 85</button>
+        </div>
+
+        <span class="zap-step-lbl">2. Profissional:</span>
+        <div class="zap-opts-2">
+          <button type="button" class="zap-pill-btn selected" onclick="marcarCampo(this, 'profissional', 'Kiko')">Kiko</button>
+          <button type="button" class="zap-pill-btn" onclick="marcarCampo(this, 'profissional', 'Equipe')">Qualquer Livre</button>
+        </div>
+
+        <span class="zap-step-lbl">3. Horário disponível (Hoje):</span>
+        <div class="zap-opts-3">
+          <button type="button" class="zap-pill-btn selected" onclick="marcarCampo(this, 'horario', '15:00')">15:00</button>
+          <button type="button" class="zap-pill-btn" onclick="marcarCampo(this, 'horario', '16:20')">16:20</button>
+          <button type="button" class="zap-pill-btn" onclick="marcarCampo(this, 'horario', '17:40')">17:40</button>
+        </div>
+
+        <span class="zap-step-lbl">4. Seu nome:</span>
+        <input type="text" class="zap-field" id="zapNomeInput" value="${dadosAgendamento.cliente}" placeholder="Digite seu nome" />
+
+        <button type="button" class="action-wa-btn" onclick="finalizarNoZapHtml()">
+          ✅ Confirmar Agendamento no zap.html
+        </button>
+      `;
+      waChat.appendChild(painel);
+      rolarChat();
+    }
+
+    function marcarCampo(btn, chave, valor) {
+      const grupo = btn.parentElement;
+      grupo.querySelectorAll(".zap-pill-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      dadosAgendamento[chave] = valor;
+    }
+
+    function finalizarNoZapHtml() {
+      const inp = document.getElementById("zapNomeInput");
+      if (inp && inp.value.trim()) {
+        dadosAgendamento.cliente = inp.value.trim();
+      }
+      setEtapa(4);
+      addBot(
+        "✅ AGENDAMENTO CONFIRMADO!\n\n" +
+        "👤 Cliente: " + dadosAgendamento.cliente + "\n" +
+        "✂️ Serviço: " + dadosAgendamento.servico + "\n" +
+        "💈 Profissional: " + dadosAgendamento.profissional + "\n" +
+        "⏰ Horário: Hoje às " + dadosAgendamento.horario + "\n\n" +
+        "🔔 Você receberá lembretes automáticos antes do horário!"
+      );
+    }
+
+    // Modo Patrão
+    const comandosPatrao = {
+      agenda: {
+        cmd: "agenda",
+        resp: "📅 AGENDA DE HOJE\n\n⏰ 09:00 - Bruno (Corte)\n⏰ 10:30 - Marcos (Combo)\n⏰ 15:00 - " + dadosAgendamento.cliente + " (" + dadosAgendamento.servico + ")"
+      },
+      marcar: {
+        cmd: "marcar Lucas 16:00 Corte",
+        resp: "✅ HORÁRIO MARCADO PELO PATRÃO!\n\n👤 Cliente: Lucas\n⏰ Horário: 16:00\n✂️ Serviço: Corte\n📲 Confirmação enviada no WhatsApp!"
+      },
+      bloquear: {
+        cmd: "bloquear 12:00 as 14:00 almoço",
+        resp: "🔒 HORÁRIO BLOQUEADO!\n\n⏰ 12:00 às 14:00\n📝 Motivo: almoço\n✅ Ninguém consegue agendar nesse intervalo."
+      },
+      caixa: {
+        cmd: "caixa",
+        resp: "📊 RESUMO DO CAIXA\n\n💰 Entradas do dia: R$ 520,00\n✂️ Atendimentos: 10\n💵 Comissões calculadas automaticamente por profissional."
+      },
+      estoque: {
+        cmd: "entrada estoque Pomada 10",
+        resp: "📦 ESTOQUE ATUALIZADO!\n\n🔸 Produto: Pomada\n➕ Adicionado: +10 unidades\n📊 Saldo atual: 22 unidades."
+      },
+      sumidos: {
+        cmd: "sumidos",
+        resp: "🔄 RECUPERAÇÃO DE SUMIDOS\n\n📲 Mensagens enviadas para clientes sem visita há 25+ dias com convite para agendar."
+      },
+      assinantes: {
+        cmd: "assinantes",
+        resp: "🏢 EMPRESAS CADASTRADAS (SAAS)\n\n🟢 Unidade 01 — Ativa\n🟢 Unidade 02 — Ativa\n🟢 kbssistema — Ativo"
+      }
+    };
+
+    const patraoBox = document.getElementById("patraoBox");
+    const cmdButtons = document.querySelectorAll("#cmdBar .cmd-btn");
+
+    function mostrarComandoPatrao(chave) {
+      const item = comandosPatrao[chave] || comandosPatrao.agenda;
+      patraoBox.innerHTML = `
+        <div class="msg-client">${item.cmd}</div>
+        <div class="msg-bot">${item.resp}</div>
+      `;
+    }
+
+    cmdButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        cmdButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        mostrarComandoPatrao(btn.dataset.cmd);
+      });
+    });
+
+    enviarOiUsuario();
+    mostrarComandoPatrao("agenda");
+  </script>
+</body>
+</html>
