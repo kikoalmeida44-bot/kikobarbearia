@@ -44,7 +44,6 @@
     
     <style>
         :root {
-            /* Variáveis Dinâmicas de Estética White-Label (Serão injetadas via JS) */
             --cor-principal: #d4af37;
             --fonte-principal: 'Montserrat', sans-serif;
         }
@@ -81,16 +80,8 @@
         }
 
         @keyframes pulseLogoPulsante {
-            0% {
-                transform: scale(0.92);
-                filter: brightness(0.9);
-                box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-            }
-            100% {
-                transform: scale(1.08);
-                filter: brightness(1.15);
-                box-shadow: 0 0 45px rgba(212, 175, 55, 0.8);
-            }
+            0% { transform: scale(0.92); filter: brightness(0.9); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+            100% { transform: scale(1.08); filter: brightness(1.15); box-shadow: 0 0 45px rgba(212, 175, 55, 0.8); }
         }
 
         /* VÍDEO DE FUNDO IMERSIVO EM TELA CHEIA */
@@ -115,7 +106,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.5;
+            opacity: 0.35;
             z-index: -3;
         }
         
@@ -125,78 +116,67 @@
             left: 0; 
             width: 100vw; 
             height: 100vh; 
-            background: linear-gradient(to bottom, rgba(5,5,5,0.7) 0%, rgba(5,5,5,0.92) 100%); 
+            background: linear-gradient(to bottom, rgba(5,5,5,0.78) 0%, rgba(5,5,5,0.95) 100%); 
             z-index: -2; 
             pointer-events: none;
         }
 
-        header { position: fixed; top: 0; width: 100%; background-color: rgba(5, 5, 5, 0.9); backdrop-filter: blur(10px); padding: 10px 0; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); z-index: 1000; }
+        header { position: fixed; top: 0; width: 100%; background-color: rgba(5, 5, 5, 0.92); backdrop-filter: blur(10px); padding: 10px 0; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); z-index: 1000; }
         
         .header-brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 2px; }
-        .header-brand img { height: 32px; border-radius: 6px; }
-        h1 { color: var(--cor-principal); margin: 0; font-size: 1.4em; text-transform: uppercase; letter-spacing: 3px; font-weight: 700; font-family: var(--fonte-principal); }
+        .header-brand img { height: 30px; border-radius: 6px; }
+        h1 { color: var(--cor-principal); margin: 0; font-size: 1.25em; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; font-family: var(--fonte-principal); }
         
-        nav { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; padding: 0 10px; gap: 12px; }
-        nav a { color: #cccccc; text-decoration: none; font-weight: 600; text-transform: uppercase; font-size: 0.7em; letter-spacing: 0.5px; font-family: var(--fonte-principal); transition: 0.2s; }
+        nav { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; padding: 0 10px; gap: 10px; }
+        nav a { color: #cccccc; text-decoration: none; font-weight: 600; text-transform: uppercase; font-size: 0.68em; letter-spacing: 0.5px; font-family: var(--fonte-principal); transition: 0.2s; }
         nav a:hover { color: var(--cor-principal); }
         
         .login-empresa-link {
-            color: #888 !important;
+            color: #aaa !important;
             font-size: 0.65em !important;
-            font-weight: 500 !important;
+            font-weight: 600 !important;
             text-transform: none !important;
-            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border: 1px dashed rgba(212, 175, 55, 0.35);
             padding: 2px 8px;
             border-radius: 10px;
-            transition: 0.3s;
-        }
-        .login-empresa-link:hover {
-            color: var(--cor-principal) !important;
-            border-color: var(--cor-principal);
         }
 
-        /* HERO SECTION OTIMIZADA E LIMPA */
-        .hero { position: relative; text-align: center; padding: 140px 20px 60px 20px; overflow: hidden; border-bottom: 2px solid rgba(212, 175, 55, 0.3); }
+        .hero { position: relative; text-align: center; padding: 135px 20px 60px 20px; overflow: hidden; border-bottom: 2px solid rgba(212, 175, 55, 0.3); }
         .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
-        
-        .hero-content h2 { font-size: 2em; margin-bottom: 10px; color: #ffffff; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.9); font-family: var(--fonte-principal); }
-        .hero-content p { font-size: 0.95em; margin-bottom: 25px; color: #dddddd; font-weight: 400; text-shadow: 0 2px 5px rgba(0,0,0,0.9); line-height: 1.5; }
-        
+        .hero-content h2 { font-size: 2em; margin-bottom: 10px; color: #ffffff; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
+        .hero-content p { font-size: 0.95em; margin-bottom: 25px; color: #dddddd; }
         .hero-buttons { display: flex; flex-direction: column; gap: 12px; align-items: center; max-width: 260px; margin: 0 auto; }
         
         .btn-gold { 
             background-color: var(--cor-principal); 
             color: #050505; 
-            width: 100%; 
-            padding: 10px 16px; 
+            padding: 11px 18px; 
             text-decoration: none; 
             font-size: 0.85em; 
-            font-weight: 700; 
+            font-weight: 800; 
             text-transform: uppercase; 
-            border-radius: 4px; 
+            border-radius: 6px; 
             border: 2px solid var(--cor-principal); 
             text-align: center; 
             cursor: pointer; 
             font-family: var(--fonte-principal); 
-            transition: 0.3s; 
+            transition: 0.2s; 
             box-sizing: border-box; 
-            box-shadow: 0 3px 10px rgba(212,175,55,0.25); 
         }
-        .btn-gold:hover { transform: scale(1.03); opacity: 0.95; }
+        .btn-gold:hover { transform: scale(1.02); }
         
         .section { padding: 70px 20px; max-width: 1200px; margin: auto; text-align: center; position: relative; z-index: 1;}
-        .section-title { color: #ffffff; font-size: 1.8em; margin-bottom: 35px; text-transform: uppercase; font-weight: 700; text-shadow: 0 2px 5px rgba(0,0,0,0.8); font-family: var(--fonte-principal); }
+        .section-title { color: #ffffff; font-size: 1.8em; margin-bottom: 35px; text-transform: uppercase; font-weight: 700; }
         .section-title::after { content: ''; display: block; width: 45px; height: 3px; background: var(--cor-principal); margin: 12px auto 0 auto; }
-        .sobre-texto { font-size: 1em; color: #dddddd; max-width: 800px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
+        .sobre-texto { font-size: 1em; color: #dddddd; max-width: 800px; margin: 0 auto; line-height: 1.8; }
         
-        /* EFEITO JANELA DE VIDRO SUPER TRANSPARENTE E SUAVE */
         .card-granulado {
-            background-color: rgba(10, 10, 10, 0.20);
+            background-color: rgba(14, 17, 24, 0.82);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
         }
 
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
@@ -208,60 +188,46 @@
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 35px; }
         .galeria-grid img, .galeria-grid video { width: 100%; height: 320px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* FORMULÁRIO COM O EFEITO JANELA TRANSPARENTE */
         .form-agendamento { padding: 35px; max-width: 600px; margin: 0 auto; text-align: left; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #dddddd; font-size: 0.85em; text-transform: uppercase; font-weight: 600; }
-        .form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"], .form-group input[type="date"], .form-group select { width: 100%; padding: 12px; background-color: rgba(0,0,0,0.3); color: #ffffff; border: 1px solid rgba(255,255,255,0.1); box-sizing: border-box; border-radius: 4px; font-family: var(--fonte-principal); }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background-color: rgba(0,0,0,0.4); color: #ffffff; border: 1px solid rgba(255,255,255,0.14); box-sizing: border-box; border-radius: 6px; font-family: var(--fonte-principal); }
         
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
-        .checkbox-item { display: flex; align-items: center; background: rgba(0,0,0,0.2); padding: 12px 15px; border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; cursor: pointer; transition: 0.3s; }
-        .checkbox-item:hover { border-color: var(--cor-principal); }
-        .checkbox-item input { margin-right: 12px; transform: scale(1.3); accent-color: var(--cor-principal); cursor: pointer;}
+        .checkbox-item { display: flex; align-items: center; background: rgba(0,0,0,0.3); padding: 12px 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; cursor: pointer; }
+        .checkbox-item input { margin-right: 12px; transform: scale(1.2); accent-color: var(--cor-principal); }
         .checkbox-details { display: flex; justify-content: space-between; flex-grow: 1; align-items: center; }
         .checkbox-title { font-weight: 600; color: #fff; font-size: 0.9em; }
         .checkbox-price { color: var(--cor-principal); font-weight: 700; font-size: 0.95em; }
         
-        .resumo-box { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-left: 4px solid var(--cor-principal); display: none; }
-        .resumo-box p { margin: 5px 0; font-size: 1em; color: #ccc; }
-        .resumo-box strong { color: var(--cor-principal); font-size: 1.1em; }
-        
-        /* CAIXA DE HORÁRIOS COM EFEITO JANELA TRANSPARENTE */
+        .resumo-box { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.35); border-left: 4px solid var(--cor-principal); display: none; }
         .horarios-box { text-align: center; color: #cccccc; font-size: 1em; line-height: 1.8; padding: 25px; max-width: 600px; margin: 0 auto;}
-        .horarios-box span { color: var(--cor-principal); font-weight: 700; font-size: 1.05em; }
-        .mapa-link { color: var(--cor-principal); text-decoration: none; font-weight: 700; font-size: 0.95em; border-bottom: 1px dashed var(--cor-principal); transition: 0.3s; padding-bottom: 2px; }
-        .mapa-link:hover { color: #fff; border-color: #fff; }
-        
-        /* CHATBOT INTELIGENTE LOCAL */
-        .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: var(--fonte-principal); }
-        .chat-btn-toggle { background-color: var(--cor-principal); color: #050505; border: none; border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85em; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; font-family: var(--fonte-principal); }
-        .chat-janela { display: none; position: absolute; bottom: 60px; right: 0; width: 320px; background: #0a0a0a; border: 1px solid var(--cor-principal); border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .chat-header { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; color: var(--cor-principal); font-weight: bold; font-size: 0.85em; text-transform: uppercase; }
-        .chat-mensagens { height: 260px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; font-size: 0.85em; }
-        .msg { padding: 8px 10px; border-radius: 6px; max-width: 85%; line-height: 1.4; animation: fadeIn 0.3s ease-in-out; word-wrap: break-word;}
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .horarios-box span { color: var(--cor-principal); font-weight: 700; }
+        .mapa-link { color: var(--cor-principal); text-decoration: none; font-weight: 700; font-size: 0.95em; border-bottom: 1px dashed var(--cor-principal); }
+
+        /* FLUTUANTES PADRÃO (OCULTOS NO MODO kbssistema PARA NÃO COBRIR A TELA) */
+        .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
+        .chat-btn-toggle { background-color: var(--cor-principal); color: #050505; border: none; border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85em; cursor: pointer; text-transform: uppercase; }
+        .chat-janela { display: none; position: absolute; bottom: 55px; right: 0; width: 310px; background: #0a0a0a; border: 1px solid var(--cor-principal); border-radius: 8px; overflow: hidden; }
+        .chat-header { background: #111; padding: 10px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; color: var(--cor-principal); font-weight: bold; font-size: 0.85em; }
+        .chat-mensagens { height: 240px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 0.85em; }
+        .msg { padding: 8px 10px; border-radius: 6px; max-width: 85%; line-height: 1.4; }
         .msg-bot { background: #1a1a1a; color: #fff; align-self: flex-start; border-left: 3px solid var(--cor-principal); }
         .msg-user { background: var(--cor-principal); color: #050505; align-self: flex-end; font-weight: 600; }
-        .msg-digitando { color: #888; font-style: italic; background: transparent; border: none; padding: 5px; }
-        
         .chat-input-area { display: flex; border-top: 1px solid #333; background: #111; padding: 8px; }
-        .chat-input { flex: 1; background: #222; border: 1px solid #444; color: white; padding: 8px 12px; border-radius: 20px; outline: none; font-size: 0.8rem; font-family: var(--fonte-principal);}
-        .chat-send-btn { background: transparent; border: none; color: var(--cor-principal); font-size: 1.1rem; cursor: pointer; padding: 0 8px; font-weight: bold;}
-        
+        .chat-input { flex: 1; background: #222; border: 1px solid #444; color: white; padding: 8px 12px; border-radius: 20px; outline: none; font-size: 0.8rem; }
+        .chat-send-btn { background: transparent; border: none; color: var(--cor-principal); font-size: 1.1rem; cursor: pointer; padding: 0 8px; }
         .chat-opcoes { padding: 8px; background: #111; display: flex; flex-direction: column; gap: 5px; }
-        .chat-opcao-btn { background: #1a1a1a; color: var(--cor-principal); border: 1px solid var(--cor-principal); padding: 6px 10px; text-align: left; border-radius: 4px; cursor: pointer; font-size: 0.75em; font-weight: 600; transition: 0.2s; font-family: var(--fonte-principal); }
-        .chat-opcao-btn:hover { background: var(--cor-principal); color: #050505; }
+        .chat-opcao-btn { background: #1a1a1a; color: var(--cor-principal); border: 1px solid var(--cor-principal); padding: 6px 10px; text-align: left; border-radius: 4px; cursor: pointer; font-size: 0.75em; font-weight: 600; }
 
-        /* BOTÃO FLUTUANTE DO WHATSAPP */
-        .whatsapp-widget { position: fixed; bottom: 20px; left: 20px; z-index: 9999; font-family: var(--fonte-principal); }
-        .whatsapp-btn-float { background-color: #25d366; color: #ffffff; border: none; border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85em; cursor: pointer; box-shadow: 0 4px 15px rgba(37,211,102,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; text-decoration: none; transition: 0.3s; }
-        .whatsapp-btn-float:hover { background-color: #20ba5a; transform: scale(1.05); }
+        .whatsapp-widget { position: fixed; bottom: 20px; left: 20px; z-index: 9998; }
+        .whatsapp-btn-float { background-color: #25d366; color: #ffffff; border: none; border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85em; text-transform: uppercase; text-decoration: none; display: inline-block; }
 
-        /* BLOCO INTERATIVO DO KBS SISTEMA (QUANDO SUBDOMÍNIO = kbssistema) */
+        /* APRESENTAÇÃO LIMPA DO KBS SISTEMA (QUANDO SUBDOMÍNIO = kbssistema) */
         #kbs-sistema-showcase {
             display: none;
-            padding: 130px 20px 60px 20px;
-            max-width: 1160px;
+            padding: 112px 16px 50px 16px;
+            max-width: 1120px;
             margin: 0 auto;
             position: relative;
             z-index: 2;
@@ -269,24 +235,25 @@
         }
         .kbs-grid-2 {
             display: grid;
-            grid-template-columns: 1.05fr 0.95fr;
-            gap: 28px;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
             align-items: start;
         }
         .kbs-grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin-top: 22px;
+            gap: 16px;
+            margin-top: 20px;
         }
         .kbs-phone {
-            max-width: 380px;
+            width: 100%;
+            max-width: 390px;
             margin: 0 auto;
             background: #0b141a;
-            border: 5px solid #222;
-            border-radius: 28px;
+            border: 4px solid #263242;
+            border-radius: 26px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.65);
         }
         .kbs-wa-top {
             background: #1f2c34;
@@ -294,11 +261,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85em;
+            font-size: 0.84em;
             font-weight: 700;
         }
         .kbs-wa-body {
-            height: 390px;
+            height: 410px;
             overflow-y: auto;
             padding: 12px;
             display: flex;
@@ -313,7 +280,7 @@
             padding: 8px 11px;
             border-radius: 10px 10px 2px 10px;
             font-size: 0.82em;
-            max-width: 85%;
+            max-width: 82%;
         }
         .kbs-msg-b {
             align-self: flex-start;
@@ -330,10 +297,10 @@
             width: 100%;
             text-align: left;
             margin-top: 6px;
-            background: #182229;
+            background: #162027;
             border: 1px solid rgba(37, 211, 102, 0.45);
             color: #86efac;
-            padding: 7px 10px;
+            padding: 8px 10px;
             border-radius: 8px;
             font-size: 0.78em;
             font-weight: 700;
@@ -349,46 +316,32 @@
         }
         .kbs-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
         .kbs-chip {
-            background: rgba(0,0,0,0.45);
+            background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.16);
             color: #fff;
             padding: 6px 10px;
             border-radius: 8px;
-            font-size: 0.78em;
+            font-size: 0.76em;
             font-weight: 700;
             cursor: pointer;
         }
-        .kbs-chip.active { border-color: var(--cor-principal); color: var(--cor-principal); }
+        .kbs-chip.active { border-color: var(--cor-principal); color: var(--cor-principal); background: rgba(212,175,55,0.12); }
 
-        footer { background-color: rgba(3, 3, 0, 0.9); text-align: center; padding: 30px 20px; border-top: 1px solid #111; color: #777; position: relative; z-index: 1;}
+        footer { background-color: rgba(3, 3, 5, 0.92); text-align: center; padding: 28px 20px; border-top: 1px solid rgba(255,255,255,0.08); color: #888; position: relative; z-index: 1;}
         
-        /* EFEITO SKELETON LOADING */
-        .skeleton {
-            background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%);
-            background-size: 200% 100%;
-            animation: pulseSkeleton 1.5s infinite ease-in-out;
-            border-radius: 4px;
-            color: transparent !important;
-            pointer-events: none;
-        }
-        @keyframes pulseSkeleton {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
+        .skeleton { background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%); background-size: 200% 100%; animation: pulseSkeleton 1.5s infinite ease-in-out; border-radius: 4px; color: transparent !important; }
+        @keyframes pulseSkeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         .skel-text { height: 18px; width: 100%; margin-bottom: 6px; display: inline-block; }
         .skel-title { height: 30px; width: 50%; display: inline-block; margin-bottom: 8px; }
         .skel-card { width: 260px; height: 140px; border-radius: 8px; margin: 0 auto; display: inline-block; }
         .skel-input { width: 100%; height: 45px; border-radius: 4px; margin-bottom: 8px; }
         .skel-galeria { width: 100%; height: 320px; border-radius: 8px; }
 
-        @media (max-width: 768px) {
-            .hero { padding: 130px 15px 50px 15px; }
-            .hero-content h2 { font-size: 1.6em; }
-            .hero-content p { font-size: 0.85em; margin-bottom: 20px; }
+        @media (max-width: 820px) {
             .kbs-grid-2, .kbs-grid-3 { grid-template-columns: 1fr; }
-            .whatsapp-widget { bottom: 15px; left: 15px; z-index: 9998; }
-            .chat-widget { bottom: 75px; right: 15px; z-index: 9999; }
-            .chat-janela { width: calc(100vw - 30px); right: 0; bottom: 45px; }
+            #kbs-sistema-showcase { padding-top: 118px; }
+            .hero { padding: 125px 15px 50px 15px; }
+            .hero-content h2 { font-size: 1.6em; }
         }
     </style>
 </head>
@@ -415,26 +368,32 @@
             <img src="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" alt="Logo Sistema">
             <h1 id="header-title"><span class="skeleton skel-title" style="margin:0; height:20px; width:120px;">&nbsp;</span></h1>
         </div>
-        <nav>
+        <nav id="nav-padrao">
             <a href="#sobre">Sobre Nós</a>
             <a href="#servicos">Serviços</a>
             <a href="#galeria">Galeria</a>
             <a href="#agendamento">Agendar</a>
             <a id="nav-facebook" href="https://www.facebook.com/share/1JepNxcz5b/" target="_blank">Facebook</a>
             <a id="nav-instagram" href="https://www.instagram.com/kikobarbearias?stkn=MTgxOHhzcjlqNmxjMw==" target="_blank">Instagram</a>
-            <!-- LOGIN DA EMPRESA DISCRETO (WHITE-LABEL) -->
             <a href="login.html" id="link-admin" class="login-empresa-link">🔐 Login da Empresa</a>
+        </nav>
+        <nav id="nav-kbs" style="display:none;">
+            <a href="#kbs-sistema-showcase">Simulador</a>
+            <a href="#kbs-estudio">Vídeo & Foto</a>
+            <a href="#kbs-patrao">Modo Patrão</a>
+            <a href="https://wa.me/5567999673200?text=Ol%C3%A1!%20Quero%20conhecer%20e%20ativar%20o%20KBS%20Sistema!" target="_blank">WhatsApp</a>
+            <a href="login.html" id="link-admin-kbs" class="login-empresa-link">🔐 Painel</a>
         </nav>
     </header>
 
-    <!-- BOTÃO FLUTUANTE DO WHATSAPP -->
-    <div class="whatsapp-widget">
+    <!-- BOTÃO FLUTUANTE DO WHATSAPP (OCULTO NO MODO kbssistema) -->
+    <div class="whatsapp-widget" id="wppWidget">
         <a id="whatsappFloatBtn" href="https://wa.me/5567999673200?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20tirar%20uma%20dúvida." target="_blank" class="whatsapp-btn-float">
             🟢 WhatsApp
         </a>
     </div>
 
-    <div class="chat-widget">
+    <div class="chat-widget" id="chatWidget">
         <button class="chat-btn-toggle" onclick="alternarChat()">💬 Atendimento</button>
         <div class="chat-janela" id="chatJanela">
             <div class="chat-header">
@@ -455,57 +414,57 @@
         </div>
     </div>
 
-    <!-- APRESENTAÇÃO INTERATIVA QUANDO ACESSADO VIA kbssistema.kikobarbearia.com.br -->
+    <!-- APRESENTAÇÃO LIMPA QUANDO SUBDOMÍNIO = kbssistema -->
     <section id="kbs-sistema-showcase">
         <div class="kbs-grid-2">
             <div>
-                <p style="color: var(--cor-principal); font-weight: 800; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px;">
-                    ⚡ KBS SISTEMA • SUBDOMÍNIO ATIVO (kbssistema)
+                <p style="color: var(--cor-principal); font-weight: 800; font-size: 0.82em; text-transform: uppercase; letter-spacing: 1px;">
+                    ⚡ KBS SISTEMA • DEMONSTRAÇÃO INTERATIVA
                 </p>
-                <h2 style="font-size: 2em; line-height: 1.15; margin: 8px 0 12px;">
-                    Do "Oi" no WhatsApp até o agendamento no zap.html e gestão completa.
+                <h2 style="font-size: 1.85em; line-height: 1.18; margin: 8px 0 12px;">
+                    Do "Oi" no WhatsApp até o agendamento no zap.html
                 </h2>
-                <p style="color: #cccccc; font-size: 0.95em; margin-bottom: 18px;">
-                    Veja na prática como o cliente interage no WhatsApp, escolhe na enquete, entra no <strong>zap.html</strong> e confirma o horário, além do estúdio de vídeo (estilo CapCut), editor de fotos (estilo Canva) e Modo Patrão.
+                <p style="color: #cccccc; font-size: 0.92em; margin-bottom: 16px;">
+                    Toque nas opções dentro do celular ao lado para ver o cliente mandando <strong>"Oi"</strong>, escolhendo na enquete, entrando no <strong>zap.html</strong> e confirmando o horário.
                 </p>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button type="button" class="btn-gold" style="width: auto;" onclick="kbsIniciarOi()">▶ Simular "Oi" no WhatsApp</button>
-                    <a href="#agendamento" class="btn-gold" style="width: auto; background: transparent; color: var(--cor-principal);">📅 Testar Agenda Real</a>
+                    <button type="button" class="btn-gold" onclick="kbsIniciarOi()">▶ Reiniciar Conversa ("Oi")</button>
+                    <button type="button" class="btn-gold" style="background: transparent; color: var(--cor-principal);" onclick="kbsEscolher('zap')">⚡ Ir para zap.html</button>
                 </div>
             </div>
 
             <div class="kbs-phone">
                 <div class="kbs-wa-top">
                     <span>🟢 KBS Bot • WhatsApp</span>
-                    <button type="button" onclick="kbsIniciarOi()" style="background:#2a3942; color:#fff; border:none; border-radius:6px; padding:4px 8px; font-size:0.75em; cursor:pointer;">Reiniciar</button>
+                    <button type="button" onclick="kbsIniciarOi()" style="background:#2a3942; color:#fff; border:none; border-radius:6px; padding:4px 9px; font-size:0.74em; cursor:pointer;">Reiniciar</button>
                 </div>
                 <div class="kbs-wa-body" id="kbsWaBody"></div>
             </div>
         </div>
 
-        <div class="kbs-grid-3">
-            <div class="card-granulado" style="padding: 20px;">
-                <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">🎬 Editor de Vídeo (Estilo CapCut)</h3>
-                <p style="color: #cccccc; font-size: 0.85em;">
-                    Corte clipes, junte cenas, coloque legendas, trilha e exporte Reels/Status verticais (9:16) direto do sistema para lotar a agenda.
+        <div class="kbs-grid-3" id="kbs-estudio">
+            <div class="card-granulado" style="padding: 18px;">
+                <h3 style="color: var(--cor-principal); font-size: 0.98em; margin-top: 0;">🎬 Editor de Vídeo (Estilo CapCut)</h3>
+                <p style="color: #cccccc; font-size: 0.84em; margin: 0;">
+                    Corte clipes, junte cenas, coloque legendas, trilha e exporte Reels/Status verticais (9:16) direto do sistema.
                 </p>
             </div>
-            <div class="card-granulado" style="padding: 20px;">
-                <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">🎨 Editor de Fotos & Artes (Estilo Canva)</h3>
-                <p style="color: #cccccc; font-size: 0.85em;">
+            <div class="card-granulado" style="padding: 18px;">
+                <h3 style="color: var(--cor-principal); font-size: 0.98em; margin-top: 0;">🎨 Editor de Fotos & Artes (Estilo Canva)</h3>
+                <p style="color: #cccccc; font-size: 0.84em; margin: 0;">
                     Monte tabelas de preços, banners de promoção e artes com a logo e cores da empresa para divulgar no WhatsApp e Instagram.
                 </p>
             </div>
-            <div class="card-granulado" style="padding: 20px;">
-                <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">📊 Todas as Funções + Modo Patrão</h3>
-                <p style="color: #cccccc; font-size: 0.85em;">
-                    Lembretes anti-falta (24h, 1h e 30min), recuperação de sumidos, caixa, comissões, estoque, multi-empresas e comandos pelo WhatsApp.
+            <div class="card-granulado" style="padding: 18px;">
+                <h3 style="color: var(--cor-principal); font-size: 0.98em; margin-top: 0;">📊 Todas as Funções do Sistema</h3>
+                <p style="color: #cccccc; font-size: 0.84em; margin: 0;">
+                    Lembretes automáticos (24h, 1h e 30min), recuperação de sumidos, caixa, comissões, estoque e multi-empresas.
                 </p>
             </div>
         </div>
 
-        <div class="card-granulado" style="padding: 22px; margin-top: 22px;">
-            <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">👑 Simulador Modo Patrão (Comandos pelo WhatsApp)</h3>
+        <div class="card-granulado" style="padding: 20px; margin-top: 20px;" id="kbs-patrao">
+            <h3 style="color: var(--cor-principal); font-size: 0.98em; margin-top: 0;">👑 Simulador Modo Patrão (Comandos no WhatsApp)</h3>
             <div class="kbs-chips" id="kbsPatraoChips">
                 <button type="button" class="kbs-chip active" data-cmd="agenda">agenda</button>
                 <button type="button" class="kbs-chip" data-cmd="marcar">marcar João 15:00 Corte</button>
@@ -516,121 +475,125 @@
             </div>
             <div id="kbsPatraoSaida" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
+
+        <div class="card-granulado" style="padding: 22px; margin-top: 20px; text-align: center;">
+            <p style="margin: 0 0 12px; font-size: 0.95em; color: #eee;">
+                <strong>Plano Completo KBS Sistema: R$ 60/mês</strong> — WhatsApp Bot + zap.html + Painel + Modo Patrão + Estúdio Vídeo & Foto
+            </p>
+            <a href="https://wa.me/5567999673200?text=Ol%C3%A1!%20Vi%20o%20KBS%20Sistema%20e%20quero%20ativar!" target="_blank" class="btn-gold" style="display:inline-block;">
+                📲 Ativar no WhatsApp (67) 99967-3200
+            </a>
+        </div>
     </section>
 
-    <div class="hero" id="hero-padrao">
-        <div class="hero-content">
-            <h2 id="txt_titulo"><span class="skeleton skel-title" style="width: 280px;">&nbsp;</span></h2>
-            <p id="txt_subtitulo">"Chegue mais! O café está pronto, a resenha é garantida e o seu visual impecável é compromisso nosso."</p>
-            
-            <div class="hero-buttons">
-                <a href="#agendamento" class="btn-gold">Agendar Horário</a>
+    <!-- CONTEÚDO PADRÃO DA BARBEARIA / EMPRESAS -->
+    <div id="conteudo-padrao">
+        <div class="hero" id="hero-padrao">
+            <div class="hero-content">
+                <h2 id="txt_titulo"><span class="skeleton skel-title" style="width: 280px;">&nbsp;</span></h2>
+                <p id="txt_subtitulo">"Chegue mais! O café está pronto, a resenha é garantida e o seu visual impecável é compromisso nosso."</p>
+                <div class="hero-buttons">
+                    <a href="#agendamento" class="btn-gold">Agendar Horário</a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="sobre" class="section">
-        <h2 class="section-title">Sobre Nós</h2>
-        <p class="sobre-texto" id="txt_sobre">
-            <span class="skeleton skel-text"></span>
-            <span class="skeleton skel-text"></span>
-            <span class="skeleton skel-text" style="width: 60%;"></span>
-        </p>
-    </div>
-
-    <div id="servicos" class="section">
-        <h2 class="section-title">Nossos Serviços</h2>
-        <div class="services" id="quadro_servicos_dinamicos">
-            <div class="skeleton skel-card"></div>
-            <div class="skeleton skel-card"></div>
-            <div class="skeleton skel-card"></div>
-        </div>
-    </div>
-
-    <div id="galeria" class="section">
-        <h2 class="section-title">Nossa Galeria e Vídeos</h2>
-        <div class="galeria-grid" id="galeriaDinamica">
-            <div class="skeleton skel-galeria"></div>
-            <div class="skeleton skel-galeria"></div>
-            <div class="skeleton skel-galeria"></div>
-        </div>
-    </div>
-
-    <div id="agendamento" class="section">
-        <h2 class="section-title">Agendar Horário</h2>
-        <!-- BLOCO COM JANELA DE VIDRO SUPER TRANSPARENTE -->
-        <div class="form-agendamento card-granulado">
-            <form id="formAgendamento">
-                <div class="form-group">
-                    <label for="nome">O Seu Nome:</label>
-                    <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">O Seu E-mail (Opcional):</label>
-                    <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
-                </div>
-                
-                <div class="form-group">
-                    <label for="telefone">O Seu WhatsApp (Com DDD):</label>
-                    <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
-                </div>
-                
-                <div class="form-group">
-                    <label>Quais serviços deseja hoje?</label>
-                    <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
-                         <div class="skeleton skel-input"></div>
-                         <div class="skeleton skel-input"></div>
-                    </div>
-                    <div id="resumo-pedido" class="resumo-box">
-                        <p>Total Estimado: <strong id="total-valor">R$ 0</strong></p>
-                        <p>Tempo Estimado: <strong id="total-tempo">0 min</strong></p>
-                    </div>
-                    <input type="hidden" id="duracao_total" name="duracao_total" value="0">
-                    <input type="hidden" id="valor_total_enviar" name="valor_total" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="profissional">Profissional de Preferência:</label>
-                    <select id="profissional" name="profissional" required onchange="verificarHorarios()">
-                        <option value="" disabled selected>A carregar profissionais...</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="data">Data de Preferência:</label>
-                    <input type="date" id="data" name="data" required onchange="verificarHorarios()">
-                </div>
-                <div class="form-group">
-                    <label for="hora">Horário de Preferência:</label>
-                    <select id="hora" name="hora" required disabled><option value="" disabled selected>Selecione a data primeiro...</option></select>
-                </div>
-                <button type="submit" id="btnSubmit" class="btn-gold" style="width:100%; margin-top:10px;">Confirmar Agendamento</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2 class="section-title">Atendimento</h2>
-        <!-- BLOCO DE HORÁRIOS COM JANELA DE VIDRO SUPER TRANSPARENTE -->
-        <div class="horarios-box card-granulado">
-            <p id="txt-horarios-info" style="color:#fff;">
-                <span class="skeleton skel-text" style="width: 250px;">&nbsp;</span>
+        <div id="sobre" class="section">
+            <h2 class="section-title">Sobre Nós</h2>
+            <p class="sobre-texto" id="txt_sobre">
+                <span class="skeleton skel-text"></span>
+                <span class="skeleton skel-text"></span>
+                <span class="skeleton skel-text" style="width: 60%;"></span>
             </p>
-            <a id="link-mapa" href="#" target="_blank" class="mapa-link">
-                <span class="skeleton skel-text" style="width: 180px; margin:0;">&nbsp;</span>
-            </a>
+        </div>
+
+        <div id="servicos" class="section">
+            <h2 class="section-title">Nossos Serviços</h2>
+            <div class="services" id="quadro_servicos_dinamicos">
+                <div class="skeleton skel-card"></div>
+                <div class="skeleton skel-card"></div>
+                <div class="skeleton skel-card"></div>
+            </div>
+        </div>
+
+        <div id="galeria" class="section">
+            <h2 class="section-title">Nossa Galeria e Vídeos</h2>
+            <div class="galeria-grid" id="galeriaDinamica">
+                <div class="skeleton skel-galeria"></div>
+                <div class="skeleton skel-galeria"></div>
+                <div class="skeleton skel-galeria"></div>
+            </div>
+        </div>
+
+        <div id="agendamento" class="section">
+            <h2 class="section-title">Agendar Horário</h2>
+            <div class="form-agendamento card-granulado">
+                <form id="formAgendamento">
+                    <div class="form-group">
+                        <label for="nome">O Seu Nome:</label>
+                        <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">O Seu E-mail (Opcional):</label>
+                        <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">O Seu WhatsApp (Com DDD):</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
+                    </div>
+                    <div class="form-group">
+                        <label>Quais serviços deseja hoje?</label>
+                        <div class="checkbox-group" id="caixinhas_servicos_dinamicos">
+                             <div class="skeleton skel-input"></div>
+                             <div class="skeleton skel-input"></div>
+                        </div>
+                        <div id="resumo-pedido" class="resumo-box">
+                            <p>Total Estimado: <strong id="total-valor">R$ 0</strong></p>
+                            <p>Tempo Estimado: <strong id="total-tempo">0 min</strong></p>
+                        </div>
+                        <input type="hidden" id="duracao_total" name="duracao_total" value="0">
+                        <input type="hidden" id="valor_total_enviar" name="valor_total" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="profissional">Profissional de Preferência:</label>
+                        <select id="profissional" name="profissional" required onchange="verificarHorarios()">
+                            <option value="" disabled selected>A carregar profissionais...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data de Preferência:</label>
+                        <input type="date" id="data" name="data" required onchange="verificarHorarios()">
+                    </div>
+                    <div class="form-group">
+                        <label for="hora">Horário de Preferência:</label>
+                        <select id="hora" name="hora" required disabled><option value="" disabled selected>Selecione a data primeiro...</option></select>
+                    </div>
+                    <button type="submit" id="btnSubmit" class="btn-gold" style="width:100%; margin-top:10px;">Confirmar Agendamento</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Atendimento</h2>
+            <div class="horarios-box card-granulado">
+                <p id="txt-horarios-info" style="color:#fff;">
+                    <span class="skeleton skel-text" style="width: 250px;">&nbsp;</span>
+                </p>
+                <a id="link-mapa" href="#" target="_blank" class="mapa-link">
+                    <span class="skeleton skel-text" style="width: 180px; margin:0;">&nbsp;</span>
+                </a>
+            </div>
         </div>
     </div>
 
     <footer>
         <p>© 2026 <span id="rodape-nome"><span class="skeleton skel-text" style="width: 120px; height:15px; margin:0; display:inline-block;">&nbsp;</span></span>. Todos os direitos reservados.</p>
-        <p style="margin-top: 15px; font-size: 0.85em; color: #888;">👀 Visitantes online hoje: <span id="contadorVisitas" style="color: var(--cor-principal); font-weight: bold;">142</span></p>
+        <p style="margin-top: 12px; font-size: 0.85em; color: #888;">👀 Visitantes online hoje: <span id="contadorVisitas" style="color: var(--cor-principal); font-weight: bold;">142</span></p>
     </footer>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // DETECÇÃO AUTOMÁTICA DE SUBDOMÍNIO SAAS (EX: legalcabeleireiro.kikobarbearia.com.br ou kbssistema.kikobarbearia.com.br)
         function detectarIdBarbeariaSaaS() {
             const urlParams = new URLSearchParams(window.location.search);
             let idParam = urlParams.get('id') || urlParams.get('id_barbearia');
@@ -656,19 +619,25 @@
             localStorage.removeItem('id_barbearia_ativo');
         }
 
-        let numeroWhatsappDono = "5567999673200"; 
-
+        let numeroWhatsappDono = "5567999673200";
         document.getElementById('link-admin').href = idBarbearia ? `login.html?id=${idBarbearia}` : `login.html`;
+        document.getElementById('link-admin-kbs').href = idBarbearia ? `login.html?id=${idBarbearia}` : `login.html`;
         
         let agendamentosDaNuvem = [];
         let configHorarios = null;
         window.listaProfissionaisGlobal = [];
 
-        // ATIVA A APRESENTAÇÃO INTERATIVA QUANDO O SUBDOMÍNIO É kbssistema
         function ativarModoKbsSistema() {
             if (idBarbearia.toLowerCase() !== 'kbssistema') return;
             document.getElementById('kbs-sistema-showcase').style.display = 'block';
-            document.getElementById('hero-padrao').style.display = 'none';
+            document.getElementById('conteudo-padrao').style.display = 'none';
+            document.getElementById('nav-padrao').style.display = 'none';
+            document.getElementById('nav-kbs').style.display = 'flex';
+            document.getElementById('wppWidget').style.display = 'none';
+            document.getElementById('chatWidget').style.display = 'none';
+            document.getElementById('header-title').innerText = "KBS SISTEMA";
+            document.getElementById('rodape-nome').innerText = "KBS Sistema";
+            document.title = "KBS Sistema";
             kbsIniciarOi();
             kbsRenderPatrao('agenda');
         }
@@ -708,7 +677,7 @@
                     <button type="button" class="kbs-opt-btn" onclick="kbsEscolher('mapa')">📍 Endereço e Mapa</button>
                     `
                 );
-            }, 250);
+            }, 220);
         }
         function kbsEscolher(tipo) {
             if (tipo === 'precos') {
@@ -773,7 +742,6 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            // CARREGA TEXTOS E APLICA O BRANDING (COR E FONTE WHITE-LABEL)
             fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia).then(res => res.json()).then(textos => {
                 if (textos.cor_primaria) {
                     document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
@@ -782,18 +750,16 @@
                     document.documentElement.style.setProperty('--fonte-principal', `'${textos.fonte_texto}', sans-serif`);
                 }
 
-                if (textos.titulo) {
-                    document.getElementById('txt_titulo').innerText = textos.titulo;
-                    document.getElementById('header-title').innerText = textos.titulo;
-                    document.getElementById('rodape-nome').innerText = textos.titulo;
-                    document.title = textos.titulo + " | Estilo e Tradição";
-                } else if (idBarbearia.toLowerCase() === 'kbssistema') {
-                    document.getElementById('header-title').innerText = "KBS SISTEMA";
-                    document.getElementById('rodape-nome').innerText = "KBS Sistema";
-                    document.title = "KBS Sistema";
+                if (idBarbearia.toLowerCase() !== 'kbssistema') {
+                    if (textos.titulo) {
+                        document.getElementById('txt_titulo').innerText = textos.titulo;
+                        document.getElementById('header-title').innerText = textos.titulo;
+                        document.getElementById('rodape-nome').innerText = textos.titulo;
+                        document.title = textos.titulo + " | Estilo e Tradição";
+                    }
+                    if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
+                    if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
                 }
-                if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
-                if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
 
                 if (textos.link_instagram && textos.link_instagram.trim() !== "") {
                     document.getElementById('nav-instagram').href = textos.link_instagram.trim();
@@ -865,7 +831,6 @@
                 configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
             });
 
-            // CARREGA FOTOS E VÍDEOS DA GALERIA DO PAINEL E APLICA O VÍDEO DE FUNDO AUTOMATICAMENTE
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
                 let midiasSemRepetir = [...new Set(fotosBrutas)]; 
                 if (midiasSemRepetir.length > 0) {
@@ -893,20 +858,18 @@
                     document.getElementById('galeriaDinamica').innerHTML = "<p style='color:#888;'>Nenhuma foto ou vídeo publicado ainda.</p>";
                 }
                 
-                // TELA DE PULSAÇÃO SOME SUAVEMENTE
                 setTimeout(() => {
                     const splash = document.getElementById('splash-screen');
                     splash.style.opacity = '0';
-                    setTimeout(() => { splash.style.display = 'none'; }, 600);
-                }, 900);
+                    setTimeout(() => { splash.style.display = 'none'; }, 500);
+                }, 700);
 
             }).catch(e => { 
-                console.error("Erro ao carregar mídia:", e);
                 setTimeout(() => {
                     const splash = document.getElementById('splash-screen');
                     splash.style.opacity = '0';
-                    setTimeout(() => { splash.style.display = 'none'; }, 600);
-                }, 1000);
+                    setTimeout(() => { splash.style.display = 'none'; }, 500);
+                }, 800);
             });
         };
 
@@ -916,39 +879,22 @@
 
         function processarMensagemUsuario() {
             const input = document.getElementById('chatInput'); const textoStr = input.value.trim(); if(textoStr === "") return;
-            const mensagensDiv = document.getElementById('chatMensagens'); const menuOpcoes = document.getElementById('chatOpcoes');
-            mensagensDiv.innerHTML += `<div class="msg msg-user">${textoStr}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; input.value = ""; 
-            menuOpcoes.style.opacity = '0.5'; menuOpcoes.style.pointerEvents = 'none';
-            const digitandoDiv = document.createElement('div'); digitandoDiv.className = 'msg msg-digitando'; digitandoDiv.innerText = 'Bot a pensar... 🧠'; mensagensDiv.appendChild(digitandoDiv); mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
-
-            setTimeout(() => {
-                mensagensDiv.removeChild(digitandoDiv);
-                const t = textoStr.toLowerCase(); let respostaBot = "Fala chefe! Para dar aquele talento no visual, deslize a tela para o final e escolha o seu horário no formulário de agendamento. ✂️";
-                
-                let hAbre = configHorarios ? configHorarios.abre : "08:00";
-                let hFecha = configHorarios ? configHorarios.fecha : "19:40";
-                let hAlmIni = configHorarios ? configHorarios.almoco_inicio : "11:40";
-                let hAlmFim = configHorarios ? configHorarios.almoco_fim : "13:00";
-
-                if (t.includes('agenda') || t.includes('marcar') || t.includes('horario') || t.includes('vaga') || t.includes('cortar')) { respostaBot = "Pode deixar, chefe! Deslize a página para o final e selecione o dia e a hora no nosso formulário de agendamento rápido. 📅"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); } 
-                else if (t.includes('preço') || t.includes('valor') || t.includes('custa') || t.includes('tabela')) { respostaBot = "Os valores e o tempo de cada serviço estão logo acima na nossa secção 'Nossos Serviços'. Dá uma vista de olhos, chefe! 💸"; setTimeout(() => { window.location.hash = '#servicos'; }, 1200); } 
-                else if (t.includes('profissional') || t.includes('barbeiro') || t.includes('quem')) { respostaBot = "Podes escolher o profissional diretamente no nosso formulário de agendamento! Basta selecionares na caixinha antes de escolher a data. 😉"; setTimeout(() => { window.location.hash = '#agendamento'; }, 1200); }
-                else if (t.includes('pix') || t.includes('cartão') || t.includes('dinheiro') || t.includes('pagar') || t.includes('credito')) { respostaBot = "Aceitamos Pix, Cartão (Crédito e Débito) e Dinheiro. O pagamento é feito diretamente no estabelecimento após o atendimento. 💳"; } 
-                else if (t.includes('abre') || t.includes('fecha') || t.includes('funcionamento') || t.includes('dia') || t.includes('sabado')) { respostaBot = `Funcionamos de Segunda a Sábado: Das ${hAbre}h às ${hAlmIni}, e à tarde das ${hAlmFim} às ${hFecha}h. ⏰`; } 
-                else if (t.includes('onde') || t.includes('rua') || t.includes('local') || t.includes('fica') || t.includes('coxim') || t.includes('endereco')) { respostaBot = "O endereço exato está no final da página. Passa por cá! 📍"; } 
-                else if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('eae') || t.includes('e ai')) { respostaBot = "Fala chefe! Tudo ótimo por aqui. Como posso ajudar o seu visual hoje? 👊"; }
-                mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`; mensagensDiv.scrollTop = mensagensDiv.scrollHeight; menuOpcoes.style.opacity = '1'; menuOpcoes.style.pointerEvents = 'auto';
-            }, 500);
+            const mensagensDiv = document.getElementById('chatMensagens');
+            mensagensDiv.innerHTML += `<div class="msg msg-user">${textoStr}</div>`; input.value = ""; 
+            const t = textoStr.toLowerCase();
+            let respostaBot = "Fala chefe! Para agendar, role até 'Agendar Horário' na página. ✂️";
+            if (t.includes('agenda') || t.includes('marcar') || t.includes('horario')) { window.location.hash = '#agendamento'; respostaBot = "Abrindo o agendamento..."; }
+            else if (t.includes('preço') || t.includes('valor')) { window.location.hash = '#servicos'; respostaBot = "Veja os valores em 'Nossos Serviços'."; }
+            mensagensDiv.innerHTML += `<div class="msg msg-bot">${respostaBot}</div>`;
+            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
         }
 
         function atualizarResumo() {
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
             checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
-            
             document.getElementById('duracao_total').value = totalT; 
             document.getElementById('valor_total_enviar').value = totalV;
-            
             const resumoBox = document.getElementById('resumo-pedido');
             if (totalT > 0) { 
                 resumoBox.style.display = 'block'; 
@@ -957,12 +903,8 @@
             } else { 
                 resumoBox.style.display = 'none'; 
             }
-
             const dataEscolhida = document.getElementById('data').value;
-            if (dataEscolhida && typeof agendamentosDaNuvem !== 'undefined') {
-                const selectHora = document.getElementById('hora');
-                renderizarDropdown(dataEscolhida, selectHora);
-            }
+            if (dataEscolhida) renderizarDropdown(dataEscolhida, document.getElementById('hora'));
         }
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
@@ -970,42 +912,31 @@
         function verificarHorarios() {
             const dataEscolhida = document.getElementById('data').value;
             const profEscolhido = document.getElementById('profissional').value;
-
             if (!dataEscolhida || !profEscolhido) return;
             const selectHora = document.getElementById('hora');
-            
-            if(!configHorarios) {
-                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
-            }
-
-            const d = new Date(dataEscolhida + "T12:00:00"); const diaSemana = d.getDay(); 
+            if(!configHorarios) configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+            const diaSemana = new Date(dataEscolhida + "T12:00:00").getDay(); 
             if (!configHorarios.dias_abertos.includes(diaSemana)) {
                 selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
             }
-
             selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>A consultar agenda online...</option>';
-            
             const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
             window[callbackName] = function(data) {
                 agendamentosDaNuvem = data;
                 delete window[callbackName]; document.getElementById(callbackName)?.remove();
                 renderizarDropdown(dataEscolhida, selectHora);
             };
-            
             const script = document.createElement('script'); 
             script.id = callbackName; 
             script.src = scriptURL + '?data=' + dataEscolhida + '&id_barbearia=' + idBarbearia + '&profissional=' + encodeURIComponent(profEscolhido) + '&callback=' + callbackName;
-            
             script.onerror = function() { renderizarDropdown(dataEscolhida, selectHora); };
             document.body.appendChild(script);
         }
 
         function renderizarDropdown(dataEscolhida, selectHora) {
             selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
-            
             let abreProf = configHorarios.abre || "08:00";
             let fechaProf = configHorarios.fecha || "19:40";
-
             const profEscolhido = (document.getElementById('profissional').value || "").trim();
             if (profEscolhido && profEscolhido !== "Equipe" && window.listaProfissionaisGlobal) {
                 let pObj = window.listaProfissionaisGlobal.find(p => p.nome.trim().toLowerCase() === profEscolhido.toLowerCase());
@@ -1014,19 +945,13 @@
                     if (pObj.fecha) fechaProf = pObj.fecha;
                 }
             }
-
-            let cur = parseTempo(abreProf); 
-            let end = parseTempo(fechaProf);
-            let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); 
-            let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
-
+            let cur = parseTempo(abreProf); let end = parseTempo(fechaProf);
+            let bStart = parseTempo(configHorarios.almoco_inicio || "11:40"); let bEnd = parseTempo(configHorarios.almoco_fim || "13:00");
             let agora = new Date();
             let hojeStr = agora.getFullYear() + "-" + ("0" + (agora.getMonth() + 1)).slice(-2) + "-" + ("0" + agora.getDate()).slice(-2);
             let horaAtualMinutos = agora.getHours() * 60 + agora.getMinutes();
-
             let duracaoMinutos = parseInt(document.getElementById('duracao_total').value) || 20;
             let blocosNecessarios = Math.ceil(duracaoMinutos / 20);
-
             const profEscolhidoLower = profEscolhido.toLowerCase();
             let agendamentosFiltrados = Array.isArray(agendamentosDaNuvem) ? agendamentosDaNuvem.filter(ag => {
                 if (!ag.profissional) return true; 
@@ -1038,71 +963,40 @@
             let mapaSlots = {};
             for (let c = cur; c <= end; c += 20) {
                 let hStr = Math.floor(c/60).toString().padStart(2,'0') + ":" + (c%60).toString().padStart(2,'0');
-                let ocupado = false;
-                let motivo = "";
-
-                if (dataEscolhida === hojeStr && c <= horaAtualMinutos) {
-                    ocupado = true; motivo = "Passado";
-                } else if (c >= bStart && c < bEnd) {
-                    ocupado = true; motivo = "Almoço";
-                } else {
+                let ocupado = false; let motivo = "";
+                if (dataEscolhida === hojeStr && c <= horaAtualMinutos) { ocupado = true; motivo = "Passado"; }
+                else if (c >= bStart && c < bEnd) { ocupado = true; motivo = "Almoço"; }
+                else {
                     ocupado = agendamentosFiltrados.some(ag => String(ag.data) === String(dataEscolhida) && String(ag.hora).trim() === hStr);
                     if(ocupado) motivo = "Ocupado";
                 }
                 mapaSlots[c] = { hora: hStr, ocupado: ocupado, motivo: motivo };
             }
 
-            let todosHorarios = [];
             for (let c = cur; c <= end; c += 20) {
                 let hStr = mapaSlots[c].hora;
-
-                if (mapaSlots[c].ocupado) {
-                    todosHorarios.push({ hora: hStr, ocupado: true, motivo: mapaSlots[c].motivo });
-                } else {
-                    let cabe = true;
+                let ocupado = mapaSlots[c].ocupado;
+                let motivo = mapaSlots[c].motivo;
+                if (!ocupado) {
                     for (let b = 1; b < blocosNecessarios; b++) {
                         let nextC = c + (b * 20);
-                        if (!mapaSlots[nextC] || mapaSlots[nextC].ocupado) {
-                            cabe = false;
-                            break;
-                        }
-                    }
-
-                    if (cabe) {
-                        todosHorarios.push({ hora: hStr, ocupado: false, motivo: "" });
-                    } else {
-                        todosHorarios.push({ hora: hStr, ocupado: true, motivo: "Espaço insuf." });
+                        if (!mapaSlots[nextC] || mapaSlots[nextC].ocupado) { ocupado = true; motivo = "Espaço insuf."; break; }
                     }
                 }
-            }
-
-            todosHorarios.forEach(item => {
-                const opt = document.createElement('option'); opt.value = item.hora;
-                if(item.ocupado) {
-                    opt.text = item.hora + " (" + item.motivo + ")";
-                    opt.disabled = true;
-                    opt.style.color = "#ff4444";
-                } else {
-                    opt.text = item.hora;
-                }
+                const opt = document.createElement('option'); opt.value = hStr;
+                if(ocupado) { opt.text = hStr + " (" + motivo + ")"; opt.disabled = true; opt.style.color = "#ff4444"; }
+                else { opt.text = hStr; }
                 selectHora.add(opt);
-            });
+            }
         }
 
         document.getElementById('formAgendamento').addEventListener('submit', e => {
             e.preventDefault();
             if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
-            
             const btnSubmit = document.getElementById('btnSubmit');
-            btnSubmit.disabled = true; 
-            btnSubmit.innerText = "Aguarde, a agendar e a bloquear horário...";
-
+            btnSubmit.disabled = true; btnSubmit.innerText = "Aguarde...";
             let nomes = []; 
             document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
-            let valorFinal = document.getElementById('valor_total_enviar').value;
-            let duracaoFinal = document.getElementById('duracao_total').value;
-            let profFinal = document.getElementById('profissional').value;
-
             const fd = new URLSearchParams();
             fd.append('acao', 'agendar');
             fd.append('id_barbearia', idBarbearia);
@@ -1112,39 +1006,25 @@
             fd.append('data', document.getElementById('data').value);
             fd.append('hora', document.getElementById('hora').value);
             fd.append('servico', nomes.join(" + "));
-            fd.append('valor_total', valorFinal);
-            fd.append('duracao_total', duracaoFinal);
-            fd.append('profissional', profFinal);
-
+            fd.append('valor_total', document.getElementById('valor_total_enviar').value);
+            fd.append('duracao_total', document.getElementById('duracao_total').value);
+            fd.append('profissional', document.getElementById('profissional').value);
             fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' })
-            .then(() => {
-                alert("✅ Agendamento realizado com sucesso!\nA confirmação e os detalhes foram enviados para o seu WhatsApp.");
-                e.target.reset(); 
-                document.getElementById('hora').disabled = true; 
-                document.getElementById('resumo-pedido').style.display = 'none';
-                location.reload();
-            })
-            .catch(() => {
-                alert("⚠️ Ocorreu um erro ao processar o agendamento. Tente novamente.");
-                btnSubmit.disabled = false;
-                btnSubmit.innerText = "Confirmar Agendamento";
-            });
+            .then(() => { alert("✅ Agendamento realizado com sucesso!"); location.reload(); })
+            .catch(() => { alert("⚠️ Erro ao agendar."); btnSubmit.disabled = false; btnSubmit.innerText = "Confirmar Agendamento"; });
         });
 
         function mascaraTelefone(input) {
             let val = input.value;
-            if (val.startsWith('+55 ')) { val = val.substring(4); } 
-            else if (val.startsWith('+55')) { val = val.substring(3); } 
-            else if (val.startsWith('55') && val.length >= 12) { val = val.substring(2); }
-            
-            let v = val.replace(/\D/g, ''); 
+            if (val.startsWith('+55 ')) val = val.substring(4);
+            else if (val.startsWith('+55')) val = val.substring(3);
+            else if (val.startsWith('55') && val.length >= 12) val = val.substring(2);
+            let v = val.replace(/\D/g, '');
             if (v.length > 11) v = v.substring(0, 11);
-
             let formatado = '';
-            if (v.length > 0) { formatado = '+55 ' + v.substring(0, 2); }
-            if (v.length > 2) { formatado += ' ' + v.substring(2, 7); }
-            if (v.length > 7) { formatado += '-' + v.substring(7, 11); }
-            
+            if (v.length > 0) formatado = '+55 ' + v.substring(0, 2);
+            if (v.length > 2) formatado += ' ' + v.substring(2, 7);
+            if (v.length > 7) formatado += '-' + v.substring(7, 11);
             input.value = formatado;
         }
     </script>
