@@ -1,1050 +1,1325 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KBS Sistema — Plataforma Completa de Agendamento, WhatsApp & Estúdio</title>
-  <link rel="icon" href="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" type="image/png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #f4f7fb;
-      --surface: #ffffff;
-      --surface-soft: #eef3fa;
-      --ink: #0f172a;
-      --muted: #475569;
-      --brand: #1d4ed8;
-      --brand-dark: #1e3a8a;
-      --gold: #d97706;
-      --gold-soft: #fef3c7;
-      --wa: #16a34a;
-      --wa-bright: #22c55e;
-      --wa-soft: #dcfce7;
-      --border: #e2e8f0;
-      --shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
-      --radius: 20px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a { text-decoration: none; color: inherit; }
-
-    .container {
-      width: 100%;
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 0 18px;
-    }
-
-    /* TOPO FIXO CLARO E LIMPO */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 90;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-bar {
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 1.12rem;
-      color: var(--ink);
-    }
-
-    .brand img {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
-
-    .brand-pill {
-      background: #dbeafe;
-      color: var(--brand);
-      font-size: 0.7rem;
-      font-weight: 800;
-      padding: 4px 9px;
-      border-radius: 999px;
-      text-transform: uppercase;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      font-size: 0.86rem;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    .nav-links a:hover { color: var(--brand); }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 0.88rem;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
-
-    .btn:hover { transform: translateY(-2px); }
-
-    .btn-wa {
-      background: var(--wa);
-      color: #ffffff;
-      box-shadow: 0 8px 20px rgba(22, 163, 74, 0.25);
-    }
-    .btn-wa:hover { background: #15803d; }
-
-    .btn-brand {
-      background: var(--brand);
-      color: #ffffff;
-      box-shadow: 0 8px 20px rgba(29, 78, 216, 0.22);
-    }
-    .btn-brand:hover { background: var(--brand-dark); }
-
-    .btn-gold {
-      background: #f59e0b;
-      color: #0f172a;
-      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
-    }
-
-    .btn-outline {
-      background: #ffffff;
-      color: var(--ink);
-      border: 1px solid #cbd5e1;
-    }
-
-    .btn-sm { padding: 9px 14px; font-size: 0.82rem; border-radius: 10px; }
-
-    /* HERO LUMINOSO */
-    .hero {
-      padding: 44px 0 58px;
-      background:
-        radial-gradient(circle at 90% 10%, rgba(29, 78, 216, 0.1), transparent 40%),
-        radial-gradient(circle at 10% 15%, rgba(22, 163, 74, 0.1), transparent 42%),
-        linear-gradient(180deg, #ffffff 0%, #f4f7fb 100%);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.06fr 0.94fr;
-      gap: 32px;
-      align-items: start;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: var(--brand);
-      font-size: 0.76rem;
-      font-weight: 800;
-      padding: 6px 12px;
-      border-radius: 999px;
-      margin-bottom: 14px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      font-size: clamp(1.9rem, 3.8vw, 2.95rem);
-      line-height: 1.13;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--ink);
-      margin-bottom: 14px;
-    }
-
-    h1 span { color: var(--brand); }
-
-    .lead {
-      font-size: 1rem;
-      color: var(--muted);
-      margin-bottom: 20px;
-      max-width: 570px;
-    }
-
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .kpi-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .kpi-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-    }
-
-    .kpi-card strong {
-      display: block;
-      font-size: 0.94rem;
-      color: var(--ink);
-      font-weight: 800;
-    }
-
-    .kpi-card span {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .link-preview-card {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-left: 4px solid var(--brand);
-      border-radius: 14px;
-      padding: 14px 16px;
-      box-shadow: var(--shadow);
-    }
-
-    .link-url-pill {
-      display: inline-block;
-      margin-top: 6px;
-      background: #eff6ff;
-      color: var(--brand-dark);
-      border: 1px solid #bfdbfe;
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 0.82rem;
-      font-weight: 700;
-      word-break: break-all;
-    }
-
-    /* CELULAR WHATSAPP NÍTIDO */
-    .phone-frame {
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto;
-      background: #efeae2;
-      border: 6px solid #1e293b;
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: 0 24px 55px rgba(15, 23, 42, 0.22);
-    }
-
-    .wa-header {
-      background: #075e54;
-      color: #ffffff;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .wa-contact {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .wa-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #ffffff;
-      color: #075e54;
-      font-weight: 800;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .wa-messages {
-      height: 430px;
-      overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background-color: #efeae2;
-      background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px);
-      background-size: 16px 16px;
-    }
-
-    .bubble-client {
-      align-self: flex-end;
-      background: #d9fdd3;
-      color: #111b21;
-      padding: 9px 12px;
-      border-radius: 12px 12px 2px 12px;
-      max-width: 82%;
-      font-size: 0.84rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-    }
-
-    .bubble-bot {
-      align-self: flex-start;
-      background: #ffffff;
-      color: #111b21;
-      padding: 10px 12px;
-      border-radius: 12px 12px 12px 2px;
-      max-width: 92%;
-      font-size: 0.83rem;
-      white-space: pre-line;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-    }
-
-    .poll-btn {
-      display: block;
-      width: 100%;
-      text-align: left;
-      margin-top: 7px;
-      background: #f0fdf4;
-      border: 1px solid #86efac;
-      color: #166534;
-      padding: 9px 11px;
-      border-radius: 9px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .poll-btn:hover { background: #dcfce7; }
-
-    .zap-launch-btn {
-      display: block;
-      width: 100%;
-      margin-top: 9px;
-      text-align: center;
-      background: var(--wa);
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 0.83rem;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .wa-footer-bar {
-      background: #f0f2f5;
-      padding: 10px 12px;
-      display: flex;
-      gap: 8px;
-      border-top: 1px solid #d1d7db;
-    }
-
-    .wa-quick-oi {
-      flex: 1;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      color: #334155;
-      border-radius: 999px;
-      padding: 9px 14px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    /* MODAL TELA CHEIA DO zap.html */
-    .zap-modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(6px);
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .zap-modal-card {
-      width: 100%;
-      max-width: 460px;
-      background: #ffffff;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
-      border: 1px solid #e2e8f0;
-    }
-
-    .zap-modal-top {
-      background: linear-gradient(135deg, #075e54, #16a34a);
-      color: #ffffff;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .zap-url-bar {
-      background: #f1f5f9;
-      padding: 8px 16px;
-      font-family: monospace;
-      font-size: 0.76rem;
-      color: #334155;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .zap-modal-body {
-      padding: 18px 20px;
-    }
-
-    .field-lbl {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: #334155;
-      margin-bottom: 5px;
-    }
-
-    .field-ctrl {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      color: var(--ink);
-      background: #f8fafc;
-      margin-bottom: 12px;
-      font-family: inherit;
-    }
-
-    /* SEÇÕES CLARAS E ORGANIZADAS */
-    section.sec {
-      padding: 64px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .sec-head {
-      text-align: center;
-      max-width: 740px;
-      margin: 0 auto 38px;
-    }
-
-    .sec-head h2 {
-      font-size: clamp(1.55rem, 3vw, 2.25rem);
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      margin-bottom: 10px;
-    }
-
-    .sec-head p {
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 22px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .white-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow);
-    }
-
-    .tag {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 10px;
-    }
-
-    .t-purple { background: #f3e8ff; color: #7e22ce; }
-    .t-blue { background: #dbeafe; color: #1d4ed8; }
-    .t-green { background: #dcfce7; color: #15803d; }
-    .t-gold { background: #fef3c7; color: #b45309; }
-
-    .white-card h3 {
-      font-size: 1.12rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .white-card p {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .timeline-demo {
-      margin-top: 14px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-
-    .track-bar {
-      padding: 7px 10px;
-      border-radius: 8px;
-    }
-
-    .check-ul {
-      list-style: none;
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      font-size: 0.86rem;
-      color: #334155;
-    }
-
-    .check-ul li::before {
-      content: "✓ ";
-      color: var(--wa);
-      font-weight: 900;
-    }
-
-    /* MODO PATRÃO CLARO */
-    .cmd-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .cmd-pill {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      color: #1e293b;
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .cmd-pill.active, .cmd-pill:hover {
-      background: #eff6ff;
-      border-color: var(--brand);
-      color: var(--brand);
-    }
-
-    .patrao-screen {
-      background: #efeae2;
-      border: 1px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 185px;
-    }
-
-    /* PLANO */
-    .pricing-box {
-      max-width: 580px;
-      margin: 0 auto;
-      background: #ffffff;
-      border: 2px solid #bfdbfe;
-      border-radius: 24px;
-      padding: 32px;
-      text-align: center;
-      box-shadow: 0 20px 50px rgba(29, 78, 216, 0.12);
-    }
-
-    .price-val {
-      font-size: 2.9rem;
-      font-weight: 800;
-      color: var(--ink);
-      margin: 8px 0 4px;
-    }
-
-    .price-val span {
-      font-size: 1rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    footer {
-      background: #ffffff;
-      padding: 30px 0;
-      color: var(--muted);
-      font-size: 0.86rem;
-    }
-
-    .foot-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    @media (max-width: 900px) {
-      .hero-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .kpi-strip { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBS Sistema | Demonstração Interativa Completa</title>
+    <link rel="icon" href="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png">
+    <meta name="theme-color" content="#ffffff">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Montserrat:wght@600;800;900&family=Oswald:wght@600;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --azul: #1d4ed8;
+            --azul-escuro: #1e3a8a;
+            --verde: #16a34a;
+            --dourado: #d97706;
+            --fundo: #f4f7fb;
+            --card: #ffffff;
+            --borda: #e2e8f0;
+            --texto: #0f172a;
+            --texto-sec: #475569;
+            --demo-cor: #d4af37;
+            --demo-fonte: 'Montserrat', sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--fundo);
+            color: var(--texto);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* HEADER FIXO */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--borda);
+            padding: 10px 14px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .brand img {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 1.15em;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--azul);
+            text-transform: uppercase;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #334155;
+            font-size: 0.7em;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: 0.2s;
+        }
+
+        nav a:hover { color: var(--azul); }
+
+        .nav-cta {
+            background: var(--verde);
+            color: #ffffff !important;
+            padding: 4px 11px;
+            border-radius: 999px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 102px 14px 60px 14px;
+        }
+
+        .sec-card {
+            background: var(--card);
+            border: 1px solid var(--borda);
+            border-radius: 22px;
+            padding: 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+        }
+
+        .pill {
+            display: inline-block;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: var(--azul);
+            padding: 4px 11px;
+            border-radius: 999px;
+            font-size: 0.7em;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .pill-green { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+        .pill-amber { background: #fffbeb; border-color: #fde68a; color: #b45309; }
+        .pill-purple { background: #faf5ff; border-color: #e9d5ff; color: #7e22ce; }
+
+        .sec-title {
+            font-size: 1.45em;
+            font-weight: 900;
+            margin: 8px 0 6px;
+            line-height: 1.2;
+        }
+
+        .sec-sub {
+            color: var(--texto-sec);
+            font-size: 0.88em;
+            margin: 0 0 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            font-size: 0.82em;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.15s ease;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-blue { background: var(--azul); color: #fff; }
+        .btn-green { background: var(--verde); color: #fff; }
+        .btn-dark { background: #0f172a; color: #fff; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        /* =========================================================
+           1. CELULAR INTERATIVO DO SITE EXCLUSIVO + EDITOR AO VIVO
+        ========================================================= */
+        .phone-frame {
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            background: #07090e;
+            border: 5px solid #1e293b;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 22px 48px rgba(15, 23, 42, 0.22);
+            color: #ffffff;
+        }
+
+        .browser-bar {
+            background: #1e293b;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.72em;
+            color: #cbd5e1;
+        }
+
+        .browser-url {
+            flex: 1;
+            background: #0f172a;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-family: monospace;
+            font-weight: 700;
+            color: #38bdf8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .site-preview-body {
+            position: relative;
+            padding: 16px;
+            min-height: 460px;
+            background-size: cover;
+            background-position: center;
+            font-family: var(--demo-fonte);
+            transition: all 0.3s ease;
+        }
+
+        .site-preview-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(5,5,5,0.62) 0%, rgba(5,5,5,0.82) 100%);
+            z-index: 0;
+        }
+
+        .site-preview-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .site-mini-header {
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid color-mix(in srgb, var(--demo-cor) 35%, transparent);
+        }
+
+        .site-mini-title {
+            color: var(--demo-cor);
+            font-weight: 900;
+            font-size: 1.05em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .site-mini-card {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid color-mix(in srgb, var(--demo-cor) 35%, transparent);
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .site-serv-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 11px;
+            margin-top: 7px;
+            border-radius: 9px;
+            border: 1px solid color-mix(in srgb, var(--demo-cor) 32%, transparent);
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.78em;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .site-serv-item.ativo {
+            background: color-mix(in srgb, var(--demo-cor) 22%, transparent);
+            border-color: var(--demo-cor);
+        }
+
+        .site-mini-btn {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: var(--demo-cor);
+            color: #050505;
+            font-weight: 900;
+            font-size: 0.78em;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* CONTROLES DO EDITOR AO VIVO DO SITE */
+        .editor-box {
+            background: #f8fafc;
+            border: 1px solid var(--borda);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .editor-label {
+            display: block;
+            font-size: 0.75em;
+            font-weight: 800;
+            color: #334155;
+            text-transform: uppercase;
+            margin: 10px 0 5px;
+        }
+
+        .editor-input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 0.85em;
+            font-family: inherit;
+            background: #fff;
+        }
+
+        .color-swatches {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 1px #cbd5e1;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .swatch:hover, .swatch.active { transform: scale(1.14); box-shadow: 0 0 0 2px #0f172a; }
+
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .mini-chip {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .mini-chip.active, .mini-chip:hover {
+            background: #eff6ff;
+            border-color: var(--azul);
+            color: var(--azul);
+        }
+
+        /* =========================================================
+           2. PAINEL ADMINISTRATIVO INTEIRO E CLICÁVEL
+        ========================================================= */
+        .admin-shell {
+            background: #090d16;
+            color: #f8fafc;
+            border-radius: 22px;
+            border: 2px solid #1e293b;
+            overflow: hidden;
+            box-shadow: 0 20px 46px rgba(15, 23, 42, 0.2);
+        }
+
+        .admin-topbar {
+            background: #111827;
+            padding: 12px 16px;
+            border-bottom: 1px solid #1f2937;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 10px 14px;
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            overflow-x: auto;
+        }
+
+        .admin-tab {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 7px 12px;
+            border-radius: 9px;
+            font-size: 0.74em;
+            font-weight: 800;
+            white-space: nowrap;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .admin-tab.active {
+            background: #facc15;
+            color: #090d16;
+            border-color: #facc15;
+        }
+
+        .admin-body {
+            padding: 18px;
+        }
+
+        .admin-view { display: none; }
+        .admin-view.active { display: block; }
+
+        .admin-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .admin-kpi-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .admin-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            height: 95px;
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 14px 12px 6px;
+            margin-bottom: 14px;
+        }
+
+        .admin-bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+            gap: 4px;
+        }
+
+        .admin-bar-fill {
+            width: 100%;
+            max-width: 28px;
+            background: linear-gradient(180deg, #facc15, #ca8a04);
+            border-radius: 6px 6px 0 0;
+        }
+
+        .admin-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .admin-menu-btn {
+            background: #111827;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 11px 12px;
+            border-radius: 10px;
+            font-size: 0.76em;
+            font-weight: 800;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.15s;
+        }
+        .admin-menu-btn:hover { border-color: #facc15; color: #facc15; }
+
+        .admin-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 0.8em;
+            gap: 8px;
+        }
+
+        /* =========================================================
+           3. ESTÚDIO INTERATIVO CANVA & CAPCUT
+        ========================================================= */
+        .studio-switch {
+            display: inline-flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 16px;
+        }
+
+        .studio-tab {
+            padding: 8px 14px;
+            border-radius: 9px;
+            border: none;
+            background: transparent;
+            font-size: 0.78em;
+            font-weight: 800;
+            color: #475569;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .studio-tab.active {
+            background: #ffffff;
+            color: var(--azul);
+            box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+        }
+
+        .canva-canvas {
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto;
+            aspect-ratio: 4 / 5;
+            border-radius: 18px;
+            padding: 20px;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: radial-gradient(circle at top right, #1e293b, #050505);
+            border: 2px solid var(--demo-cor);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.22);
+        }
+
+        .capcut-player {
+            width: 100%;
+            max-width: 310px;
+            margin: 0 auto;
+            aspect-ratio: 9 / 16;
+            max-height: 390px;
+            border-radius: 20px;
+            background: linear-gradient(160deg, #0f172a, #1e293b);
+            border: 3px solid #334155;
+            padding: 16px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-tracks {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .track-bar {
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-size: 0.72em;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* =========================================================
+           4. CHATBOT WHATSAPP + zap.html + MODO PATRÃO
+        ========================================================= */
+        .wa-phone {
+            width: 100%;
+            max-width: 395px;
+            margin: 0 auto;
+            background: #efeae2;
+            border: 5px solid #1e293b;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 44px rgba(15, 23, 42, 0.2);
+        }
+
+        .wa-top {
+            background: #075e54;
+            color: #fff;
+            padding: 11px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.83em;
+            font-weight: 800;
+        }
+
+        .wa-body {
+            height: 390px;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .msg-u {
+            align-self: flex-end;
+            background: #d9fdd3;
+            color: #111b21;
+            padding: 8px 12px;
+            border-radius: 12px 12px 2px 12px;
+            font-size: 0.81em;
+            max-width: 82%;
+        }
+
+        .msg-b {
+            align-self: flex-start;
+            background: #ffffff;
+            color: #111b21;
+            padding: 10px 12px;
+            border-radius: 12px 12px 12px 2px;
+            font-size: 0.81em;
+            max-width: 94%;
+            white-space: pre-line;
+        }
+
+        .opt-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-top: 6px;
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.78em;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* MODAL DO zap.html */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.68);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 430px;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+        }
+
+        .modal-field {
+            width: 100%;
+            padding: 9px 11px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.84em;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid var(--borda);
+            text-align: center;
+            padding: 24px 16px;
+            color: var(--texto-sec);
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 880px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .admin-menu-grid { grid-template-columns: 1fr; }
+            main { padding-top: 110px; }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- MODAL INTERATIVO DO zap.html -->
-  <div class="zap-modal-overlay" id="zapModal">
-    <div class="zap-modal-card">
-      <div class="zap-modal-top">
-        <div>
-          <strong style="font-size:1rem;">⚡ Agendamento Online • zap.html</strong>
-          <div style="font-size:0.76rem; opacity:0.92;">Integrado ao WhatsApp e Agenda em Tempo Real</div>
+    <header>
+        <div class="brand">
+            <img src="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" alt="Logo KBS Sistema">
+            <h1>KBS Sistema</h1>
         </div>
-        <button type="button" onclick="fecharZapModal()" style="background:rgba(255,255,255,0.2); color:#fff; border:none; border-radius:8px; padding:6px 10px; font-weight:800; cursor:pointer;">✕</button>
-      </div>
-      <div class="zap-url-bar">https://sua-empresa.kikobarbearia.com.br/zap.html</div>
-      <div class="zap-modal-body">
-        <label class="field-lbl">1. Escolha o Serviço</label>
-        <select id="zServ" class="field-ctrl">
-          <option value="Combo Corte + Barba — R$ 85 (60 min)">Combo Corte + Barba — R$ 85 (60 min)</option>
-          <option value="Corte de Cabelo — R$ 50 (30 min)">Corte de Cabelo — R$ 50 (30 min)</option>
-          <option value="Barba Completa — R$ 45 (30 min)">Barba Completa — R$ 45 (30 min)</option>
-        </select>
+        <nav>
+            <a href="#sec-site">1. Site Exclusivo</a>
+            <a href="#sec-painel">2. Painel Inteiro</a>
+            <a href="#sec-estudio">3. Canva & CapCut</a>
+            <a href="#sec-whatsapp">4. ZapBot & zap.html</a>
+            <a href="login.html" class="nav-cta">✨ Criar Conta Agora</a>
+        </nav>
+    </header>
 
-        <label class="field-lbl">2. Profissional</label>
-        <select id="zProf" class="field-ctrl">
-          <option value="Kiko">Kiko</option>
-          <option value="Equipe (Qualquer Livre)">Equipe (Qualquer Livre)</option>
-        </select>
+    <!-- MODAL INTERATIVO DO zap.html -->
+    <div class="modal-backdrop" id="zapModal">
+        <div class="modal-box">
+            <div style="background:linear-gradient(135deg,#075e54,#16a34a); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <strong style="font-size:0.95em;">⚡ zap.html • Agendamento Rápido</strong>
+                    <div style="font-size:0.74em; opacity:0.92;">Integrado direto na Agenda do Painel</div>
+                </div>
+                <button type="button" onclick="fecharZapModal()" style="background:rgba(255,255,255,0.2); color:#fff; border:none; border-radius:8px; padding:5px 10px; font-weight:800; cursor:pointer;">✕</button>
+            </div>
+            <div style="padding:16px 18px;">
+                <label style="display:block; font-size:0.75em; font-weight:800; color:#334155; margin-bottom:4px;">Serviço</label>
+                <select id="zapServ" class="modal-field">
+                    <option value="Combo Corte + Barba — R$ 85">Combo Corte + Barba — R$ 85</option>
+                    <option value="Corte Masculino — R$ 50">Corte Masculino — R$ 50</option>
+                    <option value="Barba — R$ 45">Barba — R$ 45</option>
+                </select>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <div>
-            <label class="field-lbl">3. Data</label>
-            <input type="text" id="zDia" class="field-ctrl" value="Hoje" />
-          </div>
-          <div>
-            <label class="field-lbl">4. Horário Livre</label>
-            <select id="zHora" class="field-ctrl">
-              <option value="14:20">14:20</option>
-              <option value="15:00" selected>15:00</option>
-              <option value="16:20">16:20</option>
-              <option value="17:40">17:40</option>
-            </select>
-          </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <div>
+                        <label style="display:block; font-size:0.75em; font-weight:800; color:#334155; margin-bottom:4px;">Profissional</label>
+                        <select id="zapProf" class="modal-field">
+                            <option value="Kiko">💈 Kiko</option>
+                            <option value="Lucas">💈 Lucas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.75em; font-weight:800; color:#334155; margin-bottom:4px;">Horário</label>
+                        <select id="zapHora" class="modal-field">
+                            <option value="14:20">14:20</option>
+                            <option value="15:00" selected>15:00</option>
+                            <option value="16:20">16:20</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label style="display:block; font-size:0.75em; font-weight:800; color:#334155; margin-bottom:4px;">Nome do Cliente</label>
+                <input type="text" id="zapNome" class="modal-field" value="Carlos">
+
+                <button type="button" class="btn btn-green" style="width:100%;" onclick="confirmarZapModal()">
+                    ✅ Confirmar no zap.html e Lançar na Agenda
+                </button>
+            </div>
         </div>
-
-        <label class="field-lbl">5. Seu Nome</label>
-        <input type="text" id="zNome" class="field-ctrl" value="Rafael" />
-
-        <label class="field-lbl">6. Seu WhatsApp</label>
-        <input type="text" id="zFone" class="field-ctrl" value="(67) 99999-1234" />
-
-        <button type="button" class="btn btn-wa" style="width:100%;" onclick="confirmarAgendamentoZap()">
-          ✅ Confirmar no zap.html e Receber no WhatsApp
-        </button>
-      </div>
     </div>
-  </div>
 
-  <!-- CABEÇALHO -->
-  <header>
-    <div class="container nav-bar">
-      <a href="#" class="brand">
-        <img src="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" alt="KBS Sistema" />
-        <span>KBS Sistema</span>
-        <span class="brand-pill">Plataforma Oficial</span>
-      </a>
-      <nav class="nav-links">
-        <a href="#fluxo">ZapBot & zap.html</a>
-        <a href="#estudio">CapCut & Canva</a>
-        <a href="#recursos">Todas as Funções</a>
-        <a href="#patrao">Modo Patrão</a>
-        <a href="#assinar">Assinar</a>
-      </nav>
-      <a href="https://wa.me/5567999673200?text=Ol%C3%A1!%20Vi%20a%20apresenta%C3%A7%C3%A3o%20do%20KBS%20Sistema%20e%20quero%20saber%20mais!" target="_blank" rel="noopener" class="btn btn-wa btn-sm">
-        Falar no WhatsApp
-      </a>
-    </div>
-  </header>
-
-  <main>
-    <!-- HERO + SIMULADOR -->
-    <section class="hero" id="fluxo">
-      <div class="container hero-grid">
-        <div>
-          <div class="eyebrow">🚀 TUDO EM UM SÓ SISTEMA • SITE + WHATSAPP + ESTÚDIO</div>
-          <h1>Seu negócio com <span>Site Próprio</span>, <span>Link Exclusivo</span>, ZapBot e <span>zap.html</span>.</h1>
-          <p class="lead">
-            Teste no celular ao lado: o cliente manda <strong>"Oi"</strong> no WhatsApp, escolhe na enquete, entra na tela do <strong>zap.html</strong>, agenda sem conflito de horário e recebe lembretes automáticos.
-          </p>
-
-          <div class="cta-row">
-            <button type="button" class="btn btn-brand" onclick="iniciarFluxoOi()">▶ Testar "Oi" no WhatsApp</button>
-            <button type="button" class="btn btn-wa" onclick="abrirZapModal()">⚡ Entrar no zap.html Agora</button>
-          </div>
-
-          <div class="kpi-strip">
-            <div class="kpi-card">
-              <strong>Site Principal</strong>
-              <span>Com serviços, galeria e agenda</span>
-            </div>
-            <div class="kpi-card">
-              <strong>CapCut + Canva</strong>
-              <span>Vídeos Reels e artes prontas</span>
-            </div>
-            <div class="kpi-card">
-              <strong>Modo Patrão</strong>
-              <span>Controle total no WhatsApp</span>
-            </div>
-          </div>
-
-          <div class="link-preview-card">
-            <strong style="font-size:0.92rem; color:var(--ink);">🌐 Cada cliente ganha seu Site Principal com Nome Exclusivo no Link</strong>
-            <p style="font-size:0.83rem; color:var(--muted); margin-top:4px;">
-              Ao assinar, sua empresa recebe sua própria página completa (serviços, preços, profissionais, fotos, vídeos, mapa e login administrativo) identificada pelo seu nome exclusivo:
+    <main>
+        <!-- HERO + PASSO 1: SITE EXCLUSIVO PERSONALIZÁVEL AO VIVO -->
+        <section class="sec-card" id="sec-site">
+            <span class="pill">✨ PASSO 1 • SITE EXCLUSIVO COM SUBDOMÍNIO PRÓPRIO</span>
+            <h2 class="sec-title">Você ganha seu próprio site profissional e muda tudo pelo celular</h2>
+            <p class="sec-sub">
+                Toque nos controles abaixo para testar na hora como você personaliza o seu site exclusivo: mude a <strong>cor</strong>, a <strong>letra (fonte)</strong>, o <strong>nome da empresa</strong>, o <strong>fundo/vídeo</strong> e clique nos serviços como um cliente real.
             </p>
-            <div class="link-url-pill">https://sua-empresa.kikobarbearia.com.br &nbsp;•&nbsp; ?id=nome-da-empresa</div>
-          </div>
-        </div>
 
-        <!-- CELULAR INTERATIVO -->
-        <div class="phone-frame">
-          <div class="wa-header">
-            <div class="wa-contact">
-              <div class="wa-avatar">KBS</div>
-              <div>
-                <div style="font-size:0.88rem; font-weight:800;">ZapBot • KBS Sistema</div>
-                <div style="font-size:0.71rem; color:#bbf7d0;">online • atendimento automático</div>
-              </div>
+            <div class="grid-2">
+                <!-- CELULAR TOUCH COM SITE EXCLUSIVO -->
+                <div class="phone-frame">
+                    <div class="browser-bar">
+                        <span>🔒</span>
+                        <div class="browser-url" id="previewUrl">https://barbeariaimperial.kikobarbearia.com.br</div>
+                    </div>
+                    <div class="site-preview-body" id="sitePreviewBody" style="background-image: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80');">
+                        <div class="site-preview-overlay"></div>
+                        <div class="site-preview-content">
+                            <div class="site-mini-header">
+                                <div class="site-mini-title" id="previewNome">BARBEARIA IMPERIAL</div>
+                                <div style="font-size:0.65em; color:#e2e8f0; margin-top:3px;">SOBRE • SERVIÇOS • GALERIA • AGENDAR</div>
+                            </div>
+
+                            <div style="text-align:center; margin-top:14px;">
+                                <p id="previewSlogan" style="font-size:0.78em; color:#f8fafc; margin:0 0 10px;">
+                                    "Estilo, tradição e horário marcado sem fila."
+                                </p>
+                            </div>
+
+                            <div class="site-mini-card">
+                                <div style="font-size:0.7em; font-weight:800; text-transform:uppercase; color:#fff; margin-bottom:6px;">
+                                    Toque para escolher os serviços:
+                                </div>
+
+                                <div class="site-serv-item ativo" onclick="toggleServicoDemo(this, 50)">
+                                    <span>✂️ Corte Masculino (20m)</span>
+                                    <span class="preco-cor" style="color:var(--demo-cor);">R$ 50</span>
+                                </div>
+                                <div class="site-serv-item" onclick="toggleServicoDemo(this, 45)">
+                                    <span>🧔 Barba Navalhada (15m)</span>
+                                    <span class="preco-cor" style="color:var(--demo-cor);">R$ 45</span>
+                                </div>
+                                <div class="site-serv-item" onclick="toggleServicoDemo(this, 85)">
+                                    <span>🔥 Combo Corte + Barba</span>
+                                    <span class="preco-cor" style="color:var(--demo-cor);">R$ 85</span>
+                                </div>
+
+                                <div style="display:flex; justify-content:space-between; font-size:0.75em; margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.14);">
+                                    <span>Total selecionado:</span>
+                                    <strong id="previewTotal" style="color:var(--demo-cor);">R$ 50</strong>
+                                </div>
+
+                                <button type="button" class="site-mini-btn" onclick="abrirZapModal()">
+                                    📅 Agendar Horário Agora
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EDITOR AO VIVO DO SITE -->
+                <div class="editor-box">
+                    <span class="pill pill-amber">🎨 TESTE O EDITOR DO SITE AO VIVO</span>
+                    <h3 style="margin:8px 0 4px; font-size:1.08em; font-weight:800;">Personalize o site acima agora mesmo:</h3>
+
+                    <label class="editor-label">1. Nome da Sua Empresa (Subdomínio automático):</label>
+                    <input type="text" class="editor-input" id="inputNomeEmpresa" value="Barbearia Imperial" oninput="atualizarSiteDemo()">
+
+                    <label class="editor-label">2. Frase / Slogan Principal:</label>
+                    <input type="text" class="editor-input" id="inputSloganEmpresa" value="Estilo, tradição e horário marcado sem fila." oninput="atualizarSiteDemo()">
+
+                    <label class="editor-label">3. Cor Principal do Sistema e Molduras:</label>
+                    <div class="color-swatches">
+                        <button type="button" class="swatch active" style="background:#d4af37;" onclick="mudarCorDemo('#d4af37', this)" title="Dourado"></button>
+                        <button type="button" class="swatch" style="background:#38bdf8;" onclick="mudarCorDemo('#38bdf8', this)" title="Azul"></button>
+                        <button type="button" class="swatch" style="background:#22c55e;" onclick="mudarCorDemo('#22c55e', this)" title="Verde"></button>
+                        <button type="button" class="swatch" style="background:#f97316;" onclick="mudarCorDemo('#f97316', this)" title="Laranja"></button>
+                        <button type="button" class="swatch" style="background:#e879f9;" onclick="mudarCorDemo('#e879f9', this)" title="Roxo"></button>
+                        <button type="button" class="swatch" style="background:#ef4444;" onclick="mudarCorDemo('#ef4444', this)" title="Vermelho"></button>
+                    </div>
+
+                    <label class="editor-label">4. Estilo da Letra (Fonte):</label>
+                    <div class="chip-row" id="fontChips">
+                        <button type="button" class="mini-chip active" onclick="mudarFonteDemo('\'Montserrat\', sans-serif', this)">Montserrat</button>
+                        <button type="button" class="mini-chip" onclick="mudarFonteDemo('\'Oswald\', sans-serif', this)">Oswald</button>
+                        <button type="button" class="mini-chip" onclick="mudarFonteDemo('\'Poppins\', sans-serif', this)">Poppins</button>
+                    </div>
+
+                    <label class="editor-label">5. Cenário / Vídeo de Fundo:</label>
+                    <div class="chip-row" id="bgChips">
+                        <button type="button" class="mini-chip active" onclick="mudarFundoDemo('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80', this)">💈 Barbearia Clássica</button>
+                        <button type="button" class="mini-chip" onclick="mudarFundoDemo('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80', this)">✂️ Corte na Tesoura</button>
+                        <button type="button" class="mini-chip" onclick="mudarFundoDemo('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=800&q=80', this)">🔥 Ambiente VIP</button>
+                    </div>
+
+                    <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <a href="login.html" class="btn btn-green" style="flex:1;">✨ Criar Minha Unidade Agora</a>
+                    </div>
+                </div>
             </div>
-            <button type="button" onclick="iniciarFluxoOi()" style="background:rgba(255,255,255,0.16); color:#fff; border:none; border-radius:8px; padding:5px 10px; font-size:0.74rem; font-weight:700; cursor:pointer;">Reiniciar</button>
-          </div>
+        </section>
 
-          <div class="wa-messages" id="waBox"></div>
-
-          <div class="wa-footer-bar">
-            <button type="button" class="wa-quick-oi" onclick="iniciarFluxoOi()">
-              💬 Toque aqui para mandar "Oi" como cliente...
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ESTÚDIO CAPCUT & CANVA -->
-    <section class="sec" id="estudio">
-      <div class="container">
-        <div class="sec-head">
-          <h2>Estúdio de Vídeo (CapCut) e Fotos/Artes (Canva) integrados</h2>
-          <p>Crie conteúdos profissionais para divulgar seu link exclusivo e encher a agenda todos os dias.</p>
-        </div>
-
-        <div class="grid-2">
-          <div class="white-card">
-            <span class="tag t-purple">🎬 Editor de Vídeo • Estilo CapCut</span>
-            <h3>Edite Reels, TikTok e Status direto no KBS Sistema</h3>
-            <p>
-              Corte clipes, combine antes e depois, coloque legendas chamativas, trilha sonora e exporte no formato vertical (9:16).
+        <!-- PASSO 2: PAINEL ADMINISTRATIVO INTEIRO E CLICÁVEL -->
+        <section class="sec-card" id="sec-painel">
+            <span class="pill pill-amber">👑 PASSO 2 • PAINEL ADMINISTRATIVO COMPLETO (CLIQUE PARA NAVEGAR)</span>
+            <h2 class="sec-title">Entre nas funções do Painel Administrativo e veja como tudo funciona</h2>
+            <p class="sec-sub">
+                Toque nas abas ou nos botões do painel abaixo para explorar <strong>Visão Geral & Gráfico</strong>, <strong>Agenda & Comandas</strong>, <strong>Comissões</strong>, <strong>CRM/Pacotes</strong>, <strong>Caixa PDV/Estoque</strong> e <strong>QR Code WhatsApp</strong>.
             </p>
-            <div class="timeline-demo">
-              <div class="track-bar" style="background:#f3e8ff; color:#6b21a8;">✂️ Faixa de Vídeo: Cortes & Transições Dinâmicas</div>
-              <div class="track-bar" style="background:#dbeafe; color:#1e40af;">🔤 Faixa de Texto: Legendas + Chamada para Agendar</div>
-              <div class="track-bar" style="background:#dcfce7; color:#166534;">🎵 Faixa de Áudio: Música + Identidade da Empresa</div>
-            </div>
-            <ul class="check-ul">
-              <li>Formato vertical pronto para Instagram, TikTok e Status do WhatsApp.</li>
-              <li>Mostre o resultado do serviço e leve o cliente direto para o zap.html.</li>
-            </ul>
-          </div>
 
-          <div class="white-card">
-            <span class="tag t-blue">🎨 Editor de Fotos & Artes • Estilo Canva</span>
-            <h3>Monte artes, tabelas de preços e promoções em segundos</h3>
-            <p>
-              Personalize modelos prontos com o logotipo, cores, fontes, serviços e valores da sua empresa sem precisar contratar designer.
+            <div class="admin-shell">
+                <div class="admin-topbar">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <strong style="color:#facc15; font-size:0.92em;">👑 PAINEL KBS PRO</strong>
+                        <span style="background:#16a34a; color:#fff; font-size:0.68em; padding:2px 8px; border-radius:999px; font-weight:800;">● WHATSAPP CONECTADO</span>
+                    </div>
+                    <div style="font-size:0.75em; color:#94a3b8;">Toque nas abas abaixo para navegar 👇</div>
+                </div>
+
+                <div class="admin-tabs">
+                    <button type="button" class="admin-tab active" onclick="abrirAbaAdmin('visao', this)">📊 Visão Geral & QR</button>
+                    <button type="button" class="admin-tab" onclick="abrirAbaAdmin('agenda', this)">📋 Agenda & Comandas</button>
+                    <button type="button" class="admin-tab" onclick="abrirAbaAdmin('comissoes', this)">💵 Comissões</button>
+                    <button type="button" class="admin-tab" onclick="abrirAbaAdmin('crm', this)">👥 CRM & Pacotes</button>
+                    <button type="button" class="admin-tab" onclick="abrirAbaAdmin('pdv', this)">🛒 Caixa PDV & Estoque</button>
+                </div>
+
+                <div class="admin-body">
+                    <!-- ABA 1: VISÃO GERAL -->
+                    <div class="admin-view active" id="view-visao">
+                        <div class="admin-row" style="border-color:#ca8a04;">
+                            <div>
+                                <strong style="color:#facc15;">📱 Conexão WhatsApp & Link Exclusivo</strong>
+                                <div style="color:#94a3b8; font-size:0.88em;">Disparos automáticos de confirmação e lembretes ativos</div>
+                            </div>
+                            <button type="button" onclick="alert('✅ QR Code gerado! Basta escanear com o WhatsApp da sua empresa para ativar o robô 24h.')" style="background:#facc15; color:#090d16; border:none; padding:7px 11px; border-radius:8px; font-weight:800; font-size:0.85em; cursor:pointer;">Gerar QR Code</button>
+                        </div>
+
+                        <div class="admin-kpi-grid">
+                            <div class="admin-kpi-card">
+                                <span style="font-size:0.72em; color:#94a3b8;">🟢 Entradas (Mês)</span><br>
+                                <strong style="color:#4ade80; font-size:1.05em;">R$ 6.292,00</strong>
+                            </div>
+                            <div class="admin-kpi-card">
+                                <span style="font-size:0.72em; color:#94a3b8;">🔴 Saídas / Despesas</span><br>
+                                <strong style="color:#f87171; font-size:1.05em;">R$ 138,00</strong>
+                            </div>
+                            <div class="admin-kpi-card">
+                                <span style="font-size:0.72em; color:#94a3b8;">💰 Saldo Líquido</span><br>
+                                <strong style="color:#facc15; font-size:1.05em;">R$ 6.154,00</strong>
+                            </div>
+                        </div>
+
+                        <div style="font-size:0.76em; color:#cbd5e1; font-weight:700; margin-bottom:6px;">📊 Faturamento dos Últimos 7 Dias</div>
+                        <div class="admin-bars">
+                            <div class="admin-bar-col"><div class="admin-bar-fill" style="height:24%;"></div><span style="font-size:0.65em; color:#94a3b8;">Seg</span></div>
+                            <div class="admin-bar-col"><div class="admin-bar-fill" style="height:60%;"></div><span style="font-size:0.65em; color:#94a3b8;">Ter</span></div>
+                            <div class="admin-bar-col"><div class="admin-bar-fill" style="height:20%;"></div><span style="font-size:0.65em; color:#94a3b8;">Qua</span></div>
+                            <div class="admin-bar-col"><div class="admin-bar-fill" style="height:55%;"></div><span style="font-size:0.65em; color:#94a3b8;">Qui</span></div>
+                            <div class="admin-bar-col"><div class="admin-bar-fill" style="height:40%;"></div><span style="font-size:0.65em; color:#94a3b8;">Sex</span></div>
+                            <div class="admin-bar-col"><div class="admin-bar-fill" style="height:96%;"></div><span style="font-size:0.65em; color:#94a3b8;">Sáb</span></div>
+                        </div>
+
+                        <div class="admin-menu-grid">
+                            <button type="button" class="admin-menu-btn" onclick="abrirAbaAdmin('agenda', document.querySelectorAll('.admin-tab')[1])">📋 VER AGENDA GERAL E COMANDAS →</button>
+                            <button type="button" class="admin-menu-btn" onclick="abrirAbaAdmin('comissoes', document.querySelectorAll('.admin-tab')[2])">💵 RELATÓRIO DE COMISSÕES →</button>
+                            <button type="button" class="admin-menu-btn" onclick="abrirAbaAdmin('crm', document.querySelectorAll('.admin-tab')[3])">👥 CRM / PACOTES DE CLIENTES →</button>
+                            <button type="button" class="admin-menu-btn" onclick="abrirAbaAdmin('pdv', document.querySelectorAll('.admin-tab')[4])">🛒 CAIXA PDV / ESTOQUE →</button>
+                            <button type="button" class="admin-menu-btn" onclick="document.getElementById('sec-estudio').scrollIntoView({behavior:'smooth'})">🎨 ESTÚDIO DE ARTES & REELS PRO →</button>
+                            <button type="button" class="admin-menu-btn" onclick="document.getElementById('sec-site').scrollIntoView({behavior:'smooth'})">🖌️ TEXTOS, CORES E VÍDEOS DO SITE →</button>
+                        </div>
+                    </div>
+
+                    <!-- ABA 2: AGENDA & COMANDAS -->
+                    <div class="admin-view" id="view-agenda">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                            <strong style="color:#facc15; font-size:0.9em;">📋 Agenda Geral & Comandas do Dia</strong>
+                            <button type="button" onclick="abrirZapModal()" style="background:#16a34a; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:800; font-size:0.75em; cursor:pointer;">+ Novo Agendamento</button>
+                        </div>
+                        <div id="listaAgendaDemo">
+                            <div class="admin-row">
+                                <div><strong>⏰ 09:00 • Lucas Silva</strong><br><span style="color:#94a3b8;">Corte Masculino • Prof. Kiko • R$ 50,00</span></div>
+                                <button type="button" onclick="this.innerText='✅ Pago'; this.style.background='#16a34a'; this.style.color='#fff';" style="background:#facc15; color:#090d16; border:none; padding:6px 10px; border-radius:8px; font-weight:800; cursor:pointer;">Fechar Comanda</button>
+                            </div>
+                            <div class="admin-row">
+                                <div><strong>⏰ 10:20 • Rafael Souza</strong><br><span style="color:#94a3b8;">Combo Corte + Barba • Prof. Lucas • R$ 85,00</span></div>
+                                <button type="button" onclick="this.innerText='✅ Pago'; this.style.background='#16a34a'; this.style.color='#fff';" style="background:#facc15; color:#090d16; border:none; padding:6px 10px; border-radius:8px; font-weight:800; cursor:pointer;">Fechar Comanda</button>
+                            </div>
+                            <div class="admin-row" style="border-color:#ef4444;">
+                                <div><strong style="color:#f87171;">🔒 12:00 às 13:00 • Horário Bloqueado</strong><br><span style="color:#94a3b8;">Intervalo de Almoço</span></div>
+                                <span style="color:#f87171; font-weight:800;">Bloqueado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA 3: COMISSÕES -->
+                    <div class="admin-view" id="view-comissoes">
+                        <strong style="color:#4ade80; font-size:0.9em; display:block; margin-bottom:10px;">💵 Cálculo Automático de Comissões por Profissional</strong>
+                        <div class="admin-row">
+                            <div><strong>💈 Kiko (Titular)</strong><br><span style="color:#94a3b8;">42 atendimentos • Produção: R$ 3.840,00</span></div>
+                            <strong style="color:#4ade80;">100% • R$ 3.840,00</strong>
+                        </div>
+                        <div class="admin-row">
+                            <div><strong>💈 Lucas (Comissão 50%)</strong><br><span style="color:#94a3b8;">28 atendimentos • Produção: R$ 2.452,00</span></div>
+                            <strong style="color:#facc15;">50% • R$ 1.226,00</strong>
+                        </div>
+                    </div>
+
+                    <!-- ABA 4: CRM & PACOTES -->
+                    <div class="admin-view" id="view-crm">
+                        <strong style="color:#38bdf8; font-size:0.9em; display:block; margin-bottom:10px;">👥 CRM, Pacotes Mensais e Clientes Sumidos</strong>
+                        <div class="admin-row">
+                            <div><strong>⭐ João Pedro • Pacote Mensal (4 Cortes)</strong><br><span style="color:#94a3b8;">Restam 2 créditos • Renovação automática</span></div>
+                            <span style="background:#16a34a; color:#fff; padding:4px 8px; border-radius:6px; font-weight:800;">Ativo</span>
+                        </div>
+                        <div class="admin-row">
+                            <div><strong>⚠️ Marcos Andrade • Ausente há 28 dias</strong><br><span style="color:#94a3b8;">Último serviço: Corte + Barba</span></div>
+                            <button type="button" onclick="this.innerText='📲 Enviado!'; this.style.background='#16a34a';" style="background:#2563eb; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:800; cursor:pointer;">Chamar no Zap</button>
+                        </div>
+                    </div>
+
+                    <!-- ABA 5: CAIXA PDV & ESTOQUE -->
+                    <div class="admin-view" id="view-pdv">
+                        <strong style="color:#f87171; font-size:0.9em; display:block; margin-bottom:10px;">🛒 Venda Rápida no Balcão (PDV) & Controle de Estoque</strong>
+                        <div class="admin-row">
+                            <div><strong>🧴 Pomada Modeladora Matte</strong><br><span style="color:#94a3b8;">Estoque atual: <strong id="estPomada" style="color:#fff;">14</strong> un. • R$ 35,00</span></div>
+                            <button type="button" onclick="venderPdvDemo('estPomada')" style="background:#16a34a; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:800; cursor:pointer;">+ Vender 1</button>
+                        </div>
+                        <div class="admin-row">
+                            <div><strong>🥤 Cerveja Long Neck / Refrigerante</strong><br><span style="color:#94a3b8;">Estoque atual: <strong id="estBebida" style="color:#fff;">24</strong> un. • R$ 8,00</span></div>
+                            <button type="button" onclick="venderPdvDemo('estBebida')" style="background:#16a34a; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:800; cursor:pointer;">+ Vender 1</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASSO 3: ESTÚDIO INTERATIVO CANVA & CAPCUT -->
+        <section class="sec-card" id="sec-estudio">
+            <span class="pill pill-purple">🎨 PASSO 3 • ESTÚDIO DE ARTES (CANVA) & VÍDEOS (CAPCUT)</span>
+            <h2 class="sec-title">Crie tabelas de preços, banners e edite Reels sem sair do sistema</h2>
+            <p class="sec-sub">
+                Alterne entre o <strong>Editor Estilo Canva</strong> e o <strong>Editor de Vídeo Estilo CapCut</strong> abaixo para testar as ferramentas de divulgação incluídas no painel.
             </p>
-            <div class="timeline-demo">
-              <div class="track-bar" style="background:#fef3c7; color:#92400e;">🏷️ Tabela de Preços e Combos Atualizada</div>
-              <div class="track-bar" style="background:#e0f2fe; color:#075985;">🔥 Arte de Horários Livres e Promoções do Dia</div>
-              <div class="track-bar" style="background:#f1f5f9; color:#334155;">✨ Logotipo, Cores e Fontes da Sua Marca</div>
+
+            <div class="studio-switch">
+                <button type="button" class="studio-tab active" onclick="trocarEstudio('canva', this)">🎨 Estúdio de Artes (Canva)</button>
+                <button type="button" class="studio-tab" onclick="trocarEstudio('capcut', this)">🎬 Estúdio de Vídeo (CapCut)</button>
             </div>
-            <ul class="check-ul">
-              <li>Pronto para postar no feed/stories ou disparar no WhatsApp.</li>
-              <li>Visual limpo, profissional e adaptado ao estilo do seu negócio.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- TODAS AS FUNÇÕES DO KBS SISTEMA -->
-    <section class="sec" id="recursos" style="background:#ffffff;">
-      <div class="container">
-        <div class="sec-head">
-          <h2>Tudo o que o KBS Sistema faz pelo seu negócio</h2>
-          <p>Uma estrutura completa de ponta a ponta: captação, agendamento, atendimento, gestão financeira e retenção.</p>
-        </div>
+            <!-- MODO CANVA -->
+            <div id="estudio-canva" class="grid-2">
+                <div class="canva-canvas" id="canvaPreviewBox">
+                    <div>
+                        <span style="background:var(--demo-cor); color:#050505; padding:4px 10px; border-radius:999px; font-size:0.7em; font-weight:900;">TABELA OFICIAL</span>
+                        <h3 id="canvaTitulo" style="margin:10px 0 4px; font-size:1.35em; font-weight:900; color:var(--demo-cor);">BARBEARIA IMPERIAL</h3>
+                        <p id="canvaSub" style="margin:0; font-size:0.78em; color:#e2e8f0;">Horários disponíveis hoje! Garanta o seu.</p>
+                    </div>
 
-        <div class="grid-3">
-          <div class="white-card">
-            <span class="tag t-blue">Site + Link Exclusivo</span>
-            <h3>Página Principal da Empresa</h3>
-            <p>Site completo com seu nome exclusivo no link, galeria de fotos e vídeos, lista de serviços, mapa e painel administrativo.</p>
-          </div>
+                    <div style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16); border-radius:12px; padding:12px; font-size:0.8em;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>✂️ Corte Masculino</span><strong style="color:var(--demo-cor);">R$ 50</strong></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>🧔 Barba Navalhada</span><strong style="color:var(--demo-cor);">R$ 45</strong></div>
+                        <div style="display:flex; justify-content:space-between;"><span>🔥 Combo Completo</span><strong style="color:var(--demo-cor);">R$ 85</strong></div>
+                    </div>
 
-          <div class="white-card">
-            <span class="tag t-green">ZapBot + zap.html</span>
-            <h3>Atendimento & Agendamento 24h</h3>
-            <p>Responde clientes no WhatsApp com enquetes, abre o <strong>zap.html</strong> com horários livres e pausa o bot quando um humano assume.</p>
-          </div>
+                    <div style="text-align:center; font-size:0.72em; color:#cbd5e1;">
+                        📲 Agende pelo link oficial ou WhatsApp
+                    </div>
+                </div>
 
-          <div class="white-card">
-            <span class="tag t-gold">Anti-Faltas Automático</span>
-            <h3>Lembretes 24h, 1h e 30min</h3>
-            <p>Envia lembretes automáticos, pede confirmação (CONFIRMAR / CANCELAR), manda localização 30min antes e solicita avaliação.</p>
-          </div>
+                <div class="editor-box">
+                    <span class="pill">🎨 EDITOR DE ARTES INTEGRADO</span>
+                    <h3 style="margin:8px 0 6px; font-size:1.05em; font-weight:800;">Edite a arte ao lado na hora:</h3>
+                    <label class="editor-label">Título da Arte:</label>
+                    <input type="text" class="editor-input" value="BARBEARIA IMPERIAL" oninput="document.getElementById('canvaTitulo').innerText = this.value">
 
-          <div class="white-card">
-            <span class="tag t-purple">Retenção & Vendas</span>
-            <h3>Clientes Sumidos & Aniversários</h3>
-            <p>Recupera clientes que não agendam há 25+ dias, manda parabéns com oferta especial e permite campanhas no WhatsApp.</p>
-          </div>
+                    <label class="editor-label">Chamada Promocional:</label>
+                    <input type="text" class="editor-input" value="Horários disponíveis hoje! Garanta o seu." oninput="document.getElementById('canvaSub').innerText = this.value">
 
-          <div class="white-card">
-            <span class="tag t-gold">Financeiro & Estoque</span>
-            <h3>Caixa, Comandas e Comissões</h3>
-            <p>Controle de entradas, despesas, lucro líquido, comissões por profissional, pacotes/assinaturas e estoque com baixa automática.</p>
-          </div>
+                    <label class="editor-label">Modelo Rápido:</label>
+                    <div class="chip-row">
+                        <button type="button" class="mini-chip active" onclick="document.getElementById('canvaPreviewBox').style.background='radial-gradient(circle at top right, #1e293b, #050505)'">🖤 Black Gold</button>
+                        <button type="button" class="mini-chip" onclick="document.getElementById('canvaPreviewBox').style.background='linear-gradient(135deg, #1e3a8a, #090d16)'">💙 Azul Pro</button>
+                        <button type="button" class="mini-chip" onclick="document.getElementById('canvaPreviewBox').style.background='linear-gradient(135deg, #065f46, #050505)'">💚 Verde VIP</button>
+                    </div>
+                </div>
+            </div>
 
-          <div class="white-card">
-            <span class="tag t-blue">Multi-Empresas SaaS</span>
-            <h3>Gestão Individual por Unidade</h3>
-            <p>Cada empresa cadastrada possui seu próprio link, QR Code, cores, horários de almoço/expediente e controle independente.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+            <!-- MODO CAPCUT -->
+            <div id="estudio-capcut" class="grid-2" style="display:none;">
+                <div class="capcut-player">
+                    <div style="display:flex; justify-content:space-between; font-size:0.7em; color:#94a3b8;">
+                        <span>9:16 REELS / TIKTOK</span>
+                        <span style="color:#4ade80; font-weight:800;">● 1080p 60fps</span>
+                    </div>
 
-    <!-- MODO PATRÃO -->
-    <section class="sec" id="patrao">
-      <div class="container">
-        <div class="sec-head">
-          <h2>Modo Patrão: comande tudo direto pelo WhatsApp</h2>
-          <p>Toque nos comandos abaixo para ver as respostas instantâneas do sistema para o dono da empresa.</p>
-        </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:2.4em;">✂️💈</div>
+                        <div id="capcutLegendaPreview" style="margin-top:8px; background:rgba(0,0,0,0.75); border:1px solid #facc15; color:#facc15; padding:6px 10px; border-radius:8px; font-weight:900; font-size:0.82em;">
+                            TRANSFORMAÇÃO DE RESPEITO 🔥
+                        </div>
+                    </div>
 
-        <div class="white-card" style="max-width:860px; margin:0 auto;">
-          <div class="cmd-tabs" id="patraoTabs">
-            <button type="button" class="cmd-pill active" onclick="verPatrao(this, 'agenda')">agenda</button>
-            <button type="button" class="cmd-pill" onclick="verPatrao(this, 'marcar')">marcar Lucas 16:00 Corte</button>
-            <button type="button" class="cmd-pill" onclick="verPatrao(this, 'bloquear')">bloquear 12:00 as 14:00 almoço</button>
-            <button type="button" class="cmd-pill" onclick="verPatrao(this, 'caixa')">caixa</button>
-            <button type="button" class="cmd-pill" onclick="verPatrao(this, 'estoque')">entrada estoque Pomada 10</button>
-            <button type="button" class="cmd-pill" onclick="verPatrao(this, 'sumidos')">sumidos</button>
-            <button type="button" class="cmd-pill" onclick="verPatrao(this, 'assinantes')">assinantes</button>
-          </div>
-          <div class="patrao-screen" id="patraoScreen"></div>
-        </div>
-      </div>
-    </section>
+                    <div class="timeline-tracks">
+                        <div class="track-bar" style="background:#2563eb;"><span>🎞️ Clipe Antes & Depois</span><span>00:08</span></div>
+                        <div class="track-bar" style="background:#d97706;" id="trackLegenda"><span>🔤 Legenda Automática</span><span>ATIVA</span></div>
+                        <div class="track-bar" style="background:#16a34a;" id="trackAudio"><span>🎵 Trilha Sonora Batida</span><span>ATIVA</span></div>
+                    </div>
+                </div>
 
-    <!-- ASSINATURA -->
-    <section class="sec" id="assinar" style="background:#ffffff;">
-      <div class="container">
-        <div class="pricing-box">
-          <span class="tag t-gold">Plano Completo KBS Sistema</span>
-          <div class="price-val">R$ 60<span>,00 / mês</span></div>
-          <p style="color:var(--muted); font-size:0.92rem; margin-bottom:18px;">
-            Site Principal com Link Exclusivo + ZapBot + zap.html + Estúdio CapCut & Canva + Modo Patrão
-          </p>
-          <ul class="check-ul" style="text-align:left; margin-bottom:24px;">
-            <li>Site principal completo com seu nome exclusivo no link</li>
-            <li>ZapBot no WhatsApp integrado ao agendamento online zap.html</li>
-            <li>Editor de vídeos (estilo CapCut) e editor de fotos/artes (estilo Canva)</li>
-            <li>Lembretes automáticos (24h, 1h e 30min), sumidos e aniversariantes</li>
-            <li>Caixa, comandas, comissões, estoque e Modo Patrão no WhatsApp</li>
-          </ul>
-          <a href="https://wa.me/5567999673200?text=Ol%C3%A1!%20Vi%20a%20apresenta%C3%A7%C3%A3o%20do%20KBS%20Sistema%20e%20quero%20assinar!" target="_blank" rel="noopener" class="btn btn-wa" style="width:100%;">
-            📲 Assinar Agora pelo WhatsApp (67) 99967-3200
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>
+                <div class="editor-box">
+                    <span class="pill pill-purple">🎬 EDITOR DE VÍDEO ESTILO CAPCUT</span>
+                    <h3 style="margin:8px 0 6px; font-size:1.05em; font-weight:800;">Edite seu Reel vertical direto pelo celular:</h3>
+                    <label class="editor-label">Texto da Legenda no Vídeo:</label>
+                    <input type="text" class="editor-input" value="TRANSFORMAÇÃO DE RESPEITO 🔥" oninput="document.getElementById('capcutLegendaPreview').innerText = this.value">
 
-  <footer>
-    <div class="container foot-row">
-      <div><strong>KBS Sistema</strong> — Site Exclusivo, ZapBot, zap.html, Estúdio & Gestão.</div>
-      <div>WhatsApp Oficial: (67) 99967-3200</div>
-    </div>
-  </footer>
+                    <label class="editor-label">Ferramentas de Edição:</label>
+                    <div class="chip-row">
+                        <button type="button" class="mini-chip active" onclick="this.classList.toggle('active')">✂️ Corte Rápido</button>
+                        <button type="button" class="mini-chip active" onclick="this.classList.toggle('active')">⚡ Transição Zoom</button>
+                        <button type="button" class="mini-chip active" onclick="this.classList.toggle('active')">🎵 Áudio Viral</button>
+                        <button type="button" class="mini-chip active" onclick="this.classList.toggle('active')">📲 Publicar no Site</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <script>
-    const waBox = document.getElementById('waBox');
-    let reservaAtual = {
-      cliente: 'Rafael',
-      servico: 'Combo Corte + Barba — R$ 85 (60 min)',
-      prof: 'Kiko',
-      dia: 'Hoje',
-      hora: '15:00'
-    };
+        <!-- PASSO 4: CHATBOT WHATSAPP + zap.html + MODO PATRÃO -->
+        <section class="sec-card" id="sec-whatsapp">
+            <span class="pill pill-green">🤖 PASSO 4 • ZAPBOT + zap.html + MODO PATRÃO NO WHATSAPP</span>
+            <h2 class="sec-title">Teste a conversa do robô, entre no zap.html e comande pelo Modo Patrão</h2>
+            <p class="sec-sub">
+                Clique nas opções dentro do WhatsApp abaixo para abrir o <strong>zap.html</strong> e ver o agendamento cair direto na agenda do painel acima.
+            </p>
 
-    function addClienteMsg(txt) {
-      const d = document.createElement('div');
-      d.className = 'bubble-client';
-      d.textContent = txt;
-      waBox.appendChild(d);
-      waBox.scrollTop = waBox.scrollHeight;
-    }
+            <div class="grid-2">
+                <div class="wa-phone">
+                    <div class="wa-top">
+                        <span>🟢 KBS Bot • Atendimento 24h</span>
+                        <button type="button" onclick="iniciarOi()" style="background:rgba(255,255,255,0.18); color:#fff; border:none; border-radius:6px; padding:4px 9px; font-size:0.74em; cursor:pointer; font-weight:700;">Reiniciar</button>
+                    </div>
+                    <div class="wa-body" id="waBody"></div>
+                </div>
 
-    function addBotMsg(txt, extraHtml = '') {
-      const d = document.createElement('div');
-      d.className = 'bubble-bot';
-      d.textContent = txt;
-      if (extraHtml) {
-        const wrap = document.createElement('div');
-        wrap.innerHTML = extraHtml;
-        d.appendChild(wrap);
-      }
-      waBox.appendChild(d);
-      waBox.scrollTop = waBox.scrollHeight;
-    }
+                <div class="editor-box">
+                    <span class="pill pill-amber">👑 MODO PATRÃO NO WHATSAPP</span>
+                    <h3 style="margin:8px 0 6px; font-size:1.08em; font-weight:800;">Comande tudo por mensagem no WhatsApp:</h3>
+                    <div class="chip-row" id="patraoChips" style="margin-bottom:12px;">
+                        <button type="button" class="mini-chip active" data-cmd="agenda">agenda</button>
+                        <button type="button" class="mini-chip" data-cmd="marcar">marcar João 15:00 Corte</button>
+                        <button type="button" class="mini-chip" data-cmd="bloquear">bloquear 12:00 as 14:00 almoço</button>
+                        <button type="button" class="mini-chip" data-cmd="caixa">caixa</button>
+                        <button type="button" class="mini-chip" data-cmd="estoque">entrada estoque Pomada 10</button>
+                        <button type="button" class="mini-chip" data-cmd="sumidos">sumidos</button>
+                    </div>
+                    <div id="patraoSaida" style="display:flex; flex-direction:column; gap:8px; background:#efeae2; padding:13px; border-radius:12px; border:1px solid #cbd5e1;"></div>
+                </div>
+            </div>
+        </section>
 
-    function iniciarFluxoOi() {
-      waBox.innerHTML = '';
-      addClienteMsg('Oi');
-      setTimeout(() => {
-        addBotMsg(
-          'Olá! 👋 Bem-vindo ao atendimento automático do KBS Sistema.\nEscolha uma opção na enquete:',
-          `
-          <button type="button" class="poll-btn" onclick="abrirZapModal()">⚡ Entrar no zap.html (Agendar Horário)</button>
-          <button type="button" class="poll-btn" onclick="responderOpcao('site')">🌐 Ver Site Principal & Link Exclusivo</button>
-          <button type="button" class="poll-btn" onclick="responderOpcao('precos')">✂️ Ver Serviços e Preços</button>
-          <button type="button" class="poll-btn" onclick="responderOpcao('mapa')">📍 Endereço e Localização</button>
-          `
-        );
-      }, 220);
-    }
+        <!-- CTA FINAL -->
+        <section class="sec-card" style="text-align:center; border:2px solid #bfdbfe;">
+            <span class="pill pill-green">🚀 TUDO INCLUSO • ACESSO IMEDIATO</span>
+            <h3 style="margin:10px 0 6px; font-size:1.32em; font-weight:900;">Plano Completo KBS Sistema: R$ 60/mês</h3>
+            <p style="margin:0 0 16px; font-size:0.9em; color:var(--texto-sec);">
+                Site Exclusivo Personalizável + Agendamento Online + ZapBot (<code>zap.html</code>) + QR Code WhatsApp + Financeiro & Gráficos + Comissões + CRM/Pacotes + Caixa PDV/Estoque + Modo Patrão + Estúdio Canva & CapCut
+            </p>
+            <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                <a href="login.html" class="btn btn-blue">✨ Criar Minha Unidade Agora</a>
+                <a href="https://wa.me/5567999673200?text=Ol%C3%A1!%20Vi%20o%20KBS%20Sistema%20interativo%20e%20quero%20ativar%20minha%20unidade!" target="_blank" class="btn btn-green">📲 Falar no WhatsApp (67) 99967-3200</a>
+            </div>
+        </section>
+    </main>
 
-    function responderOpcao(tipo) {
-      if (tipo === 'site') {
-        addClienteMsg('🌐 Ver Site Principal & Link Exclusivo');
-        addBotMsg(
-          'Sua empresa ganha um site principal próprio com serviços, galeria, vídeos e link exclusivo (ex: sua-empresa.kikobarbearia.com.br).',
-          `<button type="button" class="zap-launch-btn" onclick="abrirZapModal()">⚡ Entrar no zap.html Agora</button>`
-        );
-      } else if (tipo === 'precos') {
-        addClienteMsg('✂️ Ver Serviços e Preços');
-        addBotMsg(
-          '• Corte de Cabelo — R$ 50 (30 min)\n• Barba Completa — R$ 45 (30 min)\n• Combo Corte + Barba — R$ 85 (60 min)',
-          `<button type="button" class="zap-launch-btn" onclick="abrirZapModal()">⚡ Agendar no zap.html</button>`
-        );
-      } else {
-        addClienteMsg('📍 Endereço e Localização');
-        addBotMsg(
-          'Enviamos o endereço e o link direto do Google Maps na hora, além de lembrete 30 minutos antes do atendimento.',
-          `<button type="button" class="zap-launch-btn" onclick="abrirZapModal()">⚡ Agendar no zap.html</button>`
-        );
-      }
-    }
+    <footer>
+        <p style="margin:0;">© 2026 <strong>KBS Sistema</strong> • Plataforma Completa de Gestão, Agendamento e Marketing.</p>
+    </footer>
 
-    function abrirZapModal() {
-      document.getElementById('zapModal').style.display = 'flex';
-    }
+    <script>
+        /* =========================================================
+           1. CONTROLES AO VIVO DO SITE EXCLUSIVO
+        ========================================================= */
+        function atualizarSiteDemo() {
+            const nome = (document.getElementById('inputNomeEmpresa').value || 'Barbearia Imperial').trim();
+            const slogan = (document.getElementById('inputSloganEmpresa').value || '').trim();
+            const slug = nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '') || 'suaunidade';
+            document.getElementById('previewNome').innerText = nome.toUpperCase();
+            document.getElementById('previewSlogan').innerText = `"${slogan}"`;
+            document.getElementById('previewUrl').innerText = `https://${slug}.kikobarbearia.com.br`;
+        }
 
-    function fecharZapModal() {
-      document.getElementById('zapModal').style.display = 'none';
-    }
+        function mudarCorDemo(cor, el) {
+            document.documentElement.style.setProperty('--demo-cor', cor);
+            document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+            if (el) el.classList.add('active');
+        }
 
-    function confirmarAgendamentoZap() {
-      reservaAtual.servico = document.getElementById('zServ').value;
-      reservaAtual.prof = document.getElementById('zProf').value;
-      reservaAtual.dia = document.getElementById('zDia').value.trim() || 'Hoje';
-      reservaAtual.hora = document.getElementById('zHora').value;
-      reservaAtual.cliente = document.getElementById('zNome').value.trim() || 'Rafael';
-      const fone = document.getElementById('zFone').value.trim();
+        function mudarFonteDemo(fonte, el) {
+            document.documentElement.style.setProperty('--demo-fonte', fonte);
+            document.querySelectorAll('#fontChips .mini-chip').forEach(c => c.classList.remove('active'));
+            if (el) el.classList.add('active');
+        }
 
-      fecharZapModal();
-      addClienteMsg(`Agendou no zap.html: ${reservaAtual.cliente} • ${reservaAtual.hora}`);
-      setTimeout(() => {
-        addBotMsg(
-          `✅ AGENDAMENTO CONFIRMADO NO zap.html!\n\n` +
-          `👤 Cliente: ${reservaAtual.cliente}\n` +
-          `📱 WhatsApp: ${fone}\n` +
-          `✂️ Serviço: ${reservaAtual.servico}\n` +
-          `💈 Profissional: ${reservaAtual.prof}\n` +
-          `📅 Horário: ${reservaAtual.dia} às ${reservaAtual.hora}\n\n` +
-          `🔔 Lembretes automáticos (24h, 1h e 30min) ativados!`
-        );
-        verPatrao(null, 'agenda');
-      }, 220);
-    }
+        function mudarFundoDemo(url, el) {
+            document.getElementById('sitePreviewBody').style.backgroundImage = `url('${url}')`;
+            document.querySelectorAll('#bgChips .mini-chip').forEach(c => c.classList.remove('active'));
+            if (el) el.classList.add('active');
+        }
 
-    function verPatrao(btn, cmd) {
-      if (btn) {
-        document.querySelectorAll('#patraoTabs .cmd-pill').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-      const respostas = {
-        agenda: ['agenda', `📅 AGENDA DO DIA\n⏰ 09:00 - Bruno (Corte)\n⏰ 10:30 - Marcos (Barba)\n⏰ ${reservaAtual.hora} - ${reservaAtual.cliente} (${reservaAtual.servico})`],
-        marcar: ['marcar Lucas 16:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!\nCliente: Lucas • 16:00 • Corte • Confirmação enviada'],
-        bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 HORÁRIO BLOQUEADO!\n12:00 às 14:00 • Motivo: almoço • Bloqueado no zap.html'],
-        caixa: ['caixa', '📊 FECHAMENTO DE CAIXA\n💰 Entradas do dia: R$ 680,00 • Comissões calculadas por profissional'],
-        estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!\n+10 unidades de Pomada adicionadas'],
-        sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS\nConvites enviados para clientes sem visita há 25+ dias'],
-        assinantes: ['assinantes', '🏢 EMPRESAS ATIVAS\nCada empresa com site principal, link exclusivo e painel próprio']
-      };
-      const item = respostas[cmd] || respostas.agenda;
-      document.getElementById('patraoScreen').innerHTML =
-        `<div class="bubble-client">${item[0]}</div><div class="bubble-bot">${item[1]}</div>`;
-    }
+        function toggleServicoDemo(el) {
+            el.classList.toggle('ativo');
+            const precos = [50, 45, 85];
+            let total = 0;
+            document.querySelectorAll('.site-serv-item').forEach((item, idx) => {
+                if (item.classList.contains('ativo')) total += precos[idx] || 0;
+            });
+            document.getElementById('previewTotal').innerText = `R$ ${total}`;
+        }
 
-    iniciarFluxoOi();
-    verPatrao(null, 'agenda');
-  </script>
+        /* =========================================================
+           2. NAVEGAÇÃO DO PAINEL ADMINISTRATIVO
+        ========================================================= */
+        function abrirAbaAdmin(id, btn) {
+            document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            const alvo = document.getElementById('view-' + id);
+            if (alvo) alvo.classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
+
+        function venderPdvDemo(idSpan) {
+            const el = document.getElementById(idSpan);
+            let qtd = parseInt(el.innerText, 10) || 0;
+            if (qtd > 0) {
+                el.innerText = qtd - 1;
+                alert('✅ Venda registrada no Caixa PDV e estoque atualizado!');
+            }
+        }
+
+        /* =========================================================
+           3. ALTERNAR CANVA / CAPCUT
+        ========================================================= */
+        function trocarEstudio(modo, btn) {
+            document.querySelectorAll('.studio-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.getElementById('estudio-canva').style.display = (modo === 'canva') ? 'grid' : 'none';
+            document.getElementById('estudio-capcut').style.display = (modo === 'capcut') ? 'grid' : 'none';
+        }
+
+        /* =========================================================
+           4. SIMULADOR WHATSAPP + zap.html + MODO PATRÃO
+        ========================================================= */
+        const waBody = document.getElementById('waBody');
+
+        function addU(txt) {
+            const d = document.createElement('div');
+            d.className = 'msg-u';
+            d.textContent = txt;
+            waBody.appendChild(d);
+            waBody.scrollTop = waBody.scrollHeight;
+        }
+
+        function addB(txt, extraHtml = '') {
+            const d = document.createElement('div');
+            d.className = 'msg-b';
+            d.textContent = txt;
+            if (extraHtml) {
+                const w = document.createElement('div');
+                w.innerHTML = extraHtml;
+                d.appendChild(w);
+            }
+            waBody.appendChild(d);
+            waBody.scrollTop = waBody.scrollHeight;
+        }
+
+        function iniciarOi() {
+            waBody.innerHTML = '';
+            addU('Oi');
+            setTimeout(() => {
+                addB(
+                    'Olá! Como posso te ajudar hoje? Escolha uma opção:',
+                    `
+                    <button type="button" class="opt-btn" onclick="escolherOpcao('zap')">📅 Agendar Horário (Abrir zap.html)</button>
+                    <button type="button" class="opt-btn" onclick="escolherOpcao('precos')">💰 Preços e Serviços</button>
+                    <button type="button" class="opt-btn" onclick="escolherOpcao('mapa')">📍 Endereço e Mapa</button>
+                    `
+                );
+            }, 220);
+        }
+
+        function escolherOpcao(tipo) {
+            if (tipo === 'precos') {
+                addU('💰 Preços e Serviços');
+                addB('Serviços configurados no painel:\n• Corte Masculino — R$ 50\n• Barba — R$ 45\n• Combo Corte + Barba — R$ 85', `<button type="button" class="opt-btn" onclick="abrirZapModal()">🔗 Entrar no zap.html agora</button>`);
+                return;
+            }
+            if (tipo === 'mapa') {
+                addU('📍 Endereço e Mapa');
+                addB('Localização e link do Google Maps enviados direto no WhatsApp!', `<button type="button" class="opt-btn" onclick="abrirZapModal()">🔗 Entrar no zap.html agora</button>`);
+                return;
+            }
+            addU('📅 Agendar Horário');
+            addB('Abrindo o zap.html do KBS Sistema...', `<button type="button" class="opt-btn" onclick="abrirZapModal()">🔗 Abrir Tela zap.html</button>`);
+            abrirZapModal();
+        }
+
+        function abrirZapModal() {
+            document.getElementById('zapModal').style.display = 'flex';
+        }
+
+        function fecharZapModal() {
+            document.getElementById('zapModal').style.display = 'none';
+        }
+
+        function confirmarZapModal() {
+            const nome = (document.getElementById('zapNome').value || 'Cliente').trim();
+            const serv = document.getElementById('zapServ').value || 'Corte';
+            const prof = document.getElementById('zapProf').value || 'Kiko';
+            const hora = document.getElementById('zapHora').value || '15:00';
+            fecharZapModal();
+
+            addU(`Agendou no zap.html: ${nome} • ${hora}`);
+            setTimeout(() => {
+                addB(`✅ Agendamento confirmado para ${nome}!\n✂️ ${serv}\n💈 Profissional: ${prof}\n⏰ Hoje às ${hora}\n🔔 Lembretes automáticos ativados.`);
+            }, 200);
+
+            const lista = document.getElementById('listaAgendaDemo');
+            if (lista) {
+                const novaLinha = document.createElement('div');
+                novaLinha.className = 'admin-row';
+                novaLinha.style.borderColor = '#16a34a';
+                novaLinha.innerHTML = `<div><strong style="color:#4ade80;">⏰ ${hora} • ${nome} (Novo via zap.html)</strong><br><span style="color:#94a3b8;">${serv} • Prof. ${prof}</span></div><button type="button" onclick="this.innerText='✅ Pago'; this.style.background='#16a34a'; this.style.color='#fff';" style="background:#facc15; color:#090d16; border:none; padding:6px 10px; border-radius:8px; font-weight:800; cursor:pointer;">Fechar Comanda</button>`;
+                lista.prepend(novaLinha);
+            }
+        }
+
+        const patraoRespostas = {
+            agenda: ['agenda', '📅 AGENDA DE HOJE\n⏰ 09:00 - Lucas (Corte)\n⏰ 10:20 - Rafael (Combo)\n⏰ 15:00 - Carlos (Combo)'],
+            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!\nCliente: João • 15:00 • Corte'],
+            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!\n12:00 às 14:00 • Motivo: almoço'],
+            caixa: ['caixa', '📊 FECHO DE CAIXA\n🟢 Entradas: R$ 6.292,00\n🔴 Saídas: R$ 138,00\n💰 Líquido: R$ 6.154,00'],
+            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!\n+10 un. de Pomada adicionadas ao Caixa PDV'],
+            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS\nMensagens enviadas para clientes ausentes há 25+ dias']
+        };
+
+        function renderPatrao(cmd) {
+            const pair = patraoRespostas[cmd] || patraoRespostas.agenda;
+            document.getElementById('patraoSaida').innerHTML = `<div class="msg-u">${pair[0]}</div><div class="msg-b">${pair[1]}</div>`;
+        }
+
+        document.querySelectorAll('#patraoChips .mini-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#patraoChips .mini-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderPatrao(btn.dataset.cmd);
+            });
+        });
+
+        window.onload = function() {
+            iniciarOi();
+            renderPatrao('agenda');
+        };
+    </script>
 </body>
 </html>
