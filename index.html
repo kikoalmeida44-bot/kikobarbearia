@@ -257,6 +257,109 @@
         .whatsapp-btn-float { background-color: #25d366; color: #ffffff; border: none; border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85em; cursor: pointer; box-shadow: 0 4px 15px rgba(37,211,102,0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; text-decoration: none; transition: 0.3s; }
         .whatsapp-btn-float:hover { background-color: #20ba5a; transform: scale(1.05); }
 
+        /* BLOCO INTERATIVO DO KBS SISTEMA (QUANDO SUBDOMÍNIO = kbssistema) */
+        #kbs-sistema-showcase {
+            display: none;
+            padding: 130px 20px 60px 20px;
+            max-width: 1160px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            text-align: left;
+        }
+        .kbs-grid-2 {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 28px;
+            align-items: start;
+        }
+        .kbs-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 22px;
+        }
+        .kbs-phone {
+            max-width: 380px;
+            margin: 0 auto;
+            background: #0b141a;
+            border: 5px solid #222;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+        }
+        .kbs-wa-top {
+            background: #1f2c34;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+        .kbs-wa-body {
+            height: 390px;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            background: #0b141a;
+        }
+        .kbs-msg-u {
+            align-self: flex-end;
+            background: #005c4b;
+            color: #fff;
+            padding: 8px 11px;
+            border-radius: 10px 10px 2px 10px;
+            font-size: 0.82em;
+            max-width: 85%;
+        }
+        .kbs-msg-b {
+            align-self: flex-start;
+            background: #202c33;
+            color: #fff;
+            padding: 9px 11px;
+            border-radius: 10px 10px 10px 2px;
+            font-size: 0.82em;
+            max-width: 92%;
+            white-space: pre-line;
+        }
+        .kbs-opt-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-top: 6px;
+            background: #182229;
+            border: 1px solid rgba(37, 211, 102, 0.45);
+            color: #86efac;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 0.78em;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .kbs-opt-btn:hover { background: rgba(37, 211, 102, 0.18); }
+        .kbs-zap-box {
+            background: #111622;
+            border: 1px solid var(--cor-principal);
+            border-radius: 12px;
+            padding: 11px;
+            margin-top: 4px;
+        }
+        .kbs-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+        .kbs-chip {
+            background: rgba(0,0,0,0.45);
+            border: 1px solid rgba(255,255,255,0.16);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.78em;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .kbs-chip.active { border-color: var(--cor-principal); color: var(--cor-principal); }
+
         footer { background-color: rgba(3, 3, 0, 0.9); text-align: center; padding: 30px 20px; border-top: 1px solid #111; color: #777; position: relative; z-index: 1;}
         
         /* EFEITO SKELETON LOADING */
@@ -282,6 +385,7 @@
             .hero { padding: 130px 15px 50px 15px; }
             .hero-content h2 { font-size: 1.6em; }
             .hero-content p { font-size: 0.85em; margin-bottom: 20px; }
+            .kbs-grid-2, .kbs-grid-3 { grid-template-columns: 1fr; }
             .whatsapp-widget { bottom: 15px; left: 15px; z-index: 9998; }
             .chat-widget { bottom: 75px; right: 15px; z-index: 9999; }
             .chat-janela { width: calc(100vw - 30px); right: 0; bottom: 45px; }
@@ -351,7 +455,70 @@
         </div>
     </div>
 
-    <div class="hero">
+    <!-- APRESENTAÇÃO INTERATIVA QUANDO ACESSADO VIA kbssistema.kikobarbearia.com.br -->
+    <section id="kbs-sistema-showcase">
+        <div class="kbs-grid-2">
+            <div>
+                <p style="color: var(--cor-principal); font-weight: 800; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px;">
+                    ⚡ KBS SISTEMA • SUBDOMÍNIO ATIVO (kbssistema)
+                </p>
+                <h2 style="font-size: 2em; line-height: 1.15; margin: 8px 0 12px;">
+                    Do "Oi" no WhatsApp até o agendamento no zap.html e gestão completa.
+                </h2>
+                <p style="color: #cccccc; font-size: 0.95em; margin-bottom: 18px;">
+                    Veja na prática como o cliente interage no WhatsApp, escolhe na enquete, entra no <strong>zap.html</strong> e confirma o horário, além do estúdio de vídeo (estilo CapCut), editor de fotos (estilo Canva) e Modo Patrão.
+                </p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" class="btn-gold" style="width: auto;" onclick="kbsIniciarOi()">▶ Simular "Oi" no WhatsApp</button>
+                    <a href="#agendamento" class="btn-gold" style="width: auto; background: transparent; color: var(--cor-principal);">📅 Testar Agenda Real</a>
+                </div>
+            </div>
+
+            <div class="kbs-phone">
+                <div class="kbs-wa-top">
+                    <span>🟢 KBS Bot • WhatsApp</span>
+                    <button type="button" onclick="kbsIniciarOi()" style="background:#2a3942; color:#fff; border:none; border-radius:6px; padding:4px 8px; font-size:0.75em; cursor:pointer;">Reiniciar</button>
+                </div>
+                <div class="kbs-wa-body" id="kbsWaBody"></div>
+            </div>
+        </div>
+
+        <div class="kbs-grid-3">
+            <div class="card-granulado" style="padding: 20px;">
+                <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">🎬 Editor de Vídeo (Estilo CapCut)</h3>
+                <p style="color: #cccccc; font-size: 0.85em;">
+                    Corte clipes, junte cenas, coloque legendas, trilha e exporte Reels/Status verticais (9:16) direto do sistema para lotar a agenda.
+                </p>
+            </div>
+            <div class="card-granulado" style="padding: 20px;">
+                <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">🎨 Editor de Fotos & Artes (Estilo Canva)</h3>
+                <p style="color: #cccccc; font-size: 0.85em;">
+                    Monte tabelas de preços, banners de promoção e artes com a logo e cores da empresa para divulgar no WhatsApp e Instagram.
+                </p>
+            </div>
+            <div class="card-granulado" style="padding: 20px;">
+                <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">📊 Todas as Funções + Modo Patrão</h3>
+                <p style="color: #cccccc; font-size: 0.85em;">
+                    Lembretes anti-falta (24h, 1h e 30min), recuperação de sumidos, caixa, comissões, estoque, multi-empresas e comandos pelo WhatsApp.
+                </p>
+            </div>
+        </div>
+
+        <div class="card-granulado" style="padding: 22px; margin-top: 22px;">
+            <h3 style="color: var(--cor-principal); font-size: 1em; margin-top: 0;">👑 Simulador Modo Patrão (Comandos pelo WhatsApp)</h3>
+            <div class="kbs-chips" id="kbsPatraoChips">
+                <button type="button" class="kbs-chip active" data-cmd="agenda">agenda</button>
+                <button type="button" class="kbs-chip" data-cmd="marcar">marcar João 15:00 Corte</button>
+                <button type="button" class="kbs-chip" data-cmd="bloquear">bloquear 12:00 as 14:00 almoço</button>
+                <button type="button" class="kbs-chip" data-cmd="caixa">caixa</button>
+                <button type="button" class="kbs-chip" data-cmd="estoque">entrada estoque Pomada 10</button>
+                <button type="button" class="kbs-chip" data-cmd="sumidos">sumidos</button>
+            </div>
+            <div id="kbsPatraoSaida" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+    </section>
+
+    <div class="hero" id="hero-padrao">
         <div class="hero-content">
             <h2 id="txt_titulo"><span class="skeleton skel-title" style="width: 280px;">&nbsp;</span></h2>
             <p id="txt_subtitulo">"Chegue mais! O café está pronto, a resenha é garantida e o seu visual impecável é compromisso nosso."</p>
@@ -463,7 +630,7 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         
-        // DETECÇÃO AUTOMÁTICA DE SUBDOMÍNIO SAAS (EX: legalcabeleireiro.kikobarbearia.com.br)
+        // DETECÇÃO AUTOMÁTICA DE SUBDOMÍNIO SAAS (EX: legalcabeleireiro.kikobarbearia.com.br ou kbssistema.kikobarbearia.com.br)
         function detectarIdBarbeariaSaaS() {
             const urlParams = new URLSearchParams(window.location.search);
             let idParam = urlParams.get('id') || urlParams.get('id_barbearia');
@@ -497,7 +664,111 @@
         let configHorarios = null;
         window.listaProfissionaisGlobal = [];
 
+        // ATIVA A APRESENTAÇÃO INTERATIVA QUANDO O SUBDOMÍNIO É kbssistema
+        function ativarModoKbsSistema() {
+            if (idBarbearia.toLowerCase() !== 'kbssistema') return;
+            document.getElementById('kbs-sistema-showcase').style.display = 'block';
+            document.getElementById('hero-padrao').style.display = 'none';
+            kbsIniciarOi();
+            kbsRenderPatrao('agenda');
+        }
+
+        const kbsWaBody = document.getElementById('kbsWaBody');
+        function kbsAddU(txt) {
+            if (!kbsWaBody) return;
+            const d = document.createElement('div');
+            d.className = 'kbs-msg-u';
+            d.textContent = txt;
+            kbsWaBody.appendChild(d);
+            kbsWaBody.scrollTop = kbsWaBody.scrollHeight;
+        }
+        function kbsAddB(txt, extraHtml = '') {
+            if (!kbsWaBody) return;
+            const d = document.createElement('div');
+            d.className = 'kbs-msg-b';
+            d.textContent = txt;
+            if (extraHtml) {
+                const w = document.createElement('div');
+                w.innerHTML = extraHtml;
+                d.appendChild(w);
+            }
+            kbsWaBody.appendChild(d);
+            kbsWaBody.scrollTop = kbsWaBody.scrollHeight;
+        }
+        function kbsIniciarOi() {
+            if (!kbsWaBody) return;
+            kbsWaBody.innerHTML = '';
+            kbsAddU('Oi');
+            setTimeout(() => {
+                kbsAddB(
+                    'Olá! Como posso te ajudar hoje? Escolha uma opção:',
+                    `
+                    <button type="button" class="kbs-opt-btn" onclick="kbsEscolher('zap')">📅 Agendar Horário (Abrir zap.html)</button>
+                    <button type="button" class="kbs-opt-btn" onclick="kbsEscolher('precos')">💰 Preços e Serviços</button>
+                    <button type="button" class="kbs-opt-btn" onclick="kbsEscolher('mapa')">📍 Endereço e Mapa</button>
+                    `
+                );
+            }, 250);
+        }
+        function kbsEscolher(tipo) {
+            if (tipo === 'precos') {
+                kbsAddU('💰 Preços e Serviços');
+                kbsAddB('Serviços configurados no painel:\n• Corte — R$ 50\n• Combo — R$ 90', `<button type="button" class="kbs-opt-btn" onclick="kbsEscolher('zap')">🔗 Entrar no zap.html agora</button>`);
+                return;
+            }
+            if (tipo === 'mapa') {
+                kbsAddU('📍 Endereço e Mapa');
+                kbsAddB('Localização e link do Google Maps enviados direto no WhatsApp!', `<button type="button" class="kbs-opt-btn" onclick="kbsEscolher('zap')">🔗 Entrar no zap.html agora</button>`);
+                return;
+            }
+            kbsAddU('📅 Agendar Horário');
+            kbsAddB('Abrindo o zap.html do KBS Sistema...', `
+                <div class="kbs-zap-box">
+                    <div style="font-size:0.75em; color:var(--cor-principal); font-weight:800; margin-bottom:6px;">⚡ zap.html (AGENDAMENTO ONLINE)</div>
+                    <select id="kbsSimServ" style="width:100%; padding:6px; margin-bottom:6px; background:#0b0e16; color:#fff; border:1px solid #333; border-radius:6px; font-size:0.78em;">
+                        <option value="Corte (R$ 50)">Corte — R$ 50</option>
+                        <option value="Combo (R$ 90)">Combo — R$ 90</option>
+                    </select>
+                    <select id="kbsSimHora" style="width:100%; padding:6px; margin-bottom:6px; background:#0b0e16; color:#fff; border:1px solid #333; border-radius:6px; font-size:0.78em;">
+                        <option value="15:00">Hoje às 15:00</option>
+                        <option value="16:20">Hoje às 16:20</option>
+                    </select>
+                    <input type="text" id="kbsSimNome" value="Carlos" placeholder="Seu nome" style="width:100%; padding:6px; margin-bottom:8px; background:#0b0e16; color:#fff; border:1px solid #333; border-radius:6px; font-size:0.78em; box-sizing:border-box;">
+                    <button type="button" class="kbs-opt-btn" style="margin-top:0; text-align:center;" onclick="kbsConfirmarSim()">✅ Confirmar no zap.html</button>
+                </div>
+            `);
+        }
+        function kbsConfirmarSim() {
+            const nome = (document.getElementById('kbsSimNome')?.value || 'Cliente').trim();
+            const serv = document.getElementById('kbsSimServ')?.value || 'Corte';
+            const hora = document.getElementById('kbsSimHora')?.value || '15:00';
+            kbsAddB(`✅ Agendamento confirmado para ${nome}!\n✂️ ${serv}\n⏰ Hoje às ${hora}\n🔔 Lembretes automáticos ativados.`);
+        }
+
+        const kbsPatraoRespostas = {
+            agenda: ['agenda', '📅 AGENDA DE HOJE\n⏰ 09:00 - Lucas (Corte)\n⏰ 15:00 - Carlos (Corte)'],
+            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!\nCliente: João • 15:00 • Corte'],
+            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!\n12:00 às 14:00 • Motivo: almoço'],
+            caixa: ['caixa', '📊 FECHO DE CAIXA\n💰 Faturamento: R$ 450,00 • Comissões calculadas'],
+            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!\n+10 un. de Pomada adicionadas'],
+            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS\nMensagens enviadas para clientes ausentes há 25+ dias']
+        };
+        function kbsRenderPatrao(cmd) {
+            const el = document.getElementById('kbsPatraoSaida');
+            if (!el) return;
+            const pair = kbsPatraoRespostas[cmd] || kbsPatraoRespostas.agenda;
+            el.innerHTML = `<div class="kbs-msg-u">${pair[0]}</div><div class="kbs-msg-b">${pair[1]}</div>`;
+        }
+        document.querySelectorAll('#kbsPatraoChips .kbs-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#kbsPatraoChips .kbs-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                kbsRenderPatrao(btn.dataset.cmd);
+            });
+        });
+
         window.onload = function() {
+            ativarModoKbsSistema();
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
@@ -516,6 +787,10 @@
                     document.getElementById('header-title').innerText = textos.titulo;
                     document.getElementById('rodape-nome').innerText = textos.titulo;
                     document.title = textos.titulo + " | Estilo e Tradição";
+                } else if (idBarbearia.toLowerCase() === 'kbssistema') {
+                    document.getElementById('header-title').innerText = "KBS SISTEMA";
+                    document.getElementById('rodape-nome').innerText = "KBS Sistema";
+                    document.title = "KBS Sistema";
                 }
                 if (textos.subtitulo) document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
                 if (textos.sobre) document.getElementById('txt_sobre').innerText = textos.sobre;
