@@ -50,7 +50,7 @@
     
     <style>
         :root {
-            --cor-principal: #f59e0b;
+            --cor-principal: #d4af37;
             --fonte-principal: 'Montserrat', sans-serif;
         }
 
@@ -82,12 +82,12 @@
             height: 110px;
             object-fit: contain;
             border-radius: 20px;
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+            box-shadow: 0 0 30px color-mix(in srgb, var(--cor-principal) 50%, transparent);
         }
 
         @keyframes pulseLogoPulsante {
-            0% { transform: scale(0.92); filter: brightness(0.9); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
-            100% { transform: scale(1.08); filter: brightness(1.15); box-shadow: 0 0 45px rgba(245, 158, 11, 0.8); }
+            0% { transform: scale(0.92); filter: brightness(0.9); box-shadow: 0 0 15px color-mix(in srgb, var(--cor-principal) 30%, transparent); }
+            100% { transform: scale(1.08); filter: brightness(1.15); box-shadow: 0 0 45px color-mix(in srgb, var(--cor-principal) 80%, transparent); }
         }
 
         /* VÍDEO DE FUNDO IMERSIVO EM TELA CHEIA */
@@ -112,23 +112,23 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.45;
+            opacity: 0.48;
             z-index: -3;
         }
         
-        /* TRANSPARENTE IGUAL AO zap.html */
+        /* TRANSPARENTE COM MOLDURA SUAVE NA COR DO SISTEMA (IGUAL AO zap.html) */
         .overlay-global { 
             position: fixed; 
             top: 0; 
             left: 0; 
             width: 100vw; 
             height: 100vh; 
-            background: rgba(0, 0, 0, 0.32); 
+            background: rgba(0, 0, 0, 0.28); 
             z-index: -2; 
             pointer-events: none;
         }
 
-        header { position: fixed; top: 0; width: 100%; background-color: rgba(0, 0, 0, 0.48); backdrop-filter: blur(8px); padding: 10px 0; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.14); z-index: 1000; }
+        header { position: fixed; top: 0; width: 100%; background-color: rgba(0, 0, 0, 0.45); backdrop-filter: blur(8px); padding: 10px 0; text-align: center; border-bottom: 1px solid color-mix(in srgb, var(--cor-principal) 28%, transparent); z-index: 1000; }
         
         .header-brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 2px; }
         .header-brand img { height: 30px; border-radius: 6px; }
@@ -143,16 +143,16 @@
             font-size: 0.65em !important;
             font-weight: 600 !important;
             text-transform: none !important;
-            border: 1px dashed rgba(245, 158, 11, 0.6);
+            border: 1px dashed color-mix(in srgb, var(--cor-principal) 65%, transparent);
             padding: 2px 8px;
             border-radius: 10px;
             background: transparent;
         }
 
-        .hero { position: relative; text-align: center; padding: 135px 20px 60px 20px; overflow: hidden; border-bottom: 1px solid rgba(255, 255, 255, 0.16); background: transparent; }
+        .hero { position: relative; text-align: center; padding: 135px 20px 60px 20px; overflow: hidden; border-bottom: 1px solid color-mix(in srgb, var(--cor-principal) 26%, transparent); background: transparent; }
         .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
-        .hero-content h2 { font-size: 2em; margin-bottom: 10px; color: #ffffff; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
-        .hero-content p { font-size: 0.95em; margin-bottom: 25px; color: #f1f5f9; text-shadow: 0 1px 6px rgba(0,0,0,0.7); }
+        .hero-content h2 { font-size: 2em; margin-bottom: 10px; color: #ffffff; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.75); }
+        .hero-content p { font-size: 0.95em; margin-bottom: 25px; color: #f8fafc; text-shadow: 0 1px 6px rgba(0,0,0,0.75); }
         .hero-buttons { display: flex; flex-direction: column; gap: 12px; align-items: center; max-width: 260px; margin: 0 auto; }
         
         .btn-gold { 
@@ -174,43 +174,81 @@
         .btn-gold:hover { transform: scale(1.02); }
         
         .section { padding: 70px 20px; max-width: 1200px; margin: auto; text-align: center; position: relative; z-index: 1; background: transparent; }
-        .section-title { color: #ffffff; font-size: 1.8em; margin-bottom: 35px; text-transform: uppercase; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+        .section-title { color: #ffffff; font-size: 1.8em; margin-bottom: 35px; text-transform: uppercase; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.75); }
         .section-title::after { content: ''; display: block; width: 45px; height: 3px; background: var(--cor-principal); margin: 12px auto 0 auto; }
-        .sobre-texto { font-size: 1em; color: #f1f5f9; max-width: 800px; margin: 0 auto; line-height: 1.8; text-shadow: 0 1px 6px rgba(0,0,0,0.7); }
+        .sobre-texto { font-size: 1em; color: #f8fafc; max-width: 800px; margin: 0 auto; line-height: 1.8; text-shadow: 0 1px 6px rgba(0,0,0,0.75); }
         
+        /* MOLDURA FINA E QUASE TRANSPARENTE NA COR DO SISTEMA */
         .card-granulado {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: transparent;
+            border: 1px solid color-mix(in srgb, var(--cor-principal) 28%, transparent);
             border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .card-granulado:hover {
+            border-color: color-mix(in srgb, var(--cor-principal) 55%, transparent);
+            background: color-mix(in srgb, var(--cor-principal) 5%, transparent);
         }
 
         .services { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
         .service-card { padding: 30px 20px; width: 260px; display: flex; flex-direction: column; justify-content: space-between; }
-        .service-card h3 { color: #ffffff; font-size: 1.1em; text-transform: uppercase; margin-top: 0; text-shadow: 0 1px 5px rgba(0,0,0,0.7); }
-        .service-card p { color: #e2e8f0; font-size: 0.85em; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
+        .service-card h3 { color: #ffffff; font-size: 1.1em; text-transform: uppercase; margin-top: 0; text-shadow: 0 1px 6px rgba(0,0,0,0.75); }
+        .service-card p { color: #e2e8f0; font-size: 0.85em; text-shadow: 0 1px 5px rgba(0,0,0,0.75); }
         .service-price { font-size: 1.15em; color: var(--cor-principal); margin-top: 15px; font-weight: 700; }
         
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 35px; }
-        .galeria-grid img, .galeria-grid video { width: 100%; height: 320px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.22); }
+        .galeria-grid img, .galeria-grid video { width: 100%; height: 320px; object-fit: cover; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--cor-principal) 30%, transparent); }
         
         .form-agendamento { padding: 35px; max-width: 600px; margin: 0 auto; text-align: left; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #ffffff; font-size: 0.85em; text-transform: uppercase; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
-        .form-group input, .form-group select { width: 100%; padding: 12px; background-color: transparent; color: #ffffff; border: 1px solid rgba(255,255,255,0.35); box-sizing: border-box; border-radius: 8px; font-family: var(--fonte-principal); }
+        .form-group label { display: block; margin-bottom: 8px; color: #ffffff; font-size: 0.85em; text-transform: uppercase; font-weight: 700; text-shadow: 0 1px 5px rgba(0,0,0,0.75); }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            color: #ffffff;
+            border: 1px solid color-mix(in srgb, var(--cor-principal) 32%, transparent);
+            box-sizing: border-box;
+            border-radius: 8px;
+            font-family: var(--fonte-principal);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--cor-principal);
+            background-color: color-mix(in srgb, var(--cor-principal) 10%, transparent);
+        }
         .form-group select option { background-color: #111827; color: #ffffff; }
         
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
-        .checkbox-item { display: flex; align-items: center; background: transparent; padding: 12px 15px; border: 1px solid rgba(255,255,255,0.28); border-radius: 8px; cursor: pointer; }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            background: transparent;
+            padding: 12px 15px;
+            border: 1px solid color-mix(in srgb, var(--cor-principal) 28%, transparent);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+        }
+        .checkbox-item:hover {
+            border-color: color-mix(in srgb, var(--cor-principal) 60%, transparent);
+            background: color-mix(in srgb, var(--cor-principal) 8%, transparent);
+        }
+        .checkbox-item.selecionado,
+        .checkbox-item:has(input:checked) {
+            background: color-mix(in srgb, var(--cor-principal) 18%, transparent);
+            border-color: var(--cor-principal);
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--cor-principal) 35%, transparent);
+        }
         .checkbox-item input { margin-right: 12px; transform: scale(1.2); accent-color: var(--cor-principal); }
         .checkbox-details { display: flex; justify-content: space-between; flex-grow: 1; align-items: center; }
-        .checkbox-title { font-weight: 700; color: #fff; font-size: 0.9em; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
+        .checkbox-title { font-weight: 700; color: #fff; font-size: 0.9em; text-shadow: 0 1px 5px rgba(0,0,0,0.75); }
         .checkbox-price { color: var(--cor-principal); font-weight: 700; font-size: 0.95em; }
         
-        .resumo-box { margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.06); border-left: 4px solid var(--cor-principal); display: none; }
-        .horarios-box { text-align: center; color: #ffffff; font-size: 1em; line-height: 1.8; padding: 25px; max-width: 600px; margin: 0 auto; text-shadow: 0 1px 5px rgba(0,0,0,0.7); }
+        .resumo-box { margin-top: 15px; padding: 15px; background: color-mix(in srgb, var(--cor-principal) 12%, transparent); border-left: 4px solid var(--cor-principal); display: none; border-radius: 6px; }
+        .horarios-box { text-align: center; color: #ffffff; font-size: 1em; line-height: 1.8; padding: 25px; max-width: 600px; margin: 0 auto; text-shadow: 0 1px 5px rgba(0,0,0,0.75); }
         .horarios-box span { color: var(--cor-principal); font-weight: 700; }
         .mapa-link { color: var(--cor-principal); text-decoration: none; font-weight: 700; font-size: 0.95em; border-bottom: 1px dashed var(--cor-principal); }
 
@@ -452,7 +490,7 @@
         }
         .kbs-chip.active, .kbs-chip:hover { border-color: #1d4ed8; color: #1d4ed8; background: #eff6ff; }
 
-        footer { background-color: rgba(0, 0, 0, 0.55); text-align: center; padding: 28px 20px; border-top: 1px solid rgba(255,255,255,0.14); color: #e2e8f0; position: relative; z-index: 1;}
+        footer { background-color: rgba(0, 0, 0, 0.45); text-align: center; padding: 28px 20px; border-top: 1px solid color-mix(in srgb, var(--cor-principal) 24%, transparent); color: #e2e8f0; position: relative; z-index: 1;}
         
         .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 75%); background-size: 200% 100%; animation: pulseSkeleton 1.5s infinite ease-in-out; border-radius: 4px; color: transparent !important; }
         @keyframes pulseSkeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -606,7 +644,7 @@
                 <div class="kbs-link-box">
                     <strong style="color:#0f172a;">🌐 Seu Site Principal + Nome Exclusivo no Link</strong>
                     <div style="margin-top:4px;">Receba seu site principal completo e seu identificador exclusivo na URL:</div>
-                    <div class="kbs-link-code">sua-empresa.kikobarbearia.com.br &nbsp;|&nbsp; ?id=nome-da-empresa</div>
+                    <div class="kbs-link-code">sua-empresa.kikobarbearia.com.br  |  ?id=nome-da-empresa</div>
                 </div>
             </div>
 
@@ -962,7 +1000,7 @@
                 if (!corEhEscuraOuInvalida(textos.cor_primaria)) {
                     document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
                 } else {
-                    document.documentElement.style.setProperty('--cor-principal', '#f59e0b');
+                    document.documentElement.style.setProperty('--cor-principal', '#d4af37');
                 }
                 if (textos.fonte_texto) {
                     document.documentElement.style.setProperty('--fonte-principal', `'${textos.fonte_texto}', sans-serif`);
@@ -1117,7 +1155,16 @@
         function atualizarResumo() {
             let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
             let totalV = 0, totalT = 0;
-            checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
+            document.querySelectorAll('#caixinhas_servicos_dinamicos .checkbox-item').forEach(item => {
+                const cb = item.querySelector('input[name="servico"]');
+                if (cb && cb.checked) {
+                    item.classList.add('selecionado');
+                    totalV += parseInt(cb.getAttribute('data-valor'));
+                    totalT += parseInt(cb.getAttribute('data-tempo'));
+                } else {
+                    item.classList.remove('selecionado');
+                }
+            });
             document.getElementById('duracao_total').value = totalT; 
             document.getElementById('valor_total_enviar').value = totalV;
             const resumoBox = document.getElementById('resumo-pedido');
