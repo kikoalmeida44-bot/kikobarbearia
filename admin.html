@@ -53,6 +53,11 @@
         .master-barber-card { background: linear-gradient(135deg, #1a1a1a, #2a2211); border: 1px dashed #ffd700; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .master-title { color: #ffd700; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 
+        .banner-assinatura { padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; display: none; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 0.78rem; }
+        .banner-trial { background: rgba(0, 191, 255, 0.12); border: 1px solid #00bfff; color: #e0f7ff; }
+        .banner-alerta { background: rgba(255, 165, 0, 0.16); border: 1px solid #ffa500; color: #ffe8c2; }
+        .btn-renovar-banner { background: #25D366; color: #000; border: none; padding: 7px 12px; border-radius: 4px; font-weight: 800; font-size: 0.72rem; cursor: pointer; text-decoration: none; white-space: nowrap; }
+
         .section-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .section-title { color: var(--cor-principal); font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
@@ -118,6 +123,12 @@
     <!-- PAINEL PRINCIPAL -->
     <div class="admin-container" id="main-dashboard" style="display: block !important;">
         <h1 class="logo" id="titulo-barbearia">A Carregar...</h1>
+
+        <!-- AVISO DE ASSINATURA / TRIAL 7 DIAS DO CLIENTE -->
+        <div id="banner-assinatura-cliente" class="banner-assinatura banner-trial">
+            <div id="texto-banner-assinatura">🎁 Período de Teste Gratuito ativo.</div>
+            <a id="btn-renovar-assinatura" href="#" target="_blank" class="btn-renovar-banner">💳 Renovar (R$ 60,00)</a>
+        </div>
         
         <!-- PAINEL MESTRE SAAS -->
         <div class="master-barber-card" id="painel-master-saas" style="display: none;">
@@ -128,8 +139,8 @@
                     <button onclick="abrirModal('modal-nova-barbearia')" style="background: #ffd700; color: #000; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; cursor: pointer;">+ Nova Unidade</button>
                 </div>
             </div>
-            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Gerencie as unidades clientes, controle os pagamentos e acesse o disparador de campanhas:</p>
-            <div id="lista-barbearias-saas" style="max-height: 150px; overflow-y: auto;">
+            <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Gerencie as unidades clientes, libere +30 dias após pagamento de R$ 60,00 e acesse o disparador:</p>
+            <div id="lista-barbearias-saas" style="max-height: 220px; overflow-y: auto;">
                 <p style="font-size: 0.75rem; color: #888;">A carregar unidades...</p>
             </div>
         </div>
@@ -584,7 +595,7 @@
                                 <option value="grayscale(100%) contrast(125%)">P&B Cinema</option>
                                 <option value="contrast(130%) saturate(115%)">Alto Contraste</option>
                                 <option value="sepia(30%) saturate(130%)">Quente / Dourado</option>
-                                <option value="hue-rotate(185deg) saturate(85%)">Frio / Moderno</option>
+                                <option value="hue-rotate(185deg) saturate(85%) contrast(115%)">Frio / Moderno</option>
                             </select>
                         </div>
                         <div class="input-group">
@@ -666,7 +677,7 @@
     <!-- MODAL NOVA UNIDADE (SAAS) -->
     <div id="modal-nova-barbearia" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #ffd700;">👑 Registar Nova Unidade</h2>
+            <h2 class="modal-title" style="color: #ffd700;">👑 Registar Nova Unidade (7 Dias Grátis)</h2>
             <div class="input-group"><input type="text" id="nova-id-barbearia" placeholder="ID (ex: clinica_prime)"></div>
             <div class="input-group"><input type="text" id="novo-nome-barbearia" placeholder="Nome da Empresa / Clínica"></div>
             <div class="input-group"><input type="text" id="nova-senha-barbearia" placeholder="Senha de Acesso"></div>
@@ -930,6 +941,8 @@
     <!-- SCRIPT COMPLETO DE PONTA A PONTA -->
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        const WHATSAPP_SUPORTE_MASTER = '5567999673200';
+        const VALOR_MENSALIDADE_SAAS = 'R$ 60,00';
         
         function detectarIdBarbeariaSaaS() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1356,14 +1369,12 @@
             const h = canvas.height;
             const centroX = (formato === 'carrossel') ? 540 : (w / 2);
 
-            // 1. Fundo Base
             const grad = ctx.createLinearGradient(0, 0, w, h);
             grad.addColorStop(0, '#181818');
             grad.addColorStop(1, '#070707');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, w, h);
 
-            // 2. Renderização das Fotos conforme o Layout Escolhido
             if (layout === 'antes_depois') {
                 const tipoDiv = document.getElementById('post-tipo-divisao').value;
                 if (tipoDiv === 'vertical') {
@@ -2144,6 +2155,47 @@
             window.open('disparador.html', '_blank');
         }
 
+        function verificarExpiracaoLocal(dataVencimentoStr) {
+            if (!dataVencimentoStr || dataVencimentoStr === 'Vitalício') return { vencido: false, diasRestantes: 999 };
+            let partes = String(dataVencimentoStr).trim().split('/');
+            let dtVenc = null;
+            if (partes.length === 3) {
+                dtVenc = new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]), 23, 59, 59);
+            } else {
+                dtVenc = new Date(dataVencimentoStr);
+            }
+            if (!dtVenc || isNaN(dtVenc.getTime())) return { vencido: false, diasRestantes: 999 };
+            const agora = new Date();
+            const diffMs = dtVenc.getTime() - agora.getTime();
+            const dias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            return { vencido: diffMs < 0, diasRestantes: dias };
+        }
+
+        function exibirBannerAssinaturaCliente(unidade) {
+            if (!unidade || idBarbearia === 'kiko_barberia' || idBarbearia === 'kiko_barb') return;
+            const banner = document.getElementById('banner-assinatura-cliente');
+            const texto = document.getElementById('texto-banner-assinatura');
+            const btnRenovar = document.getElementById('btn-renovar-assinatura');
+
+            const vencStr = unidade.vencimento || localStorage.getItem('vencimento_assinatura') || '';
+            const statusStr = String(unidade.status || localStorage.getItem('status_assinatura') || 'trial').toLowerCase();
+            const check = verificarExpiracaoLocal(vencStr);
+            const dias = unidade.dias_restantes !== undefined ? unidade.dias_restantes : check.diasRestantes;
+
+            const msgZap = `Olá! Gostaria de renovar a assinatura mensal (${VALOR_MENSALIDADE_SAAS} / 30 dias) da unidade *${unidade.nome || idBarbearia}* (ID: *${idBarbearia}*).`;
+            btnRenovar.href = `https://wa.me/${WHATSAPP_SUPORTE_MASTER}?text=${encodeURIComponent(msgZap)}`;
+
+            if (statusStr === 'trial' || statusStr === 'teste') {
+                banner.className = 'banner-assinatura ' + (dias <= 2 ? 'banner-alerta' : 'banner-trial');
+                banner.style.display = 'flex';
+                texto.innerHTML = `🎁 <strong>Período Grátis (7 Dias):</strong> restam <strong>${Math.max(0, dias)} dia(s)</strong> (até ${vencStr}). Após o teste: ${VALOR_MENSALIDADE_SAAS}/mês.`;
+            } else if (dias <= 5 && vencStr && vencStr !== 'Vitalício') {
+                banner.className = 'banner-assinatura banner-alerta';
+                banner.style.display = 'flex';
+                texto.innerHTML = `⚠️ <strong>Atenção:</strong> sua assinatura vence em <strong>${Math.max(0, dias)} dia(s)</strong> (${vencStr}). Renove por ${VALOR_MENSALIDADE_SAAS} para evitar bloqueio.`;
+            }
+        }
+
         async function iniciarPainel() {
             const linkPronto = gerarLinkPublicoUnidade(idBarbearia);
             const inputLink = document.getElementById('link-compartilhamento');
@@ -2155,10 +2207,15 @@
                     const barbearias = await res.json();
                     if (Array.isArray(barbearias)) {
                         const unidade = barbearias.find(b => String(b.id).trim().toLowerCase() === String(idBarbearia).trim().toLowerCase());
-                        if (unidade && (unidade.status.toLowerCase() === "bloqueado" || unidade.status.toLowerCase() === "bloqueio")) {
-                            alert("❌ CONTA BLOQUEADA. O seu acesso foi suspenso. Por favor, contacte o administrador.");
-                            window.location.href = "login.html";
-                            return;
+                        if (unidade) {
+                            const st = String(unidade.status || '').toLowerCase();
+                            const exp = verificarExpiracaoLocal(unidade.vencimento);
+                            if (st === "bloqueado" || st === "bloqueio" || exp.vencido) {
+                                alert(`🔒 ACESSO EXPIRADO OU BLOQUEADO.\n\nO período gratuito de 7 dias ou a assinatura mensal (${VALOR_MENSALIDADE_SAAS} / 30 dias) desta unidade venceu. Faça o login para renovar via WhatsApp.`);
+                                window.location.href = "login.html";
+                                return;
+                            }
+                            exibirBannerAssinaturaCliente(unidade);
                         }
                     }
                 } catch(e) {}
@@ -2225,14 +2282,61 @@
                 container.innerHTML = '';
                 if(barbearias && barbearias.length > 0) {
                     barbearias.forEach(b => {
-                        const ativo = b.status !== "bloqueado";
+                        const st = String(b.status || 'ativo').toLowerCase();
+                        const ativo = st !== "bloqueado" && st !== "bloqueio";
                         const urlPainelUnidade = (b.id === 'kiko_barb' || b.id === 'kiko_barberia') ? `admin.html?id=${b.id}` : `https://${b.id}.kikobarbearia.com.br/admin.html`;
-                        const div = document.createElement('div'); div.className = 'linha-item';
-                        div.innerHTML = `<div><strong>${b.nome}</strong><br><span style="font-size:0.65rem; color:#aaa;">ID: ${b.id} | Status: <span style="color:${ativo ? '#28a745' : '#ff4c4c'}">${b.status || 'Ativo'}</span></span></div><div style="display:flex; gap:5px;"><a href="${urlPainelUnidade}" style="background:#00bfff; color:#000; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; text-decoration:none;">Aceder</a><button onclick="alternarBloqueio('${b.id}', '${ativo ? 'bloqueado' : 'ativo'}')" style="background:${ativo ? '#ff4c4c' : '#28a745'}; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">${ativo ? 'Bloquear' : 'Ativar'}</button><button onclick="excluirBarbearia('${b.id}')" style="background:#dc3545; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">🗑️ Excluir</button></div>`;
+                        
+                        let labelPlano = '';
+                        if (b.id === 'kiko_barb' || b.id === 'kiko_barberia') {
+                            labelPlano = '<span style="color:#ffd700;">👑 Master Vitalício</span>';
+                        } else if (!ativo) {
+                            labelPlano = '<span style="color:#ff4c4c;">🔒 Bloqueado / Vencido</span>';
+                        } else if (st === 'trial') {
+                            labelPlano = `<span style="color:#00bfff;">🎁 Teste 7 Dias (Vence: ${b.vencimento || '-'})</span>`;
+                        } else {
+                            labelPlano = `<span style="color:#28a745;">✅ Ativo (Vence: ${b.vencimento || '-'})</span>`;
+                        }
+
+                        const div = document.createElement('div');
+                        div.className = 'linha-item';
+                        div.style.flexWrap = 'wrap';
+                        div.style.gap = '8px';
+                        div.innerHTML = `
+                            <div style="flex: 1; min-width: 170px;">
+                                <strong>${b.nome}</strong>
+                                <br><span style="font-size:0.65rem; color:#aaa;">ID: ${b.id} | ${labelPlano}</span>
+                            </div>
+                            <div style="display:flex; gap:5px; flex-wrap: wrap;">
+                                <a href="${urlPainelUnidade}" style="background:#00bfff; color:#000; padding:5px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; text-decoration:none;">Aceder</a>
+                                ${b.id !== 'kiko_barb' && b.id !== 'kiko_barberia' ? `<button onclick="renovarAssinatura30Dias('${b.id}', '${b.nome}')" style="background:#25D366; color:#000; border:none; padding:5px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">💳 +30 Dias</button>` : ''}
+                                <button onclick="alternarBloqueio('${b.id}', '${ativo ? 'bloqueado' : 'ativo'}')" style="background:${ativo ? '#ff4c4c' : '#28a745'}; color:#fff; border:none; padding:5px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">${ativo ? 'Bloquear' : 'Ativar'}</button>
+                                <button onclick="excluirBarbearia('${b.id}')" style="background:#8b0000; color:#fff; border:none; padding:5px 8px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">🗑️</button>
+                            </div>
+                        `;
                         container.appendChild(div);
                     });
                 } else container.innerHTML = '<p style="font-size:0.75rem; color:#888;">Nenhuma unidade registada.</p>';
             } catch(e) { document.getElementById('lista-barbearias-saas').innerHTML = '<p style="font-size:0.75rem; color:#ff4c4c;">Erro ao carregar lista.</p>'; }
+        }
+
+        async function renovarAssinatura30Dias(idB, nomeB) {
+            if (!confirm(`Confirmar pagamento de ${VALOR_MENSALIDADE_SAAS} e liberar +30 dias de acesso para "${nomeB}" (${idB})?`)) return;
+            const fd = new URLSearchParams();
+            fd.append('acao', 'renovar_assinatura');
+            fd.append('id_barbearia', idB);
+            fd.append('dias', '30');
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString() });
+                const data = await res.json();
+                if (data.status === 'sucesso') {
+                    alert(`✅ Assinatura renovada com sucesso!\nNovo vencimento de ${nomeB}: ${data.novo_vencimento}`);
+                } else {
+                    alert(data.msg || 'Renovação enviada!');
+                }
+            } catch (e) {
+                alert('✅ Comando de renovação (+30 dias) enviado!');
+            }
+            carregarListaBarbeariasMaster();
         }
 
         async function alternarBloqueio(idB, novoStatus) {
@@ -2257,7 +2361,7 @@
             if(!idB || !nomeB || !senhaB) return alert("Preencha todos os campos!");
             const fd = new URLSearchParams(); fd.append('acao', 'criar_barbearia'); fd.append('id_barbearia', idB); fd.append('nome', nomeB); fd.append('senha', senhaB);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' });
-            alert(`Unidade criada!\nLink do cliente: https://${idB}.kikobarbearia.com.br`); fecharModal('modal-nova-barbearia'); carregarListaBarbeariasMaster();
+            alert(`Unidade criada com 7 dias grátis!\nLink do cliente: https://${idB}.kikobarbearia.com.br`); fecharModal('modal-nova-barbearia'); carregarListaBarbeariasMaster();
         }
 
         function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
