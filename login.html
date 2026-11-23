@@ -22,6 +22,18 @@
         .links-uteis a:hover { text-decoration: underline; }
         .mensagem-erro { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; padding: 10px; border-radius: 4px; font-size: 0.85em; text-align: center; margin-bottom: 15px; display: none; font-weight: 600; }
         .aviso-auto { text-align: center; color: #d4af37; font-size: 0.8em; margin-top: 10px; display: none; font-weight: 600; }
+
+        /* Box de Bloqueio / Pagamento 30 Dias */
+        .box-bloqueio { background: rgba(255, 59, 59, 0.12); border: 1px solid #ff4444; border-radius: 6px; padding: 16px; margin-bottom: 18px; display: none; text-align: center; }
+        .box-bloqueio h3 { color: #ff5c5c; margin: 0 0 8px 0; font-size: 1em; text-transform: uppercase; letter-spacing: 1px; }
+        .box-bloqueio p { color: #e2e2e2; font-size: 0.82em; line-height: 1.45; margin: 0 0 12px 0; }
+        .pix-box { background: rgba(0, 0, 0, 0.65); border: 1px dashed #d4af37; padding: 10px; border-radius: 4px; margin-bottom: 12px; }
+        .pix-box span { display: block; font-size: 0.72em; color: #aaa; text-transform: uppercase; margin-bottom: 4px; }
+        .pix-box code { color: #d4af37; font-size: 0.85em; word-break: break-all; font-weight: 700; }
+        .btn-pix-copiar { background: #222; color: #d4af37; border: 1px solid #d4af37; padding: 8px 12px; border-radius: 4px; font-size: 0.78em; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 8px; text-transform: uppercase; font-family: 'Montserrat', sans-serif; }
+        .btn-pix-copiar:hover { background: #d4af37; color: #050505; }
+        .btn-wpp-liberar { display: block; background: #25D366; color: #050505; text-decoration: none; padding: 11px; border-radius: 4px; font-size: 0.82em; font-weight: 800; text-transform: uppercase; transition: 0.3s; }
+        .btn-wpp-liberar:hover { background: #1ebe5d; }
     </style>
 </head>
 <body>
@@ -29,6 +41,18 @@
     <div class="login-container">
         <h1>Área Restrita</h1>
         <div id="msgErro" class="mensagem-erro"></div>
+
+        <!-- Tela de Bloqueio / Renovação 30 Dias -->
+        <div id="boxBloqueio" class="box-bloqueio">
+            <h3>🔒 Acesso Bloqueado</h3>
+            <p id="textoBloqueio">Seu período gratuito de 7 dias ou assinatura mensal de 30 dias encerrou.</p>
+            <div class="pix-box">
+                <span>Plano Mensal (30 Dias) — R$ 60,00 | Chave PIX:</span>
+                <code id="chavePixTexto">82f5e97b-b506-4eec-b3de-b973b8142c34</code>
+            </div>
+            <button type="button" id="btnCopiarPix" class="btn-pix-copiar" onclick="copiarChavePix()">📋 Copiar Chave PIX</button>
+            <a id="linkWhatsAppComprovante" href="#" target="_blank" class="btn-wpp-liberar">📲 Enviar Comprovante e Liberar 30 Dias</a>
+        </div>
         
         <form id="formLogin" onsubmit="fazerLogin(event)">
             <div class="form-group">
@@ -49,13 +73,15 @@
         <div id="avisoAuto" class="aviso-auto">Toque em qualquer lugar para ativar a biometria 👆</div>
 
         <div class="links-uteis">
-            <p>Ainda não tem barbearia registada? <a href="registro.html">Criar Conta</a></p>
+            <p>Ainda não tem barbearia registada? <a href="registro.html">Criar Conta (7 Dias Grátis)</a></p>
             <p style="margin-top: 10px;"><a href="index.html" id="linkSitePublico">← Voltar para o Site</a></p>
         </div>
     </div>
 
     <script>
         const URL_SCRIPT_BACKEND = "https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec";
+        const WHATSAPP_SUPORTE = "5567999673200";
+        const CHAVE_PIX_SAAS = "82f5e97b-b506-4eec-b3de-b973b8142c34";
 
         function detectarIdSubdominioOuUrl() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -83,9 +109,61 @@
             }
         }
 
-        function redirecionarParaPainel(idBarb) {
+        // Se o admin.html redirecionou para cá por vencimento expirado
+        const urlParamsGeral = new URLSearchParams(window.location.search);
+        if (urlParamsGeral.get('bloqueado') === '1') {
+            exibirTelaBloqueio(
+                idInicial,
+                urlParamsGeral.get('vencimento') || "",
+                "Seu período de teste grátis (7 dias) ou assinatura mensal (30 dias) encerrou. Faça o pagamento para liberar mais 30 dias!"
+            );
+        }
+
+        function exibirTelaBloqueio(idBarb, vencimento, mensagemCustom) {
+            const box = document.getElementById('boxBloqueio');
+            const txt = document.getElementById('textoBloqueio');
+            const linkWpp = document.getElementById('linkWhatsAppComprovante');
+
+            let msgFinal = mensagemCustom || "Seu período gratuito de 7 dias ou assinatura mensal de 30 dias encerrou.";
+            if (vencimento && msgFinal.indexOf(vencimento) === -1) {
+                msgFinal += ` (Vencimento: ${vencimento})`;
+            }
+            txt.innerText = msgFinal;
+
+            const textoWhatsApp = encodeURIComponent(
+                `Olá! Fiz o pagamento de R$ 60,00 referente à assinatura mensal (30 dias) do KBS Sistemas.\n\n🏢 ID da Unidade: ${idBarb || 'Minha Barbearia'}\n📎 Segue o comprovante para liberação:`
+            );
+            linkWpp.href = `https://wa.me/${WHATSAPP_SUPORTE}?text=${textoWhatsApp}`;
+            box.style.display = 'block';
+        }
+
+        function copiarChavePix() {
+            const btn = document.getElementById('btnCopiarPix');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(CHAVE_PIX_SAAS).then(() => {
+                    btn.innerText = "✅ Chave PIX Copiada!";
+                    setTimeout(() => { btn.innerText = "📋 Copiar Chave PIX"; }, 3000);
+                });
+            } else {
+                const temp = document.createElement("input");
+                temp.value = CHAVE_PIX_SAAS;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand("copy");
+                document.body.removeChild(temp);
+                btn.innerText = "✅ Chave PIX Copiada!";
+                setTimeout(() => { btn.innerText = "📋 Copiar Chave PIX"; }, 3000);
+            }
+        }
+
+        function redirecionarParaPainel(idBarb, dadosAssinatura) {
             localStorage.setItem('id_barbearia_ativo', idBarb);
             localStorage.setItem('biometria_autorizada', 'true');
+            if (dadosAssinatura) {
+                if (dadosAssinatura.vencimento) localStorage.setItem('vencimento_assinatura', dadosAssinatura.vencimento);
+                if (dadosAssinatura.status_assinatura) localStorage.setItem('status_assinatura', dadosAssinatura.status_assinatura);
+                if (dadosAssinatura.dias_restantes !== undefined) localStorage.setItem('dias_restantes_assinatura', dadosAssinatura.dias_restantes);
+            }
             const host = window.location.hostname.toLowerCase();
             if (host.endsWith('kikobarbearia.com.br') && idBarb !== 'kiko_barb' && idBarb !== 'master') {
                 window.location.href = `https://${idBarb}.kikobarbearia.com.br/admin.html`;
@@ -96,6 +174,8 @@
 
         // Verifica suporte a biometria ao carregar a página
         document.addEventListener("DOMContentLoaded", async function() {
+            if (urlParamsGeral.get('bloqueado') === '1') return;
+
             if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
                 try {
                     let disponivel = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
@@ -147,7 +227,33 @@
                 const credential = await navigator.credentials.create({ publicKey });
                 
                 if (credential) {
-                    redirecionarParaPainel(idBarb);
+                    if (idBarb === "kiko_barb" || idBarb === "kiko_barberia" || idBarb === "master") {
+                        redirecionarParaPainel(idBarb);
+                        return;
+                    }
+
+                    // Valida se os 7 dias grátis ou 30 dias pagos ainda estão válidos antes de liberar biometria
+                    const btnBio = document.getElementById('btnBiometria');
+                    btnBio.disabled = true;
+                    btnBio.innerText = "Verificando assinatura...";
+
+                    try {
+                        const resp = await fetch(`${URL_SCRIPT_BACKEND}?acao=verificar_assinatura&id_barbearia=${encodeURIComponent(idBarb)}`);
+                        const statusData = await resp.json();
+                        if (statusData.bloqueado === true || statusData.status === "bloqueio") {
+                            btnBio.disabled = false;
+                            btnBio.innerText = "🔐 Entrar com Impressão Digital";
+                            exibirTelaBloqueio(
+                                idBarb,
+                                statusData.vencimento || "",
+                                `Seu período de teste grátis (7 dias) ou assinatura mensal encerrou em ${statusData.vencimento || 'data anterior'}. Realize o pagamento para liberar mais 30 dias!`
+                            );
+                            return;
+                        }
+                        redirecionarParaPainel(idBarb, statusData);
+                    } catch (eCheck) {
+                        redirecionarParaPainel(idBarb);
+                    }
                 }
             } catch (error) {
                 console.log("Biometria cancelada:", error);
@@ -158,6 +264,7 @@
             e.preventDefault();
             const btn = document.getElementById('btnLogin');
             const msgErro = document.getElementById('msgErro');
+            const boxBloqueio = document.getElementById('boxBloqueio');
             const idBarb = document.getElementById('id_barbearia').value.trim().toLowerCase().replace(/\s+/g, '');
             const senha = document.getElementById('senha').value.trim();
 
@@ -170,6 +277,7 @@
             btn.disabled = true;
             btn.innerText = "A validar...";
             msgErro.style.display = 'none';
+            boxBloqueio.style.display = 'none';
 
             if (idBarb === "kiko_barb" || idBarb === "kiko_barberia" || idBarb === "master") {
                 redirecionarParaPainel(idBarb);
@@ -189,10 +297,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === "sucesso") {
-                    redirecionarParaPainel(idBarb);
-                } else if (data.status === "bloqueado") {
-                    msgErro.innerText = "Acesso suspenso: Mensalidade em atraso!";
-                    msgErro.style.display = 'block';
+                    redirecionarParaPainel(idBarb, data);
+                } else if (data.status === "bloqueio" || data.status === "bloqueado") {
+                    exibirTelaBloqueio(idBarb, data.vencimento || "", data.msg);
                     btn.disabled = false;
                     btn.innerText = "Entrar no Painel";
                 } else {
