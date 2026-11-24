@@ -764,7 +764,7 @@
         fd.append('duracao_total', duracaoFinal);
         fd.append('profissional', profFinal);
 
-        fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' })
+        fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors', keepalive: true })
             .catch(() => console.log("Envio em fila de rede..."));
 
         const dataBr = dataEscolhida ? dataEscolhida.split('-').reverse().join('/') : '';
@@ -777,7 +777,7 @@
             ${overlayEl ? overlayEl.outerHTML : ''}
             <div class="tela-confirmacao-flow animacao-abertura-app">
                 <h1 style="color: var(--cor-principal); font-size: 2em; margin: 0 0 8px 0;">VAGA GARANTIDA! ✂️</h1>
-                <p style="color: #e5e5e5; font-size: 0.98em; margin: 0;">Seu horário foi registrado e a confirmação está indo para o seu WhatsApp.</p>
+                <p style="color: #e5e5e5; font-size: 0.98em; margin: 0;">Voltando para o WhatsApp...</p>
                 <div class="card-resumo-flow">
                     <div><strong>Cliente:</strong> ${nomeCliente}</div>
                     <div><strong>Data:</strong> ${dataBr} às <strong>${horaEscolhida}</strong></div>
@@ -785,10 +785,13 @@
                     <div><strong>Profissional:</strong> ${profFinal}</div>
                     <div><strong>Total:</strong> R$ ${valorFinal} (${duracaoFinal} min)</div>
                 </div>
-                <a href="${linkZapVolta}" class="btn-gold" style="text-decoration:none; display:block; text-align:center;">Voltar ao WhatsApp</a>
-                <p style="color: #999; font-size: 0.85em; margin-top: 14px;">Pode fechar esta janela quando quiser.</p>
+                <a href="${linkZapVolta}" class="btn-gold" style="text-decoration:none; display:block; text-align:center;">Abrir WhatsApp Agora</a>
             </div>
         `;
+
+        setTimeout(() => {
+            window.location.href = linkZapVolta;
+        }, 450);
 
         setTimeout(() => {
             try {
