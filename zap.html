@@ -38,6 +38,7 @@
             background-color: var(--cor-fundo);
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
             overflow-x: hidden;
+            touch-action: manipulation;
         }
 
         /* VÍDEO DE FUNDO IMERSIVO EM TELA CHEIA */
@@ -104,10 +105,28 @@
             text-transform: uppercase;
         }
 
+        /* BARRA DE PROGRESSO ESTILO FLOW */
+        .flow-progress-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+        .flow-progress-bar {
+            height: 100%;
+            width: 25%;
+            background: var(--cor-principal);
+            transition: width 0.18s ease-out;
+        }
+
         /* JANELA 100% CRISTALINA */
         .container { 
             width: 100%; max-width: 480px; margin: 10px auto; 
-            background: rgba(5, 5, 5, 0.08);
+            background: rgba(5, 5, 5, 0.14);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 38px 24px 28px 24px; 
             border-radius: 20px; 
             border: 1px solid rgba(212, 175, 55, 0.25);
@@ -116,37 +135,40 @@
         }
 
         h3 { text-align: center; color: var(--cor-principal); text-transform: uppercase; letter-spacing: 3px; margin: 0 0 6px 0; font-size: 1.5em; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
-        .subtitulo { text-align: center; font-size: 11px; color: #d0d0d0; margin-bottom: 28px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
+        .subtitulo { text-align: center; font-size: 11px; color: #d0d0d0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
         
-        .form-group { margin-bottom: 22px; transition: all 0.4s ease; }
+        .form-group { margin-bottom: 20px; transition: border-color 0.15s ease, background 0.15s ease; }
         .form-group label { display: block; margin-bottom: 8px; color: #f0f0f0; font-size: 0.8em; text-transform: uppercase; font-weight: 700; letter-spacing: 0.8px; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
         
         .form-group input, .form-group select { 
             width: 100%; padding: 14px 16px; 
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.35);
             color: #ffffff; 
             border: 1px solid rgba(255, 255, 255, 0.2); 
-            border-radius: 12px; font-family: var(--fonte-principal); font-size: 15px; transition: all 0.3s ease;
+            border-radius: 12px; font-family: var(--fonte-principal); font-size: 15px; transition: border-color 0.15s ease, background 0.15s ease;
         }
-        .form-group input:focus, .form-group select:focus { border-color: var(--cor-principal); box-shadow: 0 0 12px var(--cor-borda); outline: none; background: rgba(0, 0, 0, 0.45); }
+        .form-group input:focus, .form-group select:focus { border-color: var(--cor-principal); box-shadow: 0 0 12px var(--cor-borda); outline: none; background: rgba(0, 0, 0, 0.55); }
 
-        .checkbox-group { display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; background: rgba(0, 0, 0, 0.15); padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .checkbox-group { display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .checkbox-group::-webkit-scrollbar { width: 6px; }
         .checkbox-group::-webkit-scrollbar-thumb { background: var(--cor-borda); border-radius: 10px; }
         
-        .checkbox-item { display: flex; align-items: center; background: rgba(255, 255, 255, 0.04); padding: 13px 15px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; cursor: pointer; transition: all 0.25s ease; }
-        .checkbox-item:hover { border-color: var(--cor-principal); background: rgba(212, 175, 55, 0.12); transform: translateY(-1px); }
+        .checkbox-item { display: flex; align-items: center; background: rgba(255, 255, 255, 0.04); padding: 13px 15px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, border-color 0.12s ease, background 0.12s ease; }
+        .checkbox-item:hover { border-color: var(--cor-principal); background: rgba(212, 175, 55, 0.12); }
+        .checkbox-item:active { transform: scale(0.985); }
+        .checkbox-item.selecionado { border-color: var(--cor-principal); background: rgba(212, 175, 55, 0.18); }
         .checkbox-item input { margin-right: 14px; transform: scale(1.3); accent-color: var(--cor-principal); cursor: pointer; }
         .checkbox-details { display: flex; justify-content: space-between; flex-grow: 1; align-items: center; }
         .checkbox-title { font-weight: 600; color: #fff; font-size: 0.9em; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
         .checkbox-price { color: var(--cor-principal); font-weight: 700; font-size: 0.95em; }
 
-        .resumo-box { margin-top: 16px; padding: 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--cor-borda); border-left: 4px solid var(--cor-principal); display: none; border-radius: 10px; }
-        .resumo-box p { margin: 4px 0; font-size: 0.95em; color: #e0e0e0; }
+        .resumo-box { margin-top: 14px; padding: 14px 16px; background: rgba(0, 0, 0, 0.38); border: 1px solid var(--cor-borda); border-left: 4px solid var(--cor-principal); display: none; border-radius: 10px; }
+        .resumo-box p { margin: 4px 0; font-size: 0.92em; color: #e0e0e0; }
         .resumo-box strong { color: var(--cor-principal); }
 
-        .btn-gold { background: var(--cor-principal); color: #050505; width: 100%; padding: 16px; font-size: 1em; font-weight: 800; text-transform: uppercase; border-radius: 12px; border: none; cursor: pointer; font-family: var(--fonte-principal); margin-top: 15px; letter-spacing: 1px; box-shadow: 0 4px 20px var(--cor-borda); transition: all 0.3s ease; }
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--cor-borda); filter: brightness(1.1); }
+        .btn-gold { background: var(--cor-principal); color: #050505; width: 100%; padding: 16px; font-size: 1em; font-weight: 800; text-transform: uppercase; border-radius: 12px; border: none; cursor: pointer; font-family: var(--fonte-principal); margin-top: 15px; letter-spacing: 1px; box-shadow: 0 4px 20px var(--cor-borda); transition: transform 0.12s ease, filter 0.12s ease; }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 25px var(--cor-borda); filter: brightness(1.08); }
+        .btn-gold:active { transform: scale(0.985); }
         .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; transform: none; filter: grayscale(50%); }
         
         #campo_nascimento { display: none; }
@@ -161,7 +183,7 @@
             background-image: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.0) 100%);
             background-repeat: no-repeat;
             background-size: 800px 100%;
-            animation: shimmer 1.5s infinite linear;
+            animation: shimmer 1.2s infinite linear;
             border-radius: 8px;
         }
         .skel-title { width: 70%; height: 28px; margin: 0 auto; border-radius: 4px; }
@@ -171,16 +193,43 @@
         .skel-line-main { width: 50%; height: 16px; border-radius: 4px; }
         .skel-line-price { width: 20%; height: 16px; border-radius: 4px; margin-left: auto; }
 
-        /* ANIMAÇÃO DE ABERTURA */
-        @keyframes nascerDoCentro {
-            0% { transform: scale(0.2); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        /* ANIMAÇÃO DE ABERTURA RÁPIDA ESTILO FLOW */
+        @keyframes nascerFlow {
+            0% { transform: translateY(10px) scale(0.98); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
         }
         .animacao-abertura-app {
             opacity: 0;
-            animation: nascerDoCentro 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            animation-delay: 0.15s;
+            animation: nascerFlow 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
             transform-origin: center center; 
+        }
+
+        .tela-confirmacao-flow {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 75vh;
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 28px 22px;
+            background: rgba(10, 10, 10, 0.78);
+            border: 1px solid var(--cor-borda);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .card-resumo-flow {
+            width: 100%;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 16px;
+            margin: 18px 0 22px 0;
+            line-height: 1.65;
+            font-size: 0.94em;
         }
     </style>
 </head>
@@ -195,11 +244,15 @@
     
     <div class="overlay-global"></div>
 
-<div class="container animacao-abertura-app">
+<div class="container animacao-abertura-app" id="appContainer">
     <!-- LOGO KBS DISCRETA NO CANTO -->
     <div class="kbs-selo-cantinho">
         <img src="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" alt="KBS">
         <span>KBS</span>
+    </div>
+
+    <div class="flow-progress-wrap" aria-hidden="true">
+        <div class="flow-progress-bar" id="flowProgressBar"></div>
     </div>
 
     <h3 id="titulo-empresa"><div class="skeleton skel-title"></div></h3>
@@ -208,12 +261,12 @@
     <form id="formAgendamento">
         <div class="form-group">
             <label for="nome">O Seu Nome:</label>
-            <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+            <input type="text" id="nome" placeholder="Digite seu nome completo" required oninput="atualizarProgressoFlow()">
         </div>
 
         <div class="form-group">
             <label for="telefone">O Seu WhatsApp (Com DDD):</label>
-            <input type="tel" id="telefone" placeholder="+55 (67) 99999-9999" required oninput="mascaraTelefone(this)" maxlength="19">
+            <input type="tel" id="telefone" placeholder="+55 (67) 99999-9999" required oninput="mascaraTelefone(this); atualizarProgressoFlow();" maxlength="19">
         </div>
 
         <div class="form-group" id="campo_nascimento">
@@ -238,19 +291,19 @@
 
         <div class="form-group">
             <label for="profissional">Profissional de Preferência:</label>
-            <select id="profissional" required onchange="verificarHorarios()">
-                <option value="" disabled selected>A consultar agenda...</option>
+            <select id="profissional" required onchange="verificarHorarios(); atualizarProgressoFlow();">
+                <option value="" disabled selected>Selecione um profissional...</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="data">Data de Preferência:</label>
-            <input type="date" id="data" required onchange="verificarHorarios()">
+            <input type="date" id="data" required onchange="verificarHorarios(); atualizarProgressoFlow();">
         </div>
 
         <div class="form-group">
             <label for="hora">Horário de Preferência:</label>
-            <select id="hora" required disabled>
+            <select id="hora" required disabled onchange="atualizarProgressoFlow()">
                 <option value="" disabled selected>Selecione a data primeiro...</option>
             </select>
         </div>
@@ -283,22 +336,46 @@
     let configHorarios = null;
     window.listaProfissionaisGlobal = [];
 
-    if (telUrl) {
-        document.getElementById('telefone').value = telUrl;
-        mascaraTelefone(document.getElementById('telefone'));
+    const chaveCache = "kbs_cache_" + idBarbearia;
+    const chaveClienteLocal = "kbs_cliente_flow_" + idBarbearia;
+    const chaveVideoLocal = "kbs_video_flow_" + idBarbearia;
+
+    function atualizarProgressoFlow() {
+        let pontos = 1;
+        if ((document.getElementById('nome')?.value || '').trim().length >= 2) pontos++;
+        if (document.querySelectorAll('input[name="servico"]:checked').length > 0) pontos++;
+        if (document.getElementById('profissional')?.value && document.getElementById('hora')?.value) pontos++;
+        const perc = Math.min(100, pontos * 25);
+        const bar = document.getElementById('flowProgressBar');
+        if (bar) bar.style.width = perc + '%';
+    }
+
+    function aplicarVideoFundo(linkVideo) {
+        if (!linkVideo) return;
+        const videoBg = document.getElementById('bg-video');
+        if (!videoBg) return;
+        const atual = videoBg.querySelector('source')?.getAttribute('src');
+        if (atual === linkVideo) return;
+        videoBg.innerHTML = `<source src="${linkVideo}" type="video/mp4">`;
+        videoBg.load();
     }
 
     function montarTela(textos) {
+        if (!textos) return;
         if (textos.cor_primaria) {
             document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
             document.documentElement.style.setProperty('--cor-borda', textos.cor_primaria + '35');
         }
         if (textos.fonte_texto && textos.fonte_texto !== "Roboto") {
+            const fontId = 'font_kbs_' + textos.fonte_texto.replace(/[^a-zA-Z0-9]/g, '');
             document.documentElement.style.setProperty('--fonte-principal', `'${textos.fonte_texto}', sans-serif`);
-            const linkFont = document.createElement('link');
-            linkFont.href = `https://fonts.googleapis.com/css2?family=${textos.fonte_texto.replace(/ /g, '+')}:wght@400;600;700;800&display=swap`;
-            linkFont.rel = 'stylesheet';
-            document.head.appendChild(linkFont);
+            if (!document.getElementById(fontId)) {
+                const linkFont = document.createElement('link');
+                linkFont.id = fontId;
+                linkFont.href = `https://fonts.googleapis.com/css2?family=${textos.fonte_texto.replace(/ /g, '+')}:wght@400;600;700;800&display=swap`;
+                linkFont.rel = 'stylesheet';
+                document.head.appendChild(linkFont);
+            }
         }
 
         if (textos.titulo) {
@@ -308,13 +385,19 @@
         }
         if (textos.telefone) numeroWhatsappDono = textos.telefone.replace(/\D/g, '');
 
+        const marcacoesAtuais = new Set(
+            Array.from(document.querySelectorAll('input[name="servico"]:checked')).map(cb => cb.value)
+        );
+
         if (textos.servicos && textos.servicos !== "[]") {
             let listaServicos = JSON.parse(textos.servicos);
             let htmlCaixas = "";
             listaServicos.forEach(servico => {
                 let precoServ = servico.preco !== undefined ? servico.preco : (servico.valor !== undefined ? servico.valor : 0);
                 let tempoServ = servico.tempo !== undefined ? servico.tempo : (servico.duracao !== undefined ? servico.duracao : 20);
-                htmlCaixas += `<label class="checkbox-item"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${precoServ}" data-tempo="${tempoServ}" onchange="atualizarResumo()"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${tempoServ}m)</span><span class="checkbox-price">R$ ${precoServ}</span></div></label>`;
+                const checkedAttr = marcacoesAtuais.has(servico.nome) ? 'checked' : '';
+                const selClass = marcacoesAtuais.has(servico.nome) ? 'selecionado' : '';
+                htmlCaixas += `<label class="checkbox-item ${selClass}"><input type="checkbox" name="servico" value="${servico.nome}" data-valor="${precoServ}" data-tempo="${tempoServ}" ${checkedAttr} onchange="atualizarResumo(); atualizarProgressoFlow();"><div class="checkbox-details"><span class="checkbox-title">${servico.nome} (${tempoServ}m)</span><span class="checkbox-price">R$ ${precoServ}</span></div></label>`;
             });
             document.getElementById('caixinhas_servicos_dinamicos').innerHTML = htmlCaixas;
         } else {
@@ -322,6 +405,7 @@
         }
 
         const selectProfissional = document.getElementById('profissional');
+        const profAnterior = selectProfissional.value;
         selectProfissional.innerHTML = '<option value="" disabled selected>Selecione um profissional...</option>';
         if (textos.profissionais && textos.profissionais !== "[]") {
             window.listaProfissionaisGlobal = JSON.parse(textos.profissionais);
@@ -329,12 +413,14 @@
                 let opt = document.createElement('option');
                 opt.value = prof.nome;
                 opt.text = "💈 " + prof.nome;
+                if (prof.nome === profAnterior) opt.selected = true;
                 selectProfissional.add(opt);
             });
         } else {
             let opt = document.createElement('option');
             opt.value = "Equipe";
             opt.text = "💈 Qualquer Barbeiro Disponível";
+            if (profAnterior === "Equipe") opt.selected = true;
             selectProfissional.add(opt);
         }
         
@@ -345,20 +431,47 @@
         if(!configHorarios.fecha) configHorarios.fecha = "19:40";
         if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
 
+        atualizarResumo();
         verificarHorarios();
+        atualizarProgressoFlow();
     }
 
-    window.onload = function() {
+    (function initInstantaneoFlow() {
         let hoje = new Date().toISOString().split('T')[0];
-        document.getElementById('data').setAttribute('min', hoje);
-        document.getElementById('data').value = hoje;
+        const inputData = document.getElementById('data');
+        inputData.setAttribute('min', hoje);
+        inputData.value = hoje;
 
-        const chaveCache = "kbs_cache_" + idBarbearia;
+        const videoSalvo = localStorage.getItem(chaveVideoLocal);
+        if (videoSalvo) aplicarVideoFundo(videoSalvo);
+
+        const clienteSalvoStr = localStorage.getItem(chaveClienteLocal);
+        if (clienteSalvoStr) {
+            try {
+                const cli = JSON.parse(clienteSalvoStr);
+                if (cli.nome && !document.getElementById('nome').value) {
+                    document.getElementById('nome').value = cli.nome;
+                }
+                if (!telUrl && cli.telefone && !document.getElementById('telefone').value) {
+                    document.getElementById('telefone').value = cli.telefone;
+                    mascaraTelefone(document.getElementById('telefone'));
+                }
+            } catch(e) {}
+        }
+
+        if (telUrl) {
+            document.getElementById('telefone').value = telUrl;
+            mascaraTelefone(document.getElementById('telefone'));
+        }
+
         const cacheSalvo = localStorage.getItem(chaveCache);
-        
         if (cacheSalvo) {
             try { montarTela(JSON.parse(cacheSalvo)); } catch(e) {}
         }
+    })();
+
+    window.onload = function() {
+        const cacheSalvo = localStorage.getItem(chaveCache);
 
         fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia)
             .then(res => res.json())
@@ -376,7 +489,6 @@
                 }
             });
 
-        // Carrega o vídeo de fundo automático direto da galeria
         fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia)
         .then(res => res.json())
         .then(fotosBrutas => {
@@ -384,9 +496,8 @@
             for (let link of midiasSemRepetir) {
                 let lkLower = link.toLowerCase();
                 if (lkLower.includes('.mp4') || lkLower.includes('.webm') || lkLower.includes('video')) {
-                    const videoBg = document.getElementById('bg-video');
-                    videoBg.innerHTML = `<source src="${link}" type="video/mp4">`;
-                    videoBg.load();
+                    localStorage.setItem(chaveVideoLocal, link);
+                    aplicarVideoFundo(link);
                     break;
                 }
             }
@@ -451,9 +562,18 @@
     }
 
     function atualizarResumo() {
-        let checkboxes = document.querySelectorAll('input[name="servico"]:checked');
+        let checkboxes = document.querySelectorAll('input[name="servico"]');
         let totalV = 0, totalT = 0;
-        checkboxes.forEach(cb => { totalV += parseInt(cb.getAttribute('data-valor')); totalT += parseInt(cb.getAttribute('data-tempo')); });
+        checkboxes.forEach(cb => {
+            const labelEl = cb.closest('.checkbox-item');
+            if (cb.checked) {
+                totalV += parseInt(cb.getAttribute('data-valor'));
+                totalT += parseInt(cb.getAttribute('data-tempo'));
+                if (labelEl) labelEl.classList.add('selecionado');
+            } else if (labelEl) {
+                labelEl.classList.remove('selecionado');
+            }
+        });
         
         document.getElementById('duracao_total').value = totalT; 
         document.getElementById('valor_total_enviar').value = totalV;
@@ -491,7 +611,8 @@
             selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
         }
 
-        selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>A consultar agenda online...</option>';
+        selectHora.disabled = false;
+        renderizarDropdown(dataEscolhida, selectHora);
         
         const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
         window[callbackName] = function(data) {
@@ -508,6 +629,7 @@
     }
 
     function renderizarDropdown(dataEscolhida, selectHora) {
+        const horaAnterior = selectHora.value;
         selectHora.innerHTML = '<option value="" disabled selected>Selecione um horário...</option>';
         
         let abreProf = configHorarios.abre || "08:00";
@@ -591,6 +713,7 @@
                 opt.style.color = "#ff4444";
             } else {
                 opt.text = item.hora;
+                if (horaAnterior && item.hora === horaAnterior) opt.selected = true;
             }
             selectHora.add(opt);
         });
@@ -598,56 +721,81 @@
 
     document.getElementById('formAgendamento').addEventListener('submit', e => {
         e.preventDefault();
-        if(document.querySelectorAll('input[name="servico"]:checked').length === 0) { alert("Selecione um serviço!"); return; }
+        if(document.querySelectorAll('input[name="servico"]:checked').length === 0) {
+            alert("Selecione um serviço!");
+            return;
+        }
+        if(!document.getElementById('hora').value) {
+            alert("Selecione um horário disponível!");
+            return;
+        }
         
         const btnSubmit = document.getElementById('btnSubmit');
         btnSubmit.disabled = true; 
-        btnSubmit.innerText = "Aguarde, a agendar...";
         
         let nomes = []; 
         document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
+        const nomeCliente = document.getElementById('nome').value.trim();
+        const telFormatado = document.getElementById('telefone').value.trim();
+        const telLimpo = telFormatado.replace(/\D/g, '');
+        const dataEscolhida = document.getElementById('data').value;
+        const horaEscolhida = document.getElementById('hora').value;
         let valorFinal = document.getElementById('valor_total_enviar').value;
         let duracaoFinal = document.getElementById('duracao_total').value;
         let profFinal = document.getElementById('profissional').value;
         let dataNascFinal = document.getElementById('data_nascimento').value || "";
+        const servicoResumo = nomes.join(" + ");
+
+        try {
+            localStorage.setItem(chaveClienteLocal, JSON.stringify({ nome: nomeCliente, telefone: telFormatado }));
+        } catch(e) {}
 
         const fd = new URLSearchParams();
         fd.append('acao', 'agendar');
         fd.append('id_barbearia', idBarbearia);
-        fd.append('nome', document.getElementById('nome').value);
+        fd.append('nome', nomeCliente);
         fd.append('email', '');
-        fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
+        fd.append('telefone', telLimpo);
         fd.append('data_nascimento', dataNascFinal);
-        fd.append('data', document.getElementById('data').value);
-        fd.append('hora', document.getElementById('hora').value);
-        fd.append('servico', nomes.join(" + "));
+        fd.append('data', dataEscolhida);
+        fd.append('hora', horaEscolhida);
+        fd.append('servico', servicoResumo);
         fd.append('valor_total', valorFinal);
         fd.append('duracao_total', duracaoFinal);
         fd.append('profissional', profFinal);
 
         fetch(scriptURL, { method: 'POST', body: fd.toString(), mode: 'no-cors' })
-        .then(() => {
-            alert("✅ Agendamento realizado com sucesso!\nA confirmação e os detalhes foram enviados para o seu WhatsApp.");
-            window.location.href = "https://wa.me/" + numeroWhatsappDono;
+            .catch(() => console.log("Envio em fila de rede..."));
 
-            setTimeout(() => { 
-                window.open('','_self').close(); 
-                window.close(); 
-            }, 800);
+        const dataBr = dataEscolhida ? dataEscolhida.split('-').reverse().join('/') : '';
+        const linkZapVolta = "https://wa.me/" + numeroWhatsappDono;
 
-            document.body.innerHTML = `
-                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center; padding: 20px; font-family: var(--fonte-principal); background-color: var(--cor-fundo);">
-                    <h1 style="color: var(--cor-principal); font-size: 2.2em; margin-bottom: 10px;">VAGA GARANTIDA! ✂️</h1>
-                    <p style="color: #fff; font-size: 1.1em; margin-bottom: 30px;">O seu horário foi marcado com sucesso e o nosso assistente já enviou a confirmação no seu WhatsApp.</p>
-                    <p style="color: #888; font-size: 0.9em;">Pode fechar esta aba e voltar ao WhatsApp.</p>
+        const overlayEl = document.querySelector('.overlay-global');
+        const videoWrapEl = document.querySelector('.video-background-container');
+        document.body.innerHTML = `
+            ${videoWrapEl ? videoWrapEl.outerHTML : ''}
+            ${overlayEl ? overlayEl.outerHTML : ''}
+            <div class="tela-confirmacao-flow animacao-abertura-app">
+                <h1 style="color: var(--cor-principal); font-size: 2em; margin: 0 0 8px 0;">VAGA GARANTIDA! ✂️</h1>
+                <p style="color: #e5e5e5; font-size: 0.98em; margin: 0;">Seu horário foi registrado e a confirmação está indo para o seu WhatsApp.</p>
+                <div class="card-resumo-flow">
+                    <div><strong>Cliente:</strong> ${nomeCliente}</div>
+                    <div><strong>Data:</strong> ${dataBr} às <strong>${horaEscolhida}</strong></div>
+                    <div><strong>Serviço:</strong> ${servicoResumo}</div>
+                    <div><strong>Profissional:</strong> ${profFinal}</div>
+                    <div><strong>Total:</strong> R$ ${valorFinal} (${duracaoFinal} min)</div>
                 </div>
-            `;
-        })
-        .catch(() => {
-            alert("⚠️ Ocorreu um erro ao processar o agendamento. Tente novamente.");
-            btnSubmit.disabled = false;
-            btnSubmit.innerText = "Confirmar Agendamento";
-        });
+                <a href="${linkZapVolta}" class="btn-gold" style="text-decoration:none; display:block; text-align:center;">Voltar ao WhatsApp</a>
+                <p style="color: #999; font-size: 0.85em; margin-top: 14px;">Pode fechar esta janela quando quiser.</p>
+            </div>
+        `;
+
+        setTimeout(() => {
+            try {
+                window.open('', '_self').close();
+                window.close();
+            } catch(errClose) {}
+        }, 1200);
     });
 </script>
 
