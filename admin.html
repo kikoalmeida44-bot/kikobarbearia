@@ -885,15 +885,32 @@
         <div class="modal-content">
             <h2 class="modal-title">🎨 Textos e Visual do Site</h2>
             <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Configurações de Textos:</h3>
-            <div class="input-group"><input type="text" id="edit-titulo" placeholder="Título"></div>
-            <div class="input-group"><input type="text" id="edit-subtitulo" placeholder="Subtítulo"></div>
+            <div class="input-group">
+                <label>Título da Unidade:</label>
+                <input type="text" id="edit-titulo" placeholder="Título">
+            </div>
+            <div class="input-group">
+                <label>Subtítulo:</label>
+                <input type="text" id="edit-subtitulo" placeholder="Subtítulo">
+            </div>
             <div class="input-group">
                 <label>Texto da Seção "Sobre Nós":</label>
                 <textarea id="edit-sobre" rows="3" placeholder="Escreva aqui a apresentação da empresa (Sobre Nós)"></textarea>
             </div>
-            <div class="input-group"><input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)"></div>
-            <div class="input-group"><input type="text" id="edit-endereco" placeholder="Endereço"></div>
-            <div class="input-group"><input type="text" id="edit-link-google" placeholder="Link do Google Meu Negócio"></div>
+            <div class="input-group">
+                <label>WhatsApp (DDD + Número):</label>
+                <input type="text" id="edit-telefone" placeholder="WhatsApp (DDD + Número)">
+            </div>
+            <div class="input-group">
+                <label>📍 Endereço Completo (Gera o Mapa / Localização Automaticamente):</label>
+                <input type="text" id="edit-endereco" placeholder="Ex: Av. Mato Grosso do Sul, 207 - Centro, Coxim - MS">
+                <small style="display:block; color:#888; font-size:0.68rem; margin-top:3px;">O link do mapa enviado no lembrete e nas consultas de endereço é gerado automaticamente a partir deste endereço.</small>
+            </div>
+            <div class="input-group">
+                <label>⭐ Link de Avaliação do Google (Estrelas / Pós-Atendimento):</label>
+                <input type="url" id="edit-link-google" placeholder="Cole aqui APENAS o link de avaliação (ex: https://g.page/r/.../review)">
+                <small style="display:block; color:#ffd700; font-size:0.68rem; margin-top:3px;">Usado exclusivamente na mensagem automática de avaliação 1h após o atendimento. Não cole link de mapa aqui.</small>
+            </div>
             <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
             <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Estética e Branding (SaaS):</h3>
             <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
@@ -2739,19 +2756,27 @@
             abrirModal('modal-textos'); 
             try { 
                 const res = await fetch(SCRIPT_URL + '?acao=obter_textos&id_barbearia=' + idBarbearia); const data = await res.json(); 
-                if(data.titulo) document.getElementById('edit-titulo').value = data.titulo; 
-                if(data.subtitulo) document.getElementById('edit-subtitulo').value = data.subtitulo; 
-                if(data.sobre) document.getElementById('edit-sobre').value = data.sobre; 
-                if(data.telefone) document.getElementById('edit-telefone').value = data.telefone; 
-                if(data.endereco) document.getElementById('edit-endereco').value = data.endereco; 
-                if(data.link_google) document.getElementById('edit-link-google').value = data.link_google; 
+                document.getElementById('edit-titulo').value = data.titulo || ""; 
+                document.getElementById('edit-subtitulo').value = data.subtitulo || ""; 
+                document.getElementById('edit-sobre').value = data.sobre || ""; 
+                document.getElementById('edit-telefone').value = data.telefone || ""; 
+                document.getElementById('edit-endereco').value = data.endereco || ""; 
+                document.getElementById('edit-link-google').value = data.link_google || ""; 
                 if(data.cor_primaria) document.getElementById('edit-cor-primaria').value = data.cor_primaria;
                 if(data.fonte_texto) document.getElementById('edit-fonte-texto').value = data.fonte_texto;
             } catch(e) {} 
         }
         
         async function salvarTextos() { 
-            const fd = new URLSearchParams(); fd.append('acao', 'salvar_textos'); fd.append('id_barbearia', idBarbearia); fd.append('titulo', document.getElementById('edit-titulo').value); fd.append('subtitulo', document.getElementById('edit-subtitulo').value); fd.append('sobre', document.getElementById('edit-sobre').value); fd.append('telefone', document.getElementById('edit-telefone').value); fd.append('endereco', document.getElementById('edit-endereco').value); fd.append('link_google', document.getElementById('edit-link-google').value); 
+            const fd = new URLSearchParams(); 
+            fd.append('acao', 'salvar_textos'); 
+            fd.append('id_barbearia', idBarbearia); 
+            fd.append('titulo', document.getElementById('edit-titulo').value.trim()); 
+            fd.append('subtitulo', document.getElementById('edit-subtitulo').value.trim()); 
+            fd.append('sobre', document.getElementById('edit-sobre').value.trim()); 
+            fd.append('telefone', document.getElementById('edit-telefone').value.trim()); 
+            fd.append('endereco', document.getElementById('edit-endereco').value.trim()); 
+            fd.append('link_google', document.getElementById('edit-link-google').value.trim()); 
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
             const fd2 = new URLSearchParams(); fd2.append('acao', 'salvar_aparencia'); fd2.append('id_barbearia', idBarbearia); fd2.append('cor_primaria', document.getElementById('edit-cor-primaria').value); fd2.append('fonte_texto', document.getElementById('edit-fonte-texto').value);
             await fetch(SCRIPT_URL, { method: 'POST', body: fd2.toString(), mode: 'no-cors' });
