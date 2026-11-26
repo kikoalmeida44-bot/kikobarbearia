@@ -644,7 +644,7 @@
                 <div class="kbs-link-box">
                     <strong style="color:#0f172a;">🌐 Seu Site Principal + Nome Exclusivo no Link</strong>
                     <div style="margin-top:4px;">Receba seu site principal completo e seu identificador exclusivo na URL:</div>
-                    <div class="kbs-link-code">sua-empresa.kikobarbearia.com.br  |  ?id=nome-da-empresa</div>
+                    <div class="kbs-link-code">sua-empresa.kikobarbearia.com.br &nbsp;|&nbsp; ?id=nome-da-empresa</div>
                 </div>
             </div>
 
@@ -807,6 +807,9 @@
         <div class="section">
             <h2 class="section-title">Atendimento</h2>
             <div class="horarios-box card-granulado">
+                <p id="txt-dias-info" style="color:#fff; margin-bottom: 6px;">
+                    Dias de atendimento: <span>Seg a Sáb</span>
+                </p>
                 <p id="txt-horarios-info" style="color:#fff;">
                     Aberto das <span>08:00 às 11:40 e das 13:00 às 19:40</span>
                 </p>
@@ -857,6 +860,13 @@
         let agendamentosDaNuvem = [];
         let configHorarios = null;
         window.listaProfissionaisGlobal = [];
+
+        function formatarDiasAbertosTexto(dias) {
+            if (!Array.isArray(dias) || dias.length === 0) return "Fechado temporariamente";
+            const nomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+            const ordenados = [...new Set(dias.map(Number))].sort((a, b) => a - b);
+            return ordenados.map(d => nomes[d]).filter(Boolean).join(", ");
+        }
 
         function aplicarTemaClaro(ativo) {
             if (ativo) {
@@ -1043,9 +1053,7 @@
                     let linkMapa = document.getElementById('link-mapa');
                     if(linkMapa) {
                         linkMapa.innerHTML = "📍 " + textos.endereco;
-                        linkMapa.href = (textos.link_google && textos.link_google.trim() !== "")
-                            ? textos.link_google.trim()
-                            : "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(textos.endereco);
+                        linkMapa.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(textos.endereco);
                     }
                 }
                 
@@ -1087,11 +1095,13 @@
                 if(!configHorarios.almoco_fim) configHorarios.almoco_fim = "13:00";
                 if(!configHorarios.abre) configHorarios.abre = "08:00";
                 if(!configHorarios.fecha) configHorarios.fecha = "19:40";
-                if(!configHorarios.dias_abertos) configHorarios.dias_abertos = [1,2,3,4,5,6];
+                if(!Array.isArray(configHorarios.dias_abertos)) configHorarios.dias_abertos = [1,2,3,4,5,6];
+                if(!Array.isArray(configHorarios.datas_fechadas)) configHorarios.datas_fechadas = [];
 
+                document.getElementById('txt-dias-info').innerHTML = `Dias de atendimento: <span>${formatarDiasAbertosTexto(configHorarios.dias_abertos)}</span>`;
                 document.getElementById('txt-horarios-info').innerHTML = `Aberto das <span>${configHorarios.abre} às ${configHorarios.almoco_inicio} e das ${configHorarios.almoco_fim} às ${configHorarios.fecha}</span>`;
             }).catch(e => {
-                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+                configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6], datas_fechadas: [] };
             });
 
             fetch(scriptURL + "?acao=obter_fotos&id_barbearia=" + idBarbearia).then(res => res.json()).then(fotosBrutas => {
@@ -1176,7 +1186,9 @@
                 resumoBox.style.display = 'none'; 
             }
             const dataEscolhida = document.getElementById('data').value;
-            if (dataEscolhida) renderizarDropdown(dataEscolhida, document.getElementById('hora'));
+            if (dataEscolhida && document.getElementById('profissional').value) {
+                verificarHorarios();
+            }
         }
 
         function parseTempo(str) { let p = str.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
@@ -1186,11 +1198,23 @@
             const profEscolhido = document.getElementById('profissional').value;
             if (!dataEscolhida || !profEscolhido) return;
             const selectHora = document.getElementById('hora');
-            if(!configHorarios) configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6] };
+            if(!configHorarios) configHorarios = { abre: "08:00", fecha: "19:40", almoco_inicio: "11:40", almoco_fim: "13:00", dias_abertos: [1,2,3,4,5,6], datas_fechadas: [] };
+            
+            const diasAbertos = Array.isArray(configHorarios.dias_abertos) ? configHorarios.dias_abertos.map(Number) : [1,2,3,4,5,6];
+            const datasFechadas = Array.isArray(configHorarios.datas_fechadas) ? configHorarios.datas_fechadas : [];
             const diaSemana = new Date(dataEscolhida + "T12:00:00").getDay(); 
-            if (!configHorarios.dias_abertos.includes(diaSemana)) {
-                selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia</option>'; selectHora.disabled = true; return;
+
+            if (!diasAbertos.includes(diaSemana)) {
+                selectHora.innerHTML = '<option value="" disabled selected>Fechado neste dia da semana</option>';
+                selectHora.disabled = true;
+                return;
             }
+            if (datasFechadas.includes(dataEscolhida)) {
+                selectHora.innerHTML = '<option value="" disabled selected>Fechado nesta data (Feriado / Folga)</option>';
+                selectHora.disabled = true;
+                return;
+            }
+
             selectHora.disabled = false; selectHora.innerHTML = '<option value="" disabled selected>A consultar agenda online...</option>';
             const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
             window[callbackName] = function(data) {
