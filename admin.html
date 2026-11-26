@@ -221,7 +221,7 @@
         <button class="menu-btn" onclick="abrirModalAgendar()">📅 AGENDAR / BLOQUEAR HORÁRIO</button>
         <button class="menu-btn" onclick="abrirModalServicos()">✂ GERENCIAR SERVIÇOS</button>
         <button class="menu-btn" onclick="abrirModalProfissionais()">💈 GERENCIAR PROFISSIONAIS</button>
-        <button class="menu-btn" onclick="abrirModalHorarios()">🕒 HORÁRIO DE FUNCIONAMENTO</button>
+        <button class="menu-btn" onclick="abrirModalHorarios()">🕒 DIAS E HORÁRIOS DE FUNCIONAMENTO</button>
         <button class="menu-btn" onclick="abrirModalTextos()">🎨 TEXTOS E VISUAL DO SITE</button>
         <button class="menu-btn" onclick="abrirModalGaleria()">📸 GERENCIAR GALERIA / VÍDEOS</button>
         <button class="logout-btn" onclick="window.location.href='login.html'">🔒 Sair e Bloquear Painel</button>
@@ -861,21 +861,42 @@
         </div>
     </div>
     
-    <!-- MODAL HORÁRIOS -->
+    <!-- MODAL DIAS E HORÁRIOS DE FUNCIONAMENTO -->
     <div id="modal-horarios" class="modal">
         <div class="modal-content">
-            <h2 class="modal-title">🕒 Horários de Funcionamento</h2>
+            <h2 class="modal-title">🕒 Dias e Horários de Funcionamento</h2>
+            
+            <label style="display:block; font-size:0.75rem; color:var(--cor-principal); font-weight:bold; margin-bottom:6px;">📅 Dias da Semana que Atende:</label>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px;">
+                <label class="checkbox-inline"><input type="checkbox" class="dia-semana-chk" value="0"> <span>Dom</span></label>
+                <label class="checkbox-inline"><input type="checkbox" class="dia-semana-chk" value="1" checked> <span>Seg</span></label>
+                <label class="checkbox-inline"><input type="checkbox" class="dia-semana-chk" value="2" checked> <span>Ter</span></label>
+                <label class="checkbox-inline"><input type="checkbox" class="dia-semana-chk" value="3" checked> <span>Qua</span></label>
+                <label class="checkbox-inline"><input type="checkbox" class="dia-semana-chk" value="4" checked> <span>Qui</span></label>
+                <label class="checkbox-inline"><input type="checkbox" class="dia-semana-chk" value="5" checked> <span>Sex</span></label>
+                <label class="checkbox-inline"><input type="checkbox" class="dia-semana-chk" value="6" checked> <span>Sáb</span></label>
+            </div>
+
             <div style="display: flex; gap: 10px;">
                 <div class="input-group" style="flex: 1;"><label>Abre às:</label><input type="time" id="edit-abre" value="08:00"></div>
                 <div class="input-group" style="flex: 1;"><label>Fecha às:</label><input type="time" id="edit-fecha" value="19:40"></div>
             </div>
-            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
-            <h3 style="font-size: 0.85rem; margin-bottom: 10px; color: #aaa;">Horário de Almoço / Pausa</h3>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 12px 0;">
+            <h3 style="font-size: 0.82rem; margin-bottom: 8px; color: #aaa;">Horário de Almoço / Pausa</h3>
             <div style="display: flex; gap: 10px;">
                 <div class="input-group" style="flex: 1;"><label>Início do Almoço:</label><input type="time" id="edit-almoco-inicio" value="11:40"></div>
                 <div class="input-group" style="flex: 1;"><label>Fim do Almoço:</label><input type="time" id="edit-almoco-fim" value="13:00"></div>
             </div>
-            <button class="action-btn" onclick="salvarHorarios(event)">Guardar</button>
+
+            <hr style="border: 0; border-top: 1px solid #333; margin: 12px 0;">
+            <h3 style="font-size: 0.82rem; margin-bottom: 6px; color: #ff6b6b;">🚫 Datas Fechadas / Feriados (Calendário):</h3>
+            <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                <input type="date" id="nova-data-fechada" style="flex: 1; padding: 8px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                <button type="button" onclick="adicionarDataFechada()" style="background: #ff4c4c; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">+ Bloquear Dia</button>
+            </div>
+            <div id="lista-datas-fechadas" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;"></div>
+
+            <button class="action-btn" onclick="salvarHorarios(event)">Guardar Dias e Horários</button>
             <button class="close-btn" onclick="fecharModal('modal-horarios')">Cancelar</button>
         </div>
     </div>
@@ -909,7 +930,7 @@
             <div class="input-group">
                 <label>⭐ Link de Avaliação do Google (Estrelas / Pós-Atendimento):</label>
                 <input type="url" id="edit-link-google" placeholder="Cole aqui APENAS o link de avaliação (ex: https://g.page/r/.../review)">
-                <small style="display:block; color:#ffd700; font-size:0.68rem; margin-top:3px;">Usado exclusivamente na mensagem automática de avaliação 1h após o atendimento. Não cole link de mapa aqui.</small>
+                <small style="display:block; color:#ffd700; font-size:0.68rem; margin-top:3px;">Usado exclusivamente na mensagem automática de avaliação após o atendimento. Não cole link de mapa aqui.</small>
             </div>
             <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
             <h3 style="font-size: 0.85rem; margin: 10px 0; color: #fff;">Estética e Branding (SaaS):</h3>
@@ -989,6 +1010,7 @@
         window.produtosCarregados = [];
         window.dadosDashboardCache = null;
         window.filtroIniciado = false;
+        window.datasFechadasLista = [];
         
         // Variáveis Globais do Estúdio Ultra Pro
         window.imagemFundoPost = null;
@@ -2782,6 +2804,36 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: fd2.toString(), mode: 'no-cors' });
             alert('Guardado!'); fecharModal('modal-textos'); atualizarPainelAdmin(); 
         }
+
+        // =========================================================================
+        // DIAS DA SEMANA, HORÁRIOS E CALENDÁRIO DE DATAS FECHADAS
+        // =========================================================================
+        function renderizarDatasFechadas() {
+            const container = document.getElementById('lista-datas-fechadas');
+            container.innerHTML = '';
+            window.datasFechadasLista.forEach((dt, idx) => {
+                const badge = document.createElement('span');
+                badge.style.cssText = 'background: #2a1515; border: 1px solid #ff4c4c; color: #ff9999; padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 6px;';
+                badge.innerHTML = `📅 ${dt.split('-').reverse().join('/')} <button type="button" onclick="removerDataFechada(${idx})" style="background:none; border:none; color:#ff4c4c; font-weight:bold; cursor:pointer;">✕</button>`;
+                container.appendChild(badge);
+            });
+        }
+
+        function adicionarDataFechada() {
+            const val = document.getElementById('nova-data-fechada').value;
+            if (!val) return alert("Selecione uma data no calendário!");
+            if (!window.datasFechadasLista.includes(val)) {
+                window.datasFechadasLista.push(val);
+                window.datasFechadasLista.sort();
+                renderizarDatasFechadas();
+            }
+            document.getElementById('nova-data-fechada').value = '';
+        }
+
+        function removerDataFechada(idx) {
+            window.datasFechadasLista.splice(idx, 1);
+            renderizarDatasFechadas();
+        }
         
         async function abrirModalHorarios() {
             abrirModal('modal-horarios');
@@ -2793,15 +2845,37 @@
                     if(h.fecha) document.getElementById('edit-fecha').value = h.fecha;
                     if(h.almoco_inicio) document.getElementById('edit-almoco-inicio').value = h.almoco_inicio;
                     if(h.almoco_fim) document.getElementById('edit-almoco-fim').value = h.almoco_fim;
+
+                    const diasSalvos = Array.isArray(h.dias_abertos) ? h.dias_abertos.map(Number) : [1, 2, 3, 4, 5, 6];
+                    document.querySelectorAll('.dia-semana-chk').forEach(chk => {
+                        chk.checked = diasSalvos.includes(parseInt(chk.value));
+                    });
+
+                    window.datasFechadasLista = Array.isArray(h.datas_fechadas) ? h.datas_fechadas : [];
+                    renderizarDatasFechadas();
                 }
             } catch(e) {}
         }
 
         async function salvarHorarios(e) { 
             const btn = e ? e.target : document.querySelector('#modal-horarios .action-btn'); btn.innerText = "A guardar..."; btn.disabled = true;
-            const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('id_barbearia', idBarbearia); fd.append('horarios_json', JSON.stringify({ abre: document.getElementById('edit-abre').value, fecha: document.getElementById('edit-fecha').value, almoco_inicio: document.getElementById('edit-almoco-inicio').value, almoco_fim: document.getElementById('edit-almoco-fim').value, dias_abertos: [1,2,3,4,5,6] })); 
+            const diasMarcados = [];
+            document.querySelectorAll('.dia-semana-chk:checked').forEach(chk => {
+                diasMarcados.push(parseInt(chk.value));
+            });
+
+            const payloadHorarios = {
+                abre: document.getElementById('edit-abre').value,
+                fecha: document.getElementById('edit-fecha').value,
+                almoco_inicio: document.getElementById('edit-almoco-inicio').value,
+                almoco_fim: document.getElementById('edit-almoco-fim').value,
+                dias_abertos: diasMarcados,
+                datas_fechadas: window.datasFechadasLista
+            };
+
+            const fd = new URLSearchParams(); fd.append('acao', 'salvar_horarios'); fd.append('id_barbearia', idBarbearia); fd.append('horarios_json', JSON.stringify(payloadHorarios)); 
             await fetch(SCRIPT_URL, { method: 'POST', body: fd.toString(), mode: 'no-cors' }); 
-            alert('Horários guardados!'); btn.innerText = "Guardar"; btn.disabled = false; fecharModal('modal-horarios'); 
+            alert('Dias e horários guardados!'); btn.innerText = "Guardar Dias e Horários"; btn.disabled = false; fecharModal('modal-horarios'); 
         }
 
         async function salvarFotoGaleria() { 
