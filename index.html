@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KBS | Estilo e Tradição</title>
+    <title>Kiko Barbearia | Estilo e Tradição</title>
     
     <!-- Configuração do PWA / Aplicativo -->
     <link rel="manifest" href="manifest.json">
@@ -117,6 +117,7 @@
             z-index: -3;
         }
         
+        /* TRANSPARENTE COM MOLDURA SUAVE NA COR DO SISTEMA (IGUAL AO zap.html) */
         .overlay-global { 
             position: fixed; 
             top: 0; 
@@ -178,6 +179,7 @@
         .section-title::after { content: ''; display: block; width: 45px; height: 3px; background: var(--cor-principal); margin: 12px auto 0 auto; }
         .sobre-texto { font-size: 1em; color: #f8fafc; max-width: 800px; margin: 0 auto; line-height: 1.8; text-shadow: 0 1px 6px rgba(0,0,0,0.75); }
         
+        /* MOLDURA FINA E QUASE TRANSPARENTE NA COR DO SISTEMA */
         .card-granulado {
             background: transparent;
             border: 1px solid color-mix(in srgb, var(--cor-principal) 28%, transparent);
@@ -205,7 +207,7 @@
         .form-group input, .form-group select {
             width: 100%;
             padding: 12px;
-            background-color: rgba(10, 10, 10, 0.55);
+            background-color: transparent;
             color: #ffffff;
             border: 1px solid color-mix(in srgb, var(--cor-principal) 32%, transparent);
             box-sizing: border-box;
@@ -216,17 +218,9 @@
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: var(--cor-principal);
-            background-color: color-mix(in srgb, var(--cor-principal) 12%, rgba(10, 10, 10, 0.75));
+            background-color: color-mix(in srgb, var(--cor-principal) 10%, transparent);
         }
         .form-group select option { background-color: #111827; color: #ffffff; }
-
-        .status-cliente-auto {
-            margin-top: 6px;
-            font-size: 0.78em;
-            font-weight: 700;
-            color: var(--cor-principal);
-            min-height: 18px;
-        }
         
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
         .checkbox-item {
@@ -277,7 +271,9 @@
         .whatsapp-widget { position: fixed; bottom: 20px; left: 20px; z-index: 9998; }
         .whatsapp-btn-float { background-color: #25d366; color: #ffffff; border: none; border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85em; text-transform: uppercase; text-decoration: none; display: inline-block; }
 
-        /* TEMA CLARO */
+        /* =====================================================================
+           FUNÇÃO TEMA CLARO (PADRÃO DO KBS SISTEMA E NOVOS CADASTROS)
+        ===================================================================== */
         body.tema-claro-ativo {
             background-color: #f4f7fb !important;
             color: #0f172a !important;
@@ -510,6 +506,9 @@
         
         .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 75%); background-size: 200% 100%; animation: pulseSkeleton 1.5s infinite ease-in-out; border-radius: 4px; color: transparent !important; }
         @keyframes pulseSkeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .skel-text { height: 18px; width: 100%; margin-bottom: 6px; display: inline-block; }
+        .skel-title { height: 30px; width: 50%; display: inline-block; margin-bottom: 8px; }
+        .skel-card { width: 260px; height: 140px; border-radius: 8px; margin: 0 auto; display: inline-block; }
         .skel-input { width: 100%; height: 45px; border-radius: 4px; margin-bottom: 8px; }
         .skel-galeria { width: 100%; height: 320px; border-radius: 8px; }
 
@@ -542,7 +541,7 @@
     <header>
         <div class="header-brand">
             <img id="logo-header" src="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" alt="Logo Sistema">
-            <h1 id="header-title">KBS</h1>
+            <h1 id="header-title">Kiko Barbearia</h1>
         </div>
         <nav id="nav-padrao">
             <a href="#sobre">Sobre Nós</a>
@@ -562,7 +561,7 @@
         </nav>
     </header>
 
-    <!-- BOTÃO FLUTUANTE DO WHATSAPP -->
+    <!-- BOTÃO FLUTUANTE DO WHATSAPP (OCULTO NO MODO kbssistema) -->
     <div class="whatsapp-widget" id="wppWidget">
         <a id="whatsappFloatBtn" href="https://wa.me/5567999673200?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20tirar%20uma%20dúvida." target="_blank" class="whatsapp-btn-float">
             🟢 WhatsApp
@@ -590,7 +589,7 @@
         </div>
     </div>
 
-    <!-- MODAL DEDICADO DO zap.html (NÚMERO NO TOPO + NOME AUTOMÁTICO) -->
+    <!-- MODAL DEDICADO DO zap.html -->
     <div class="kbs-zap-modal-backdrop" id="kbsZapModal">
         <div class="kbs-zap-modal">
             <div style="background:linear-gradient(135deg,#075e54,#16a34a); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
@@ -598,19 +597,12 @@
                     <img src="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" alt="Logo" style="width:28px; height:28px; border-radius:8px; object-fit:cover;">
                     <div>
                         <strong style="font-size:0.95em;">⚡ zap.html • Agendamento Online</strong>
-                        <div style="font-size:0.74em; opacity:0.92;">Digite o WhatsApp primeiro para puxar seu nome</div>
+                        <div style="font-size:0.74em; opacity:0.92;">Integrado ao WhatsApp e Agenda em Tempo Real</div>
                     </div>
                 </div>
                 <button type="button" onclick="kbsFecharZapModal()" style="background:rgba(255,255,255,0.2); color:#fff; border:none; border-radius:8px; padding:5px 10px; font-weight:800; cursor:pointer;">✕</button>
             </div>
             <div style="padding:16px 18px;">
-                <label style="display:block; font-size:0.76em; font-weight:800; color:#334155; margin-bottom:4px;">1. Seu WhatsApp (com DDD):</label>
-                <input type="tel" id="kbsZapTelefone" class="kbs-zap-field" placeholder="+55 67 99999-9999" oninput="aoDigitarTelefone(this, 'kbsZapNome', 'kbsZapStatusCliente')" onblur="aoDigitarTelefone(this, 'kbsZapNome', 'kbsZapStatusCliente')" maxlength="17">
-                <div id="kbsZapStatusCliente" style="font-size:0.74em; font-weight:700; color:#15803d; margin:-6px 0 10px; min-height:16px;"></div>
-
-                <label style="display:block; font-size:0.76em; font-weight:800; color:#334155; margin-bottom:4px;">2. Nome do Cliente (puxa automático se já agendou):</label>
-                <input type="text" id="kbsZapNome" class="kbs-zap-field" placeholder="Nome completo">
-
                 <label style="display:block; font-size:0.76em; font-weight:800; color:#334155; margin-bottom:4px;">Serviço</label>
                 <select id="kbsZapServ" class="kbs-zap-field">
                     <option value="Combo Corte + Barba — R$ 85">Combo Corte + Barba — R$ 85</option>
@@ -632,6 +624,9 @@
                         </select>
                     </div>
                 </div>
+
+                <label style="display:block; font-size:0.76em; font-weight:800; color:#334155; margin-bottom:4px;">Nome do Cliente</label>
+                <input type="text" id="kbsZapNome" class="kbs-zap-field" value="Carlos">
 
                 <button type="button" class="btn-gold" style="width:100%; background:#16a34a; border-color:#16a34a; color:#fff;" onclick="kbsConfirmarZapModal()">
                     ✅ Confirmar no zap.html
@@ -743,7 +738,7 @@
     <div id="conteudo-padrao">
         <div class="hero" id="hero-padrao">
             <div class="hero-content">
-                <h2 id="txt_titulo">KBS</h2>
+                <h2 id="txt_titulo">Kiko Barbearia</h2>
                 <p id="txt_subtitulo">"Chegue mais! O café está pronto, a resenha é garantida e o seu visual impecável é compromisso nosso."</p>
                 <div class="hero-buttons">
                     <a href="#agendamento" class="btn-gold">Agendar Horário</a>
@@ -780,22 +775,17 @@
             <h2 class="section-title">Agendar Horário</h2>
             <div class="form-agendamento card-granulado">
                 <form id="formAgendamento">
-                    <!-- 1ª OPÇÃO DO AGENDAMENTO: NÚMERO DO WHATSAPP NO TOPO -->
                     <div class="form-group">
-                        <label for="telefone">1. Seu WhatsApp (com DDD):</label>
-                        <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="aoDigitarTelefone(this, 'nome', 'statusClienteAuto')" onblur="aoDigitarTelefone(this, 'nome', 'statusClienteAuto')" maxlength="17">
-                        <div id="statusClienteAuto" class="status-cliente-auto"></div>
-                    </div>
-
-                    <!-- NOME PREENCHIDO AUTOMATICAMENTE SE JÁ AGENDOU -->
-                    <div class="form-group">
-                        <label for="nome">2. Seu Nome (puxa automático se já agendou):</label>
+                        <label for="nome">O Seu Nome:</label>
                         <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="email">Seu E-mail (Opcional):</label>
+                        <label for="email">O Seu E-mail (Opcional):</label>
                         <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">O Seu WhatsApp (Com DDD):</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
                     </div>
                     <div class="form-group">
                         <label>Quais serviços deseja hoje?</label>
@@ -846,143 +836,13 @@
     </div>
 
     <footer>
-        <p>© 2026 <span id="rodape-nome">KBS</span>. Todos os direitos reservados.</p>
+        <p>© 2026 <span id="rodape-nome">Kiko Barbearia</span>. Todos os direitos reservados.</p>
         <p style="margin-top: 12px; font-size: 0.85em;">👀 Visitantes online hoje: <span id="contadorVisitas" style="color: var(--cor-principal); font-weight: bold;">142</span></p>
     </footer>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
         const LOGO_PADRAO_URL = 'https://i.postimg.cc/TY1sfwPS/1795826354947.jpg';
-        const STORAGE_CLIENTES_KEY = 'kbs_clientes_agendados_v1';
-
-        let agendamentosDaNuvem = [];
-        let configHorarios = null;
-        window.listaProfissionaisGlobal = [];
-        let clientesConhecidosCache = carregarCacheClientesLocal();
-
-        function carregarCacheClientesLocal() {
-            try {
-                const raw = localStorage.getItem(STORAGE_CLIENTES_KEY);
-                return raw ? JSON.parse(raw) : {};
-            } catch (e) {
-                return {};
-            }
-        }
-
-        function salvarClienteNoCache(telefone, nome) {
-            const chave = normalizarTelefone(telefone);
-            const nomeLimpo = (nome || '').trim();
-            if (!chave || chave.length < 10 || !nomeLimpo) return;
-            clientesConhecidosCache[chave] = nomeLimpo;
-            try {
-                localStorage.setItem(STORAGE_CLIENTES_KEY, JSON.stringify(clientesConhecidosCache));
-            } catch (e) {}
-        }
-
-        function normalizarTelefone(tel) {
-            let digitos = String(tel || '').replace(/\D/g, '');
-            if (digitos.startsWith('55') && digitos.length > 11) {
-                digitos = digitos.slice(2);
-            }
-            return digitos;
-        }
-
-        function indexarAgendamentosParaClientes(lista) {
-            if (!Array.isArray(lista)) return;
-            lista.forEach(item => {
-                const telRaw = item.telefone || item.whatsapp || item.fone || item.celular || '';
-                const nomeRaw = item.nome || item.cliente || item.nome_cliente || '';
-                const telNorm = normalizarTelefone(telRaw);
-                if (telNorm.length >= 10 && nomeRaw.trim()) {
-                    clientesConhecidosCache[telNorm] = nomeRaw.trim();
-                }
-            });
-            try {
-                localStorage.setItem(STORAGE_CLIENTES_KEY, JSON.stringify(clientesConhecidosCache));
-            } catch (e) {}
-        }
-
-        function buscarNomePorTelefone(telefone) {
-            const norm = normalizarTelefone(telefone);
-            if (norm.length < 10) return '';
-
-            if (clientesConhecidosCache[norm]) {
-                return clientesConhecidosCache[norm];
-            }
-
-            if (Array.isArray(agendamentosDaNuvem)) {
-                for (let i = agendamentosDaNuvem.length - 1; i >= 0; i--) {
-                    const ag = agendamentosDaNuvem[i];
-                    const agTel = normalizarTelefone(ag.telefone || ag.whatsapp || ag.fone || ag.celular || '');
-                    const agNome = (ag.nome || ag.cliente || '').trim();
-                    if (agTel && agTel === norm && agNome) {
-                        clientesConhecidosCache[norm] = agNome;
-                        return agNome;
-                    }
-                }
-            }
-
-            const chaves = Object.keys(clientesConhecidosCache);
-            for (const k of chaves) {
-                if (k.endsWith(norm) || norm.endsWith(k)) {
-                    return clientesConhecidosCache[k];
-                }
-            }
-            return '';
-        }
-
-        function aoDigitarTelefone(inputEl, idCampoNome, idStatusEl) {
-            mascaraTelefone(inputEl);
-            const campoNome = document.getElementById(idCampoNome);
-            const statusEl = idStatusEl ? document.getElementById(idStatusEl) : null;
-            const norm = normalizarTelefone(inputEl.value);
-
-            if (norm.length < 10) {
-                if (statusEl) statusEl.textContent = '';
-                return;
-            }
-
-            const nomeEncontrado = buscarNomePorTelefone(inputEl.value);
-            if (nomeEncontrado) {
-                if (campoNome && (!campoNome.value.trim() || campoNome.dataset.autoPreenchido === '1')) {
-                    campoNome.value = nomeEncontrado;
-                    campoNome.dataset.autoPreenchido = '1';
-                }
-                if (statusEl) {
-                    statusEl.textContent = `✓ Cliente já cadastrado na barbearia: ${nomeEncontrado}`;
-                }
-                return;
-            }
-
-            if (norm.length >= 11 && idBarbearia) {
-                if (statusEl) statusEl.textContent = 'Buscando cadastro...';
-                const cbName = 'busca_cli_' + Math.floor(Math.random() * 1000000);
-                window[cbName] = function(resp) {
-                    delete window[cbName];
-                    document.getElementById(cbName)?.remove();
-                    const nomeResp = resp && (resp.nome || resp.cliente || (resp.dados && resp.dados.nome)) ? String(resp.nome || resp.cliente || resp.dados.nome).trim() : '';
-                    if (nomeResp) {
-                        salvarClienteNoCache(inputEl.value, nomeResp);
-                        if (campoNome && (!campoNome.value.trim() || campoNome.dataset.autoPreenchido === '1')) {
-                            campoNome.value = nomeResp;
-                            campoNome.dataset.autoPreenchido = '1';
-                        }
-                        if (statusEl) statusEl.textContent = `✓ Cliente já cadastrado na barbearia: ${nomeResp}`;
-                    } else if (statusEl) {
-                        statusEl.textContent = '';
-                    }
-                };
-                const sc = document.createElement('script');
-                sc.id = cbName;
-                sc.src = `${scriptURL}?acao=buscar_cliente&telefone=${encodeURIComponent(norm)}&id_barbearia=${encodeURIComponent(idBarbearia)}&callback=${cbName}`;
-                sc.onerror = function() {
-                    if (statusEl) statusEl.textContent = '';
-                };
-                document.body.appendChild(sc);
-            } else if (statusEl) {
-                statusEl.textContent = '';
-            }
-        }
 
         function aplicarLogoGlobal(urlLogo) {
             const urlFinal = (urlLogo && urlLogo.trim()) ? urlLogo.trim() : LOGO_PADRAO_URL;
@@ -1029,6 +889,10 @@
         let numeroWhatsappDono = "5567999673200";
         document.getElementById('link-admin').href = idBarbearia ? `login.html?id=${idBarbearia}` : `login.html`;
         document.getElementById('link-admin-kbs').href = idBarbearia ? `login.html?id=${idBarbearia}` : `login.html`;
+        
+        let agendamentosDaNuvem = [];
+        let configHorarios = null;
+        window.listaProfissionaisGlobal = [];
 
         function formatarDiasAbertosTexto(dias) {
             if (!Array.isArray(dias) || dias.length === 0) return "Fechado temporariamente";
@@ -1069,9 +933,9 @@
             document.getElementById('nav-kbs').style.display = 'flex';
             document.getElementById('wppWidget').style.display = 'none';
             document.getElementById('chatWidget').style.display = 'none';
-            document.getElementById('header-title').innerText = "KBS";
-            document.getElementById('rodape-nome').innerText = "KBS";
-            document.title = "KBS";
+            document.getElementById('header-title').innerText = "KBS SISTEMA";
+            document.getElementById('rodape-nome').innerText = "KBS Sistema";
+            document.title = "KBS Sistema";
             kbsIniciarOi();
             kbsRenderPatrao('agenda');
         }
@@ -1116,7 +980,9 @@
         function kbsEscolher(tipo) {
             if (tipo === 'precos') {
                 kbsAddU('💰 Preços e Serviços');
-                kbsAddB('Serviços configurados no painel:\n• Corte — R$ 50\n• Combo — R$ 90', `<button type="button" class="kbs-opt-btn" onclick="kbsAbrirZapModal()">🔗 Entrar no zap.html agora</button>`);
+                kbsAddB('Serviços configurados no painel:
+• Corte — R$ 50
+• Combo — R$ 90', `<button type="button" class="kbs-opt-btn" onclick="kbsAbrirZapModal()">🔗 Entrar no zap.html agora</button>`);
                 return;
             }
             if (tipo === 'mapa') {
@@ -1137,26 +1003,34 @@
             if (m) m.style.display = 'none';
         }
         function kbsConfirmarZapModal() {
-            const tel = (document.getElementById('kbsZapTelefone')?.value || '').trim();
             const nome = (document.getElementById('kbsZapNome')?.value || 'Cliente').trim();
             const serv = document.getElementById('kbsZapServ')?.value || 'Corte';
             const dia = (document.getElementById('kbsZapDia')?.value || 'Hoje').trim();
             const hora = document.getElementById('kbsZapHora')?.value || '15:00';
-            if (tel) salvarClienteNoCache(tel, nome);
             kbsFecharZapModal();
-            kbsAddU(`Agendou no zap.html: ${nome} (${tel || 'sem número'}) • ${hora}`);
+            kbsAddU(`Agendou no zap.html: ${nome} • ${hora}`);
             setTimeout(() => {
-                kbsAddB(`✅ Agendamento confirmado para ${nome}!\n📱 WhatsApp: ${tel || 'Não informado'}\n✂️ ${serv}\n⏰ ${dia} às ${hora}\n🔔 Lembretes automáticos ativados.`);
+                kbsAddB(`✅ Agendamento confirmado para ${nome}!
+✂️ ${serv}
+⏰ ${dia} às ${hora}
+🔔 Lembretes automáticos ativados.`);
             }, 200);
         }
 
         const kbsPatraoRespostas = {
-            agenda: ['agenda', '📅 AGENDA DE HOJE\n⏰ 09:00 - Lucas (Corte)\n⏰ 15:00 - Carlos (Corte)'],
-            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!\nCliente: João • 15:00 • Corte'],
-            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!\n12:00 às 14:00 • Motivo: almoço'],
-            caixa: ['caixa', '📊 FECHO DE CAIXA\n💰 Faturamento: R$ 450,00 • Comissões calculadas'],
-            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!\n+10 un. de Pomada adicionadas'],
-            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS\nMensagens enviadas para clientes ausentes há 25+ dias']
+            agenda: ['agenda', '📅 AGENDA DE HOJE
+⏰ 09:00 - Lucas (Corte)
+⏰ 15:00 - Carlos (Corte)'],
+            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!
+Cliente: João • 15:00 • Corte'],
+            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!
+12:00 às 14:00 • Motivo: almoço'],
+            caixa: ['caixa', '📊 FECHO DE CAIXA
+💰 Faturamento: R$ 450,00 • Comissões calculadas'],
+            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!
++10 un. de Pomada adicionadas'],
+            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS
+Mensagens enviadas para clientes ausentes há 25+ dias']
         };
         function kbsRenderPatrao(cmd) {
             const el = document.getElementById('kbsPatraoSaida');
@@ -1179,13 +1053,6 @@
             document.getElementById('data').setAttribute('min', hoje);
             let visitasBase = 120 + (new Date().getHours() * 7); document.getElementById('contadorVisitas').innerText = visitasBase;
 
-            document.getElementById('nome').addEventListener('input', function() {
-                this.dataset.autoPreenchido = '0';
-            });
-            document.getElementById('kbsZapNome').addEventListener('input', function() {
-                this.dataset.autoPreenchido = '0';
-            });
-
             fetch(scriptURL + "?acao=obter_textos&id_barbearia=" + idBarbearia).then(res => res.json()).then(textos => {
                 if (!corEhEscuraOuInvalida(textos.cor_primaria)) {
                     document.documentElement.style.setProperty('--cor-principal', textos.cor_primaria);
@@ -1201,8 +1068,8 @@
 
                 if (idBarbearia.toLowerCase() !== 'kbssistema') {
                     const tituloRecebido = (textos.titulo || '').trim();
-                    const ehGenericoSemId = !idBarbearia && (!tituloRecebido || tituloRecebido.toUpperCase() === 'ESTABELECIMENTO' || tituloRecebido.toUpperCase() === 'KIKO BARBEARIA');
-                    const nomeFinal = ehGenericoSemId ? 'KBS' : (tituloRecebido || 'KBS');
+                    const ehGenericoSemId = !idBarbearia && (!tituloRecebido || tituloRecebido.toUpperCase() === 'ESTABELECIMENTO');
+                    const nomeFinal = ehGenericoSemId ? 'Kiko Barbearia' : (tituloRecebido || 'Kiko Barbearia');
 
                     document.getElementById('txt_titulo').innerText = nomeFinal;
                     document.getElementById('header-title').innerText = nomeFinal;
@@ -1402,11 +1269,6 @@
             const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
             window[callbackName] = function(data) {
                 agendamentosDaNuvem = data;
-                indexarAgendamentosParaClientes(data);
-                const telAtual = document.getElementById('telefone')?.value;
-                if (telAtual) {
-                    aoDigitarTelefone(document.getElementById('telefone'), 'nome', 'statusClienteAuto');
-                }
                 delete window[callbackName]; document.getElementById(callbackName)?.remove();
                 renderizarDropdown(dataEscolhida, selectHora);
             };
@@ -1481,16 +1343,12 @@
             btnSubmit.disabled = true; btnSubmit.innerText = "Aguarde...";
             let nomes = []; 
             document.querySelectorAll('input[name="servico"]:checked').forEach(cb => nomes.push(cb.value));
-            const nomeCli = document.getElementById('nome').value.trim();
-            const telLimpo = document.getElementById('telefone').value.replace(/\D/g, '');
-            salvarClienteNoCache(telLimpo, nomeCli);
-
             const fd = new URLSearchParams();
             fd.append('acao', 'agendar');
             fd.append('id_barbearia', idBarbearia);
-            fd.append('nome', nomeCli);
+            fd.append('nome', document.getElementById('nome').value);
             fd.append('email', document.getElementById('email').value);
-            fd.append('telefone', telLimpo);
+            fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
             fd.append('data', document.getElementById('data').value);
             fd.append('hora', document.getElementById('hora').value);
             fd.append('servico', nomes.join(" + "));
