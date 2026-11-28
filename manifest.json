@@ -1,32 +1,25 @@
 {
-  "id": "./index.html",
-  "name": "KBS Sistemas",
-  "short_name": "KBS Sistemas",
-  "description": "Sistema de agendamento e gestão - KBS Sistemas",
+  "name": "KBS | Estilo e Tradição",
+  "short_name": "KBS",
+  "description": "Agendamento online, serviços e atendimento da KBS.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#050505",
   "theme_color": "#d4af37",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "https://i.postimg.cc/TY1sfwPS/1795826354947.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "https://i.postimg.cc/TY1sfwPS/1795826354947.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
-      "purpose": "any"
-    },
-    {
-      "src": "https://i.postimg.cc/TY1sfwPS/1795826354947.jpg",
-      "sizes": "512x512",
-      "type": "image/jpeg",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }
