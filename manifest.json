@@ -1,6 +1,8 @@
 {
-  "name": "Kiko Barbearia | KBS Sistema",
-  "short_name": "Kiko Barbearia",
+  "id": "./index.html",
+  "name": "KBS Sistemas",
+  "short_name": "KBS Sistemas",
+  "description": "Sistema de agendamento e gestão - KBS Sistemas",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -12,13 +14,19 @@
       "src": "https://i.postimg.cc/TY1sfwPS/1795826354947.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "https://i.postimg.cc/TY1sfwPS/1795826354947.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.postimg.cc/TY1sfwPS/1795826354947.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
     }
   ]
 }
