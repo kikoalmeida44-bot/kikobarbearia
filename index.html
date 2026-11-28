@@ -980,9 +980,7 @@
         function kbsEscolher(tipo) {
             if (tipo === 'precos') {
                 kbsAddU('💰 Preços e Serviços');
-                kbsAddB('Serviços configurados no painel:
-• Corte — R$ 50
-• Combo — R$ 90', `<button type="button" class="kbs-opt-btn" onclick="kbsAbrirZapModal()">🔗 Entrar no zap.html agora</button>`);
+                kbsAddB('Serviços configurados no painel:\n• Corte — R$ 50\n• Combo — R$ 90', `<button type="button" class="kbs-opt-btn" onclick="kbsAbrirZapModal()">🔗 Entrar no zap.html agora</button>`);
                 return;
             }
             if (tipo === 'mapa') {
@@ -1010,27 +1008,17 @@
             kbsFecharZapModal();
             kbsAddU(`Agendou no zap.html: ${nome} • ${hora}`);
             setTimeout(() => {
-                kbsAddB(`✅ Agendamento confirmado para ${nome}!
-✂️ ${serv}
-⏰ ${dia} às ${hora}
-🔔 Lembretes automáticos ativados.`);
+                kbsAddB(`✅ Agendamento confirmado para ${nome}!\n✂️ ${serv}\n⏰ ${dia} às ${hora}\n🔔 Lembretes automáticos ativados.`);
             }, 200);
         }
 
         const kbsPatraoRespostas = {
-            agenda: ['agenda', '📅 AGENDA DE HOJE
-⏰ 09:00 - Lucas (Corte)
-⏰ 15:00 - Carlos (Corte)'],
-            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!
-Cliente: João • 15:00 • Corte'],
-            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!
-12:00 às 14:00 • Motivo: almoço'],
-            caixa: ['caixa', '📊 FECHO DE CAIXA
-💰 Faturamento: R$ 450,00 • Comissões calculadas'],
-            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!
-+10 un. de Pomada adicionadas'],
-            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS
-Mensagens enviadas para clientes ausentes há 25+ dias']
+            agenda: ['agenda', '📅 AGENDA DE HOJE\n⏰ 09:00 - Lucas (Corte)\n⏰ 15:00 - Carlos (Corte)'],
+            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!\nCliente: João • 15:00 • Corte'],
+            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!\n12:00 às 14:00 • Motivo: almoço'],
+            caixa: ['caixa', '📊 FECHO DE CAIXA\n💰 Faturamento: R$ 450,00 • Comissões calculadas'],
+            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!\n+10 un. de Pomada adicionadas'],
+            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS\nMensagens enviadas para clientes ausentes há 25+ dias']
         };
         function kbsRenderPatrao(cmd) {
             const el = document.getElementById('kbsPatraoSaida');
@@ -1045,6 +1033,15 @@ Mensagens enviadas para clientes ausentes há 25+ dias']
                 kbsRenderPatrao(btn.dataset.cmd);
             });
         });
+
+        function esconderSplashComSeguranca() {
+            const splash = document.getElementById('splash-screen');
+            if (splash && splash.style.display !== 'none') {
+                splash.style.opacity = '0';
+                setTimeout(() => { splash.style.display = 'none'; }, 500);
+            }
+        }
+        setTimeout(esconderSplashComSeguranca, 2500);
 
         window.onload = function() {
             aplicarLogoGlobal(LOGO_PADRAO_URL);
