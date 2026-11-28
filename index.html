@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiko Barbearia | Estilo e Tradição</title>
+    <title>KBS</title>
     
-    <!-- Configuração do PWA / Aplicativo -->
-    <link rel="manifest" href="manifest.json">
+    <!-- Configuração do PWA / Aplicativo (Nome KBS) -->
+    <meta name="application-name" content="KBS">
+    <meta name="apple-mobile-web-app-title" content="KBS">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22KBS%22%2C%22short_name%22%3A%22KBS%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23050505%22%2C%22theme_color%22%3A%22%23d4af37%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.postimg.cc%2FTY1sfwPS%2F1795826354947.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D">
     <link rel="icon" href="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg">
     <meta name="theme-color" content="#050505">
@@ -980,7 +984,9 @@
         function kbsEscolher(tipo) {
             if (tipo === 'precos') {
                 kbsAddU('💰 Preços e Serviços');
-                kbsAddB('Serviços configurados no painel:\n• Corte — R$ 50\n• Combo — R$ 90', `<button type="button" class="kbs-opt-btn" onclick="kbsAbrirZapModal()">🔗 Entrar no zap.html agora</button>`);
+                kbsAddB('Serviços configurados no painel:
+• Corte — R$ 50
+• Combo — R$ 90', `<button type="button" class="kbs-opt-btn" onclick="kbsAbrirZapModal()">🔗 Entrar no zap.html agora</button>`);
                 return;
             }
             if (tipo === 'mapa') {
@@ -1008,17 +1014,27 @@
             kbsFecharZapModal();
             kbsAddU(`Agendou no zap.html: ${nome} • ${hora}`);
             setTimeout(() => {
-                kbsAddB(`✅ Agendamento confirmado para ${nome}!\n✂️ ${serv}\n⏰ ${dia} às ${hora}\n🔔 Lembretes automáticos ativados.`);
+                kbsAddB(`✅ Agendamento confirmado para ${nome}!
+✂️ ${serv}
+⏰ ${dia} às ${hora}
+🔔 Lembretes automáticos ativados.`);
             }, 200);
         }
 
         const kbsPatraoRespostas = {
-            agenda: ['agenda', '📅 AGENDA DE HOJE\n⏰ 09:00 - Lucas (Corte)\n⏰ 15:00 - Carlos (Corte)'],
-            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!\nCliente: João • 15:00 • Corte'],
-            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!\n12:00 às 14:00 • Motivo: almoço'],
-            caixa: ['caixa', '📊 FECHO DE CAIXA\n💰 Faturamento: R$ 450,00 • Comissões calculadas'],
-            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!\n+10 un. de Pomada adicionadas'],
-            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS\nMensagens enviadas para clientes ausentes há 25+ dias']
+            agenda: ['agenda', '📅 AGENDA DE HOJE
+⏰ 09:00 - Lucas (Corte)
+⏰ 15:00 - Carlos (Corte)'],
+            marcar: ['marcar João 15:00 Corte', '✅ HORÁRIO MARCADO PELO PATRÃO!
+Cliente: João • 15:00 • Corte'],
+            bloquear: ['bloquear 12:00 as 14:00 almoço', '🔒 PERÍODO BLOQUEADO!
+12:00 às 14:00 • Motivo: almoço'],
+            caixa: ['caixa', '📊 FECHO DE CAIXA
+💰 Faturamento: R$ 450,00 • Comissões calculadas'],
+            estoque: ['entrada estoque Pomada 10', '📦 ESTOQUE ATUALIZADO!
++10 un. de Pomada adicionadas'],
+            sumidos: ['sumidos', '🔄 RECUPERAÇÃO DE SUMIDOS
+Mensagens enviadas para clientes ausentes há 25+ dias']
         };
         function kbsRenderPatrao(cmd) {
             const el = document.getElementById('kbsPatraoSaida');
@@ -1062,7 +1078,7 @@
                     document.getElementById('txt_titulo').innerText = nomeFinal;
                     document.getElementById('header-title').innerText = nomeFinal;
                     document.getElementById('rodape-nome').innerText = nomeFinal;
-                    document.title = nomeFinal + " | Estilo e Tradição";
+                    document.title = "KBS";
 
                     if (textos.subtitulo && !ehGenericoSemId) {
                         document.getElementById('txt_subtitulo').innerText = textos.subtitulo;
