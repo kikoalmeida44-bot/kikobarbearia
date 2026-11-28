@@ -776,16 +776,17 @@
             <div class="form-agendamento card-granulado">
                 <form id="formAgendamento">
                     <div class="form-group">
+                        <label for="telefone">O Seu WhatsApp (Com DDD):</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
+                        <div id="statusClienteIndex" style="font-size: 0.8em; margin-top: 6px; color: var(--cor-principal); font-weight: 700;"></div>
+                    </div>
+                    <div class="form-group">
                         <label for="nome">O Seu Nome:</label>
                         <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
                     </div>
                     <div class="form-group">
                         <label for="email">O Seu E-mail (Opcional):</label>
                         <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="telefone">O Seu WhatsApp (Com DDD):</label>
-                        <input type="tel" id="telefone" name="telefone" placeholder="+55 67 99999-9999" required oninput="mascaraTelefone(this)" maxlength="17">
                     </div>
                     <div class="form-group">
                         <label>Quais serviços deseja hoje?</label>
@@ -1357,6 +1358,44 @@
             .catch(() => { alert("⚠️ Erro ao agendar."); btnSubmit.disabled = false; btnSubmit.innerText = "Confirmar Agendamento"; });
         });
 
+        let _ultimoTelConsultadoIndex = "";
+        let _timerConsultaClienteIndex = null;
+
+        function verificarClienteNuvemIndex(telefoneDigitos) {
+            const telLimpo = (telefoneDigitos || "").replace(/\D/g, "");
+            if (telLimpo.length < 10) return;
+            const telCom55 = telLimpo.startsWith("55") ? telLimpo : ("55" + telLimpo);
+            if (telCom55 === _ultimoTelConsultadoIndex) return;
+            _ultimoTelConsultadoIndex = telCom55;
+
+            const statusEl = document.getElementById('statusClienteIndex');
+            const inputNome = document.getElementById('nome');
+            if (statusEl) statusEl.textContent = "🔍 Consultando cadastro...";
+
+            const cbName = 'cb_cli_idx_' + Math.round(100000 * Math.random());
+            window[cbName] = function(data) {
+                delete window[cbName];
+                document.getElementById(cbName)?.remove();
+                const nomeEncontrado = (data && (data.nome || data.cliente)) ? String(data.nome || data.cliente).trim() : "";
+                if (nomeEncontrado && inputNome) {
+                    inputNome.value = nomeEncontrado;
+                    if (statusEl) statusEl.textContent = "✓ Cliente já cadastrado: " + nomeEncontrado;
+                } else {
+                    if (statusEl) statusEl.textContent = "";
+                }
+            };
+
+            const s = document.createElement('script');
+            s.id = cbName;
+            s.src = scriptURL + "?acao=verificar_cliente&telefone=" + encodeURIComponent(telCom55) + "&callback=" + cbName;
+            s.onerror = function() {
+                delete window[cbName];
+                s.remove();
+                if (statusEl) statusEl.textContent = "";
+            };
+            document.body.appendChild(s);
+        }
+
         function mascaraTelefone(input) {
             let val = input.value;
             if (val.startsWith('+55 ')) val = val.substring(4);
@@ -1369,6 +1408,17 @@
             if (v.length > 2) formatado += ' ' + v.substring(2, 7);
             if (v.length > 7) formatado += '-' + v.substring(7, 11);
             input.value = formatado;
+
+            clearTimeout(_timerConsultaClienteIndex);
+            if (v.length >= 10) {
+                _timerConsultaClienteIndex = setTimeout(() => {
+                    verificarClienteNuvemIndex(v);
+                }, 250);
+            } else {
+                _ultimoTelConsultadoIndex = "";
+                const statusEl = document.getElementById('statusClienteIndex');
+                if (statusEl) statusEl.textContent = "";
+            }
         }
     </script>
 </body>
