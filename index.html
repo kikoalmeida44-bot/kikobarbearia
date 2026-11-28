@@ -7,8 +7,8 @@
     
     <!-- Configuração do PWA / Aplicativo -->
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" type="image/png">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png">
+    <link rel="icon" href="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg">
     <meta name="theme-color" content="#050505">
 
     <!-- ATIVADOR DO APLICATIVO (SERVICE WORKER) -->
@@ -52,6 +52,7 @@
         :root {
             --cor-principal: #d4af37;
             --fonte-principal: 'Montserrat', sans-serif;
+            --logo-sistema: url("https://i.postimg.cc/TY1sfwPS/1795826354947.jpg");
         }
 
         body { font-family: var(--fonte-principal); margin: 0; padding: 0; color: #ffffff; line-height: 1.6; overflow-x: hidden; background-color: #050505; }
@@ -381,6 +382,17 @@
             font-size: 0.84em;
             font-weight: 800;
         }
+        .kbs-wa-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .kbs-wa-brand img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
         .kbs-wa-body {
             height: 430px;
             overflow-y: auto;
@@ -513,7 +525,7 @@
     <!-- TELA DE INICIALIZAÇÃO COM LOGO PULSANTE -->
     <div id="splash-screen">
         <div class="splash-logo-container">
-            <img src="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" alt="Logo Pulsante">
+            <img src="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" alt="Logo Pulsante">
         </div>
     </div>
 
@@ -528,7 +540,7 @@
 
     <header>
         <div class="header-brand">
-            <img src="https://i.postimg.cc/0jcXj8Dd/Icone-kbs-em-3D-2-Nov-2026-11-08-am-20261102-110816-0000.png" alt="Logo Sistema">
+            <img id="logo-header" src="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" alt="Logo Sistema">
             <h1 id="header-title">Kiko Barbearia</h1>
         </div>
         <nav id="nav-padrao">
@@ -581,9 +593,12 @@
     <div class="kbs-zap-modal-backdrop" id="kbsZapModal">
         <div class="kbs-zap-modal">
             <div style="background:linear-gradient(135deg,#075e54,#16a34a); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <strong style="font-size:0.95em;">⚡ zap.html • Agendamento Online</strong>
-                    <div style="font-size:0.74em; opacity:0.92;">Integrado ao WhatsApp e Agenda em Tempo Real</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" alt="Logo" style="width:28px; height:28px; border-radius:8px; object-fit:cover;">
+                    <div>
+                        <strong style="font-size:0.95em;">⚡ zap.html • Agendamento Online</strong>
+                        <div style="font-size:0.74em; opacity:0.92;">Integrado ao WhatsApp e Agenda em Tempo Real</div>
+                    </div>
                 </div>
                 <button type="button" onclick="kbsFecharZapModal()" style="background:rgba(255,255,255,0.2); color:#fff; border:none; border-radius:8px; padding:5px 10px; font-weight:800; cursor:pointer;">✕</button>
             </div>
@@ -650,7 +665,7 @@
 
             <div class="kbs-phone">
                 <div class="kbs-wa-top">
-                    <span>🟢 KBS Bot • WhatsApp</span>
+                    <span class="kbs-wa-brand"><img src="https://i.postimg.cc/TY1sfwPS/1795826354947.jpg" alt="KBS Bot"> KBS Bot • WhatsApp</span>
                     <button type="button" onclick="kbsIniciarOi()" style="background:rgba(255,255,255,0.18); color:#fff; border:none; border-radius:6px; padding:4px 9px; font-size:0.74em; cursor:pointer; font-weight:700;">Reiniciar</button>
                 </div>
                 <div class="kbs-wa-body" id="kbsWaBody"></div>
@@ -827,6 +842,24 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbj0EtBYyEYBw1-d8TdA_Rd6bLN6fn893aG6YF12Gp99D8ME4jr7ZKjViCKV-q27C7DQ/exec';
+        const LOGO_PADRAO_URL = 'https://i.postimg.cc/TY1sfwPS/1795826354947.jpg';
+
+        function aplicarLogoGlobal(urlLogo) {
+            const urlFinal = (urlLogo && urlLogo.trim()) ? urlLogo.trim() : LOGO_PADRAO_URL;
+            document.documentElement.style.setProperty('--logo-sistema', `url("${urlFinal}")`);
+
+            const iconLink = document.querySelector('link[rel="icon"]');
+            if (iconLink) iconLink.href = urlFinal;
+
+            const appleIconLink = document.querySelector('link[rel="apple-touch-icon"]');
+            if (appleIconLink) appleIconLink.href = urlFinal;
+
+            document.querySelectorAll('img').forEach(img => {
+                if (img.id === 'logo-header' || img.closest('.splash-logo-container') || img.closest('.kbs-wa-brand') || img.closest('.kbs-zap-modal') || img.src.includes('Icone-kbs-em-3D') || img.src.includes('1795826354947')) {
+                    img.src = urlFinal;
+                }
+            });
+        }
         
         function detectarIdBarbeariaSaaS() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -893,6 +926,7 @@
             if (!forcarKbs) return;
 
             aplicarTemaClaro(true);
+            aplicarLogoGlobal(LOGO_PADRAO_URL);
             document.getElementById('kbs-sistema-showcase').style.display = 'block';
             document.getElementById('conteudo-padrao').style.display = 'none';
             document.getElementById('nav-padrao').style.display = 'none';
@@ -1001,6 +1035,7 @@
         });
 
         window.onload = function() {
+            aplicarLogoGlobal(LOGO_PADRAO_URL);
             ativarModoKbsSistema();
             let hoje = new Date().toISOString().split('T')[0];
             document.getElementById('data').setAttribute('min', hoje);
@@ -1015,6 +1050,9 @@
                 if (textos.fonte_texto) {
                     document.documentElement.style.setProperty('--fonte-principal', `'${textos.fonte_texto}', sans-serif`);
                 }
+
+                const logoDinamica = textos.logo || textos.logo_url || textos.icone || textos.icone_url || LOGO_PADRAO_URL;
+                aplicarLogoGlobal(logoDinamica);
 
                 if (idBarbearia.toLowerCase() !== 'kbssistema') {
                     const tituloRecebido = (textos.titulo || '').trim();
