@@ -149,6 +149,14 @@
         }
         .form-group input:focus, .form-group select:focus { border-color: var(--cor-principal); box-shadow: 0 0 12px var(--cor-borda); outline: none; background: rgba(0, 0, 0, 0.55); }
 
+        .status-cliente-auto {
+            margin-top: 6px;
+            font-size: 0.78em;
+            font-weight: 700;
+            color: var(--cor-principal);
+            min-height: 16px;
+        }
+
         .checkbox-group { display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .checkbox-group::-webkit-scrollbar { width: 6px; }
         .checkbox-group::-webkit-scrollbar-thumb { background: var(--cor-borda); border-radius: 10px; }
@@ -259,14 +267,17 @@
     <div class="subtitulo" id="subtitulo-empresa"><div class="skeleton skel-sub"></div></div>
 
     <form id="formAgendamento">
+        <!-- 1ª OPÇÃO: WHATSAPP NO TOPO -->
         <div class="form-group">
-            <label for="nome">O Seu Nome:</label>
-            <input type="text" id="nome" placeholder="Digite seu nome completo" required oninput="atualizarProgressoFlow()">
+            <label for="telefone">1. O Seu WhatsApp (Com DDD):</label>
+            <input type="tel" id="telefone" placeholder="+55 (67) 99999-9999" required oninput="mascaraTelefone(this); atualizarProgressoFlow();" onblur="aoDigitarTelefoneZap(this)" maxlength="19">
+            <div id="statusClienteZap" class="status-cliente-auto"></div>
         </div>
 
+        <!-- 2ª OPÇÃO: NOME PUXADO AUTOMATICAMENTE SE JÁ AGENDOU -->
         <div class="form-group">
-            <label for="telefone">O Seu WhatsApp (Com DDD):</label>
-            <input type="tel" id="telefone" placeholder="+55 (67) 99999-9999" required oninput="mascaraTelefone(this); atualizarProgressoFlow();" maxlength="19">
+            <label for="nome">2. O Seu Nome:</label>
+            <input type="text" id="nome" placeholder="Digite seu nome completo" required oninput="atualizarProgressoFlow()">
         </div>
 
         <div class="form-group" id="campo_nascimento">
@@ -330,7 +341,7 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     let idBarbearia = detectarIdBarbeariaSaaS();
-    let telUrl = urlParams.get('tel');
+    let telUrl = urlParams.get('tel') || urlParams.get('telefone') || urlParams.get('whatsapp') || '';
     let numeroWhatsappDono = "5567999673200"; 
     let agendamentosDaNuvem = [];
     let configHorarios = null;
@@ -338,13 +349,151 @@
 
     const chaveCache = "kbs_cache_" + idBarbearia;
     const chaveClienteLocal = "kbs_cliente_flow_" + idBarbearia;
+    const chaveClientesMapa = "kbs_clientes_mapa_" + idBarbearia;
     const chaveVideoLocal = "kbs_video_flow_" + idBarbearia;
+
+    let clientesMapaLocal = carregarMapaClientes();
+
+    function carregarMapaClientes() {
+        try {
+            const raw = localStorage.getItem(chaveClientesMapa);
+            return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function normalizarNumeroCliente(tel) {
+        let dig = String(tel || '').replace(/\D/g, '');
+        if (dig.startsWith('55') && dig.length > 11) {
+            dig = dig.slice(2);
+        }
+        if (dig.length === 10) {
+            dig = dig.substring(0, 2) + '9' + dig.substring(2);
+        }
+        return dig;
+    }
+
+    function salvarNomeNoMapa(tel, nome) {
+        const norm = normalizarNumeroCliente(tel);
+        const nomeLimpo = String(nome || '').trim();
+        if (!norm || norm.length < 10 || !nomeLimpo) return;
+        clientesMapaLocal[norm] = nomeLimpo;
+        try {
+            localStorage.setItem(chaveClientesMapa, JSON.stringify(clientesMapaLocal));
+        } catch (e) {}
+    }
+
+    function indexarAgendamentosClientes(lista) {
+        if (!Array.isArray(lista)) return;
+        lista.forEach(item => {
+            const telItem = item.telefone || item.whatsapp || item.fone || item.celular || '';
+            const nomeItem = item.nome || item.cliente || item.nome_cliente || '';
+            const norm = normalizarNumeroCliente(telItem);
+            if (norm.length >= 10 && nomeItem.trim()) {
+                clientesMapaLocal[norm] = nomeItem.trim();
+            }
+        });
+        try {
+            localStorage.setItem(chaveClientesMapa, JSON.stringify(clientesMapaLocal));
+        } catch (e) {}
+    }
+
+    function buscarNomeLocalPorTelefone(tel) {
+        const norm = normalizarNumeroCliente(tel);
+        if (norm.length < 10) return '';
+
+        if (clientesMapaLocal[norm]) return clientesMapaLocal[norm];
+
+        const base10 = norm.length === 11 && norm[2] === '9' ? norm.substring(0, 2) + norm.substring(3) : norm;
+        if (clientesMapaLocal[base10]) return clientesMapaLocal[base10];
+
+        if (Array.isArray(agendamentosDaNuvem)) {
+            for (let i = agendamentosDaNuvem.length - 1; i >= 0; i--) {
+                const ag = agendamentosDaNuvem[i];
+                const agNorm = normalizarNumeroCliente(ag.telefone || ag.whatsapp || ag.fone || ag.celular || '');
+                const agNome = String(ag.nome || ag.cliente || '').trim();
+                if (agNorm && agNome && (agNorm === norm || agNorm === base10)) {
+                    salvarNomeNoMapa(norm, agNome);
+                    return agNome;
+                }
+            }
+        }
+        return '';
+    }
+
+    function preencherNomeSeExistir(telefoneNum, telFormatadoExibicao) {
+        const campoNome = document.getElementById('nome');
+        const statusEl = document.getElementById('statusClienteZap');
+        const nomeLocal = buscarNomeLocalPorTelefone(telefoneNum);
+
+        if (nomeLocal) {
+            if (campoNome && (!campoNome.value.trim() || campoNome.dataset.autoPreenchido === '1')) {
+                campoNome.value = nomeLocal;
+                campoNome.dataset.autoPreenchido = '1';
+                atualizarProgressoFlow();
+            }
+            if (statusEl) {
+                statusEl.textContent = `✓ Cliente já cadastrado: ${nomeLocal}`;
+            }
+            return;
+        }
+
+        if (telefoneNum.length >= 10) {
+            if (statusEl) statusEl.textContent = 'Verificando cadastro...';
+            fetch(scriptURL + "?acao=verificar_cliente&telefone=" + encodeURIComponent(telefoneNum) + "&id_barbearia=" + encodeURIComponent(idBarbearia))
+                .then(res => res.json())
+                .then(data => {
+                    const caixaNasc = document.getElementById('campo_nascimento');
+                    const inputNasc = document.getElementById('data_nascimento');
+                    if (data && data.tem_aniversario) {
+                        caixaNasc.style.display = 'none';
+                        inputNasc.required = false;
+                        inputNasc.value = "";
+                    } else if (data) {
+                        caixaNasc.style.display = 'block';
+                        inputNasc.required = true;
+                    }
+
+                    const nomeServidor = data && (data.nome || data.cliente || (data.dados && data.dados.nome))
+                        ? String(data.nome || data.cliente || data.dados.nome).trim()
+                        : '';
+
+                    if (nomeServidor) {
+                        salvarNomeNoMapa(telefoneNum, nomeServidor);
+                        if (campoNome && (!campoNome.value.trim() || campoNome.dataset.autoPreenchido === '1')) {
+                            campoNome.value = nomeServidor;
+                            campoNome.dataset.autoPreenchido = '1';
+                            atualizarProgressoFlow();
+                        }
+                        if (statusEl) {
+                            statusEl.textContent = `✓ Cliente já cadastrado: ${nomeServidor}`;
+                        }
+                    } else if (statusEl) {
+                        statusEl.textContent = '';
+                    }
+                })
+                .catch(() => {
+                    if (statusEl) statusEl.textContent = '';
+                });
+        } else if (statusEl) {
+            statusEl.textContent = '';
+        }
+    }
+
+    function aoDigitarTelefoneZap(inputEl) {
+        mascaraTelefone(inputEl);
+        const norm = normalizarNumeroCliente(inputEl.value);
+        if (norm.length >= 10) {
+            preencherNomeSeExistir(norm, inputEl.value);
+        }
+    }
 
     function atualizarProgressoFlow() {
         let pontos = 1;
-        if ((document.getElementById('nome')?.value || '').trim().length >= 2) pontos++;
-        if (document.querySelectorAll('input[name="servico"]:checked').length > 0) pontos++;
-        if (document.getElementById('profissional')?.value && document.getElementById('hora')?.value) pontos++;
+        if (normalizarNumeroCliente(document.getElementById('telefone')?.value || '').length >= 10) pontos = 2;
+        if ((document.getElementById('nome')?.value || '').trim().length >= 2 && document.querySelectorAll('input[name="servico"]:checked').length > 0) pontos = 3;
+        if (document.getElementById('profissional')?.value && document.getElementById('hora')?.value) pontos = 4;
         const perc = Math.min(100, pontos * 25);
         const bar = document.getElementById('flowProgressBar');
         if (bar) bar.style.width = perc + '%';
@@ -445,23 +594,32 @@
         const videoSalvo = localStorage.getItem(chaveVideoLocal);
         if (videoSalvo) aplicarVideoFundo(videoSalvo);
 
+        const inputTel = document.getElementById('telefone');
+        const inputNome = document.getElementById('nome');
+
+        if (inputNome) {
+            inputNome.addEventListener('input', function() {
+                this.dataset.autoPreenchido = '0';
+            });
+        }
+
         const clienteSalvoStr = localStorage.getItem(chaveClienteLocal);
         if (clienteSalvoStr) {
             try {
                 const cli = JSON.parse(clienteSalvoStr);
-                if (cli.nome && !document.getElementById('nome').value) {
-                    document.getElementById('nome').value = cli.nome;
+                if (cli.telefone && cli.nome) {
+                    salvarNomeNoMapa(cli.telefone, cli.nome);
                 }
-                if (!telUrl && cli.telefone && !document.getElementById('telefone').value) {
-                    document.getElementById('telefone').value = cli.telefone;
-                    mascaraTelefone(document.getElementById('telefone'));
+                if (!telUrl && cli.telefone && inputTel && !inputTel.value) {
+                    inputTel.value = cli.telefone;
+                    mascaraTelefone(inputTel);
                 }
             } catch(e) {}
         }
 
-        if (telUrl) {
-            document.getElementById('telefone').value = telUrl;
-            mascaraTelefone(document.getElementById('telefone'));
+        if (telUrl && inputTel) {
+            inputTel.value = telUrl;
+            mascaraTelefone(inputTel);
         }
 
         const cacheSalvo = localStorage.getItem(chaveCache);
@@ -540,25 +698,7 @@
             }
         }
         input.value = formatado;
-        if (v.length >= 10) verificarClienteNuvem(v);
-    }
-
-    function verificarClienteNuvem(telefoneNum) {
-        fetch(scriptURL + "?acao=verificar_cliente&telefone=" + telefoneNum)
-        .then(res => res.json())
-        .then(data => {
-            const caixaNasc = document.getElementById('campo_nascimento');
-            const inputNasc = document.getElementById('data_nascimento');
-            if (data.tem_aniversario) {
-                caixaNasc.style.display = 'none';
-                inputNasc.required = false;
-                inputNasc.value = "";
-            } else {
-                caixaNasc.style.display = 'block';
-                inputNasc.required = true;
-            }
-        })
-        .catch(err => console.log("Não foi possível checar o cliente agora."));
+        if (v.length >= 10) preencherNomeSeExistir(v, formatado);
     }
 
     function atualizarResumo() {
@@ -617,6 +757,12 @@
         const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
         window[callbackName] = function(data) {
             agendamentosDaNuvem = data;
+            indexarAgendamentosClientes(data);
+            const telAtual = document.getElementById('telefone')?.value || '';
+            const normAtual = normalizarNumeroCliente(telAtual);
+            if (normAtual.length >= 10) {
+                preencherNomeSeExistir(normAtual, telAtual);
+            }
             delete window[callbackName]; document.getElementById(callbackName)?.remove();
             renderizarDropdown(dataEscolhida, selectHora);
         };
@@ -746,6 +892,7 @@
         let dataNascFinal = document.getElementById('data_nascimento').value || "";
         const servicoResumo = nomes.join(" + ");
 
+        salvarNomeNoMapa(telLimpo, nomeCliente);
         try {
             localStorage.setItem(chaveClienteLocal, JSON.stringify({ nome: nomeCliente, telefone: telFormatado }));
         } catch(e) {}
@@ -780,6 +927,7 @@
                 <p style="color: #e5e5e5; font-size: 0.98em; margin: 0;">Voltando para o WhatsApp...</p>
                 <div class="card-resumo-flow">
                     <div><strong>Cliente:</strong> ${nomeCliente}</div>
+                    <div><strong>WhatsApp:</strong> ${telFormatado}</div>
                     <div><strong>Data:</strong> ${dataBr} às <strong>${horaEscolhida}</strong></div>
                     <div><strong>Serviço:</strong> ${servicoResumo}</div>
                     <div><strong>Profissional:</strong> ${profFinal}</div>
